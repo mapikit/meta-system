@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "types": ["node", "mocha", "reflect-metadata"],
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ],
+      "@api/*" : [
+        "src/types/*",
+        "src/*"
+      ],
+      "@test/*" : [
+        "test/*"
+      ]
+    }
+  },
+  "inlcude": [
+    "src/*"
+  ]
+}

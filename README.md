@@ -1,0 +1,1 @@
+This is the mapikit module responsible for managing a client's system characteristics and behaviors.
