@@ -1,0 +1,21 @@
+version: '3.7'
+
+networks:
+  api-main:
+    name : api-main
+    ipam:
+      driver: default
+
+services:
+  mongo-db:
+    image: mongo:4.2.3-bionic
+    container_name: 'mongo-entities'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "api-development" #Need to move out from here
+      MONGO_INITDB_ROOT_PASSWORD: "apipass" #Need to move out from here
+    volumes:
+      - ../mapikit-db/mongo:/data/db
+    networks:
+      - api-main
+    ports:
+      - "27017:27017"

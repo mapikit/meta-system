@@ -19,19 +19,3 @@ app.use("/", rootRouter.router);
 app.listen(PORT, () : void => {
   logger.info({ message : `we're listening on port ${PORT}` });
 });
-
-// TEPORARY TESTS
-
-// import { TypeOrmSchemaRepository } from "@api/client/application/repositories/typeorm-schema-repository";
-// import { Schema } from "./client/domain/models/schema";
-// const repo = new TypeOrmSchemaRepository().initiate();
-
-// const aa = async () : Promise<void> => {
-//   const initiated = await repo;
-
-//   console.log(await initiated.findByClient(
-//     "e23b3ad3-810c-4446-908c-d0802631baca",
-//   ));
-// };
-
-// aa();

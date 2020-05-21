@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import constants from "@api/mapikit/constants";
-import { TokenClient } from "@api/client/domain/authorized-client";
+import { TokenClient } from "@api/entity/domain/types/authorized-client";
 
 interface TokenOutput extends TokenClient {
   iat ?: number;
@@ -17,7 +17,6 @@ export function decodeToken (token : string) : TokenOutput {
 }
 
 function assertDecoded (decoded : object | string) : asserts decoded is TokenOutput {
-  if(Object.keys(decoded).includes("iat"))
-    return;
+  if(Object.keys(decoded).includes("iat")) return;
   throw new Error("Invalid type for decoded token");
 }

@@ -4,7 +4,7 @@ import { ResponseMessages } from "@api/common/enums/response-messages";
 import * as Http from "http-status-codes";
 import { decodeToken } from "@api/common/helpers/jwt-utils";
 import jwt from "jsonwebtoken";
-import { TokenClient } from "@api/client/domain/authorized-client";
+import { TokenClient } from "@api/entity/domain/types/authorized-client";
 
 type ExpressRequest = (req : Request, res : Response, next : NextFunction) => Promise<void>;
 
@@ -12,8 +12,10 @@ export function Authorization () : ExpressRequest {
   return async (req : Request, res : Response, next : NextFunction) : Promise<void> => {
     try {
       const token = decodeToken(req.headers.authorization);
+      console.log("decoded: ", token);
       assignAuthorizationHeader(token, req.headers);
     } catch(err) {
+      console.log(err);
       resolveError(res, err);
       return;
     }
@@ -32,6 +34,11 @@ function resolveError (res : Response, err : jwt.JsonWebTokenError) : void {
 
     return;
   }
+  res.statusCode = Http.BAD_REQUEST; //TODO create default response for random "authorization "junk
+  res.send({
+    key: "MS666",
+    message: "Corrupt Token. The Token had invalid type",
+  });
 }
 
 function tokenExpired (res : Response) : void {
@@ -56,4 +63,5 @@ function assignAuthorizationHeader (token : TokenClient, headers : any) : void {
   headers.clientEmail = token.clientEmail;
   headers.clientName = token.clientName;
   headers.clientUsername = token.clientUsername;
+  headers.schemaId = token.schemaId;
 }

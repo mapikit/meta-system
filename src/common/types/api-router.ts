@@ -17,10 +17,8 @@ export abstract class APIRouter {
   protected middlewares = []
 
   public constructor (routeSecurity : "secure" | "insecure" = "insecure") {
-    if(routeSecurity === "secure")
-      this.middlewares.push(Authorization());
-    if(this.middlewares.length)
-      this.router.use(this.middlewares);
+    if(routeSecurity === "secure") this.middlewares.push(Authorization());
+    if(this.middlewares.length) this.router.use(this.middlewares);
   }
 
   protected get version () : string {
