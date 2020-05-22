@@ -8,6 +8,7 @@ import { entityInsertionRequestFactory } from "@test/factories/requests/entity-i
 import { InsertEntity } from "@api/entity/domain/procedures/insert-entity";
 import { entityFactory } from "@test/factories/entity-factory";
 import { tokenClientFactory } from "@test/factories/token-client-factory";
+import { schemaFactory } from "@test/factories/schema-factory";
 const expect = chai.expect;
 
 describe("Insert Entity Test", () => {
@@ -33,11 +34,29 @@ describe("Insert Entity Test", () => {
       Premium : true,
     });
 
+    const schema = schemaFactory({
+      schema : [
+        {
+          fieldName : "Station Name",
+          nullable: false,
+          readonly: false,
+          fieldType : "string",
+        },
+        {
+          fieldName : "Premium",
+          nullable: false,
+          readonly: false,
+          fieldType : "boolean",
+        },
+      ],
+    });
+
     const insertEntityRequest = entityInsertionRequestFactory({
+      schema: schema,
       entity: entity,
     });
 
-    const authorizedClient = tokenClientFactory({});
+    const authorizedClient = tokenClientFactory({ clientId: schema.clientId });
 
     const insertEntityProcedure = new InsertEntity({
       MongoRepository: mongoRepository,
@@ -45,7 +64,7 @@ describe("Insert Entity Test", () => {
 
     await mongoRepository.createDatabase(authorizedClient.clientName);
     await mongoRepository.checkoutDatabase(authorizedClient.clientName);
-    await mongoRepository.createCollection(insertEntityRequest.schemaId);
+    await mongoRepository.createCollection(insertEntityRequest.schema.schemaId);
 
     entityContext.setContextState(authorizedClient);
     await insertEntityProcedure.execute(entityContext, {

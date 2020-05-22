@@ -5,4 +5,8 @@ export enum FailureResponseCodes {
   //Auth codes
   tokenExpired = "MS3001",
   tokenInvalid = "MS3002",
+
+  //Entity
+  schemaTypeMismatch = "MS4002",
+  invalidClientId = "MK2002",
 };
