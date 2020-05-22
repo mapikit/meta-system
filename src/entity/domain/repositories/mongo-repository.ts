@@ -9,6 +9,7 @@ export interface MongoRepositoryAttributes {
   createCollection (collectionName : string) : Promise<void>;
   selectCollection (collectionName : string) : Promise<void>;
   dropCollection (collectionName : string) : Promise<void>;
+  query (queryTerm : Partial<Entity>) : Promise<Entity[]>;
   getEntities () : Promise<EntityAttributes[]>;
   insert (entity : Entity) : Promise<void>;
   close () : Promise<void>;

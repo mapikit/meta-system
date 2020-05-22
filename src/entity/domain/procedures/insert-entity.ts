@@ -39,6 +39,17 @@ export class InsertEntity extends Procedure {
     logger.debug({ message: `New entity ${entity} added` });
   }
 
+  //For future use
+  private async validateUniqueKeys (entity : Entity, uniqueKeys : string[]) : Promise<boolean> {
+    for (const key of uniqueKeys) {
+      if (await this.mongoRepository.query({ [key]: entity[key] })) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
 
   private invalidRequest (context : EntityContext) : void {
     context.setError({

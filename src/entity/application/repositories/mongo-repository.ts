@@ -2,6 +2,7 @@ import { MongoClient, Db, Collection } from "mongodb";
 import constants from "@api/mapikit/constants";
 import { MongoRepositoryAttributes } from "@api/entity/domain/repositories/mongo-repository";
 import { EntityAttributes } from "@api/entity/domain/types/entity-attributes";
+import { Entity } from "@api/entity/domain/models/entity";
 
 export class MongoRepository implements MongoRepositoryAttributes {
   private readonly connection : MongoClient = new MongoClient(
@@ -50,6 +51,10 @@ export class MongoRepository implements MongoRepositoryAttributes {
 
   public async getEntities () : Promise<any> {
     return this.workingCollection.find();
+  }
+
+  public query (queryTerm : Partial<EntityAttributes>) : Promise<Entity[]> {
+    return this.workingCollection.find(queryTerm).next();
   }
 
   public async insert (entity : EntityAttributes) : Promise<void> {

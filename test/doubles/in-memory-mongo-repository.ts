@@ -55,6 +55,24 @@ export class InMemoryMongoRepository implements MongoRepositoryAttributes {
     this.db[this.currentDb][this.currentCollection].push(entity);
   }
 
+  /*This current fake implementation of query returns any entity that matches any of the parameters
+  ie we have {e1: {a: 12, b:6}, e2: {a: 9, b:18}} and query with {a: 12, b: 18}. This would return
+  both e1 and e2. So TODO check if this behavior matches repository query or it is suposed to return
+  blank
+
+  TL;DR: check if query parameters are treated as AND or as OR*/
+  public async query (queryTerm : Partial<Entity>) : Promise<Entity[]> {
+    const queryKeys = Object.keys(queryTerm);
+    return this.db[this.currentDb][this.currentCollection].filter(entity => {
+      for (const key of queryKeys) {
+        if(entity[key] == queryTerm[key]) {
+          return true;
+        }
+      }
+      return false;
+    });
+  }
+
   public async getEntities () : Promise<EntityAttributes[]> {
     return this.db[this.currentDb][this.currentCollection];
   }
