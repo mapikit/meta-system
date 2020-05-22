@@ -21,19 +21,18 @@ export class InsertEntity extends Procedure {
     this.mongoRepository = options.MongoRepository;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public async execute (context : EntityContext, parameters ?: InsertEntityParameters) : Promise<void> {
-    logger.debug({ message: "Starting procedure" });
+    logger.debug({ message: "Starting Enitty Insertion Procedure", contextState: context.contextState });
 
-    // if(TODO validateRequestSomehow) {
-    //   this.invalidRequest(context);
+    if(!context.contextState.clientName) {
+      this.invalidRequest(context);
 
-    //   return;
-    // }
+      return;
+    }
 
     const entity = Entity.toDomain(parameters.payload.entity);
     await this.mongoRepository.checkoutDatabase(context.contextState.clientName);
-    await this.mongoRepository.selectCollection(context.contextState.schemaId);
+    await this.mongoRepository.selectCollection(parameters.payload.schemaId);
     await this.mongoRepository.insert(entity);
 
     context.setResponse<InsertEntityResponse>({ data : { message : "Inserted" }, statusCode: 201 });

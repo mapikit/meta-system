@@ -3,5 +3,4 @@ export interface TokenClient {
   clientEmail : string;
   clientName : string;
   clientUsername : string;
-  schemaId : string;
 };

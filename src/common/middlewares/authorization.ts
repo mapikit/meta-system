@@ -12,10 +12,8 @@ export function Authorization () : ExpressRequest {
   return async (req : Request, res : Response, next : NextFunction) : Promise<void> => {
     try {
       const token = decodeToken(req.headers.authorization);
-      console.log("decoded: ", token);
       assignAuthorizationHeader(token, req.headers);
     } catch(err) {
-      console.log(err);
       resolveError(res, err);
       return;
     }
@@ -63,5 +61,4 @@ function assignAuthorizationHeader (token : TokenClient, headers : any) : void {
   headers.clientEmail = token.clientEmail;
   headers.clientName = token.clientName;
   headers.clientUsername = token.clientUsername;
-  headers.schemaId = token.schemaId;
 }

@@ -4,7 +4,7 @@ import { EventManager } from "birbs";
 import { apiErrorHandler } from "@api/common/helpers/api-context-error-handler";
 
 export interface EntityState extends TokenClient {
-  entityName ?: string; //TODO remove/change this placeholder
+  schemaId ?: string; //TODO remove/change/use this
 }
 
 export class EntityContext extends MapikitCommandContext<EntityState> {

@@ -13,7 +13,7 @@ import { ManagerRoutineInfo } from "@api/common/types/manager-routine-info";
 export class EntityController extends APIRouter {
   private manager : EventManager;
   public constructor (options : { EntityManager : EventManager }) {
-    super("insecure");
+    super("secure");
     this.manager = options.EntityManager;
     this.routeVersion = 1;
 
@@ -42,7 +42,6 @@ export class EntityController extends APIRouter {
   };
 
   private runManagerRoutine (info : ManagerRoutineInfo) : void {
-    logger.debug({ message: "Runing routine" });
     info.context.setContextState(this.buildStateFromHeaders(info.request.headers));
     this.manager.addContext(info.response)
       .addContext(info.context)
@@ -62,7 +61,6 @@ export class EntityController extends APIRouter {
       clientEmail: headers.clientEmail,
       clientName: headers.clientName,
       clientUsername: headers.clientUsername,
-      schemaId: headers.schemaId,
     };
   }
 };

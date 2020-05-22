@@ -53,7 +53,7 @@ export class MongoRepository implements MongoRepositoryAttributes {
   }
 
   public async insert (entity : EntityAttributes) : Promise<void> {
-    await this.workingCollection.insert(entity);
+    await this.workingCollection.insertOne(entity);
   }
 
   public async close () : Promise<void> {
