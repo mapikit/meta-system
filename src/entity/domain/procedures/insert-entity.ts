@@ -32,7 +32,7 @@ export class InsertEntity extends Procedure {
 
     const entity = Entity.toDomain(parameters.payload.entity);
     await this.mongoRepository.checkoutDatabase(context.contextState.clientName);
-    await this.mongoRepository.selectCollection(parameters.payload.schemaId);
+    await this.mongoRepository.selectCollection(parameters.payload.schema.schemaId);
     await this.mongoRepository.insert(entity);
 
     context.setResponse<InsertEntityResponse>({ data : { message : "Inserted" }, statusCode: 201 });
