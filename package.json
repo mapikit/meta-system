@@ -57,7 +57,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lukineas/APIMarketplace.git"
+    "url": "git+https://github.com/mapikit/meta-system.git"
   },
   "keywords": [
     "market",
@@ -68,7 +68,7 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/homemmakako/APIMarketplace/issues"
+    "url": "https://github.com/mapikit/meta-system/issues"
   },
   "dependencies": {
     "awilix": "^4.2.5",
@@ -88,7 +88,7 @@
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.2"
   },
-  "homepage": "https://github.com/lukineas/APIMarketplace#readme",
+  "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.11",
