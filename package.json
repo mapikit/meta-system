@@ -8,12 +8,7 @@
     "test": "mocha --exit --sort",
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'",
     "coverage": "nyc npm run test",
-    "dev": "nodemon",
-    "run:full": "docker-compose up -d --build && nodemon",
-    "run:reset": "docker-compose restart",
-    "run:down": "docker-compose down",
-    "db:migrate": "ts-node ./node_modules/typeorm/cli.js migration:run -t=false",
-    "db:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -t=false"
+    "run": "nodemon"
   },
   "_moduleAliases": {
     "@api": "src",
