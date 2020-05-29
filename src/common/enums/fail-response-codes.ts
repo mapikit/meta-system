@@ -7,6 +7,7 @@ export enum FailureResponseCodes {
   tokenInvalid = "MS3002",
 
   //Entity
-  schemaTypeMismatch = "MS4002",
-  invalidClientId = "MK2002",
+  schemaTypeMismatch = "MS4001",
+  invalidClientId = "MS4002",
+  contextNotSetup = "MS4003"
 };

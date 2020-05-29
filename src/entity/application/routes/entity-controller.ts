@@ -12,6 +12,10 @@ import { ManagerRoutineInfo } from "@api/common/types/manager-routine-info";
 import EntityManager from "@api/entity/application/entity-manager";
 import { EntityState } from "@api/entity/domain/contexts/entity-context";
 import { ContextCreationRequest } from "@api/entity/application/request/context-creation";
+import { MapikitErrorPayload } from "@api/common/response/error-payload";
+import { FailureResponseCodes } from "@api/common/enums/fail-response-codes";
+import { ResponseMessages } from "@api/common/enums/response-messages";
+import Http from "http-status-codes";
 
 export class EntityController extends APIRouter {
   private manager : EventManager;
@@ -39,16 +43,25 @@ export class EntityController extends APIRouter {
   // eslint-disable-next-line max-lines-per-function
   public async insertEntity (request : MapikitRequest, response : MapikitResponse) : Promise<void> {
     logger.debug({ message: `Received request: Entity Insertion - ${new Date()}` });
-
-    this.manager
-      .addContext(response)
-      .addBirbable(container.resolve(TYPES.SetResponse), response.identifier)
-      .addBirbable(container.resolve(TYPES.SetError), response.identifier)
-      .addBirbable(container.resolve(TYPES.InsertEntity), request.headers.clientId.toString())
-      .broadcast({ birbable: container.resolve(TYPES.InsertEntity).constructor.name, context: request.headers.clientId.toString() }, {
-        payload: request,
-        identifier: response.identifier,
-      });
+    try {
+      this.manager
+        .addContext(response)
+        .addBirbable(container.resolve(TYPES.SetResponse), response.identifier)
+        .addBirbable(container.resolve(TYPES.SetError), response.identifier)
+        .addBirbable(container.resolve(TYPES.InsertEntity), request.headers.clientId.toString())
+        .broadcast({ birbable: container.resolve(TYPES.InsertEntity).constructor.name, context: request.headers.clientId.toString() }, {
+          payload: request,
+          identifier: response.identifier,
+        });
+    }
+    catch {
+      const noContextError : MapikitErrorPayload = {
+        key: FailureResponseCodes.contextNotSetup,
+        message: ResponseMessages.contextNotSetup,
+        statusCode: Http.BAD_REQUEST,
+      };
+      this.manager.broadcast({ birbable: "SetError", context: response.identifier }, noContextError);
+    }
   };
 
   // eslint-disable-next-line max-lines-per-function
@@ -62,10 +75,7 @@ export class EntityController extends APIRouter {
     context.setContextState(this.buildStateFromRequest(request));
     this.manager
       .addContext(context);
-    logger.debug({
-      message: "Created new context",
-      contextIdentifier: request.headers.clientId,
-      state: context.contextState });
+    logger.debug({ message: "Created new context", state: context.contextState });
     response.response.send("Success");
 
   };
