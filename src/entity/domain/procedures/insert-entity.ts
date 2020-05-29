@@ -27,19 +27,16 @@ export class InsertEntity extends Procedure {
   public async execute (context : EntityContext, parameters ?: InsertEntityParameters) : Promise<void> {
     logger.debug({ message: "Starting Enitty Insertion Procedure", contextState: context.contextState });
 
-    if(!context.contextState.clientName) {
+    const relatedSchema = context.contextState.clientSchemas
+      .find((schema) => schema.schemaId == parameters.payload.schemaId);
+
+    if(!relatedSchema) {
       this.invalidRequest(context);
 
       return;
     }
 
-    if(parameters.payload.schema.clientId !== context.contextState.clientId) {
-      this.invalidClientId(context);
-
-      return;
-    }
-
-    if(!this.isValidType(parameters.payload.entity, parameters.payload.schema.schema)) {
+    if(!this.isValidType(parameters.payload.entity, relatedSchema.schema)) {
       this.invalidType(context);
 
       return;
@@ -47,7 +44,7 @@ export class InsertEntity extends Procedure {
 
     const entity = Entity.toDomain(parameters.payload.entity);
     await this.mongoRepository.checkoutDatabase(context.contextState.clientName);
-    await this.mongoRepository.selectCollection(parameters.payload.schema.schemaId);
+    await this.mongoRepository.selectCollection(relatedSchema.schemaId);
     await this.mongoRepository.insert(entity);
 
     context.setResponse<InsertEntityResponse>({ data : { message : "Inserted" }, statusCode: 201 });
@@ -72,6 +69,7 @@ export class InsertEntity extends Procedure {
   }
 
   private checkFieldType (entity : Entity, schemaField : SchemaField, key : string) : boolean {
+    if(!schemaField) return false;
     if(schemaField.fieldType !== typeof entity[key] && !schemaField.nullable) {
 
       return false;

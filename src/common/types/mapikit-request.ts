@@ -7,6 +7,7 @@ interface UsefulRequestData {
 }
 
 export class MapikitRequest {
+  [propertyName : string] : any;
   public headers : IncomingHttpHeaders = {};
   public constructor (request : UsefulRequestData) {
     Object.assign(this.headers, request.headers);

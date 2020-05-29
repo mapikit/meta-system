@@ -8,14 +8,10 @@ export class MapikitCommandContext<T = undefined> extends Context<T> {
 
   public setResponse <T extends MapikitResponsePayload> (data : T) : void {
     this.manager.broadcast({ birbable: "SetResponse", context: this.responseIdentifier }, data);
-
-    this.terminateContext();
   }
 
   public setError (error : MapikitErrorPayload) : void {
     this.manager.broadcast({ birbable: "SetError", context: this.responseIdentifier }, error);
-
-    this.terminateContext();
   }
 
   public terminateContext () : void {
