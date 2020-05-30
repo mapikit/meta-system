@@ -8,14 +8,13 @@ import { MapikitRequest } from "@api/common/types/mapikit-request";
 import { logger } from "@api/mapikit/logger/logger";
 import { EntityContext } from "@api/entity/domain/contexts/entity-context";
 import { EntityInsertionRequest } from "@api/entity/application/request/entity-insertion";
-import { ManagerRoutineInfo } from "@api/common/types/manager-routine-info";
 import EntityManager from "@api/entity/application/entity-manager";
 import { EntityState } from "@api/entity/domain/contexts/entity-context";
 import { ContextCreationRequest } from "@api/entity/application/request/context-creation";
-import { MapikitErrorPayload } from "@api/common/response/error-payload";
 import { FailureResponseCodes } from "@api/common/enums/fail-response-codes";
 import { ResponseMessages } from "@api/common/enums/response-messages";
 import Http from "http-status-codes";
+import { SetupContextResponse } from "@api/entity/domain/types/responses/response-payloads";
 
 export class EntityController extends APIRouter {
   private manager : EventManager;
@@ -43,28 +42,21 @@ export class EntityController extends APIRouter {
   // eslint-disable-next-line max-lines-per-function
   public async insertEntity (request : MapikitRequest, response : MapikitResponse) : Promise<void> {
     logger.debug({ message: `Received request: Entity Insertion - ${new Date()}` });
+    this.setupResponseContext(response);
     try {
       this.manager
-        .addContext(response)
-        .addBirbable(container.resolve(TYPES.SetResponse), response.identifier)
-        .addBirbable(container.resolve(TYPES.SetError), response.identifier)
         .addBirbable(container.resolve(TYPES.InsertEntity), request.headers.clientId.toString())
-        .broadcast({ birbable: container.resolve(TYPES.InsertEntity).constructor.name, context: request.headers.clientId.toString() }, {
+        .broadcast({ birbable: container.resolve(TYPES.InsertEntity).constructor.name,
+          context: request.headers.clientId.toString() }, {
           payload: request,
           identifier: response.identifier,
         });
     }
     catch {
-      const noContextError : MapikitErrorPayload = {
-        key: FailureResponseCodes.contextNotSetup,
-        message: ResponseMessages.contextNotSetup,
-        statusCode: Http.BAD_REQUEST,
-      };
-      this.manager.broadcast({ birbable: "SetError", context: response.identifier }, noContextError);
+      this.invalidContext(response);
     }
   };
 
-  // eslint-disable-next-line max-lines-per-function
   public async setupContext (request : MapikitRequest, response : MapikitResponse) : Promise<void> {
     logger.debug({ message: `Received request: Schemas Setup - ${new Date()}` });
     const context = new EntityContext({
@@ -73,26 +65,20 @@ export class EntityController extends APIRouter {
     context.responseIdentifier = response.identifier;
 
     context.setContextState(this.buildStateFromRequest(request));
-    this.manager
-      .addContext(context);
-    logger.debug({ message: "Created new context", state: context.contextState });
-    response.response.send("Success");
+    this.setupResponseContext(response);
+    this.manager.addContext(context);
 
+    logger.debug({ message: "Created new context", state: context.contextState });
+    context.setResponse<SetupContextResponse>({ data: { message: "Context Setup" }, statusCode: 201 });
   };
 
 
 
-
-  private runManagerRoutine (info : ManagerRoutineInfo) : void {
-    this.manager.addContext(info.response)
-      .addContext(info.context)
-      .addBirbable(container.resolve(TYPES.SetResponse), info.response.identifier)
-      .addBirbable(container.resolve(TYPES.SetError), info.response.identifier)
-      .addBirbable(info.birbable, info.context.identifier)
-      .broadcast({ birbable: info.birbable.constructor.name, context: info.context.identifier }, {
-        payload: info.request,
-        identifier: info.response.identifier,
-      });
+  private setupResponseContext (response : MapikitResponse) : void {
+    this.manager
+      .addContext(response)
+      .addBirbable(container.resolve(TYPES.SetResponse), response.identifier)
+      .addBirbable(container.resolve(TYPES.SetError), response.identifier);
   }
 
   private buildStateFromRequest (request : MapikitRequest) : EntityState {
@@ -103,5 +89,13 @@ export class EntityController extends APIRouter {
       clientUsername: request.headers.clientUsername.toString(),
       clientSchemas: request.clientSchemas,
     };
+  }
+
+  private invalidContext (response : MapikitResponse) : void{
+    this.manager.broadcast({ birbable: "SetError", context: response.identifier }, {
+      key: FailureResponseCodes.contextNotSetup,
+      message: ResponseMessages.contextNotSetup,
+      statusCode: Http.BAD_REQUEST,
+    });
   }
 };
