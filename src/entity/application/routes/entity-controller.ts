@@ -39,7 +39,6 @@ export class EntityController extends APIRouter {
       ));;
   };
 
-  // eslint-disable-next-line max-lines-per-function
   public async insertEntity (request : MapikitRequest, response : MapikitResponse) : Promise<void> {
     logger.debug({ message: `Received request: Entity Insertion - ${new Date()}` });
     this.setupResponseContext(response);
@@ -49,8 +48,7 @@ export class EntityController extends APIRouter {
         .broadcast({ birbable: container.resolve(TYPES.InsertEntity).constructor.name,
           context: request.headers.clientId.toString() }, {
           payload: request,
-          identifier: response.identifier,
-        });
+          identifier: response.identifier });
     }
     catch {
       this.invalidContext(response);

@@ -25,13 +25,12 @@ export class InsertEntity extends Procedure {
   //TODO REMOVE THIS DISABLE
   // eslint-disable-next-line max-lines-per-function
   public async execute (context : EntityContext, parameters ?: InsertEntityParameters) : Promise<void> {
-    logger.debug({ message: "Starting Enitty Insertion Procedure", contextState: context.contextState });
 
     const relatedSchema = context.contextState.clientSchemas
       .find((schema) => schema.schemaId == parameters.payload.schemaId);
 
     if(!relatedSchema) {
-      this.invalidRequest(context);
+      this.invalidSchema(context);
 
       return;
     }
@@ -93,20 +92,11 @@ export class InsertEntity extends Procedure {
     return true;
   }
 
-
-  private invalidRequest (context : EntityContext) : void {
+  private invalidSchema (context : EntityContext) : void {
     context.setError({
-      key: FailureResponseCodes.invalidRequest,
-      message: ResponseMessages.invalidRequest,
+      key: FailureResponseCodes.invalidSchema,
+      message: ResponseMessages.invalidSchema,
       statusCode: Http.BAD_REQUEST,
-    });
-  }
-
-  private invalidClientId (context : EntityContext) : void {
-    context.setError({
-      key: FailureResponseCodes.invalidClientId,
-      message: ResponseMessages.invalidClientId,
-      statusCode: Http.NOT_FOUND,
     });
   }
 

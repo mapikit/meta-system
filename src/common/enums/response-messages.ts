@@ -9,6 +9,7 @@ export enum ResponseMessages {
   //Entity
   invalidClientId = "Schema client does not match authorized client",
   schemaTypeMismatch = "An entity field type does not match one of the schemaFields type",
-  contextNotSetup = "The clients context has not yet been setup"
+  contextNotSetup = "The clients context has not yet been setup",
+  invalidSchema = "The schema requested does not exist"
 
 };
