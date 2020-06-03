@@ -12,7 +12,7 @@ const app = e();
 app.use(e.json()); // for parsing application/json
 app.use(e.urlencoded({ extended: true }));
 
-const PORT = 8000;
+const PORT = 9000;
 
 app.use("/", rootRouter.router);
 
