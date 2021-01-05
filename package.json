@@ -72,7 +72,7 @@
   },
   "dependencies": {
     "awilix": "^4.2.5",
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^5.0.0",
     "birbs": "^0.9.1",
     "class-validator": "^0.11.1",
     "express": "^4.17.1",
@@ -92,7 +92,7 @@
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.11",
-    "@types/express": "^4.17.6",
+    "@types/express": "^4.17.9",
     "@types/faker": "^4.1.11",
     "@types/jsonwebtoken": "^8.3.9",
     "@types/mocha": "^5.2.7",
