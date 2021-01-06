@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { RouteFormatError } from "./route-format-error";
-import { PortFormatError } from "./port-format-error";
+import { RouteFormatError } from "@api/common/errors/route-format-error";
+import { PortFormatError } from "@api/common/errors/port-format-error";
 
 import express = require("express");
 
