@@ -1,8 +1,9 @@
+import { RequestHandler } from "express";
 import express = require("express");
 
 type HttpMethods = "get" | "patch" | "put" | "delete" | "post";
 
-interface ActiveRoutersList {
+interface ActiveRoutesList {
   [route : string] : {
     post ?: boolean;
     get ?: boolean;
@@ -16,14 +17,14 @@ class MetaRouter {
   private app = express();
   private router = express.Router();
 
-  constructor (baseRoute : string) {
-    const resolvedBaseRoute = baseRoute.startsWith("/") ? baseRoute : `/${baseRoute}`;
-    this.app.use(resolvedBaseRoute, this.router);
+  constructor (baseRoute ?: string) {
+    if(baseRoute && !baseRoute.match(/^\/[0-9a-z-]+\/?$/g)) throw new Error("Path error");
+    this.app.use(baseRoute ? baseRoute : "/", this.router);
   }
 
-  public createRoute (method : HttpMethods, route : string, handler : express.RequestHandler) : void {
-    const resolvedRoute = route.startsWith("/") ? route : `/${route}`;
-    this.router[method](resolvedRoute, handler);
+  public createRoute (method : HttpMethods, route : string, handler : RequestHandler) : void {
+    if(!route.match(/^((?:\/[0-9a-z-]+)+\/?)$/g)) return;
+    this.router[method](route, handler);
   }
 
   public listenOnPort (port : string | number) : void {
@@ -32,9 +33,9 @@ class MetaRouter {
     });
   }
 
-  public get activeRoutes () : ActiveRoutersList {
+  public get activeRoutes () : ActiveRoutesList {
     const routerStack = this.router.stack;
-    const organizedStack : ActiveRoutersList = {};
+    const organizedStack : ActiveRoutesList = {};
     for(const layer of routerStack) {
       if(layer.route?.path !== undefined) {
         organizedStack[layer.route.path] = {
