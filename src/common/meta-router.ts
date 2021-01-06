@@ -1,4 +1,7 @@
 import { RequestHandler } from "express";
+import { RouteFormatError } from "./route-format-error";
+import { PortFormatError } from "./port-format-error";
+
 import express = require("express");
 
 type HttpMethods = "get" | "patch" | "put" | "delete" | "post";
@@ -18,18 +21,19 @@ class MetaRouter {
   private router = express.Router();
 
   constructor (baseRoute ?: string) {
-    if(baseRoute && !baseRoute.match(/^\/[0-9a-z-]+\/?$/g)) throw new Error("Path error");
+    if(baseRoute && !baseRoute.match(/^\/[0-9a-z-]+\/?$/g)) throw new RouteFormatError;
     this.app.use(baseRoute ? baseRoute : "/", this.router);
   }
 
   public createRoute (method : HttpMethods, route : string, handler : RequestHandler) : void {
-    if(!route.match(/^((?:\/[0-9a-z-]+)+\/?)$/g)) return;
+    if(!route.match(/^((?:\/[0-9a-z-]+)+\/?)$/g)) throw new RouteFormatError;
     this.router[method](route, handler);
   }
 
   public listenOnPort (port : string | number) : void {
+    if(!String(port).match(/^\d+$/)) throw new PortFormatError;
     this.app.listen(port, () => {
-      console.log("Now listening on port ", port);
+      console.log("Now listening on port", port);
     });
   }
 
@@ -37,9 +41,10 @@ class MetaRouter {
     const routerStack = this.router.stack;
     const organizedStack : ActiveRoutesList = {};
     for(const layer of routerStack) {
-      if(layer.route?.path !== undefined) {
+      if(layer.route?.path) {
         organizedStack[layer.route.path] = {
-          ...layer.route.methods, ...organizedStack[layer.route.path],
+          ...organizedStack[layer.route.path],
+          ...layer.route.methods,
         };
       }
     }
