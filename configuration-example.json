@@ -1,0 +1,308 @@
+{
+  "name": "car-system-mgmt",
+  "version": "1.0.2",
+  "port": 8080,
+  "envs": [
+    {"key": "NODE_ENV", "value": "production"}
+  ],
+  "schemas": [
+    {
+      "name": "customer",
+      "format": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "purchases": { "type": "array", "data": "string", "refName": "purchase" },
+        "birthdate": { "type": "date" }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": true,
+        "deleteMethodEnabled": false,
+        "patchMethodEnabled": true,
+        "putMethodEnabled": false,
+        "queryParamsGetEnabled": true
+      }
+    },
+    {
+      "name": "purchase",
+      "format": {
+        "id": { "type": "string" },
+        "date": { "type": "date" },
+        "value": { "type": "number" },
+        "productId": { "type": "string" }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": false,
+        "deleteMethodEnabled": false,
+        "patchMethodEnabled": false,
+        "putMethodEnabled": false,
+        "queryParamsGetEnabled": true
+      }
+    },
+    {
+      "name": "employee",
+      "format": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "salary": { "type": "number" },
+        "confirmedSales": { "type": "array", "data": "string", "refName": "purchase" }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": true,
+        "deleteMethodEnabled": true,
+        "patchMethodEnabled": true,
+        "putMethodEnabled": false,
+        "queryParamsGetEnabled": true
+      }
+    },
+    {
+      "name": "car",
+      "format": {
+        "id": { "type": "string" },
+        "model": { "type": "string" },
+        "brand": { "type": "string" },
+        "price": { "type": "number" },
+        "color": { "type": "string" },
+        "description": { "type": "string" },
+        "sold": { "type": "boolean" }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": true,
+        "deleteMethodEnabled": true,
+        "patchMethodEnabled": true,
+        "putMethodEnabled": true,
+        "queryParamsGetEnabled": true
+      }
+    }
+  ],
+  "dbConnectionString": "mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin",
+  "businessOperations": [
+    {
+      "name": "car-sell",
+      "inputs": [
+        { "name": "carId", "alias": "Id do Carro", "type": "string", "localization": "uri" },
+        { "name": "jsonBody", "alias": "Corpo da Requisição", "type": "$carSellBody", "localization": "body" }
+       ],
+      "outputs": [
+        { "name": "success", "type": "string", "statusCode": 200 },
+        { "name": "systemFailure", "type": "string", "statusCode": 500 }
+      ],
+      "route": "/cars/:carId/sell",
+      "constants": [
+        { "name": "emptyArrayLength", "type": "number", "value": 0 },
+        { "name": "successMessage", "type": "string", "value": "Success on performing purchase" },
+        { "name": "failureMessage", "type": "string", "value": "Failure" },
+        { "name": "firstArrayItemIndex", "type": "number", "value": 0 },
+        { "name": "carSoldStatus", "type": "boolean", "value": true }
+      ],
+      "configuration": [
+        {
+          "moduleRepo": "@car@get",
+          "key": 1,
+          "inputsSource": [
+            { "source": "!carId", "target": "id" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 2, "branch": "get" }
+          ]
+        },
+        {
+          "moduleRepo": "#higherThan",
+          "key": 2,
+          "inputsSource": [
+            { "source": 1, "sourceOutput": "result.lenght", "target": "input" },
+            { "source": "!emptyArrayLength", "target": "targetValue" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 10, "branch": "higherThanValue" },
+            { "nextKeys": 4, "branch": "equalOrLowerThanValue" }
+          ]
+        },
+        {
+          "moduleRepo": "%success",
+          "key": 5,
+          "inputsSource": [ { "source": "!successMessage", "target": "value" } ]
+        },
+        {
+          "moduleRepo": "%failure",
+          "key": 6,
+          "inputsSource": [ { "source": "!failureMessage", "target": "value" } ]
+        },
+        {
+          "moduleRepo": "#timestamp",
+          "key": 8
+        },
+        {
+          "moduleRepo": "#boolCheck",
+          "key": 10,
+          "inputsSource": [
+            { "source": 9, "sourceOutput": "item.sold", "target": "boolean" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 7, "branch": "false" },
+            { "nextKeys": 6, "branch": "true" }
+          ]
+        },
+        {
+          "modulerRepo": "#arrayIndex",
+          "key": 9,
+          "inputsSource": [
+            { "source": "!firstArrayItemIndex", "target": "index" },
+            { "source": 1, "sourceOutput": "result","target": "array" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 10 }
+          ]
+        },
+        {
+          "moduleRepo": "@purchase@create",
+          "key": 7,
+          "inputsSource": [
+            { "source": 8, "sourceOutput": "date", "target": "date" },
+            { "source": 9 , "sourceOutput": "item.id", "target": "productId"},
+            { "source": 9, "sourceOutput": "item.price", "target": "value" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 11 }
+          ]
+        },
+        {
+          "moduleRepo": "@customer@get",
+          "key": 11,
+          "inputsSource": [
+            { "source": "!carSellBody.clientId", "target": "id" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 12 }
+          ]
+        },
+        {
+          "moduleRepo": "#higherThan",
+          "key": 12,
+          "inputsSource": [
+            { "source": 11, "sourceOutput": "result.lenght", "target": "input" },
+            { "source": "!emptyArrayLength", "target": "targetValue" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 13, "branch": "higherThanValue" },
+            { "nextKeys": 4, "branch": "equalOrLowerThanValue" }
+          ]
+        },
+        {
+          "modulerRepo": "#arrayIndex",
+          "key": 13,
+          "inputsSource": [
+            { "source": "!firstArrayItemIndex", "target": "index" },
+            { "source": 11, "sourceOutput": "result", "target": "array" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 14 }
+          ]
+        },
+        {
+          "moduleRepo": "#arrayAppend",
+          "key": 14,
+          "inputsSource": [
+            { "source": 13, "sourceOutput": "item.purchases", "target": "array" },
+            { "source": 7, "sourceOutput": "created.id", "target": "elementToAppend" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 15 }
+          ]
+        },
+        {
+          "moduleRepo": "@employee@get",
+          "key": 15,
+          "inputsSource": [
+            { "source": "!carSellBody.employeeId", "target": "id" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 16 }
+          ]
+        },
+        {
+          "moduleRepo": "#higherThan",
+          "key": 16,
+          "inputsSource": [
+            { "source": 15, "sourceOutput": "result.lenght", "target": "input" },
+            { "source": "!emptyArrayLength", "target": "targetValue" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 17, "branch": "higherThanValue" },
+            { "nextKeys": 4, "branch": "equalOrLowerThanValue" }
+          ]
+        },
+        {
+          "modulerRepo": "#arrayIndex",
+          "key": 17,
+          "inputsSource": [
+            { "source": "!firstArrayItemIndex", "target": "index" },
+            { "source": 15, "sourceOutput": "result", "target": "array" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 18 }
+          ]
+        },
+        {
+          "moduleRepo": "#arrayAppend",
+          "key": 18,
+          "inputsSource": [
+            { "source": 17, "sourceOutput": "item.confirmedSales", "target": "array" },
+            { "source": 7, "sourceOutput": "created.id", "target": "elementToAppend" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 19 }
+          ]
+        },
+        {
+          "moduleRepo": "@car@update",
+          "key": 19,
+          "inputsSource": [
+            { "source": 9, "sourceOutput": "item.id", "target": "id" },
+            { "source": "!carSoldStatus", "target": "sold" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 20 }
+          ]
+        },
+        {
+          "moduleRepo": "@employee@update",
+          "key": 20,
+          "inputsSource": [
+            { "source": 17, "sourceOutput": "item.id", "target": "id" },
+            { "source": 18, "sourceOutput": "result", "target": "confirmedSales" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 21 }
+          ]
+        },
+        {
+          "moduleRepo": "@customer@update",
+          "key": 21,
+          "inputsSource": [
+            { "source": 13, "sourceOutput": "item.id", "target": "id" },
+            { "source": 14, "sourceOutput": "result", "target": "purchases" }
+          ],
+          "nextFunctions": [
+            { "nextKeys": 5 }
+          ]
+        }
+      ],
+      "usedAsRoute": true,
+      "customObjects": [
+        {
+          "name": "carSellBody",
+          "properties": [
+            { "name": "clientId", "type": "string" },
+            { "name": "employeeId", "type": "string" }
+          ]
+        }
+      ]
+    }
+  ]
+}
