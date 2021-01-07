@@ -26,13 +26,13 @@ export type SchemaTypeDefinitionParameter = {
 
 export type SchemaTypeDefinitionArray = {
   type : "array";
-  data ?: "string" | "boolean" | "number" | "date" | "array" | Record<string, SchemaObject>;
+  data : "string" | "boolean" | "number" | "date" | Record<string, SchemaObject>;
   refName ?: string;
 }
 
 export type SchemaTypeDefinitionObject = {
   type : "object";
-  data ?: Record<string, SchemaTypeDefinition>;
+  data : Record<string, SchemaTypeDefinition>;
 }
 
 // const testObj : SchemasType = {

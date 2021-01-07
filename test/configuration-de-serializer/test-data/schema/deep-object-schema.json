@@ -1,0 +1,27 @@
+{ 
+  "schemas": [
+    {
+      "name": "test1",
+      "format": {
+        "shallowProperty": { "type": "string" },
+        "oneLevelDeepProperty": { "type": "object", "data": {
+          "nestedProperty": { "type": "string" },
+          "anotherNestedProperty": { "type": "number" }
+        } },
+        "twoLevelDeepProperty": { "type": "object", "data": {
+          "nestedDeepProperty": { "type": "object", "data": {
+            "reallyDeepNestedProp": { "type": "boolean" }
+          } }
+        } }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": true,
+        "deleteMethodEnabled": false,
+        "patchMethodEnabled": true,
+        "putMethodEnabled": false,
+        "queryParamsGetEnabled": true
+      }
+    }
+  ]
+}

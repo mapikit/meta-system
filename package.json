@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "mocha --exit --sort",
+    "watch-test": "mocha --watch",
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'",
     "coverage": "nyc npm run test",
     "run": "nodemon"
