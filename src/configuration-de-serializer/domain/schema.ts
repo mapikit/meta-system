@@ -31,7 +31,6 @@ export class Schema implements SchemasType {
     this.format = schema.format;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   static findRefs (format : SchemaObject) : string[]  {
     const values = Object.values(format);
     const results = [];

@@ -34,28 +34,3 @@ export type SchemaTypeDefinitionObject = {
   type : "object";
   data : Record<string, SchemaTypeDefinition>;
 }
-
-// const testObj : SchemasType = {
-//   "name": "customer",
-//   "format": {
-//     "id": { "type": "string" },
-//     "name": { "type": "string" },
-//     "phone": { "type": "string" },
-//     "email": { "type": "string" },
-//     "purchases": { "type": "array", "data": "string", "refName": "purchase" },
-//     "birthdate": { "type": "date" },
-//     "address": { "type": "object", "data": {
-//       "street": { "type": "string" },
-//       "city": { "type": "string" },
-//       "number": { "type": "string" },
-//     } },
-//   },
-//   "routes": {
-//     "getMethodEnabled": true,
-//     "postMethodEnabled": true,
-//     "deleteMethodEnabled": false,
-//     "patchMethodEnabled": true,
-//     "putMethodEnabled": false,
-//     "queryParamsGetEnabled": true,
-//   },
-// };

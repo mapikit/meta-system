@@ -7,6 +7,8 @@ import { expect } from "chai";
 const configurationExample = require("@test/configuration-de-serializer/test-data/configuration-example.json");
 const deepObjectSchema = require("@test/configuration-de-serializer/test-data/schema/deep-object-schema.json");
 const arraysSchema = require("@test/configuration-de-serializer/test-data/schema/array-types-schema.json");
+const missingRefNameSchema =
+  require("@test/configuration-de-serializer/test-data/schema/missing-reference-schema.json");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Schemas De-Serializer", () => {
@@ -39,5 +41,18 @@ describe("Schemas De-Serializer", () => {
     const command = new DeserializeSchemasCommand();
 
     command.execute(arraysSchema["schemas"]);
+
+    expect(command.resultSchemas.length).to.be.equal(2);
+    // This would throw if failed so no more assertions are needed
+  });
+
+  it("Does not desserialize schema with missing references (THROWS)", () => {
+    const command = new DeserializeSchemasCommand();
+
+    const commandExecution = () : void => {
+      command.execute(missingRefNameSchema["schemas"]);
+    };
+
+    expect(commandExecution).to.throw;
   });
 });

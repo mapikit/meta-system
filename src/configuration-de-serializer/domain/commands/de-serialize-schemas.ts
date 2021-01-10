@@ -24,9 +24,7 @@ export class DeserializeSchemasCommand {
     this.validateSchemaRefs();
   }
 
-  // eslint-disable-next-line max-lines-per-function
   private validateSchemaRefs () : void {
-    console.log("Validating that all schemas have their refNames matched");
     const schemaRefs : string[] = [];
 
     this.result.forEach((schema) => {
@@ -43,7 +41,5 @@ export class DeserializeSchemasCommand {
           "Schema Configuration Error: 'Schema with unmatched refName found - Be sure that all refNames exists!'");
       }
     });
-
-    console.log(schemaRefs);
   }
 };
