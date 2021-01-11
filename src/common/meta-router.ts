@@ -4,7 +4,7 @@ import { PortFormatError } from "@api/common/errors/port-format-error";
 
 import express = require("express");
 
-type HttpMethods = "get" | "patch" | "put" | "delete" | "post";
+export type HttpMethods = "get" | "patch" | "put" | "delete" | "post";
 
 interface ActiveRoutesList {
   [route : string] : {
