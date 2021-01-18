@@ -1,0 +1,39 @@
+{ 
+  "schemas": [
+    {
+      "name": "arrayTypesSchemas",
+      "format": {
+        "stringArray": { "type": "array", "data": "string" },
+        "booleanArray": { "type": "array", "data": "boolean" },
+        "dateArray": { "type": "array", "data": "date" },
+        "numberArray": { "type": "array", "data": "number"},
+        "objectArray": { "type": "array", "data": {
+          "nestedArrayProperty": { "type": "string" }
+        } },
+        "referencedArray": { "type":"array", "data": "string", "refName": "other" }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": true,
+        "deleteMethodEnabled": false,
+        "patchMethodEnabled": true,
+        "putMethodEnabled": false,
+        "queryParamsGetEnabled": true
+      }
+    },
+    {
+      "name": "other",
+      "format": {
+        "aProperty": { "type": "boolean" }
+      },
+      "routes": {
+        "getMethodEnabled": true,
+        "postMethodEnabled": true,
+        "deleteMethodEnabled": false,
+        "patchMethodEnabled": true,
+        "putMethodEnabled": false,
+        "queryParamsGetEnabled": true
+      }
+    }
+  ]
+}
