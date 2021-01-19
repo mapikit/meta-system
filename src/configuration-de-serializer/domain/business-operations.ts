@@ -4,7 +4,7 @@ export interface BusinessOperations {
   name : string;
   inputs : BopsInput[];
   outputs : BopsOutput[];
-  route : string;
+  route ?: string;
   constants : BopsConstant[];
   configuration : BopsConfigurationEntry[];
   usedAsRoute : boolean;
@@ -41,7 +41,7 @@ export interface InputsSource {
 }
 
 export interface NextFunctions {
-  nextKey : string;
+  nextKey : number;
   branch ?: string;
 }
 
