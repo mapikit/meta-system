@@ -1,5 +1,4 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
-import constants from "@api/mapikit/constants";
 import { Collection, Db, MongoClient } from "mongodb";
 
 export class MetaRepository {
@@ -7,21 +6,14 @@ export class MetaRepository {
   private db : Db;
   private collection : Collection;
 
-  constructor () {
-    this.connection = new MongoClient(
-      constants.MONGO.URL,
-      {
-        useUnifiedTopology: true,
-        auth: {
-          user: constants.MONGO.USER,
-          password: constants.MONGO.PASS,
-        },
-      });
+  constructor (connection : MongoClient) {
+    this.connection = connection;
   }
 
   public async initialize (schema : SchemasType, systemName : string) : Promise<void> {
-    await this.connection.connect();
-    this.connection.db(systemName);
+    if(!this.connection.isConnected()) {
+      await this.connection.connect();
+    }
     this.db = this.connection.db(systemName);
     await this.checkoutCollection(schema.name);
     //In the future add validator if Rules are enabled
