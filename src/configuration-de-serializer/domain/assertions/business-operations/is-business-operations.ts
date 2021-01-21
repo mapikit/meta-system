@@ -2,6 +2,8 @@ import { BusinessOperations } from "@api/configuration-de-serializer/domain/busi
 import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
 import { isBopsInput } from "./is-bops-input";
 import { isBopsOutput } from "./is-bops-output";
+import { isBopsConstants } from "./is-bops-constants";
+import { isBopsCustomObjects } from "./is-bops-custom-objects";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [
   "configuration",
@@ -39,4 +41,6 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
 
   isBopsInput(businessOperationInput.inputs);
   isBopsOutput(businessOperationInput.outputs);
+  isBopsConstants(businessOperationInput.constants);
+  isBopsCustomObjects(businessOperationInput.customObjects);
 };
