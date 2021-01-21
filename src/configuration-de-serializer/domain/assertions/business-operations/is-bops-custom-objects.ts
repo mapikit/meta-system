@@ -24,7 +24,7 @@ export function isBopsCustomObjects (input : unknown) : asserts input is BopsCus
 
   customObjects.forEach((object) => {
     isType("string", "CustomObject property name must be a string", object.name);
-    isCustomObjectProperty(object);
+    isCustomObjectProperty(object.properties);
   });
 
 }

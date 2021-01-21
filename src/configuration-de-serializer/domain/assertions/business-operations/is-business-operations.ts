@@ -26,7 +26,7 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
 
   requiredObjectKeys.forEach((requiredKey) => {
     if (!inputKeys.includes(requiredKey)) {
-      throw new Error(`Business Operation with incorrect format found: Missing key ${requiredKey}`);
+      throw new Error(`Business Operation with incorrect format found: Missing key "${requiredKey}"`);
     }
   });
 

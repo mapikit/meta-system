@@ -22,8 +22,8 @@ export function isBopsInput (input : unknown) : asserts input is BopsInput[] {
 
     const bopsInputEntry = entry as BopsInput;
 
-    stringIsOneOf<BopsInput["type"]>(bopsInputEntry.type, ["uri", "body"]);
+    stringIsOneOf<BopsInput["type"]>(bopsInputEntry.localization, ["uri", "body"]);
     isType("string", "Business Operation With Incorrect Type Found", bopsInputEntry.name);
-    isType("string", "Business Operation With Incorrect Type Found", bopsInputEntry.localization);
+    isType("string", "Business Operation With Incorrect Type Found", bopsInputEntry.type);
   });
 };

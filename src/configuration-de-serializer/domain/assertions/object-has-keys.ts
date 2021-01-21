@@ -5,7 +5,7 @@ export function objectHasKeys (input : object, keys : string[], objectType ?: st
 
   keys.forEach((requiredKey) => {
     if (!inputKeys.includes(requiredKey)) {
-      throw new Error(`${type} with incorrect format found: Missing key ${requiredKey}`);
+      throw new Error(`${type} with incorrect format found: Missing key "${requiredKey}"`);
     }
   });
 };

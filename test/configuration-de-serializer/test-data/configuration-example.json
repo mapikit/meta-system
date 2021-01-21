@@ -301,6 +301,13 @@
             { "name": "clientId", "type": "string" },
             { "name": "employeeId", "type": "string" }
           ]
+        },
+        {
+          "name": "carPurchaseData",
+          "properties": [
+            { "name": "transaction", "type": "$carSellBody" },
+            { "name": "employeeId", "type": "string" }
+          ]
         }
       ]
     }
