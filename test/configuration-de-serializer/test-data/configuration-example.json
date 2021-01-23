@@ -108,7 +108,7 @@
             { "source": "!carId", "target": "id" }
           ],
           "nextFunctions": [
-            { "nextKeys": 2, "branch": "get" }
+            { "nextKey": 2, "branch": "get" }
           ]
         },
         {
@@ -119,8 +119,8 @@
             { "source": "!emptyArrayLength", "target": "targetValue" }
           ],
           "nextFunctions": [
-            { "nextKeys": 10, "branch": "higherThanValue" },
-            { "nextKeys": 4, "branch": "equalOrLowerThanValue" }
+            { "nextKey": 10, "branch": "higherThanValue" },
+            { "nextKey": 6, "branch": "equalOrLowerThanValue" }
           ]
         },
         {
@@ -129,13 +129,9 @@
           "inputsSource": [ { "source": "!successMessage", "target": "value" } ]
         },
         {
-          "moduleRepo": "%failure",
+          "moduleRepo": "%systemFailure",
           "key": 6,
           "inputsSource": [ { "source": "!failureMessage", "target": "value" } ]
-        },
-        {
-          "moduleRepo": "#timestamp",
-          "key": 8
         },
         {
           "moduleRepo": "#boolCheck",
@@ -144,31 +140,31 @@
             { "source": 9, "sourceOutput": "item.sold", "target": "boolean" }
           ],
           "nextFunctions": [
-            { "nextKeys": 7, "branch": "false" },
-            { "nextKeys": 6, "branch": "true" }
+            { "nextKey": 7, "branch": "false" },
+            { "nextKey": 6, "branch": "true" }
           ]
         },
         {
-          "modulerRepo": "#arrayIndex",
+          "moduleRepo": "#arrayIndex",
           "key": 9,
           "inputsSource": [
             { "source": "!firstArrayItemIndex", "target": "index" },
             { "source": 1, "sourceOutput": "result","target": "array" }
           ],
           "nextFunctions": [
-            { "nextKeys": 10 }
+            { "nextKey": 10 }
           ]
         },
         {
           "moduleRepo": "@purchase@create",
           "key": 7,
           "inputsSource": [
-            { "source": 8, "sourceOutput": "date", "target": "date" },
+            { "source": "#timestamp", "sourceOutput": "date", "target": "date" },
             { "source": 9 , "sourceOutput": "item.id", "target": "productId"},
             { "source": 9, "sourceOutput": "item.price", "target": "value" }
           ],
           "nextFunctions": [
-            { "nextKeys": 11 }
+            { "nextKey": 11 }
           ]
         },
         {
@@ -178,7 +174,7 @@
             { "source": "!carSellBody.clientId", "target": "id" }
           ],
           "nextFunctions": [
-            { "nextKeys": 12 }
+            { "nextKey": 12 }
           ]
         },
         {
@@ -189,19 +185,19 @@
             { "source": "!emptyArrayLength", "target": "targetValue" }
           ],
           "nextFunctions": [
-            { "nextKeys": 13, "branch": "higherThanValue" },
-            { "nextKeys": 4, "branch": "equalOrLowerThanValue" }
+            { "nextKey": 13, "branch": "higherThanValue" },
+            { "nextKey": 6, "branch": "equalOrLowerThanValue" }
           ]
         },
         {
-          "modulerRepo": "#arrayIndex",
+          "moduleRepo": "#arrayIndex",
           "key": 13,
           "inputsSource": [
             { "source": "!firstArrayItemIndex", "target": "index" },
             { "source": 11, "sourceOutput": "result", "target": "array" }
           ],
           "nextFunctions": [
-            { "nextKeys": 14 }
+            { "nextKey": 14 }
           ]
         },
         {
@@ -212,7 +208,7 @@
             { "source": 7, "sourceOutput": "created.id", "target": "elementToAppend" }
           ],
           "nextFunctions": [
-            { "nextKeys": 15 }
+            { "nextKey": 15 }
           ]
         },
         {
@@ -222,7 +218,7 @@
             { "source": "!carSellBody.employeeId", "target": "id" }
           ],
           "nextFunctions": [
-            { "nextKeys": 16 }
+            { "nextKey": 16 }
           ]
         },
         {
@@ -233,19 +229,19 @@
             { "source": "!emptyArrayLength", "target": "targetValue" }
           ],
           "nextFunctions": [
-            { "nextKeys": 17, "branch": "higherThanValue" },
-            { "nextKeys": 4, "branch": "equalOrLowerThanValue" }
+            { "nextKey": 17, "branch": "higherThanValue" },
+            { "nextKey": 6, "branch": "equalOrLowerThanValue" }
           ]
         },
         {
-          "modulerRepo": "#arrayIndex",
+          "moduleRepo": "#arrayIndex",
           "key": 17,
           "inputsSource": [
             { "source": "!firstArrayItemIndex", "target": "index" },
             { "source": 15, "sourceOutput": "result", "target": "array" }
           ],
           "nextFunctions": [
-            { "nextKeys": 18 }
+            { "nextKey": 18 }
           ]
         },
         {
@@ -256,7 +252,7 @@
             { "source": 7, "sourceOutput": "created.id", "target": "elementToAppend" }
           ],
           "nextFunctions": [
-            { "nextKeys": 19 }
+            { "nextKey": 19 }
           ]
         },
         {
@@ -267,7 +263,7 @@
             { "source": "!carSoldStatus", "target": "sold" }
           ],
           "nextFunctions": [
-            { "nextKeys": 20 }
+            { "nextKey": 20 }
           ]
         },
         {
@@ -278,7 +274,7 @@
             { "source": 18, "sourceOutput": "result", "target": "confirmedSales" }
           ],
           "nextFunctions": [
-            { "nextKeys": 21 }
+            { "nextKey": 21 }
           ]
         },
         {
@@ -289,7 +285,7 @@
             { "source": 14, "sourceOutput": "result", "target": "purchases" }
           ],
           "nextFunctions": [
-            { "nextKeys": 5 }
+            { "nextKey": 5 }
           ]
         }
       ],

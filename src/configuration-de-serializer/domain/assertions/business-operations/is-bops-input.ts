@@ -1,4 +1,4 @@
-import { BopsInput } from "@api/configuration-de-serializer/domain/business-operations";
+import { BopsInput } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
 import { objectHasKeys } from "@api/configuration-de-serializer/domain/assertions/object-has-keys";
 import { stringIsOneOf } from "@api/configuration-de-serializer/domain/assertions/string-is-one-of";

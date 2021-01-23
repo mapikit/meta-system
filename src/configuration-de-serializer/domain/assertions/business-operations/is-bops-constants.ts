@@ -1,4 +1,4 @@
-import { BopsConstant } from "@api/configuration-de-serializer/domain/business-operations";
+import { BopsConstant } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
 import { stringIsOneOf } from "@api/configuration-de-serializer/domain/assertions/string-is-one-of";
 

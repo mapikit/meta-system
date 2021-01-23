@@ -1,9 +1,10 @@
-import { BusinessOperations } from "@api/configuration-de-serializer/domain/business-operations";
+import { BusinessOperations } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
 import { isBopsInput } from "./is-bops-input";
 import { isBopsOutput } from "./is-bops-output";
 import { isBopsConstants } from "./is-bops-constants";
 import { isBopsCustomObjects } from "./is-bops-custom-objects";
+import { isBopsConfigurationEntry } from "./is-bops-configuration";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [
   "configuration",
@@ -43,4 +44,5 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
   isBopsOutput(businessOperationInput.outputs);
   isBopsConstants(businessOperationInput.constants);
   isBopsCustomObjects(businessOperationInput.customObjects);
+  isBopsConfigurationEntry(businessOperationInput.configuration);
 };

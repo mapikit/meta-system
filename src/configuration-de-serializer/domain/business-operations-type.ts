@@ -32,11 +32,11 @@ export interface BopsConfigurationEntry {
   moduleRepo : string;
   key : number;
   inputsSource : InputsSource[];
-  nextFunctions : NextFunctions[];
+  nextFunctions ?: NextFunctions[];
 }
 
 export interface InputsSource {
-  source : string;
+  source : string | number;
   target : string;
 }
 

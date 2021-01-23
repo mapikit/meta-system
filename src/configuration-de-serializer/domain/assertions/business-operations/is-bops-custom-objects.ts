@@ -1,5 +1,5 @@
 import { BopsCustomObject, BopsCustomObjectProperty } from
-  "@api/configuration-de-serializer/domain/business-operations";
+  "@api/configuration-de-serializer/domain/business-operations-type";
 import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
 
 function isCustomObjectProperty (input : unknown) : asserts input is BopsCustomObjectProperty[] {
