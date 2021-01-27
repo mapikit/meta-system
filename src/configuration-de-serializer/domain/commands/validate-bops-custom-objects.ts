@@ -38,8 +38,6 @@ export class ValidateBopsCustomObjectsCommand {
     });
   }
 
-  // I believe this could go as its own command at this pace, however, let's keep it here before the tests
-  // eslint-disable-next-line max-lines-per-function
   private validateCustomObjectLoopReference () : void {
     this.businessOperation.customObjects.forEach((customObject) => {
       this.objectMap.set(customObject.name, customObject);
@@ -51,38 +49,36 @@ export class ValidateBopsCustomObjectsCommand {
       });
     });
 
-    // eslint-disable-next-line max-lines-per-function
-    this.objectsToValidate.forEach((value) => {
-      const referenceChain : string[] = [];
+    this.objectsToValidate.forEach((object) => {
+      // Map of references from Origin<string> to Reference<string>
+      const referenceChain : Map<string, string> = new Map();
 
-      referenceChain.push(...this.validateSingleObject(referenceChain, value));
+      this.validateSingleObject(referenceChain, object);
     });
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private validateSingleObject (referenceChain : string[], object ?: BopsCustomObject) : string[] {
+  private validateSingleObject (referenceChain : Map<string, string>, object ?: BopsCustomObject) : void {
     if (object === undefined) {
       throw Error(`Bops Configuration Problem: There is an unreferenced object at "${this.businessOperation.name}"`);
     }
-
-    const hasLooped = referenceChain.includes(object.name);
-
-    if (hasLooped) {
-      throw Error(
-        `Loop reference detected on the custom objects of the business operation ${this.businessOperation.name}`,
-      );
-    }
-
-    const resultChain = [...referenceChain, object.name];
 
     object.properties.forEach((property) => {
       if (property.type.charAt(0) === "$") {
         const referencedName = property.type.substring(1);
 
-        resultChain.push(...this.validateSingleObject(referenceChain, this.objectMap.get(referencedName)));
+        const hasLooped = referenceChain.get(object.name) === referencedName;
+
+        if (hasLooped) {
+          throw Error(
+            `Loop reference detected on the custom objects of the business operation ${this.businessOperation.name}`,
+          );
+        }
+
+        referenceChain.set(object.name, referencedName);
+
+        this.validateSingleObject(referenceChain, this.objectMap.get(referencedName));
       }
     });
-
-    return resultChain;
   };
 };
