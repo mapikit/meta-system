@@ -140,7 +140,7 @@
             { "source": 9, "sourceOutput": "item.sold", "target": "boolean" }
           ],
           "nextFunctions": [
-            { "nextKey": 7, "branch": "false" },
+            { "nextKey": 22, "branch": "false" },
             { "nextKey": 6, "branch": "true" }
           ]
         },
@@ -156,10 +156,18 @@
           ]
         },
         {
+          "moduleRepo": "#timestamp",
+          "key": 22,
+          "inputsSource": [],
+          "nextFunctions": [
+            { "nextKey": 7 }
+          ]
+        },
+        {
           "moduleRepo": "@purchase@create",
           "key": 7,
           "inputsSource": [
-            { "source": "#timestamp", "sourceOutput": "date", "target": "date" },
+            { "source": 22, "sourceOutput": "date", "target": "date" },
             { "source": 9 , "sourceOutput": "item.id", "target": "productId"},
             { "source": 9, "sourceOutput": "item.price", "target": "value" }
           ],
