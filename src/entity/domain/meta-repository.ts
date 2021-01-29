@@ -1,5 +1,5 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
-import { Collection, Db, MongoClient } from "mongodb";
+import { Collection, Db, FilterQuery, MongoClient } from "mongodb";
 
 export class MetaRepository {
   private connection : MongoClient;
@@ -29,15 +29,19 @@ export class MetaRepository {
   }
 
   public async update (entityId : string, newValue : unknown) : Promise<void> {
-    await this.collection.updateOne({ id : entityId }, newValue);
+    await this.collection.updateOne({ _id : entityId }, newValue);
   }
 
   public async findById (entityId : string) : Promise<unknown> {
-    return this.collection.find({ id: entityId });
+    return this.collection.find({ _id: entityId }).next();
   }
 
   public async findByProperty (propertyName : string, propertyValue : unknown) : Promise<unknown> {
-    return this.collection.find({ [propertyName] : propertyValue });
+    return this.collection.find({ [propertyName] : propertyValue }).toArray();
+  }
+
+  public async query<T> (query : FilterQuery<T>) : Promise<unknown> {
+    return this.collection.find(query).toArray();
   }
 
   private async checkoutCollection (collection : string) : Promise<void> {
