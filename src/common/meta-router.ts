@@ -27,7 +27,8 @@ class MetaRouter {
    * @param baseRoute : a base route that preceeds every route. Routes must start with a "/"
    */
   constructor (baseRoute ?: string) {
-    if(baseRoute && !baseRoute.match(/^\/[0-9a-z-]+\/?$/g)) throw new RouteFormatError;
+    if(baseRoute && !baseRoute.match(/^\/[0-9a-zA-Z-]+\/?$/g)) throw new RouteFormatError;
+    this.app.use(express.json());
     this.app.use(baseRoute ? baseRoute : "/", this.router);
   }
 
@@ -39,7 +40,7 @@ class MetaRouter {
    * @param handler A handler (function) to resolve requests. Can access request and response parameters
    */
   public createRoute (method : HttpMethods, route : string, handler : RequestHandler) : void {
-    if(!route.match(/^((?:\/[0-9a-z-]+)+\/?)$/g)) throw new RouteFormatError;
+    if(!route.match(/^((?:\/[0-9a-zA-Z-:]+)+\/?)$/g)) throw new RouteFormatError;
     this.router[method](route, handler);
   }
 
@@ -47,10 +48,13 @@ class MetaRouter {
    * Starts listening on the given port
    * @param port The port to start listening to. Can be a number or a numeric string
    */
-  public listenOnPort (port : string | number) : void {
+  public async listenOnPort (port : string | number) : Promise<void> {
     if(!String(port).match(/^\d+$/)) throw new PortFormatError;
-    this.app.listen(port, () => {
-      console.log("Now listening on port", port);
+    return new Promise<void> ((resolve) => {
+      this.app.listen(port, () => {
+        console.log("Now listening on port", port);
+        resolve();
+      });
     });
   }
 
