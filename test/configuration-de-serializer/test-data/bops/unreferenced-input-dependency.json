@@ -268,7 +268,7 @@
           "key": 19,
           "inputsSource": [
             { "source": 9, "sourceOutput": "item.id", "target": "id" },
-            { "source": "!carSoldStatus", "target": "sold" }
+            { "source": "!unreferenced", "target": "sold" }
           ],
           "nextFunctions": [
             { "nextKey": 20 }

@@ -1,5 +1,8 @@
 import { BusinessOperation } from "@api/configuration-de-serializer/domain/business-operation";
 import { Schema } from "@api/configuration-de-serializer/domain/schema";
+import { externalFunctionIsLoaded } from "@api/external-functions/domain/external-function-is-loaded";
+import { checkInternalFunctionExist } from "@api/internal-functions";
+import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 
 interface BopsDependencies {
   fromSchemas : string[];
@@ -28,21 +31,19 @@ export class CheckBopsFunctionsDependenciesCommand {
 
   public execute (businessOperation : BusinessOperation) : void {
     this.businessOperation = businessOperation;
-    // get all current dependencies, separated by type:
-    // - From Schemas
-    // - Internal
-    // - From Constants/Inputs/Outputs
-    // - External
     this.extractDependencies();
 
     // Check if required configurational functions/data exists
     this.checkConfigurationalDependencies();
 
     // Check if required internal functions exist
+    this.checkInternalFunctionsDependencies();
 
-    // Check if required shcema functions exists
+    // Check if required schema functions exists
+    this.checkSchemaFunctionsDependencies();
 
     // Check if required external functions exists and are valid
+    this.checkExternalRequiredFunctions();
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -57,14 +58,12 @@ export class CheckBopsFunctionsDependenciesCommand {
     this.businessOperation.configuration.forEach((bopsFunctionConfig) => {
       const typeChar = bopsFunctionConfig.moduleRepo.charAt(0);
 
-      enum Chars {
-        internal = "#",
-        schema = "@",
-        parameters = "!",
-        outputs = "%",
+      const typeCharsEnum = {
+        internal: "#",
+        schema: "@",
+        parameters: "!",
+        outputs: "%",
       };
-
-      const currentType = Chars[typeChar];
 
       bopsFunctionConfig.inputsSource.forEach((inputSource) => {
         if (typeof inputSource.source === "string") {
@@ -72,19 +71,19 @@ export class CheckBopsFunctionsDependenciesCommand {
         }
       });
 
-      if (currentType === undefined) {
-        return externalDependencies.push(bopsFunctionConfig.moduleRepo);
-      }
-
-      if (currentType === Chars.internal) {
+      if (typeChar === typeCharsEnum.internal) {
         return internalDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      if (currentType === Chars.outputs) {
+      if (typeChar === typeCharsEnum.outputs) {
         return outputsDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      schemasDependencies.push(bopsFunctionConfig.moduleRepo);
+      if (typeChar === typeCharsEnum.schema) {
+        return schemasDependencies.push(bopsFunctionConfig.moduleRepo);
+      }
+
+      externalDependencies.push(bopsFunctionConfig.moduleRepo);
     });
 
     this.dependencies = {
@@ -98,6 +97,8 @@ export class CheckBopsFunctionsDependenciesCommand {
 
   // eslint-disable-next-line max-lines-per-function
   private checkConfigurationalDependencies () : void {
+    // This method should only check for the presence of the field, thus, should disregard types
+    // and property accesses such as "!data.property", needing only to verify the "!data" part
     const availableOutputFunctions = this.businessOperation.outputs.map((output) => {
       return `%${output.name}`;
     });
@@ -112,20 +113,77 @@ export class CheckBopsFunctionsDependenciesCommand {
     });
 
     this.dependencies.fromConfigurations.forEach((configurationDependency) => {
-      const configurationExists = availableInputAndConstantsData.includes(configurationDependency);
+      const configurationToVerify = this.fromPropertyPathToType(configurationDependency);
+
+      const configurationExists = availableInputAndConstantsData
+        .includes(configurationToVerify);
 
       if (!configurationExists) {
         // eslint-disable-next-line max-len
-        throw Error(`There is an error on the configuration: Unmet dependency from inputs or constants "${configurationDependency}"`);
+        throw Error(`There is an error on the configuration: Unmet dependency from inputs or constants "${configurationToVerify}"`);
       }
     });
 
     this.dependencies.fromOutputs.forEach((outputDependency) => {
-      const outputExists = availableOutputFunctions.includes(outputDependency);
+      const outputToVerify= this.fromPropertyPathToType(outputDependency);
+
+      const outputExists = availableOutputFunctions
+        .includes(outputToVerify);
 
       if (!outputExists) {
-        throw Error(`There is an error on the configuration: Unmet dependency from outputs "${outputDependency}"`);
+        throw Error(`There is an error on the configuration: Unmet dependency from outputs "${outputToVerify}"`);
       }
+    });
+  }
+
+  /**
+   * This method should be used to remove properties access when you just need the
+   * plain type of the string.
+   *
+   * This does not remove the initial path indication, such as the "!" or "%"
+   */
+  private fromPropertyPathToType (fullPath : string) : string {
+    const firstAccessIndex = fullPath.indexOf(".");
+
+    if (firstAccessIndex <= 1) {
+      return fullPath;
+    }
+
+    return fullPath.substring(0, firstAccessIndex);
+  }
+
+  private checkInternalFunctionsDependencies () : void {
+    this.dependencies.internal.forEach((internalDependencyName) => {
+      const functionExists = checkInternalFunctionExist(internalDependencyName);
+
+      if (!functionExists) {
+        throw Error (`Required internal function "${internalDependencyName}" does not exist internally`);
+      }
+    });
+  }
+
+  private checkSchemaFunctionsDependencies () : void {
+    this.dependencies.fromSchemas.forEach((schemaDependecy) => {
+      const requiredSchema = schemaDependecy.substring(1,
+        schemaDependecy.lastIndexOf("@"),
+      );
+
+      if (!this.schemas.has(requiredSchema)) {
+        throw Error(`Required Schema "${requiredSchema}" was not provided in the configuration`);
+      }
+
+      const requiredFunction = schemaDependecy
+        .substring(schemaDependecy.lastIndexOf("@") + 1);
+
+      if (!(requiredFunction in SchemasFunctions)) {
+        throw Error(`The schema operation required "${requiredFunction}" at "${schemaDependecy}" does not exist`);
+      }
+    });
+  }
+
+  private checkExternalRequiredFunctions () : void {
+    this.dependencies.external.forEach((externalDependency) => {
+      externalFunctionIsLoaded(externalDependency);
     });
   }
 }
