@@ -1,6 +1,6 @@
-import { BusinessOperations } from "./business-operations-type";
+import { BusinessOperation } from "./business-operation";
 import { ConfigurationType, EnvironmentVariable } from "./configuration-type";
-import { SchemasType } from "./schemas-type";
+import { Schema } from "./schema";
 
 export class Configuration implements ConfigurationType {
   public readonly name : string;
@@ -8,8 +8,8 @@ export class Configuration implements ConfigurationType {
   public readonly port : number;
   public readonly envs : EnvironmentVariable[];
   public readonly dbConnectionString : string;
-  public readonly schemas : SchemasType[];
-  public readonly businessOperations : BusinessOperations[];
+  public readonly schemas : Schema[];
+  public readonly businessOperations : BusinessOperation[];
 
   public constructor (input : ConfigurationType) {
     this.name = input.name;
@@ -18,6 +18,8 @@ export class Configuration implements ConfigurationType {
     this.envs = input.envs;
     this.dbConnectionString = input.dbConnectionString;
     this.schemas = input.schemas;
-    this.businessOperations = input.businessOperations;
+    this.businessOperations = input.businessOperations.map((businessOperationData) => {
+      return new BusinessOperation(businessOperationData);
+    });
   }
 }
