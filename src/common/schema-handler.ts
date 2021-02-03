@@ -20,7 +20,7 @@ export class SchemaHandler {
 
   private schema : SchemasType;
   private repository : MetaRepository;
-  private router : MetaRouter;
+  public router : MetaRouter;
 
   constructor (schema : SchemasType) {
     this.schema = schema;
