@@ -1,6 +1,6 @@
 {
   "name": "car-system-mgmt",
-  "version": "1.0.2",
+  "version": 1.02,
   "port": 8080,
   "envs": [
     {"key": "NODE_ENV", "value": "production"}
