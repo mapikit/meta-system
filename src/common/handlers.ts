@@ -24,9 +24,12 @@ export const handlers : HandlersList = {
   post: (repository : MetaRepository) => {
     return async (req, res) : Promise<void> => {
       await repository.insert(req.body)
-        .then(result => {
+        .then((result) => {
           res.statusCode = 200;
-          res.send(result);
+          res.send({
+            message: "Inserted entity successfully",
+            insertedId: result.insertedId,
+          });
         })
         .catch(error => {
           res.statusCode = 500;
@@ -38,13 +41,17 @@ export const handlers : HandlersList = {
   put: (repository : MetaRepository) => {
     return  async (req, res) : Promise<void> => {
       await repository.update(req.params.id, req.body)
-        .then(() => {
+        .then((result) => {
           res.statusCode = 200;
-          res.send({ message: "Entity Updated successfully" });
+          res.send({
+            message: "Entity Updated successfully",
+            updatedId: result.upsertedId,
+          });
         })
         .catch(error => {
+          res.statusCode = 500;
           res.send({
-            message: "There was an error while inserting the entity",
+            message: "There was an error while updating the entity",
             error,
           });
         });
@@ -54,12 +61,15 @@ export const handlers : HandlersList = {
   patch: (repository : MetaRepository) => {
     return  async (req, res) : Promise<void> => {
       await repository.update(req.params.id, req.body)
-        .then(() => {
+        .then((result) => {
           res.statusCode = 200;
-          res.send({ message : "Upadated entity successfully" });
+          res.send({
+            message: "Entity Updated successfully",
+            updatedId: result.upsertedId,
+          });
         })
-        .catch((error) => {
-          res.statusCode = 500,
+        .catch(error => {
+          res.statusCode = 500;
           res.send({
             message: "There was an error while updating the entity",
             error,
@@ -70,10 +80,12 @@ export const handlers : HandlersList = {
 
   delete: (repository : MetaRepository) => {
     return async (req, res) : Promise<void> => {
-      await repository.delete(req.params.id)
+      await repository.deleteById(req.params.id)
         .then(() => {
           res.statusCode = 200;
-          res.send({ message : "Deleted entity successfully" });
+          res.send({
+            message : "Deleted entity successfully",
+          });
         })
         .catch((error) => {
           res.statusCode = 500,

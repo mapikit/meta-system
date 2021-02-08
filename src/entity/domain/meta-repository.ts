@@ -1,12 +1,13 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
-import { Collection, Db, FilterQuery, MongoClient } from "mongodb";
+import { DeleteWriteOpResultObject, FilterQuery, InsertOneWriteOpResult, UpdateWriteOpResult } from "mongodb";
+import { CollectionAttributes, DbAttributes, MongoClientAttributes } from "./types/mongo-attributes";
 
 export class MetaRepository {
-  private connection : MongoClient;
-  private db : Db;
-  private collection : Collection;
+  private connection : MongoClientAttributes;
+  private db : DbAttributes;
+  private collection : CollectionAttributes;
 
-  constructor (connection : MongoClient) {
+  constructor (connection : MongoClientAttributes) {
     this.connection = connection;
   }
 
@@ -20,16 +21,16 @@ export class MetaRepository {
     //For more info see https://docs.mongodb.com/manual/core/schema-validation/
   }
 
-  public async insert (entity : unknown) : Promise<void> {
-    await this.collection.insertOne(entity);
+  public async insert (entity : unknown) : Promise<InsertOneWriteOpResult<any>> {
+    return this.collection.insertOne(entity);
   }
 
-  public async delete (entity : unknown) : Promise<void> {
-    await this.collection.deleteOne(entity);
+  public async deleteById (id : string) : Promise<DeleteWriteOpResultObject> {
+    return this.collection.deleteOne({ _id : id });
   }
 
-  public async update (entityId : string, newValue : unknown) : Promise<void> {
-    await this.collection.updateOne({ _id : entityId }, newValue);
+  public async update (entityId : string, newValue : unknown) : Promise<UpdateWriteOpResult> {
+    return this.collection.updateOne({ _id : entityId }, newValue);
   }
 
   public async findById (entityId : string) : Promise<unknown> {

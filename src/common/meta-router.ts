@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { RouteFormatError } from "./errors/route-format-error";
 import { PortFormatError } from "./errors/port-format-error";
+import { Server } from "http";
 
 import express = require("express");
 
@@ -21,6 +22,7 @@ interface ActiveRoutesList {
 class MetaRouter {
   private app = express();
   private router = express.Router();
+  private servers : {[port : number] : Server} = {};
 
   /**
    * Creates a new MetaRouter instance
@@ -51,10 +53,27 @@ class MetaRouter {
   public async listenOnPort (port : string | number) : Promise<void> {
     if(!String(port).match(/^\d+$/)) throw new PortFormatError;
     return new Promise<void> ((resolve) => {
-      this.app.listen(port, () => {
+      this.servers[Number(port)] = this.app.listen(port, () => {
         console.log("Now listening on port", port);
         resolve();
       });
+    });
+  }
+  /**
+   * Shutsdown (stops listening on) the given port. If not port is given
+   * shuts down all current ports.
+   * @param port The number/stringified port to be shutdown
+   */
+
+  public shutdown (port ?: number | string) : Promise<void> {
+    return new Promise(resolve => {
+      if(port) {
+        resolve(this.servers[port]?.close());
+      }
+      for(const server of Object.values(this.servers)) {
+        server.close();
+      }
+      resolve();
     });
   }
 

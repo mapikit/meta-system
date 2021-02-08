@@ -1,33 +1,21 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
-import constants from "@api/mapikit/constants";
-import { MongoClient } from "mongodb";
+import { MongoClientAttributes } from "@api/entity/domain/types/mongo-attributes";
 import { handlers } from "./handlers";
 import MetaRouter, { HttpMethods } from "./meta-router";
 
-type ExtendedHttpMethods = HttpMethods | "query";
+export type ExtendedHttpMethods = HttpMethods | "query";
 
 export class SchemaHandler {
-  private defaultConnection = new MongoClient(constants.MONGO.URL,
-    {
-      useUnifiedTopology: true,
-      auth: {
-        user: constants.MONGO.USER,
-        password: constants.MONGO.PASS,
-      },
-    },
-  );
-
   private schema : SchemasType;
   private repository : MetaRepository;
   public router : MetaRouter;
 
-  constructor (schema : SchemasType) {
+  constructor (schema : SchemasType, dbConnection : MongoClientAttributes) {
     this.schema = schema;
-    this.repository = new MetaRepository(this.defaultConnection);
+    this.repository = new MetaRepository(dbConnection);
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public async initialize (systemName : string) : Promise<void> {
     this.router = new MetaRouter(`/${systemName}`);
     await this.repository.initialize(this.schema, systemName);
