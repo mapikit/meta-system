@@ -1,42 +1,31 @@
 import { SchemaObject } from "@api/configuration-de-serializer/domain/schemas-type";
 import { FilterQuery } from "mongodb";
 
-export class QueryParser {
-  // eslint-disable-next-line max-lines-per-function
-  public static parseQuery<T> (
-    query : FilterQuery<T>,
-    schemaFormat : SchemaObject,
-  ) : FilterQuery<T> {
-    const resolved : FilterQuery<object> = {};
-    for(const propInSchema in schemaFormat) {
-      if(query[propInSchema]) {
-        if(schemaFormat[propInSchema].type == "object" && typeof query[propInSchema] == "object") {
-          resolved[propInSchema] = this.parseQuery(query[propInSchema], schemaFormat[propInSchema]["data"]);
-        }
-        else if(schemaFormat[propInSchema].type == "array" && query[propInSchema] instanceof Array) {
-          resolved[propInSchema] = [];
-          for(const prop of query[propInSchema]) {
-            resolved[propInSchema].push(this.resolveBasicType(prop, schemaFormat[propInSchema]["data"]));
-          }
-        }
-        else {
-          resolved[propInSchema] = this.resolveBasicType(query[propInSchema], schemaFormat[propInSchema].type);
-        }
-      }
-    }
-    return resolved;
-  }
+type TypeResolver = {[typeName : string] : (query : string | unknown, dataFormat ?: SchemaObject | string) => unknown}
 
-  private static resolveBasicType (query : string, type : string) : string | number | boolean {
-    if(type == "string") {
-      return query;
+export function  parseQuery<T> (query : FilterQuery<T>, schema : SchemaObject) : FilterQuery<T> {
+  const resolved : FilterQuery<object> = {};
+  for(const property in query) {
+    if(schema[property]) {
+      resolved[property] = resolveType[schema[property].type](query[property], schema[property]["data"]);
     }
-    else if(type == "number" && typeof Number(query == "number")) {
-      return Number(query);
-    }
-    else if(type == "boolean" && ["true", "false"].includes(query)) {
-      return Boolean(query);
-    }
-    return;
   }
+  return resolved;
 }
+
+const resolveType : TypeResolver = {
+  string: (query : string) : string => { return query; },
+  number: (query : string) : number => { if(!isNaN(+query)) return Number(query); },
+  boolean: (query : string) : boolean => { if(["true", "false"].includes(query)) return Boolean(query);},
+  date : (query : string) : Date => { if(!isNaN(Date.parse(query))) return new Date(query); },
+  object: (query : unknown, dataFormat : SchemaObject) : object => {
+    if(typeof query === "object") return parseQuery(query, dataFormat);
+  },
+  array: (query : unknown, dataFormat : string) : Array<unknown> => {
+    if(query instanceof Array) {
+      const array = [];
+      query.forEach(property => { array.push(resolveType[dataFormat](property)); });
+      return array;
+    }
+  },
+};

@@ -2,7 +2,7 @@
 import { SchemaObject } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { RequestHandler } from "express";
-import { QueryParser } from "./query-parser";
+import { parseQuery } from "./query-parser";
 
 type HandlersList = { [handlerName : string] : (repo : MetaRepository, schema ?: SchemaObject) => RequestHandler };
 
@@ -99,7 +99,7 @@ export const handlers : HandlersList = {
 
   query: (repository : MetaRepository, schema : SchemaObject) => {
     return  async (req, res) : Promise<void> => {
-      const resolvedQuery = QueryParser.parseQuery(req.query, schema);
+      const resolvedQuery = parseQuery(req.query, schema);
       await repository.query(resolvedQuery)
         .then(result => {
           res.statusCode = 200;
