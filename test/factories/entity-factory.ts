@@ -1,7 +1,7 @@
 import faker from "faker";
 import { SchemasType, SchemaTypeDefinition } from "@api/configuration-de-serializer/domain/schemas-type";
 
-export const entityFactory = (schemaFormat : SchemasType["format"]) : unknown => {
+export const entityFactory = (schemaFormat : SchemasType["format"]) : object => {
   const entity = {};
   for(const prop in schemaFormat) {
     entity[prop] = typeCreation[schemaFormat[prop].type](schemaFormat[prop]["data"]);

@@ -8,6 +8,7 @@ import { MockMongoClient } from "@test/doubles/mongo-client";
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import faker from "faker";
 import { entityFactory } from "@test/factories/entity-factory";
+import { entityToQuery } from "@test/factories/entity-to-query";
 
 const expect = chai.expect;
 
@@ -20,11 +21,11 @@ const allRoutesEnabled : SchemasType["routes"] = {
   queryParamsGetEnabled: true,
 };
 
-describe("Schema Handler Test", () => {
+describe.only("Schema Handler Test", () => {
   const port = faker.random.number({ min: 8001, max: 8800, precision: 1 });
   let schema = schemaFactory({ routes: allRoutesEnabled });
   let systemName : string;
-  let entity : unknown;
+  let entity : object;
   let fakeClient : MockMongoClient;
   let schemaHandler : SchemaHandler;
 
@@ -55,13 +56,14 @@ describe("Schema Handler Test", () => {
   });
 
   it("Query [Get] method successfull", async () => {
+    const query = entityToQuery(entity);
     await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity);
-    await axios.get(`http://localhost:${port}/${systemName}/${schema.name}`, entity)
+    await axios.get(`http://localhost:${port}/${systemName}/${schema.name}?${query}`)
       .then(response => {
         const foundKeys = Object.keys(response.data[0]);
-        const expectedKeys = Object.keys(entity);
-        expectedKeys.push("_id");
-        expect(foundKeys).to.be.deep.equal(expectedKeys);
+        const entityKeys = Object.keys(entity);
+        entityKeys.push("_id");
+        expect(foundKeys).to.be.deep.equal(entityKeys);
       });
   });
 
