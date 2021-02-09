@@ -29,7 +29,7 @@ const typeCreation = {
   array: (dataType : string) : Array<unknown> => {
     const array = [];
     for (let i = 0; i < faker.random.number({ min: 3, max: 10, precision: 1 }); i++) {
-      const newItem = typeCreation[dataType]();
+      const newItem = typeCreation[typeof dataType === "string" ? dataType : "object"](dataType["data"]);
       array.push(newItem);
     }
     return array;

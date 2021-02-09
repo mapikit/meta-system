@@ -24,7 +24,9 @@ const resolveType : TypeResolver = {
   array: (query : unknown, dataFormat : string) : Array<unknown> => {
     if(query instanceof Array) {
       const array = [];
-      query.forEach(property => { array.push(resolveType[dataFormat](property)); });
+      query.forEach(property => {
+        array.push(resolveType[typeof dataFormat == "string" ? dataFormat : "object"](property));
+      });
       return array;
     }
   },

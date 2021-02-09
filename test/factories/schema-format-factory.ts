@@ -1,5 +1,5 @@
 import faker from "faker";
-import { SchemaObject, SchemaTypeDefinition } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaObject, SchemaTypeDefinitionArray, SchemaTypeDefinitionObject } from "@api/configuration-de-serializer/domain/schemas-type";
 
 
 type basicTypes = "boolean" | "string" | "number" | "date";
@@ -25,8 +25,8 @@ export const schemaFormatFactory = (maxDepth = 3) : SchemaObject => {
   return creationInput;
 };
 
-const typeFactory : { [type : string] : (maxDepth ?: number) => SchemaTypeDefinition } = {
-  object: (maxDepth : number) : SchemaTypeDefinition => {
+const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
+  object: (maxDepth : number) : SchemaTypeDefinitionObject => {
     return {
       type: "object",
       data: {
@@ -35,10 +35,10 @@ const typeFactory : { [type : string] : (maxDepth ?: number) => SchemaTypeDefini
     };
   },
 
-  array: () : SchemaTypeDefinition => {
+  array: () : SchemaTypeDefinitionArray => {
     return {
       type: "array",
-      data:  faker.random.arrayElement(basicStrings),
+      data:  faker.random.arrayElement([...basicStrings, typeFactory.object(2)]),
     };
   },
 };
