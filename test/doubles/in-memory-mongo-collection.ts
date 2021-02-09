@@ -1,57 +1,8 @@
-/* eslint-disable max-classes-per-file */
-import { CollectionAttributes, DbAttributes, MongoClientAttributes } from "@api/entity/domain/types/mongo-attributes";
+import { CollectionAttributes } from "@api/entity/domain/types/mongo-attributes";
 import faker from "faker";
-import { UpdateWriteOpResult, DeleteWriteOpResultObject, FilterQuery, InsertOneWriteOpResult, ObjectId } from "mongodb";
+import { DeleteWriteOpResultObject, FilterQuery, InsertOneWriteOpResult, ObjectId, UpdateWriteOpResult } from "mongodb";
 
-export class MockMongoClient implements MongoClientAttributes {
-  public connected = false;
-  public activeDbs : Array<MockDb> = [];
-  connect () : Promise<this> {
-    return new Promise<this>(resolve => {
-      this.connected = true;
-      resolve(this);
-    });
-  }
-
-  isConnected () : boolean {
-    return this.connected;
-  }
-
-  db (dbName : string) : MockDb {
-    const foundDb = this.activeDbs.find(db => db.databaseName === dbName);
-    if(foundDb) return foundDb;
-    const createdDb = new MockDb(dbName);
-    this.activeDbs.push(createdDb);
-    return createdDb;
-  }
-}
-
-class MockDb implements DbAttributes {
-  public databaseName : string;
-  public activeCollections : Array<MockCollection> = [];
-
-  constructor (name : string) {
-    this.databaseName = name;
-    return this;
-  }
-
-  collection (name : string) : MockCollection {
-    const collection = this.activeCollections.find((col) => {
-      return col.collectionName == name;
-    });
-    return collection;
-  }
-
-  createCollection (name : string) : Promise<MockCollection> {
-    return new Promise(resolve => {
-      const createdColl = new MockCollection(name);
-      this.activeCollections.push(createdColl);
-      resolve(createdColl);
-    });
-  }
-}
-
-class MockCollection implements CollectionAttributes {
+export class InMemoryCollection implements CollectionAttributes {
   public collectionName : string;
   public entities = [];
 
@@ -121,10 +72,7 @@ class MockCollection implements CollectionAttributes {
 
     return new Promise(resolve => {
       resolve({
-        result: {
-          ok: 1,
-          n: 1,
-        },
+        result: { ok: 1, n: 1 },
         connection: undefined,
         deletedCount: 1,
       });

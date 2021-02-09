@@ -4,7 +4,7 @@ import chai from "chai";
 import { SchemaHandler } from "@api/common/schema-handler";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios from "axios";
-import { MockMongoClient } from "@test/doubles/mongo-client";
+import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import faker from "faker";
 import { entityFactory } from "@test/factories/entity-factory";
@@ -21,19 +21,19 @@ const allRoutesEnabled : SchemasType["routes"] = {
   queryParamsGetEnabled: true,
 };
 
-describe("Schema Handler Test", () => {
+describe("Schema Handler Methods Test", () => {
   const port = faker.random.number({ min: 8001, max: 8800, precision: 1 });
   let schema = schemaFactory({ routes: allRoutesEnabled });
   let systemName : string;
   let entity : object;
-  let fakeClient : MockMongoClient;
+  let fakeClient : InMemoryMongoClient;
   let schemaHandler : SchemaHandler;
 
   beforeEach(async () => {
     schema = schemaFactory({ routes: allRoutesEnabled });
     systemName = faker.name.jobType();
     entity = entityFactory(schema.format);
-    fakeClient = new MockMongoClient();
+    fakeClient = new InMemoryMongoClient();
     schemaHandler = new SchemaHandler(schema, fakeClient);
 
     await schemaHandler.initialize(systemName);
