@@ -21,7 +21,7 @@ const allRoutesEnabled : SchemasType["routes"] = {
   queryParamsGetEnabled: true,
 };
 
-describe.only("Schema Handler Test", () => {
+describe("Schema Handler Test", () => {
   const port = faker.random.number({ min: 8001, max: 8800, precision: 1 });
   let schema = schemaFactory({ routes: allRoutesEnabled });
   let systemName : string;
@@ -57,13 +57,16 @@ describe.only("Schema Handler Test", () => {
 
   it("Query [Get] method successfull", async () => {
     const query = entityToQuery(entity);
-    await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity);
+    let entityId : string;
+    await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity)
+      .then(response => { entityId = response.data.insertedId; });
     await axios.get(`http://localhost:${port}/${systemName}/${schema.name}?${query}`)
       .then(response => {
         const foundKeys = Object.keys(response.data[0]);
         const entityKeys = Object.keys(entity);
         entityKeys.push("_id");
         expect(foundKeys).to.be.deep.equal(entityKeys);
+        expect(entityId).to.be.equal(response.data[0]._id);
       });
   });
 
