@@ -16,7 +16,7 @@ export function  parseQuery<T> (query : FilterQuery<T>, schema : SchemaObject) :
 const resolveType : TypeResolver = {
   string: (query : string) : string => { return query; },
   number: (query : string) : number => { if(!isNaN(+query)) return Number(query); },
-  boolean: (query : string) : boolean => { if(["true", "false"].includes(query)) return Boolean(query);},
+  boolean: (query : string) : boolean => { if(["true", "false"].includes(query)) return query === "true";},
   date : (query : string) : Date => { if(!isNaN(Date.parse(query))) return new Date(query); },
   object: (query : unknown, dataFormat : SchemaObject) : object => {
     if(typeof query === "object") return parseQuery(query, dataFormat);
