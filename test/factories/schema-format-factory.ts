@@ -8,21 +8,17 @@ type advancedTypes = "array" | "object";
 const advancedStrings : advancedTypes[] = ["array", "object"];
 
 export const schemaFormatFactory = (maxDepth = 3) : SchemaObject => {
-  const creationInput : SchemaObject = {};
+  const newFormat : SchemaObject = {};
 
-  for (let property = 0; property < 7; property += faker.random.arrayElement([1, 2])) {
+  for (let property = 0; property < 6; property += faker.random.arrayElement([1, 2])) {
     const type = faker.random.arrayElement([...basicStrings, ...advancedStrings]);
     if(type === "object" || type === "array") {
-      if(maxDepth > 0) {
-        creationInput[faker.name.jobType()] = typeFactory[type](maxDepth);
-      }
+      if(maxDepth > 0) newFormat[faker.name.jobType()] = typeFactory[type](maxDepth);
     }
-    else {
-      creationInput[faker.name.jobType()] = { type };
-    }
+    else newFormat[faker.name.jobType()] = { type };
   }
 
-  return creationInput;
+  return newFormat;
 };
 
 const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
@@ -35,10 +31,10 @@ const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
     };
   },
 
-  array: () : SchemaTypeDefinitionArray => {
+  array: (maxDepth : number) : SchemaTypeDefinitionArray => {
     return {
       type: "array",
-      data:  faker.random.arrayElement([...basicStrings, typeFactory.object(2)]),
+      data:  faker.random.arrayElement([...basicStrings, typeFactory.object(maxDepth-1)]),
     };
   },
 };

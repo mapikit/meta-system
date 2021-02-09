@@ -11,7 +11,7 @@ export const entityFactory = (schemaFormat : SchemasType["format"]) : object => 
 
 const typeCreation = {
   string: () : string => {
-    return faker.name.jobType();
+    return faker.lorem.sentence(faker.random.number({ min: 2, max: 5 }));
   },
 
   number: () : number => {
@@ -19,7 +19,7 @@ const typeCreation = {
   },
 
   date: () : Date => {
-    return new Date();
+    return faker.date.between("1500", "2500");
   },
 
   boolean: () : boolean => {
@@ -28,7 +28,7 @@ const typeCreation = {
 
   array: (dataType : string) : Array<unknown> => {
     const array = [];
-    for (let i = 0; i < faker.random.number({ min: 3, max: 10, precision: 1 }); i++) {
+    for (let i = 0; i < faker.random.number({ min: 2, max: 5, precision: 1 }); i++) {
       const newItem = typeCreation[typeof dataType === "string" ? dataType : "object"](dataType["data"]);
       array.push(newItem);
     }

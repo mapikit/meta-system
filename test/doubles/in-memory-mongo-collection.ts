@@ -22,8 +22,7 @@ export class InMemoryCollection implements CollectionAttributes {
     };
   }
 
-  // eslint-disable-next-line max-lines-per-function
-  insertOne (entity : any) : Promise<InsertOneWriteOpResult<any>> {
+  insertOne (entity : Record<string, unknown>) : Promise<InsertOneWriteOpResult<Record<"_id", unknown>>> {
     const newId = faker.random.alphaNumeric(12); //Must be a 12 letters string. See mongodb ObjectId for more info
     entity._id = newId;
     this.entities.push(entity);
