@@ -58,15 +58,20 @@ describe("Schema Handler Methods Test", () => {
   it("Query [Get] method successfull", async () => {
     const query = entityToQuery(entity);
     let entityId : string;
+    const duplicateEntity = entity; //Will also be found on query
+    await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, duplicateEntity);
     await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity)
       .then(response => { entityId = response.data.insertedId; });
+
     await axios.get(`http://localhost:${port}/${systemName}/${schema.name}?${query}`)
       .then(response => {
+        expect(response.data.length).to.be.equal(2);
+        const secondEntity = response.data.find(returnedEntity => returnedEntity._id === entityId);
+        expect(secondEntity).not.to.be.undefined;
         const foundKeys = Object.keys(response.data[0]);
         const entityKeys = Object.keys(entity);
         entityKeys.push("_id");
         expect(foundKeys).to.be.deep.equal(entityKeys);
-        expect(entityId).to.be.equal(response.data[0]._id);
       });
   });
 
@@ -119,7 +124,7 @@ describe("Schema Handler Methods Test", () => {
 
     await axios.get(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`)
       .then(response => {
-        const foundKeys = Object.keys(response.data[0]);
+        const foundKeys = Object.keys(response.data);
         const expectedKeys = Object.keys(entity);
         expectedKeys.push("_id");
         expect(foundKeys).to.be.deep.equal(expectedKeys);

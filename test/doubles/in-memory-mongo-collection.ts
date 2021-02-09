@@ -11,12 +11,15 @@ export class InMemoryCollection implements CollectionAttributes {
     return this;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   find (query : FilterQuery<unknown>) : unknown {
     return {
       toArray: () : Array<unknown> => this.entities.filter(entity => {
+        let found = false;
         for(const prop of Object.keys(query)) {
-          return entity[prop] === query[prop];
+          if(entity[prop] === query[prop]) found = true;
         }
+        return found;
       }),
       next: () : unknown => this.entities.find(entity => {
         for(const prop of Object.keys(query)) {

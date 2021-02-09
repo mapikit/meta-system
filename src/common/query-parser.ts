@@ -14,18 +14,19 @@ export function  parseQuery<T> (query : FilterQuery<T>, schema : SchemaObject) :
 }
 
 const resolveType : TypeResolver = {
-  string: (query : string) : string => { return query; },
-  number: (query : string) : number => { if(!isNaN(+query)) return Number(query); },
-  boolean: (query : string) : boolean => { if(["true", "false"].includes(query)) return query === "true";},
-  date : (query : string) : Date => { if(!isNaN(Date.parse(query))) return new Date(query); },
+  string: (query : string) : string =>  query,
+  number: (query : string) : number => Number(query),
+  boolean: (query : string) : boolean => query === "true",
+  date : (query : string) : Date => new Date(query),
   object: (query : unknown, dataFormat : SchemaObject) : object => {
     if(typeof query === "object") return parseQuery(query, dataFormat);
   },
   array: (query : unknown, dataFormat : string) : Array<unknown> => {
     if(query instanceof Array) {
       const array = [];
+      const dataType = typeof dataFormat == "string" ? dataFormat : "object";
       query.forEach(property => {
-        array.push(resolveType[typeof dataFormat == "string" ? dataFormat : "object"](property));
+        array.push(resolveType[dataType](property));
       });
       return array;
     }

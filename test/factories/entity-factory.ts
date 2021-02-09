@@ -10,21 +10,10 @@ export const entityFactory = (schemaFormat : SchemasType["format"]) : object => 
 };
 
 const typeCreation = {
-  string: () : string => {
-    return faker.lorem.sentence(faker.random.number({ min: 2, max: 5 }));
-  },
-
-  number: () : number => {
-    return faker.random.number();
-  },
-
-  date: () : Date => {
-    return faker.date.between("1500", "2500");
-  },
-
-  boolean: () : boolean => {
-    return faker.random.boolean();
-  },
+  string: () : string => faker.lorem.sentence(faker.random.number({ min: 2, max: 5 })),
+  number: () : number => faker.random.number(),
+  date: () : Date => faker.date.between("1500", "2500"),
+  boolean: () : boolean =>  faker.random.boolean(),
 
   array: (dataType : string) : Array<unknown> => {
     const array = [];

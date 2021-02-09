@@ -8,9 +8,9 @@ export const entityToQuery = (entity : object) : string => {
 
 
 const typeCreation = {
-  string: (string : string, propName : string) : string => { return `&${propName}=${string}`; },
-  number: (number : number, propName : string) : string => { return `&${propName}=${number}`; },
-  boolean: (bool : boolean, propName : string) : string => { return `&${propName}=${bool.toString()}`; },
+  string: (string : string, propName : string) : string => `&${propName}=${string}`,
+  number: (number : number, propName : string) : string => `&${propName}=${number}`,
+  boolean: (bool : boolean, propName : string) : string => `&${propName}=${bool.toString()}`,
   object: (object : object, propName ?: string) : string => {
     if(object instanceof Array) return `&${propName}[]=` + object.join(`&${propName}[]=`);
     if(object instanceof Date) return `&${propName}=${object.toISOString()}`;
