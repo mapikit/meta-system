@@ -13,8 +13,12 @@ export class InMemoryCollection implements CollectionAttributes {
 
   find (query : FilterQuery<unknown>) : unknown {
     return {
-      toArray: () : Array<unknown> => this.entities,
-      next: () : unknown => this.entities.filter(entity => {
+      toArray: () : Array<unknown> => this.entities.filter(entity => {
+        for(const prop of Object.keys(query)) {
+          return entity[prop] === query[prop];
+        }
+      }),
+      next: () : unknown => this.entities.find(entity => {
         for(const prop of Object.keys(query)) {
           return entity[prop] === query[prop];
         }

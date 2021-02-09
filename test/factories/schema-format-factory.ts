@@ -1,5 +1,9 @@
 import faker from "faker";
-import { SchemaObject, SchemaTypeDefinitionArray, SchemaTypeDefinitionObject } from "@api/configuration-de-serializer/domain/schemas-type";
+import {
+  SchemaObject,
+  SchemaTypeDefinitionArray,
+  SchemaTypeDefinitionObject,
+} from "@api/configuration-de-serializer/domain/schemas-type";
 
 
 type basicTypes = "boolean" | "string" | "number" | "date";

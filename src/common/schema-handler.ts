@@ -1,7 +1,7 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { MongoClientAttributes } from "@api/entity/domain/types/mongo-attributes";
-import { handlers } from "./handlers";
+import { handlers } from "./request-handlers";
 import MetaRouter, { HttpMethods } from "./meta-router";
 
 export type ExtendedHttpMethods = HttpMethods | "query";

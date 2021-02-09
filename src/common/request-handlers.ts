@@ -4,7 +4,7 @@ import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { RequestHandler } from "express";
 import { parseQuery } from "./query-parser";
 
-type HandlersList = { [handlerName : string] : (repo : MetaRepository, schema ?: SchemaObject) => RequestHandler };
+type HandlersList = { [method : string] : (repo : MetaRepository, schema ?: SchemaObject) => RequestHandler };
 
 export const handlers : HandlersList = {
   get: (repository : MetaRepository) => {
@@ -16,7 +16,10 @@ export const handlers : HandlersList = {
         })
         .catch(error => {
           res.statusCode = 500;
-          res.send(error);
+          res.send({
+            message: "There was an error while finding the entities",
+            error,
+          });
         });
     };
   },
@@ -107,7 +110,10 @@ export const handlers : HandlersList = {
         })
         .catch(error => {
           res.statusCode = 500;
-          res.send(error);
+          res.send(res.send({
+            message: "There was an error while finding the entities",
+            error,
+          }));
         });
     };
   },
