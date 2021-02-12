@@ -18,7 +18,7 @@ describe("Meta Router Test", () => {
 
     metaRouter.createRoute(httpMethod, "/success", mockHandler);
     try {
-      metaRouter.listenOnPort(8000);
+      await metaRouter.listenOnPort(8000);
     } catch(error) {
       expect(error).to.be.undefined;
     }
@@ -51,7 +51,7 @@ describe("Meta Router Test", () => {
     metaRoute.createRoute(httpMethod, "/invalid-port", mockHandler);
 
     try {
-      metaRoute.listenOnPort("InvalidPort");
+      await metaRoute.listenOnPort("InvalidPort");
     } catch(error) {
       expect(error.name).to.be.equal("PortFormatError");
     }

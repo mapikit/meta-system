@@ -1,12 +1,13 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
-import { Collection, Db, MongoClient } from "mongodb";
+import { DeleteWriteOpResultObject, FilterQuery, InsertOneWriteOpResult, UpdateWriteOpResult } from "mongodb";
+import { CollectionAttributes, DbAttributes, MongoClientAttributes } from "./types/mongo-attributes";
 
 export class MetaRepository {
-  private connection : MongoClient;
-  private db : Db;
-  private collection : Collection;
+  private connection : MongoClientAttributes;
+  private db : DbAttributes;
+  private collection : CollectionAttributes;
 
-  constructor (connection : MongoClient) {
+  constructor (connection : MongoClientAttributes) {
     this.connection = connection;
   }
 
@@ -20,24 +21,28 @@ export class MetaRepository {
     //For more info see https://docs.mongodb.com/manual/core/schema-validation/
   }
 
-  public async insert (entity : unknown) : Promise<void> {
-    await this.collection.insertOne(entity);
+  public async insert (entity : unknown) : Promise<InsertOneWriteOpResult<any>> {
+    return this.collection.insertOne(entity);
   }
 
-  public async delete (entity : unknown) : Promise<void> {
-    await this.collection.deleteOne(entity);
+  public async deleteById (id : string) : Promise<DeleteWriteOpResultObject> {
+    return this.collection.deleteOne({ _id : id });
   }
 
-  public async update (entityId : string, newValue : unknown) : Promise<void> {
-    await this.collection.updateOne({ id : entityId }, newValue);
+  public async update (entityId : string, newValue : unknown) : Promise<UpdateWriteOpResult> {
+    return this.collection.updateOne({ _id : entityId }, newValue);
   }
 
   public async findById (entityId : string) : Promise<unknown> {
-    return this.collection.find({ id: entityId });
+    return this.collection.find({ _id: entityId }).next();
   }
 
   public async findByProperty (propertyName : string, propertyValue : unknown) : Promise<unknown> {
-    return this.collection.find({ [propertyName] : propertyValue });
+    return this.collection.find({ [propertyName] : propertyValue }).toArray();
+  }
+
+  public async query<T> (query : FilterQuery<T>) : Promise<unknown> {
+    return this.collection.find(query).toArray();
   }
 
   private async checkoutCollection (collection : string) : Promise<void> {
