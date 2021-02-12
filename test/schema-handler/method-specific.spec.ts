@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 require("module-alias/register");
 import chai from "chai";
-import { SchemaHandler } from "@api/common/schema-handler";
+import { SchemaRoutesManager } from "@api/common/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios from "axios";
 import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
@@ -27,14 +27,14 @@ describe("Schema Handler Methods Test", () => {
   let systemName : string;
   let entity : object;
   let fakeClient : InMemoryMongoClient;
-  let schemaHandler : SchemaHandler;
+  let schemaHandler : SchemaRoutesManager;
 
   beforeEach(async () => {
     schema = schemaFactory({ routes: allRoutesEnabled });
     systemName = faker.name.jobType();
     entity = entityFactory(schema.format);
     fakeClient = new InMemoryMongoClient();
-    schemaHandler = new SchemaHandler(schema, fakeClient);
+    schemaHandler = new SchemaRoutesManager(schema, fakeClient);
 
     await schemaHandler.initialize(systemName);
     await schemaHandler.router.listenOnPort(port);

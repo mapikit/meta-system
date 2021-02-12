@@ -1,12 +1,12 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { MongoClientAttributes } from "@api/entity/domain/types/mongo-attributes";
-import { handlers } from "./request-handlers";
+import { SchemaRequestHandlers } from "./request-handlers";
 import MetaRouter, { HttpMethods } from "./meta-router";
 
 export type ExtendedHttpMethods = HttpMethods | "query";
 
-export class SchemaHandler {
+export class SchemaRoutesManager {
   private schema : SchemasType;
   private repository : MetaRepository;
   public router : MetaRouter;
@@ -25,7 +25,7 @@ export class SchemaHandler {
       this.router.createRoute(
         method === "query" ? "get" : method,
         idlessRoutes.includes(method) ? `/${this.schema.name}` : `/${this.schema.name}/:id`,
-        handlers[method](this.repository, this.schema.format),
+        SchemaRequestHandlers[method](this.repository, this.schema.format),
       );
     }
   }

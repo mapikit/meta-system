@@ -4,10 +4,8 @@ import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { RequestHandler } from "express";
 import { parseQuery } from "./query-parser";
 
-type HandlersList = { [method : string] : (repo : MetaRepository, schema ?: SchemaObject) => RequestHandler };
-
-export const handlers : HandlersList = {
-  get: (repository : MetaRepository) => {
+export class SchemaRequestHandlers {
+  static get (repository : MetaRepository) : RequestHandler {
     return async (req, res) : Promise<void> => {
       await repository.findById(req.params.id)
         .then(result => {
@@ -22,9 +20,9 @@ export const handlers : HandlersList = {
           });
         });
     };
-  },
+  };
 
-  post: (repository : MetaRepository) => {
+  static post (repository : MetaRepository) : RequestHandler {
     return async (req, res) : Promise<void> => {
       await repository.insert(req.body)
         .then((result) => {
@@ -39,9 +37,9 @@ export const handlers : HandlersList = {
           res.send(error);
         });
     };
-  },
+  };
 
-  put: (repository : MetaRepository) => {
+  static put (repository : MetaRepository) : RequestHandler {
     return  async (req, res) : Promise<void> => {
       await repository.update(req.params.id, req.body)
         .then((result) => {
@@ -59,9 +57,9 @@ export const handlers : HandlersList = {
           });
         });
     };
-  },
+  };
 
-  patch: (repository : MetaRepository) => {
+  static patch (repository : MetaRepository) : RequestHandler {
     return  async (req, res) : Promise<void> => {
       await repository.update(req.params.id, req.body)
         .then((result) => {
@@ -79,9 +77,9 @@ export const handlers : HandlersList = {
           });
         });
     };
-  },
+  };
 
-  delete: (repository : MetaRepository) => {
+  static delete (repository : MetaRepository) : RequestHandler {
     return async (req, res) : Promise<void> => {
       await repository.deleteById(req.params.id)
         .then(() => {
@@ -98,9 +96,9 @@ export const handlers : HandlersList = {
           });
         });
     };
-  },
+  };
 
-  query: (repository : MetaRepository, schema : SchemaObject) => {
+  static query (repository : MetaRepository, schema : SchemaObject) : RequestHandler {
     return  async (req, res) : Promise<void> => {
       const resolvedQuery = parseQuery(req.query, schema);
       await repository.query(resolvedQuery)
@@ -116,5 +114,5 @@ export const handlers : HandlersList = {
           }));
         });
     };
-  },
+  };
 };

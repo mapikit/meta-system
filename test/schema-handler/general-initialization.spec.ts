@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 require("module-alias/register");
 import chai from "chai";
-import { ExtendedHttpMethods, SchemaHandler } from "@api/common/schema-handler";
+import { ExtendedHttpMethods, SchemaRoutesManager } from "@api/common/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios, { AxiosResponse } from "axios";
 import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
@@ -24,13 +24,13 @@ describe("Schema Handler Initialization Test", () => {
   let schema = schemaFactory({ routes: allRoutesEnabled });
   let systemName : string;
   let fakeClient : InMemoryMongoClient;
-  let schemaHandler : SchemaHandler;
+  let schemaHandler : SchemaRoutesManager;
 
   beforeEach(() => {
     schema = schemaFactory({ routes: allRoutesEnabled });
     systemName = faker.name.jobType();
     fakeClient = new InMemoryMongoClient();
-    schemaHandler = new SchemaHandler(schema, fakeClient);
+    schemaHandler = new SchemaRoutesManager(schema, fakeClient);
 
   });
 
@@ -57,7 +57,7 @@ describe("Schema Handler Initialization Test", () => {
 
   it("Fails to initiate routes - Invalid schema name", async () => {
     const invalidSchema = schemaFactory({ name : "some-symbols-are-prohibited$%$!@" });
-    schemaHandler = new SchemaHandler(invalidSchema, fakeClient);
+    schemaHandler = new SchemaRoutesManager(invalidSchema, fakeClient);
     await schemaHandler.initialize(systemName)
       .then(() => {
         expect(false).to.be.true;
