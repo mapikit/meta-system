@@ -1,14 +1,16 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { MongoClientAttributes } from "@api/entity/domain/types/mongo-attributes";
-import { SchemaRequestHandlers } from "./request-handlers";
-import MetaRouter, { HttpMethods } from "./meta-router";
+import { SchemaRequestHandlers } from "@api/schemas/application/request-handlers";
+import MetaRouter, { HttpMethods } from "@api/common/meta-router";
+import { SchemasBopsFunctions } from "@api/schemas/application/schema-bops-functions/main";
 
 export type ExtendedHttpMethods = HttpMethods | "query";
 
 export class SchemaRoutesManager {
   private schema : SchemasType;
   private repository : MetaRepository;
+  public BOpsFunction : SchemasBopsFunctions;
   public router : MetaRouter;
 
   constructor (schema : SchemasType, dbConnection : MongoClientAttributes) {
@@ -19,6 +21,7 @@ export class SchemaRoutesManager {
   public async initialize (systemName : string) : Promise<void> {
     this.router = new MetaRouter(`/${systemName}`);
     await this.repository.initialize(this.schema, systemName);
+    this.BOpsFunction = new SchemasBopsFunctions(this.repository);
 
     const idlessRoutes : ExtendedHttpMethods[] = ["query", "post"];
     for(const method of this.getActiveMethods(this.schema.routes)) {

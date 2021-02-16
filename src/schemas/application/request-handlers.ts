@@ -2,7 +2,7 @@
 import { SchemaObject } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { RequestHandler } from "express";
-import { parseQuery } from "./query-parser";
+import { parseQuery } from "@api/common/query-parser";
 
 export class SchemaRequestHandlers {
   static get (repository : MetaRepository) : RequestHandler {

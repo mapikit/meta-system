@@ -1,4 +1,4 @@
-import { JsonTypes } from "@api/common/json-types";
+import { JsonTypes } from "@api/common/types/json-types";
 
 export interface BusinessOperations {
   name : string;

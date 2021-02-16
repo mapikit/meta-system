@@ -4,12 +4,10 @@ import {
   SchemaTypeDefinitionArray,
   SchemaTypeDefinitionObject,
 } from "@api/configuration-de-serializer/domain/schemas-type";
+import { ExtendedJsonTypes, JsonTypes } from "@api/common/types/json-types";
 
-
-type basicTypes = "boolean" | "string" | "number" | "date";
-const basicStrings : basicTypes[] = ["boolean", "string", "number", "date"];
-type advancedTypes = "array" | "object";
-const advancedStrings : advancedTypes[] = ["array", "object"];
+const basicStrings : JsonTypes[] = ["boolean", "string", "number", "date"];
+const advancedStrings : Exclude<ExtendedJsonTypes, JsonTypes>[] = ["array", "object"];
 
 export const schemaFormatFactory = (maxDepth = 3) : SchemaObject => {
   const newFormat : SchemaObject = {};

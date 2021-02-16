@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 require("module-alias/register");
 import chai from "chai";
-import { SchemaRoutesManager } from "@api/common/schema-routes-manager";
+import { SchemaRoutesManager } from "@api/schemas/application/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios from "axios";
 import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
