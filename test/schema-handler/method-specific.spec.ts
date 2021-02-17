@@ -50,7 +50,7 @@ describe("Schema Handler Methods Test", () => {
         expect(response.data.message).to.be.equal("Inserted entity successfully");
         const foundKeys = Object.keys(fakeClient.db(systemName).collection(schema.name)["entities"][0]);
         const expectedKeys = Object.keys(entity);
-        expectedKeys.push("_id");
+        expectedKeys.unshift("_id");
         expect(foundKeys).to.be.deep.equal(expectedKeys);
       });
   });
@@ -70,7 +70,7 @@ describe("Schema Handler Methods Test", () => {
         expect(secondEntity).not.to.be.undefined;
         const foundKeys = Object.keys(response.data[0]);
         const entityKeys = Object.keys(entity);
-        entityKeys.push("_id");
+        entityKeys.unshift("_id");
         expect(foundKeys).to.be.deep.equal(entityKeys);
       });
   });
@@ -126,7 +126,7 @@ describe("Schema Handler Methods Test", () => {
       .then(response => {
         const foundKeys = Object.keys(response.data);
         const expectedKeys = Object.keys(entity);
-        expectedKeys.push("_id");
+        expectedKeys.unshift("_id");
         expect(foundKeys).to.be.deep.equal(expectedKeys);
       });
   });
