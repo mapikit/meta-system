@@ -1,0 +1,41 @@
+{
+  "functionName": "create",
+  "description": "Inserts the given entity in the database",
+  "author": "mapikit",
+  "version": "0.0.1",
+  "inputParameters": [],
+  "outputBranches": [
+    {
+      "branchName": "default",
+      "description": "The inserted entity"
+    },
+    {
+      "branchName": "createError",
+      "description": "Insertion fails due to null input value"
+    }
+  ],
+  "outputData": [
+    {
+      "name": "errorMessage",
+      "type": "$errorMessage",
+      "branch": "createError"
+    }
+  ],
+  "entrypoint": "index.ts",
+  "mainFunction": "main",
+  "customTypes": [
+    {
+      "name": "errorMessage",
+      "properties": [
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "errorCode",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
