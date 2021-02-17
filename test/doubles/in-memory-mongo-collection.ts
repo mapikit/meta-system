@@ -31,17 +31,17 @@ export class InMemoryCollection implements CollectionAttributes {
 
   insertOne (entity : Record<string, unknown>) : Promise<InsertOneWriteOpResult<Record<"_id", unknown>>> {
     const newId = faker.random.alphaNumeric(12); //Must be a 12 letters string. See mongodb ObjectId for more info
-    entity._id = newId;
-    this.entities.push(entity);
+    const newEntity = { _id : newId };
+    Object.assign(newEntity, entity);
+    this.entities.push(newEntity);
     return new Promise(resolve => {
-      resolve(
-        {
-          insertedCount: 1,
-          ops: [],
-          insertedId: newId,
-          connection: undefined,
-          result: { ok: 1, n: 1 },
-        });
+      resolve({
+        insertedCount: 1,
+        ops: [],
+        insertedId: newId,
+        connection: undefined,
+        result: { ok: 1, n: 1 },
+      });
     });
   }
 

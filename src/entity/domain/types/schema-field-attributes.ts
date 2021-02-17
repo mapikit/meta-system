@@ -1,8 +1,8 @@
-import { JsonType } from "@api/common/types/json-types";
+import { JsonTypes } from "@api/common/types/json-types";
 
 export interface SchemaField {
   fieldName : string;
-  fieldType : JsonType;
+  fieldType : JsonTypes;
   nullable : boolean;
   readonly : boolean;
 };
