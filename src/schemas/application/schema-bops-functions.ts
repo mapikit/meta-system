@@ -20,8 +20,25 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
     return { createdEntity : await this.repository.findById(insertionResult.insertedId) };
   }
 
+  public async getById (input : { entityId : string })
+    : Promise<unknown | SchemaFunctionErrorType> {
+    let found = false;
+
+    if (input.entityId === undefined) {
+      return ({
+        found,
+        getError: SchemaFunctionErrors.getById,
+      });
+    }
+
+    const entity = await this.repository.findById(input.entityId);
+    found = entity !== null;
+
+    return ({ found, entity });
+
+  }
+
   public get = null;
-  public getById = null;
   public update = null;
   public updateById = null;
   public delete = null;

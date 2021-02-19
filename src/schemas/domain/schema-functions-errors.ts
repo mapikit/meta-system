@@ -31,7 +31,10 @@ export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   create : CreateErrors,
 
   get : null,
-  getById : null,
+  getById : {
+    errorCode: "GET001",
+    message: "No id was provided",
+  },
   update : null,
   updateById : null,
   delete : null,
