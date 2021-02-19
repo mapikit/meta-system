@@ -18,5 +18,9 @@ export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   update : null,
   updateById : null,
   delete : null,
-  deleteById : null,
+
+  deleteById : {
+    errorCode: "DBI001",
+    message: "No id was provided in order to delete an entity or the entity was not found",
+  },
 };

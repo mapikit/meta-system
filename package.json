@@ -79,7 +79,7 @@
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
-    "meta-function-helper": "0.0.3",
+    "meta-function-helper": "0.0.4",
     "module-alias": "^2.2.2",
     "mongodb": "^3.5.6",
     "nodemon": "^1.19.2",

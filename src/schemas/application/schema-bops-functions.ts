@@ -8,18 +8,16 @@ type SchemasFunctionsTypes = {
 }
 
 class SchemasBopsFunctions implements SchemasFunctionsTypes {
-  private repository : MetaRepository;
+  public repository : MetaRepository;
   constructor (repository : MetaRepository) {
     this.repository = repository;
   }
 
-  public async create (...input : Array<Record<string, unknown>>)
+  public async create (input : Record<string, unknown>)
     : Promise<unknown | SchemaFunctionErrorType> {
-    if(input.length === 0) return SchemaFunctionErrors.create;
-    const assembledObject = {};
-    for(const inputProperty of input) Object.assign(assembledObject, inputProperty);
-    await this.repository.insert(assembledObject);
-    return assembledObject;
+    if(!input || Object.keys(input).length === 0) return { errorMessage: SchemaFunctionErrors.create };
+    const insertionResult = await this.repository.insert(input);
+    return { createdEntity : await this.repository.findById(insertionResult.insertedId) };
   }
 
   public get = null;
@@ -27,7 +25,13 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
   public update = null;
   public updateById = null;
   public delete = null;
-  public deleteById = null;
+
+  public async deleteById (id : string) : Promise<unknown | SchemaFunctionErrorType> {
+    const entity = await this.repository.findById(id);
+    if(!id || !entity) return { errorMessage: SchemaFunctionErrors.deleteById };
+    await this.repository.deleteById(id);
+    return { deleted: entity };
+  };
 };
 
 
