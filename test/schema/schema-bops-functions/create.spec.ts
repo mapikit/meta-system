@@ -20,13 +20,13 @@ describe("Bops Function - Create", () => {
     const entity = entityFactory(schema.format);
     const result = await create.main(entity as Record<string, unknown>);
     expect(result["createdEntity"]._id).not.to.be.undefined;
-    delete result["createdEntity"]._id;
+    delete result["createdEntity"]._id; // The entity generated with "entityFactory" does not contain an Id
     expect(result["createdEntity"]).to.be.deep.equal(entity);
   });
 
   it("Fails to creates entity - Null input", async () => {
     const createdEntity = await create.main(undefined);
     expect(createdEntity["errorMessage"]).not.to.be.undefined;
-    expect(createdEntity["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.create);
+    expect(createdEntity["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.create.nullInput);
   });
 });

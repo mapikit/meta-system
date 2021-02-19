@@ -15,7 +15,7 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
 
   public async create (input : Record<string, unknown>)
     : Promise<unknown | SchemaFunctionErrorType> {
-    if(!input || Object.keys(input).length === 0) return { errorMessage: SchemaFunctionErrors.create };
+    if(!input || Object.keys(input).length === 0) return { errorMessage: SchemaFunctionErrors.create.nullInput };
     const insertionResult = await this.repository.insert(input);
     return { createdEntity : await this.repository.findById(insertionResult.insertedId) };
   }
@@ -28,7 +28,8 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
 
   public async deleteById (id : string) : Promise<unknown | SchemaFunctionErrorType> {
     const entity = await this.repository.findById(id);
-    if(!id || !entity) return { errorMessage: SchemaFunctionErrors.deleteById };
+    if(!id) return { errorMessage: SchemaFunctionErrors.deleteById.nullInput };
+    if(!entity) return { errorMessage: SchemaFunctionErrors.deleteById.notFound };
     await this.repository.deleteById(id);
     return { deleted: entity };
   };

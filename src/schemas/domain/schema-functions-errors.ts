@@ -2,16 +2,33 @@ import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 
 export type SchemaFunctionErrorType = {
   [key in SchemasFunctions] : {
-    errorCode : string;
-    message : string;
+    [errorName : string ] : {
+      errorCode : string;
+      message : string;
+    };
   }
 }
 
-export const SchemaFunctionErrors : SchemaFunctionErrorType = {
-  create : {
+const CreateErrors = {
+  nullInput: {
     errorCode: "CRT001",
     message: "No value was provided for insertion",
   },
+};
+
+const DeleteByIdErrors = {
+  nullInput: {
+    errorCode: "DBI001",
+    message: "No Id was Provided for deletion",
+  },
+  notFound: {
+    errorCode: "DBI002",
+    message: "No entity was found with given Id",
+  },
+};
+
+export const SchemaFunctionErrors : SchemaFunctionErrorType = {
+  create : CreateErrors,
 
   get : null,
   getById : null,
@@ -19,8 +36,5 @@ export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   updateById : null,
   delete : null,
 
-  deleteById : {
-    errorCode: "DBI001",
-    message: "No id was provided in order to delete an entity or the entity was not found",
-  },
+  deleteById : DeleteByIdErrors,
 };
