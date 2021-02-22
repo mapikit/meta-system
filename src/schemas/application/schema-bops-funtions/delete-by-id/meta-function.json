@@ -1,32 +1,32 @@
 {
-  "functionName": "create",
-  "description": "Inserts the given entity in the database",
+  "functionName": "deleteById",
+  "description": "Deletes the entity associated with the given Id",
   "author": "mapikit",
   "version": "0.0.1",
   "inputParameters": [
     {
-      "name": "entity",
-      "type": "cloudedObject"
+      "name" : "id",
+      "type" : "string"
     }
   ],
   "outputBranches": [
     {
       "branchName": "default",
-      "description": "The inserted entity"
+      "description": "The deleted entity"
     },
     {
-      "branchName": "createError",
-      "description": "Insertion fails due to null input value"
+      "branchName": "deleteError",
+      "description": "deletion fails due to null input value or no entity found"
     }
   ],
   "outputData": [
     {
       "name": "errorMessage",
       "type": "$errorMessage",
-      "branch": "createError"
+      "branch": "deleteError"
     },
     {
-      "name": "createdEntity",
+      "name": "deleted",
       "type": "cloudedObject",
       "branch": "default"
     }
