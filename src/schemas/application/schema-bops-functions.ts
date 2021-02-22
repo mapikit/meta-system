@@ -1,3 +1,4 @@
+import isNill from "@api/common/assertions/is-nill";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
@@ -24,15 +25,15 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
     : Promise<unknown | SchemaFunctionErrorType> {
     let found = false;
 
-    if (input.entityId === undefined) {
+    if (isNill(input.entityId)) {
       return ({
         found,
-        getError: SchemaFunctionErrors.getById,
+        getError: SchemaFunctionErrors.getById["nullInput"],
       });
     }
 
     const entity = await this.repository.findById(input.entityId);
-    found = entity !== null;
+    found = !isNill(entity);
 
     return ({ found, entity });
 
