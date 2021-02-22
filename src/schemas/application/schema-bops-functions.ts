@@ -16,9 +16,13 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
 
   public async create (input : Record<string, unknown>)
     : Promise<unknown | SchemaFunctionErrorType> {
-    if(!input || Object.keys(input).length === 0) return { errorMessage: SchemaFunctionErrors.create.nullInput };
+    if(isNill(input) || Object.keys(input).length === 0) {
+      return ({ errorMessage: SchemaFunctionErrors.create.nullInput });
+    }
+
     const insertionResult = await this.repository.insert(input);
-    return { createdEntity : await this.repository.findById(insertionResult.insertedId) };
+
+    return ({ createdEntity : await this.repository.findById(insertionResult.insertedId) });
   }
 
   public async getById (input : { entityId : string })
@@ -28,7 +32,7 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
     if (isNill(input.entityId)) {
       return ({
         found,
-        getError: SchemaFunctionErrors.getById["nullInput"],
+        errorMessage: SchemaFunctionErrors.getById.nullInput,
       });
     }
 
@@ -45,9 +49,16 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
   public delete = null;
 
   public async deleteById (id : string) : Promise<unknown | SchemaFunctionErrorType> {
+    if(isNill(id)) {
+      return ({ errorMessage: SchemaFunctionErrors.deleteById.nullInput });
+    };
+
     const entity = await this.repository.findById(id);
-    if(!id) return { errorMessage: SchemaFunctionErrors.deleteById.nullInput };
-    if(!entity) return { errorMessage: SchemaFunctionErrors.deleteById.notFound };
+
+    if(isNill(entity)) {
+      return ({ errorMessage: SchemaFunctionErrors.deleteById.notFound });
+    };
+
     await this.repository.deleteById(id);
     return { deleted: entity };
   };
