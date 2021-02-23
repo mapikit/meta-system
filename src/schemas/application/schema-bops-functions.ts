@@ -1,3 +1,4 @@
+import isNill from "@api/common/assertions/is-nill";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
@@ -15,21 +16,49 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
 
   public async create (input : Record<string, unknown>)
     : Promise<unknown | SchemaFunctionErrorType> {
-    if(!input || Object.keys(input).length === 0) return { errorMessage: SchemaFunctionErrors.create.nullInput };
+    if(isNill(input) || Object.keys(input).length === 0) {
+      return ({ errorMessage: SchemaFunctionErrors.create.nullInput });
+    }
+
     const insertionResult = await this.repository.insert(input);
-    return { createdEntity : await this.repository.findById(insertionResult.insertedId) };
+
+    return ({ createdEntity : await this.repository.findById(insertionResult.insertedId) });
+  }
+
+  public async getById (input : { entityId : string })
+    : Promise<unknown | SchemaFunctionErrorType> {
+    let found = false;
+
+    if (isNill(input.entityId)) {
+      return ({
+        found,
+        errorMessage: SchemaFunctionErrors.getById.nullInput,
+      });
+    }
+
+    const entity = await this.repository.findById(input.entityId);
+    found = !isNill(entity);
+
+    return ({ found, entity });
+
   }
 
   public get = null;
-  public getById = null;
   public update = null;
   public updateById = null;
   public delete = null;
 
   public async deleteById (id : string) : Promise<unknown | SchemaFunctionErrorType> {
+    if(isNill(id)) {
+      return ({ errorMessage: SchemaFunctionErrors.deleteById.nullInput });
+    };
+
     const entity = await this.repository.findById(id);
-    if(!id) return { errorMessage: SchemaFunctionErrors.deleteById.nullInput };
-    if(!entity) return { errorMessage: SchemaFunctionErrors.deleteById.notFound };
+
+    if(isNill(entity)) {
+      return ({ errorMessage: SchemaFunctionErrors.deleteById.notFound });
+    };
+
     await this.repository.deleteById(id);
     return { deleted: entity };
   };

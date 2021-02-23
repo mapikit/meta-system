@@ -1,0 +1,56 @@
+{
+  "functionName": "getById",
+  "description": "Gets an entity from the database by the Id",
+  "author": "mapikit",
+  "version": "0.0.1",
+  "inputParameters": [
+    {
+      "type": "string",
+      "name": "entityId",
+      "required": true
+    }
+  ],
+  "outputBranches": [
+    {
+      "branchName": "default",
+      "description": "The searched entity"
+    },
+    {
+      "branchName": "getError",
+      "description": "Error on retrieving information"
+    }
+  ],
+  "outputData": [
+    {
+      "name": "entity",
+      "type": "cloudedObject",
+      "branch": "default"
+    },
+    {
+      "name": "found",
+      "type": "boolean"
+    },
+    {
+      "name": "errorMessage",
+      "type": "$errorMessage",
+      "branch": "getError"
+    }
+  ],
+  "entrypoint": "index.ts",
+  "mainFunction": "main",
+  "customTypes": [
+    {
+      "name": "errorMessage",
+      "properties": [
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "errorCode",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -27,14 +27,20 @@ const DeleteByIdErrors = {
   },
 };
 
+const GetByIdErrors = {
+  nullInput : {
+    errorCode: "GBI001",
+    message: "No value for the ID search was provided",
+  },
+};
+
 export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   create : CreateErrors,
+  getById : GetByIdErrors,
+  deleteById : DeleteByIdErrors,
 
   get : null,
-  getById : null,
   update : null,
   updateById : null,
   delete : null,
-
-  deleteById : DeleteByIdErrors,
 };
