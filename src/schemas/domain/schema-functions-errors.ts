@@ -28,9 +28,25 @@ const DeleteByIdErrors = {
 };
 
 const GetByIdErrors = {
-  nullInput : {
+  nullInput: {
     errorCode: "GBI001",
     message: "No value for the ID search was provided",
+  },
+};
+
+const UpdateByIdErrors = {
+  nullInput: {
+    errorCode: "UBI001",
+    message: "No valid ID was provided for updating the entity",
+  },
+  notFound: {
+    errorCode: "UBI002",
+    message: "No entity was found for the provided ID",
+  },
+  genericError: {
+    errorCode: "UBI003",
+    message: "A unmapped error has happened. This possibly means that" +
+      " some configuration in the server was off, or the communication channel was shut down.",
   },
 };
 
@@ -38,9 +54,9 @@ export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   create : CreateErrors,
   getById : GetByIdErrors,
   deleteById : DeleteByIdErrors,
+  updateById : UpdateByIdErrors,
 
   get : null,
   update : null,
-  updateById : null,
   delete : null,
 };

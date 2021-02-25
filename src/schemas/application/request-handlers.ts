@@ -41,7 +41,7 @@ export class SchemaRequestHandlers {
 
   static put (repository : MetaRepository) : RequestHandler {
     return  async (req, res) : Promise<void> => {
-      await repository.update(req.params.id, req.body)
+      await repository.updateById(req.params.id, req.body)
         .then((result) => {
           res.statusCode = 200;
           res.send({
@@ -61,7 +61,7 @@ export class SchemaRequestHandlers {
 
   static patch (repository : MetaRepository) : RequestHandler {
     return  async (req, res) : Promise<void> => {
-      await repository.update(req.params.id, req.body)
+      await repository.updateById(req.params.id, req.body)
         .then((result) => {
           res.statusCode = 200;
           res.send({
