@@ -51,7 +51,7 @@ export class InMemoryCollection implements CollectionAttributes {
     this.entities.forEach((entity, index) => {
       if(filter._id === entity._id) {
         this.entities.splice(index, 1);
-        this.entities.push(update);
+        this.entities.push({ ...entity, ...update });
         id = entity._id;
       }
     });

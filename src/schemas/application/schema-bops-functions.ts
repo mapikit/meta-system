@@ -48,7 +48,7 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
   public async updateById (input : { id : string; valuesToUpdate : CloudedObject })
     : Promise<unknown | SchemaFunctionErrorType> {
     if (isNill(input.id)) {
-      return SchemaFunctionErrors.updateById.nullInput;
+      return { errorMessage: SchemaFunctionErrors.updateById.nullInput };
     }
 
     let hasError = false;
@@ -57,15 +57,15 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
     const insertResult = await this.repository.updateById(input.id, input.valuesToUpdate)
       .catch((result) => { hasError = true; return result; });
 
-    if (hasError) { return SchemaFunctionErrors.updateById.genericError; }
+    if (hasError) { return { errorMessage: SchemaFunctionErrors.updateById.genericError }; }
 
     if (Number.isNaN(insertResult.modifiedCount) || insertResult.modifiedCount < 1) {
       notFound = true;
     }
 
-    if (notFound) { return SchemaFunctionErrors.updateById.notFound; }
+    if (notFound) { return { errorMessage: SchemaFunctionErrors.updateById.notFound }; }
 
-    return this.repository.findById(input.id);
+    return { updatedEntity: await this.repository.findById(input.id) };
   }
 
   public get = null;
