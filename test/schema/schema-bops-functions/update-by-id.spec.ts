@@ -7,6 +7,7 @@ import * as updateById from "@api/schemas/application/schema-bops-funtions/updat
 import { random } from "faker";
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { expect } from "chai";
+import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 
 const randomPartialObject = (fromSchema : SchemasType) : CloudedObject => {
   const resultObject : CloudedObject = {};
@@ -47,5 +48,19 @@ describe("Update By Id - Schema BOPs function", () => {
     }
 
     expect(createClone).to.not.be.deep.equal(result["updatedEntity"]);
+  });
+
+  it("Fails to update due to Null ID", async () => {
+    const result = await updateById.main({ id: null, valuesToUpdate: {} });
+
+    expect(result["updatedEntity"]).be.undefined;
+    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.nullInput);
+  });
+
+  it.only("Fails to update due to ID Not found", async () => {
+    const result = await updateById.main({ id: random.alphaNumeric(15), valuesToUpdate: {} });
+
+    expect(result["updatedEntity"]).be.undefined;
+    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.notFound);
   });
 });

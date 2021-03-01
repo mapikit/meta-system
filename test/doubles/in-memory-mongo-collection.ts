@@ -48,8 +48,14 @@ export class InMemoryCollection implements CollectionAttributes {
   // eslint-disable-next-line max-lines-per-function
   updateOne (filter : FilterQuery<unknown>, update : Partial<unknown>) : Promise<UpdateWriteOpResult> {
     let id : string;
+    let modifiedCount = 0;
+    let matchedCount = 0;
+
+
     this.entities.forEach((entity, index) => {
       if(filter._id === entity._id) {
+        modifiedCount ++;
+        matchedCount ++;
         this.entities.splice(index, 1);
         this.entities.push({ ...entity, ...update });
         id = entity._id;
@@ -60,8 +66,8 @@ export class InMemoryCollection implements CollectionAttributes {
       resolve({
         result: { ok: 1, n: 1, nModified: 1 },
         connection: undefined,
-        matchedCount: 1,
-        modifiedCount: 1,
+        matchedCount,
+        modifiedCount,
         upsertedCount: 1,
         upsertedId: { _id: new ObjectId(id) },
       });
