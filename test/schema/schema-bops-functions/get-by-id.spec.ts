@@ -6,6 +6,7 @@ import * as create from "@api/schemas/application/schema-bops-funtions/create-fu
 import { expect } from "chai";
 import { random } from "faker";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
+import { CloudedObject } from "@api/common/types/clouded-object";
 
 
 describe("Schemas BOPS functions - Get By ID", () => {
@@ -16,24 +17,24 @@ describe("Schemas BOPS functions - Get By ID", () => {
   });
 
   it("Successfully gets an existing Schema from the DB", async () => {
-    const entity = entityFactory(schema.format);
-    const createdEntity = (await create.main(entity as Record<string, unknown>))["createdEntity"];
+    const entity = entityFactory(schema.format) as CloudedObject;
+    const createdEntity = (await create.main({ entity }))["createdEntity"];
 
-    const result = await getById.main({ entityId: createdEntity["_id"] });
+    const result = await getById.main({ id: createdEntity["_id"] });
 
     expect(result["found"]).be.true;
     expect(result["entity"]._id).to.be.equal(createdEntity["_id"]);
   });
 
   it("Gets no Schema", async () => {
-    const result = await getById.main({ entityId: random.alphaNumeric(10) });
+    const result = await getById.main({ id: random.alphaNumeric(10) });
 
     expect(result["found"]).be.false;
     expect(result["entity"]).to.be.undefined;
   });
 
   it("Fails to execute", async () => {
-    const result = await getById.main({ entityId: null });
+    const result = await getById.main({ id: null });
 
     expect(result["found"]).be.false;
     expect(result["entity"]).to.be.undefined;

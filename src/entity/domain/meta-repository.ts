@@ -21,6 +21,7 @@ export class MetaRepository {
     //For more info see https://docs.mongodb.com/manual/core/schema-validation/
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async insert (entity : unknown) : Promise<InsertOneWriteOpResult<any>> {
     return this.collection.insertOne(entity);
   }
@@ -29,7 +30,7 @@ export class MetaRepository {
     return this.collection.deleteOne({ _id : id });
   }
 
-  public async update (entityId : string, newValue : unknown) : Promise<UpdateWriteOpResult> {
+  public async updateById (entityId : string, newValue : unknown) : Promise<UpdateWriteOpResult> {
     return this.collection.updateOne({ _id : entityId }, newValue);
   }
 

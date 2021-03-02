@@ -1,6 +1,6 @@
 {
-  "functionName": "getById",
-  "description": "Gets an entity from the database by the Id",
+  "functionName": "updateById",
+  "description": "Updates the values of properties of an entity based on a provided ID.",
   "author": "mapikit",
   "version": "0.0.1",
   "inputParameters": [
@@ -8,27 +8,28 @@
       "type": "string",
       "name": "id",
       "required": true
+    },
+    {
+      "type": "cloudedObject",
+      "name": "valuesToUpdate",
+      "required": true
     }
   ],
   "outputBranches": [
     {
       "branchName": "default",
-      "description": "The searched entity"
+      "description": "The updated entity"
     },
     {
-      "branchName": "getError",
-      "description": "Error on retrieving information"
+      "branchName": "updateError",
+      "description": "Error on updating information"
     }
   ],
   "outputData": [
     {
-      "name": "entity",
+      "name": "updatedEntity",
       "type": "cloudedObject",
       "branch": "default"
-    },
-    {
-      "name": "found",
-      "type": "boolean"
     },
     {
       "name": "errorMessage",

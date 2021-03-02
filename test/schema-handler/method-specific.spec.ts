@@ -98,7 +98,7 @@ describe("Schema Handler Methods Test", () => {
     const newEntity = entityFactory(schema.format);
     await axios.put(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`, newEntity);
     const found = fakeClient.db(systemName).collection(schema.name).entities[0];
-
+    delete found._id;
     expect(JSON.stringify(found)).to.be.equal(JSON.stringify(newEntity));
   });
 
@@ -112,6 +112,7 @@ describe("Schema Handler Methods Test", () => {
     const newEntity = entityFactory(schema.format);
     await axios.patch(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`, newEntity);
     const found = fakeClient.db(systemName).collection(schema.name).entities[0];
+    delete found._id;
     expect(JSON.stringify(found)).to.be.equal(JSON.stringify(newEntity));
   });
 
