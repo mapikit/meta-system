@@ -34,7 +34,7 @@
     {
       "name": "errorMessage",
       "type": "$errorMessage",
-      "branch": "getError"
+      "branch": "updateError"
     }
   ],
   "entrypoint": "index.ts",
