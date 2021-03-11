@@ -57,7 +57,7 @@ describe("Update By Id - Schema BOPs function", () => {
     expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.nullInput);
   });
 
-  it.only("Fails to update due to ID Not found", async () => {
+  it("Fails to update due to ID Not found", async () => {
     const result = await updateById.main({ id: random.alphaNumeric(15), valuesToUpdate: {} });
 
     expect(result["updatedEntity"]).be.undefined;
