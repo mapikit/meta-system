@@ -1,0 +1,41 @@
+// Controls file and dependency structure for BOps functions.
+
+import FS from "fs";
+import Path from "path";
+const fsPromise = FS.promises;
+
+// private readonly functionFolder = "custom-bops-functions";
+// private readonly customFunctionLocation = process.cwd() + "/" + FunctionFileSystem.functionFolder;
+
+export class FunctionFileSystem {
+  private readonly functionsFolder : string;
+  private readonly customFunctionsLocation : string;
+  private readonly configurationFileName : string;
+
+  public constructor (
+    homeDirectory : string,
+    functionsFolder : string,
+    configurationFileName : string,
+  ) {
+    this.functionsFolder = functionsFolder;
+    this.customFunctionsLocation = Path.join(homeDirectory, this.functionsFolder);
+    this.configurationFileName = configurationFileName;
+  }
+
+  /**
+   * Finds and retrieve the meta-function.json file for a given moduleName
+   * @param moduleName
+   */
+  public async getFunctionDescriptionFile (moduleName : string) : Promise<string> {
+    const filePath = Path.join(this.customFunctionsLocation, moduleName, this.configurationFileName);
+
+    return fsPromise.readFile(filePath, "utf8");
+  }
+
+  public async importMain (moduleName : string, entrypoint : string, mainFunctionName : string)
+    : Promise<(...args : unknown[]) => unknown> {
+    const filePath = Path.join(this.customFunctionsLocation, moduleName, entrypoint);
+
+    return require(filePath)[mainFunctionName];
+  }
+}
