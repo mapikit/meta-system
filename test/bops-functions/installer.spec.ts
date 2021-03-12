@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { random } from "faker";
 import Path from "path";
 
-describe.only("BOps Functions Installation (external functions)", () => {
+describe("BOps Functions Installation (external functions)", () => {
   const testFunction = "bops-function-hello-world";
   const testFunctionVersion = "1.0.0";
   const functionInstallLocation = "./test-functions";
