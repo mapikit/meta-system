@@ -5,9 +5,6 @@ import FS from "fs";
 import Path from "path";
 const fsPromise = FS.promises;
 
-// private readonly functionFolder = "custom-bops-functions";
-// private readonly customFunctionLocation = process.cwd() + "/" + FunctionFileSystem.functionFolder;
-
 export class FunctionFileSystem {
   private readonly functionsFolder : string;
   private readonly customFunctionsLocation : string;

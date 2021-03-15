@@ -26,7 +26,7 @@ export class FunctionsInstaller {
 
         throw error;
       });
-    ;
+
     console.log(`[BOps Function] Installed ${moduleName}@${version}`);
   }
 
