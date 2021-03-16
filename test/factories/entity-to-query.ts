@@ -11,7 +11,15 @@ const typeCreation = {
   string: (string : string, propName : string) : string => `&${propName}=${string}`,
   number: (number : number, propName : string) : string => `&${propName}=${number}`,
   boolean: (bool : boolean, propName : string) : string => `&${propName}=${bool.toString()}`,
+  // eslint-disable-next-line max-lines-per-function
   object: (object : object, propName ?: string) : string => {
+    if(object instanceof Array && typeof object[0] === "object") {
+      let q = "";
+      object.forEach((obj, index) => {
+        q += typeCreation.object(obj, `${propName}[${index}]`);
+      });
+      return  q;
+    }
     if(object instanceof Array) return `&${propName}[]=` + object.join(`&${propName}[]=`);
     if(object instanceof Date) return `&${propName}=${object.toISOString()}`;
 
