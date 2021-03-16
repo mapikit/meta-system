@@ -4,9 +4,10 @@ import chai from "chai";
 import { ExtendedHttpMethods, SchemaRoutesManager } from "@api/schemas/application/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios, { AxiosResponse } from "axios";
-import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import faker from "faker";
+import { MongoClient } from "mongodb";
+import { createFakeMongo } from "@test/doubles/mongo-server";
 
 const expect = chai.expect;
 
@@ -23,13 +24,13 @@ describe("Schema Handler Initialization Test", () => {
   const port = faker.random.number({ min: 8001, max: 8800, precision: 1 });
   let schema = schemaFactory({ routes: allRoutesEnabled });
   let systemName : string;
-  let fakeClient : InMemoryMongoClient;
+  let fakeClient : MongoClient;
   let schemaHandler : SchemaRoutesManager;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     schema = schemaFactory({ routes: allRoutesEnabled });
     systemName = faker.name.jobType();
-    fakeClient = new InMemoryMongoClient();
+    fakeClient = await createFakeMongo();
     schemaHandler = new SchemaRoutesManager(schema, fakeClient);
 
   });
@@ -56,11 +57,15 @@ describe("Schema Handler Initialization Test", () => {
   });
 
   it("Fails to initiate routes - Invalid schema name", async () => {
-    const invalidSchema = schemaFactory({ name : "some-symbols-are-prohibited$%$!@" });
+    const invalidSchema = schemaFactory({
+      routes: allRoutesEnabled,
+      name : "some-symbols-are-prohibited$%$!@",
+    });
+
     schemaHandler = new SchemaRoutesManager(invalidSchema, fakeClient);
     await schemaHandler.initialize(systemName)
       .then(() => {
-        expect(false).to.be.true;
+        chai.assert.fail("Route initialization successfull when expected to fail");
       })
       .catch(error => {
         expect(error.name).to.be.equal("RouteFormatError");
@@ -93,9 +98,10 @@ async function testMethods (methods : SchemasType["routes"], baseRoute : string)
       }
     }
     else {
-      await axios[method](`${baseRoute}/fakeId`).then((response : AxiosResponse) => {
-        expect(response.status).to.be.equal(200);
-      });
+      await axios[method](`${baseRoute}/${faker.random.alphaNumeric(12)}`, { fakeEntity: "fakeEntity" })
+        .then((response : AxiosResponse) => {
+          expect(response.status).to.be.equal(200);
+        });
     }
   }
 };

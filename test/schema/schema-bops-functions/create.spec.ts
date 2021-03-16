@@ -7,6 +7,8 @@ import { entityFactory } from "@test/factories/entity-factory";
 import { SchemaFunctions } from "@api/schemas/application/schema-bops-functions";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import { CloudedObject } from "@api/common/types/clouded-object";
+import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { createFakeMongo } from "@test/doubles/mongo-server";
 
 const expect = chai.expect;
 
@@ -14,14 +16,15 @@ describe("Bops Function - Create", () => {
   const schema = schemaFactory({});
 
   beforeEach(async () => {
-    await SchemaFunctions.repository.initialize(schema, "fakeSystem");
+    const repo = new MetaRepository(await createFakeMongo());
+    await SchemaFunctions.initialize(repo);
+    await repo.initialize(schema, "fakeSystem");
   });
 
   it("Successfully creates entity", async () => {
-    const entity : CloudedObject  = entityFactory(schema.format) as CloudedObject;
+    const entity : CloudedObject = entityFactory(schema.format) as CloudedObject;
     const result = await create.main({ entity });
     expect(result["createdEntity"]._id).not.to.be.undefined;
-    delete result["createdEntity"]._id; // The entity generated with "entityFactory" does not contain an Id
     expect(result["createdEntity"]).to.be.deep.equal(entity);
   });
 
