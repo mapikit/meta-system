@@ -62,11 +62,11 @@ export class SchemaRequestHandlers {
   static patch (repository : MetaRepository) : RequestHandler {
     return  async (req, res) : Promise<void> => {
       await repository.updateById(req.params.id, req.body)
-        .then((result) => {
+        .then(() => {
           res.statusCode = 200;
           res.send({
             message: "Entity Updated successfully",
-            updatedId: result.upsertedId,
+            updatedId: req.params.id,
           });
         })
         .catch(error => {
