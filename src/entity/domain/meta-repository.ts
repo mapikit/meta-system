@@ -1,13 +1,12 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
-import { DeleteWriteOpResultObject, FilterQuery, InsertOneWriteOpResult, UpdateWriteOpResult } from "mongodb";
-import { CollectionAttributes, DbAttributes, MongoClientAttributes } from "./types/mongo-attributes";
+import * as Mongo from "mongodb";
 
 export class MetaRepository {
-  private connection : MongoClientAttributes;
-  private db : DbAttributes;
-  private collection : CollectionAttributes;
+  private connection : Mongo.MongoClient;
+  private db : Mongo.Db;
+  private collection : Mongo.Collection;
 
-  constructor (connection : MongoClientAttributes) {
+  constructor (connection : Mongo.MongoClient) {
     this.connection = connection;
   }
 
@@ -22,27 +21,27 @@ export class MetaRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async insert (entity : unknown) : Promise<InsertOneWriteOpResult<any>> {
+  public async insert (entity : unknown) : Promise<Mongo.InsertOneWriteOpResult<any>> {
     return this.collection.insertOne(entity);
   }
 
-  public async deleteById (id : string) : Promise<DeleteWriteOpResultObject> {
-    return this.collection.deleteOne({ _id : id });
+  public async deleteById (id : string) : Promise<Mongo.DeleteWriteOpResultObject> {
+    return this.collection.deleteOne({ _id : new Mongo.ObjectId(id) });
   }
 
-  public async updateById (entityId : string, newValue : unknown) : Promise<UpdateWriteOpResult> {
-    return this.collection.updateOne({ _id : entityId }, newValue);
+  public async updateById (entityId : string, newValue : unknown) : Promise<Mongo.UpdateWriteOpResult> {
+    return this.collection.updateOne({ _id : new Mongo.ObjectId(entityId) }, { $set: newValue });
   }
 
   public async findById (entityId : string) : Promise<unknown> {
-    return this.collection.find({ _id: entityId }).next();
+    return this.collection.findOne({ _id: new Mongo.ObjectId(entityId) });
   }
 
   public async findByProperty (propertyName : string, propertyValue : unknown) : Promise<unknown> {
     return this.collection.find({ [propertyName] : propertyValue }).toArray();
   }
 
-  public async query<T> (query : FilterQuery<T>) : Promise<unknown> {
+  public async query<T> (query : Mongo.FilterQuery<T>) : Promise<unknown> {
     return this.collection.find(query).toArray();
   }
 
