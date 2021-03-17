@@ -14,11 +14,11 @@ const typeCreation = {
   // eslint-disable-next-line max-lines-per-function
   object: (object : object, propName ?: string) : string => {
     if(object instanceof Array && typeof object[0] === "object") {
-      let q = "";
+      let query = "";
       object.forEach((obj, index) => {
-        q += typeCreation.object(obj, `${propName}[${index}]`);
+        query += typeCreation.object(obj, `${propName}[${index}]`);
       });
-      return  q;
+      return  query;
     }
     if(object instanceof Array) return `&${propName}[]=` + object.join(`&${propName}[]=`);
     if(object instanceof Date) return `&${propName}=${object.toISOString()}`;
