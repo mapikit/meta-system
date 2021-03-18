@@ -8,6 +8,8 @@ import { random } from "faker";
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { expect } from "chai";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
+import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { createFakeMongo } from "@test/doubles/mongo-server";
 
 const randomPartialObject = (fromSchema : SchemasType) : CloudedObject => {
   const resultObject : CloudedObject = {};
@@ -26,7 +28,10 @@ describe("Update By Id - Schema BOPs function", () => {
   const schema = schemaFactory({});
 
   beforeEach(async () => {
-    await SchemaFunctions.repository.initialize(schema, "fakeSystem");
+    const fakeClient = await createFakeMongo();
+    const repo = new MetaRepository(fakeClient);
+    await SchemaFunctions.initialize(repo);
+    await repo.initialize(schema, "fakeSystem");
   });
 
   it("Updates a schema in the Database", async () => {
@@ -40,10 +45,10 @@ describe("Update By Id - Schema BOPs function", () => {
 
     const result = await updateById.main({ id: resultId, valuesToUpdate: partialChange });
 
-    expect(result["updatedEntity"]._id).be.equal(resultId);
+    expect(result["updatedEntity"]._id).be.deep.equal(resultId);
 
     for (const property in partialChange) {
-      expect(result["updatedEntity"][property]).to.be
+      expect(result["updatedEntity"][property]).to.be.deep
         .equal(partialChange[property], `Property ${property} must be updated to ${partialChange[property]}`);
     }
 
@@ -51,14 +56,14 @@ describe("Update By Id - Schema BOPs function", () => {
   });
 
   it("Fails to update due to Null ID", async () => {
-    const result = await updateById.main({ id: null, valuesToUpdate: {} });
+    const result = await updateById.main({ id: null, valuesToUpdate: { fake: "property" } });
 
     expect(result["updatedEntity"]).be.undefined;
     expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.nullInput);
   });
 
   it("Fails to update due to ID Not found", async () => {
-    const result = await updateById.main({ id: random.alphaNumeric(15), valuesToUpdate: {} });
+    const result = await updateById.main({ id: random.alphaNumeric(12), valuesToUpdate: { fake: "property" } });
 
     expect(result["updatedEntity"]).be.undefined;
     expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.notFound);

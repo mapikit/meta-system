@@ -36,7 +36,7 @@ const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
   array: (maxDepth : number) : SchemaTypeDefinitionArray => {
     return {
       type: "array",
-      data:  faker.random.arrayElement([...basicStrings, typeFactory.object(maxDepth-1)]),
+      data:  faker.random.arrayElement([...basicStrings, typeFactory.object(maxDepth-1).data]),
     };
   },
 };

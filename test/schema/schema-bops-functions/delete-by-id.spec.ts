@@ -9,13 +9,20 @@ import { SchemaFunctions } from "@api/schemas/application/schema-bops-functions"
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import faker from "faker";
 import { CloudedObject } from "@api/common/types/clouded-object";
+import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { createFakeMongo } from "@test/doubles/mongo-server";
+import { MongoClient, ObjectId } from "mongodb";
 
 const expect = chai.expect;
 describe("Bops Function - Delete by Id", () => {
   const schema = schemaFactory({});
+  let fakeClient : MongoClient;
 
   beforeEach(async () => {
-    await SchemaFunctions.repository.initialize(schema, "fakeSystem");
+    fakeClient = await createFakeMongo();
+    const repo = new MetaRepository(fakeClient);
+    await SchemaFunctions.initialize(repo);
+    await repo.initialize(schema, "fakeSystem");
   });
 
   it("Successfully deletes entity", async () => {
@@ -23,8 +30,12 @@ describe("Bops Function - Delete by Id", () => {
     const createdEntity = (await create.main({ entity }))["createdEntity"];
     const result = await deleteById.main({ id: createdEntity["_id"] });
     expect(result["deleted"]).not.to.be.undefined;
-    expect(result["deleted"]._id).to.be.equal(createdEntity["_id"]);
-    const foundAfterDeletion = SchemaFunctions.repository.findById(createdEntity["_id"]);
+    expect(result["deleted"]._id).to.be.deep.equal(createdEntity["_id"]);
+    const foundAfterDeletion =
+      fakeClient.db("fakeSystem")
+        .collection(schema.name)
+        .findOne({ _id: new ObjectId(createdEntity["_id"]) });
+
     expect(foundAfterDeletion).to.be.empty;
   });
 

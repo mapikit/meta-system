@@ -1,8 +1,8 @@
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
-import { MongoClientAttributes } from "@api/entity/domain/types/mongo-attributes";
 import { SchemaRequestHandlers } from "@api/schemas/application/request-handlers";
 import MetaRouter, { HttpMethods } from "@api/common/meta-router";
+import { MongoClient } from "mongodb";
 
 export type ExtendedHttpMethods = HttpMethods | "query";
 
@@ -11,14 +11,13 @@ export class SchemaRoutesManager {
   private repository : MetaRepository;
   public router : MetaRouter;
 
-  constructor (schema : SchemasType, dbConnection : MongoClientAttributes) {
+  constructor (schema : SchemasType, dbConnection : MongoClient) {
     this.schema = schema;
     this.repository = new MetaRepository(dbConnection);
   }
 
   public async initialize (systemName : string) : Promise<void> {
     this.router = new MetaRouter(`/${systemName}`);
-    await this.repository.initialize(this.schema, systemName);
 
     const idlessRoutes : ExtendedHttpMethods[] = ["query", "post"];
     for(const method of this.getActiveMethods(this.schema.routes)) {
@@ -28,6 +27,7 @@ export class SchemaRoutesManager {
         SchemaRequestHandlers[method](this.repository, this.schema.format),
       );
     }
+    await this.repository.initialize(this.schema, systemName);
   }
 
   private getActiveMethods (methods : SchemasType["routes"]) : Array<ExtendedHttpMethods> {

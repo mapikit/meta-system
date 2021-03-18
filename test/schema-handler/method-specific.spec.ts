@@ -4,11 +4,12 @@ import chai from "chai";
 import { SchemaRoutesManager } from "@api/schemas/application/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios from "axios";
-import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
 import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import faker from "faker";
 import { entityFactory } from "@test/factories/entity-factory";
 import { entityToQuery } from "@test/factories/entity-to-query";
+import { MongoClient } from "mongodb";
+import { createFakeMongo } from "@test/doubles/mongo-server";
 
 const expect = chai.expect;
 
@@ -26,14 +27,14 @@ describe("Schema Handler Methods Test", () => {
   let schema = schemaFactory({ routes: allRoutesEnabled });
   let systemName : string;
   let entity : object;
-  let fakeClient : InMemoryMongoClient;
+  let fakeClient : MongoClient;
   let schemaHandler : SchemaRoutesManager;
 
   beforeEach(async () => {
     schema = schemaFactory({ routes: allRoutesEnabled });
     systemName = faker.name.jobType();
     entity = entityFactory(schema.format);
-    fakeClient = new InMemoryMongoClient();
+    fakeClient = await createFakeMongo();
     schemaHandler = new SchemaRoutesManager(schema, fakeClient);
 
     await schemaHandler.initialize(systemName);
@@ -46,46 +47,49 @@ describe("Schema Handler Methods Test", () => {
 
   it("Post method successfull", async () => {
     await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity)
-      .then(response => {
+      .then(async response => {
         expect(response.data.message).to.be.equal("Inserted entity successfully");
-        const foundKeys = Object.keys(fakeClient.db(systemName).collection(schema.name)["entities"][0]);
-        const expectedKeys = Object.keys(entity);
-        expectedKeys.unshift("_id");
-        expect(foundKeys).to.be.deep.equal(expectedKeys);
+        const foundEntity = await fakeClient.db(systemName).collection(schema.name).find().next();
+        delete foundEntity._id;
+        datesToString(entity);
+        expect(foundEntity).to.be.deep.equal(entity);
       });
   });
 
   it("Query [Get] method successfull", async () => {
     const query = entityToQuery(entity);
-    let entityId : string;
     const duplicateEntity = entity; //Will also be found on query
-    await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, duplicateEntity);
     await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity)
-      .then(response => { entityId = response.data.insertedId; });
+      .catch(() => { chai.assert.fail("Failed on first entity insertion"); });
+
+    await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, duplicateEntity)
+      .catch(() => { chai.assert.fail("Failed on second entity insertion"); });
 
     await axios.get(`http://localhost:${port}/${systemName}/${schema.name}?${query}`)
-      .then(response => {
+      .then(async response => {
         expect(response.data.length).to.be.equal(2);
-        const secondEntity = response.data.find(returnedEntity => returnedEntity._id === entityId);
-        expect(secondEntity).not.to.be.undefined;
-        const foundKeys = Object.keys(response.data[0]);
-        const entityKeys = Object.keys(entity);
-        entityKeys.unshift("_id");
-        expect(foundKeys).to.be.deep.equal(entityKeys);
+
+        const entitiesFound = response.data;
+        entitiesFound.forEach(ent => { delete ent._id; });
+        datesToString(entity);
+        expect(entitiesFound[0]).to.be.deep.equal(entity);
+        expect(entitiesFound[1]).to.be.deep.equal(entity);
       });
   });
 
   it("Delete method successfull", async () => {
-    const entities = fakeClient.db(systemName).collection(schema.name).entities;
     let entityId : string;
     await axios.post(`http://localhost:${port}/${systemName}/${schema.name}`, entity)
-      .then(response => {
+      .then(async response => {
         entityId = response.data.insertedId;
+        const entitiesAfterInsertion = await fakeClient.db(systemName).collection(schema.name).find().toArray();
+        expect(entitiesAfterInsertion).not.to.be.empty;
       });
 
-    expect(entities).not.to.be.empty;
-    await axios.delete(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`);
-    expect(entities).to.be.empty;
+    await axios.delete(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`).then(async () => {
+      const entitiesAfterDeletion = await fakeClient.db(systemName).collection(schema.name).find().toArray();
+      expect(entitiesAfterDeletion).to.be.empty;
+    });
   });
 
   it("Put method successfull", async () => {
@@ -97,9 +101,10 @@ describe("Schema Handler Methods Test", () => {
 
     const newEntity = entityFactory(schema.format);
     await axios.put(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`, newEntity);
-    const found = fakeClient.db(systemName).collection(schema.name).entities[0];
+    const found = await fakeClient.db(systemName).collection(schema.name).find().next();
     delete found._id;
-    expect(JSON.stringify(found)).to.be.equal(JSON.stringify(newEntity));
+    datesToString(newEntity);
+    expect(found).to.be.deep.equal(newEntity);
   });
 
   it("Patch method successfull", async () => {
@@ -110,10 +115,14 @@ describe("Schema Handler Methods Test", () => {
       });
 
     const newEntity = entityFactory(schema.format);
-    await axios.patch(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`, newEntity);
-    const found = fakeClient.db(systemName).collection(schema.name).entities[0];
-    delete found._id;
-    expect(JSON.stringify(found)).to.be.equal(JSON.stringify(newEntity));
+    await axios.patch(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`, newEntity)
+      .then(async () => {
+        const found = await fakeClient.db(systemName).collection(schema.name).find().next();
+        delete found._id;
+        datesToString(found);
+        datesToString(newEntity);
+        expect(found).to.be.deep.equal(newEntity);
+      });
   });
 
   it("Get method successfull", async () => {
@@ -124,13 +133,23 @@ describe("Schema Handler Methods Test", () => {
       });
 
     await axios.get(`http://localhost:${port}/${systemName}/${schema.name}/${entityId}`)
-      .then(response => {
-        const foundKeys = Object.keys(response.data);
-        const expectedKeys = Object.keys(entity);
-        expectedKeys.unshift("_id");
-        expect(foundKeys).to.be.deep.equal(expectedKeys);
+      .then(async response => {
+        delete response.data._id;
+        datesToString(entity);
+        expect(response.data).to.be.deep.equal(entity);
       });
   });
 });
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function datesToString (entity : Record<string, any>) : void {
+  for(const key in entity) {
+    if(entity[key] instanceof Object) {
+      datesToString(entity[key]);
+    }
+    if(entity[key] instanceof Date) {
+      entity[key] = entity[key].toISOString();
+    }
+  }
+}

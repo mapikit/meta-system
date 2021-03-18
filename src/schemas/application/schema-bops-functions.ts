@@ -3,15 +3,15 @@ import { CloudedObject } from "@api/common/types/clouded-object";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
-import { InMemoryMongoClient } from "@test/doubles/in-memory-mongo-client";
 
 type SchemasFunctionsTypes = {
   [key in SchemasFunctions] : Function;
 }
 
 class SchemasBopsFunctions implements SchemasFunctionsTypes {
-  public repository : MetaRepository;
-  constructor (repository : MetaRepository) {
+  private repository : MetaRepository;
+
+  public async initialize (repository : MetaRepository) : Promise<void> {
     this.repository = repository;
   }
 
@@ -89,8 +89,4 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
 };
 
 
-const repo = new MetaRepository(new InMemoryMongoClient());
-// TODO this will eventually be aquired from systemConfig as below:
-// const config = new Configuration(systemConfig)
-// const repo = new MetaRepository(new MongoClient(config.dbConnectionString));
-export const SchemaFunctions = new SchemasBopsFunctions(repo);
+export const SchemaFunctions = new SchemasBopsFunctions();

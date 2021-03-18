@@ -15,17 +15,18 @@ class TypeResolver {
   static string (query : string) : string { return query; };
   static number (query : string) : number { return Number(query); };
   static boolean (query : string) : boolean { return query === "true"; };
-  static date (query : string) : Date { return new Date(query); };
+  static date (query : string) : string { return new Date(query).toISOString(); };
+  //Mongo stores dates as strings
   static object (query : unknown, dataFormat : SchemaObject) : object {
     if(typeof query === "object") return parseQuery(query, dataFormat);
   };
 
-  static array (query : unknown, dataFormat : string) : Array<unknown> {
+  static array (query : unknown, dataFormat : unknown) : Array<unknown> {
     if(query instanceof Array) {
       const array = [];
       const dataType = typeof dataFormat == "string" ? dataFormat : "object";
       query.forEach(property => {
-        array.push(TypeResolver[dataType](property));
+        array.push(TypeResolver[dataType](property, dataFormat));
       });
       return array;
     }

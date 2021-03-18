@@ -7,13 +7,18 @@ import { expect } from "chai";
 import { random } from "faker";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import { CloudedObject } from "@api/common/types/clouded-object";
-
+import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { createFakeMongo } from "@test/doubles/mongo-server";
+import isNill from "@api/common/assertions/is-nill";
 
 describe("Schemas BOPS functions - Get By ID", () => {
   const schema = schemaFactory({});
 
   beforeEach(async () => {
-    await SchemaFunctions.repository.initialize(schema, "fakeSystem");
+    const fakeClient = await createFakeMongo();
+    const repo = new MetaRepository(fakeClient);
+    await SchemaFunctions.initialize(repo);
+    await repo.initialize(schema, "fakeSystem");
   });
 
   it("Successfully gets an existing Schema from the DB", async () => {
@@ -23,14 +28,14 @@ describe("Schemas BOPS functions - Get By ID", () => {
     const result = await getById.main({ id: createdEntity["_id"] });
 
     expect(result["found"]).be.true;
-    expect(result["entity"]._id).to.be.equal(createdEntity["_id"]);
+    expect(result["entity"]._id).to.be.deep.equal(createdEntity["_id"]);
   });
 
   it("Gets no Schema", async () => {
-    const result = await getById.main({ id: random.alphaNumeric(10) });
+    const result = await getById.main({ id: random.alphaNumeric(12) });
 
     expect(result["found"]).be.false;
-    expect(result["entity"]).to.be.undefined;
+    expect(isNill(result["entity"])).to.be.true;
   });
 
   it("Fails to execute", async () => {

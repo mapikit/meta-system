@@ -26,7 +26,7 @@ export type SchemaTypeDefinitionParameter = {
 
 export type SchemaTypeDefinitionArray = {
   type : "array";
-  data : "string" | "boolean" | "number" | "date" | Record<string, SchemaObject>;
+  data : "string" | "boolean" | "number" | "date" | SchemaObject;
   refName ?: string;
 }
 
