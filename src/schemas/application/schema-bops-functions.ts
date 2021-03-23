@@ -68,7 +68,10 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
     return { updatedEntity: await this.repository.findById(input.id) };
   }
 
-  public get = null;
+  public async get (query : Record<string, unknown>) : Promise<unknown | SchemaFunctionErrorType> {
+    
+  };
+
   public update = null;
   public delete = null;
 

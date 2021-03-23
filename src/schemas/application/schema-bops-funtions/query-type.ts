@@ -2,12 +2,25 @@ export type QueryType = {
   [K : string] : PropertyQuery;
 }
 
-type PropertyQuery = TypeStringQuery | TypeNumberQuery
+export type PropertyQuery = TypeStringQuery | TypeNumberQuery
 | TypeDateQuery | TypeBooleanQuery | TypeStringArrayQuery | QueryType
 | TypeNumberArrayQuery | TypeBooleanArrayQuery | TypeDateArrayQuery
 | TypeObjectArrayQuery;
 
-interface TypeStringQuery {
+export enum QueryTypes {
+  string,
+  number,
+  date,
+  boolean,
+  stringArray,
+  numberArray,
+  booleanArray,
+  dateArray,
+  object,
+  objectArray,
+}
+
+export interface TypeStringQuery {
   equal_to ?: string;
   not_equal_to ?: string;
   one_of ?: string[];
@@ -16,7 +29,7 @@ interface TypeStringQuery {
   regexp ?: string;
 }
 
-interface TypeNumberQuery {
+export interface TypeNumberQuery {
   equal_to ?: number;
   not_equal_to ?: number;
   greater_than ?: number;
@@ -28,7 +41,7 @@ interface TypeNumberQuery {
   exists ?: boolean;
 }
 
-interface TypeDateQuery {
+export interface TypeDateQuery {
   equal_to ?: string;
   not_equal_to ?: string;
   greater_than ?: string;
@@ -40,7 +53,7 @@ interface TypeDateQuery {
   exists ?: boolean;
 }
 
-interface TypeBooleanQuery {
+export interface TypeBooleanQuery {
   equal_to ?: boolean;
   not_equal_to ?: boolean;
   exists ?: boolean;
@@ -52,7 +65,7 @@ interface TypeArrayQuery {
   exists ?: boolean;
 }
 
-interface TypeStringArrayQuery extends TypeArrayQuery {
+export interface TypeStringArrayQuery extends TypeArrayQuery {
   all_are_equal_to ?: string;
   all_are_not_equal_to ?: string;
   all_are_one_of ?: string[];
@@ -65,7 +78,7 @@ interface TypeStringArrayQuery extends TypeArrayQuery {
   at_least_one_is_regexp ?: string;
 }
 
-interface TypeNumberArrayQuery extends TypeArrayQuery {
+export interface TypeNumberArrayQuery extends TypeArrayQuery {
   all_are_equal_to ?: number;
   all_are_not_equal_to ?: number;
   all_are_greater_than ?: number;
@@ -84,14 +97,14 @@ interface TypeNumberArrayQuery extends TypeArrayQuery {
   at_least_one_is_not_one_of ?: number[];
 }
 
-interface TypeBooleanArrayQuery extends TypeArrayQuery {
+export interface TypeBooleanArrayQuery extends TypeArrayQuery {
   all_are_equal_to ?: boolean;
   all_are_not_equal_to ?: boolean;
   at_least_one_is_equal_to ?: boolean;
   at_least_one_is_not_equal_to ?: boolean;
 }
 
-interface TypeDateArrayQuery extends TypeArrayQuery {
+export interface TypeDateArrayQuery extends TypeArrayQuery {
   all_are_equal_to ?: string;
   all_are_not_equal_to ?: string;
   all_are_greater_than ?: string;
@@ -111,7 +124,7 @@ interface TypeDateArrayQuery extends TypeArrayQuery {
   at_least_one_is_exists ?: boolean;
 }
 
-interface TypeObjectArrayQuery extends TypeArrayQuery {
+export interface TypeObjectArrayQuery extends TypeArrayQuery {
   all_are : QueryType;
   at_least_one_is : QueryType;
 }
