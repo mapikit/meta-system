@@ -3,9 +3,11 @@ import {
   QueryTypes,
   TypeBooleanArrayQuery,
   TypeBooleanQuery,
+  TypeDateArrayQuery,
   TypeDateQuery,
   TypeNumberArrayQuery,
   TypeNumberQuery,
+  TypeObjectArrayQuery,
   TypeStringArrayQuery,
   TypeStringQuery,
 } from "@api/schemas/application/schema-bops-funtions/query-type";
@@ -19,6 +21,8 @@ const valueToReplaceNumberArray = [valueToReplaceNumber];
 const valueToReplaceDate = new Date(- Math.PI * 1000000000000);
 const valueToReplaceDateArray = [valueToReplaceDate];
 const valueToReplaceBooleanArray = [valueToReplaceBoolean];
+const valueToReplaceObject = { 0: null };
+const valueToReplaceObjectArray = [valueToReplaceObject];
 
 export const stringQueryTranslationMap : Map<keyof TypeStringQuery, QuerySelector<string>> = new Map();
 stringQueryTranslationMap.set("equal_to", { "$eq": valueToReplaceString });
@@ -93,6 +97,32 @@ booleanArrayQueryTranslationMap.set("contains_none_of", { "$elemMatch": { "$nin"
 booleanArrayQueryTranslationMap.set("not_contains", { "$elemMatch": { "$not": valueToReplaceBoolean } });
 booleanArrayQueryTranslationMap.set("size", { "$size": valueToReplaceNumber });
 
+export const dateArrayQueryTranslationMap :
+Map<keyof TypeDateArrayQuery, QuerySelector<Array<Date>>> = new Map();
+dateArrayQueryTranslationMap.set("contains", { "$all": [valueToReplaceDate] });
+dateArrayQueryTranslationMap.set("contains_all", { "$all": valueToReplaceDateArray });
+dateArrayQueryTranslationMap.set("exists", { "$exists": valueToReplaceBoolean });
+dateArrayQueryTranslationMap.set("identical_to", { "$eq": valueToReplaceDateArray });
+dateArrayQueryTranslationMap.set("contains_one_of", { "$elemMatch": { "$in": valueToReplaceDateArray } });
+dateArrayQueryTranslationMap.set("contains_none_of", { "$elemMatch": { "$nin": valueToReplaceDateArray } });
+dateArrayQueryTranslationMap.set("not_contains", { "$elemMatch": { "$not": valueToReplaceDate } });
+dateArrayQueryTranslationMap.set("size", { "$size": valueToReplaceNumber });
+dateArrayQueryTranslationMap.set("contains_higher_than", { "$elemMatch": { "$gt": valueToReplaceDate } });
+dateArrayQueryTranslationMap.set("contains_higher_or_equal_to", { "$elemMatch": { "$gte": valueToReplaceDate } });
+dateArrayQueryTranslationMap.set("contains_lower_than", { "$elemMatch": { "$lt": valueToReplaceDate } });
+dateArrayQueryTranslationMap.set("contains_lower_or_equal_to", { "$elemMatch": { "$lte": valueToReplaceDate } });
+
+export const objectArrayQueryTranslationMap :
+Map<keyof TypeObjectArrayQuery, QuerySelector<Array<object>>> = new Map();
+objectArrayQueryTranslationMap.set("contains", { "$all": [valueToReplaceObject] });
+objectArrayQueryTranslationMap.set("contains_all", { "$all": valueToReplaceObjectArray });
+objectArrayQueryTranslationMap.set("exists", { "$exists": valueToReplaceBoolean });
+objectArrayQueryTranslationMap.set("identical_to", { "$eq": valueToReplaceObjectArray });
+objectArrayQueryTranslationMap.set("contains_one_of", { "$elemMatch": { "$in": valueToReplaceObjectArray } });
+objectArrayQueryTranslationMap.set("contains_none_of", { "$elemMatch": { "$nin": valueToReplaceObjectArray } });
+objectArrayQueryTranslationMap.set("not_contains", { "$elemMatch": { "$not": valueToReplaceObject } });
+objectArrayQueryTranslationMap.set("size", { "$size": valueToReplaceNumber });
+
 export const queryTranslationMap : Map<QueryTypes, Map<keyof QueryType, QuerySelector<unknown>>> = new Map();
 queryTranslationMap.set(QueryTypes.string, stringQueryTranslationMap);
 queryTranslationMap.set(QueryTypes.number, numberQueryTranslationMap);
@@ -101,4 +131,5 @@ queryTranslationMap.set(QueryTypes.boolean, booleanQueryTranslationMap);
 queryTranslationMap.set(QueryTypes.stringArray, stringArrayQueryTranslationMap);
 queryTranslationMap.set(QueryTypes.numberArray, numberArrayQueryTranslationMap);
 queryTranslationMap.set(QueryTypes.booleanArray, booleanArrayQueryTranslationMap);
-
+queryTranslationMap.set(QueryTypes.dateArray, dateArrayQueryTranslationMap);
+queryTranslationMap.set(QueryTypes.objectArray, objectArrayQueryTranslationMap);

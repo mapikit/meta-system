@@ -86,12 +86,9 @@ export type TypeBooleanArrayQuery = TypeArrayQuery<boolean>;
 
 export interface TypeDateArrayQuery extends TypeArrayQuery<Date> {
   contains_higher_than ?: Date;
-  continas_higher_or_equal_to ?: Date;
+  contains_higher_or_equal_to ?: Date;
   contains_lower_than ?: Date;
   contains_lower_or_equal_to ?: Date;
 }
 
-export interface TypeObjectArrayQuery extends TypeArrayQuery<QueryType> {
-  all_are : QueryType;
-  at_least_one_is : QueryType;
-}
+export type TypeObjectArrayQuery = TypeArrayQuery<QueryType>;
