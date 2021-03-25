@@ -7,6 +7,7 @@ import {
 } from "@api/schemas/application/schema-bops-funtions/query-type";
 import { SchemaObject, SchemasType, SchemaTypeDefinition } from "@api/configuration-de-serializer/domain/schemas-type";
 import { queryTranslationMap } from "@api/schemas/application/query-builder/query-translation-type";
+import { queryValueReplace } from "@api/schemas/application/query-builder/query-value-replace";
 
 export class MongoSchemaQueryBuilder {
   private readonly schemaFormat : SchemaObject;
@@ -35,21 +36,16 @@ export class MongoSchemaQueryBuilder {
     return this.buildQuery<string>(queryInput, QueryTypes.string);
   }
 
-  // eslint-disable-next-line max-lines-per-function
   private buildQuery<T> (queryInput : PropertyQuery, type : QueryTypes) : QuerySelector<T> {
     const currentTypeQueryTranslationMap = queryTranslationMap.get(type);
 
     const result : QuerySelector<T> = {};
 
     Object.keys(queryInput).forEach((key) => {
-      const translatedKey = currentTypeQueryTranslationMap.get(key as keyof TypeStringQuery);
-      // Typescript throws a weird error if we try to set the property on the result object
-      // so this other approach was chosen.
-      const intermediaryObject : Record<string, unknown> = {};
+      const translatedQuery = currentTypeQueryTranslationMap.get(key);
+      const query = queryValueReplace(translatedQuery, queryInput[key]);
 
-      intermediaryObject[translatedKey] = queryInput[key];
-
-      Object.assign(result, intermediaryObject);
+      Object.assign(result, query);
     });
 
     return result;
