@@ -32,5 +32,5 @@ export type SchemaTypeDefinitionArray = {
 
 export type SchemaTypeDefinitionObject = {
   type : "object";
-  data : Record<string, SchemaTypeDefinition>;
+  data : SchemaObject;
 }
