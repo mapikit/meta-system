@@ -8,12 +8,12 @@ import { valueToReplaceBoolean,
   valueToReplaceObject,
   valueToReplaceObjectArray,
   valueToReplaceString,
-  valueToReplaceStringArray
+  valueToReplaceStringArray,
 } from "@api/schemas/application/query-builder/query-translation-type";
 
-export const queryValueReplace = <T>(mongoQuery : QuerySelector<T>, replacer : unknown) :
-QuerySelector<T> => {
-  const result = Object.assign({}, mongoQuery);
+export const queryValueReplace = <T>(query : QuerySelector<T>, replacer : unknown) :
+object => {
+  const result = Array.isArray(query) ? [...query] : Object.assign({}, query);
 
   Object.keys(result).forEach((key) => {
     if (isReplaceableValue(result[key])) {

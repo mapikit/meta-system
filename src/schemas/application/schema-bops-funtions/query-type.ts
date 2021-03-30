@@ -91,4 +91,4 @@ export interface TypeDateArrayQuery extends TypeArrayQuery<Date> {
   contains_lower_or_equal_to ?: Date;
 }
 
-export type TypeObjectArrayQuery = TypeArrayQuery<QueryType>;
+export type TypeObjectArrayQuery = TypeArrayQuery<object>;

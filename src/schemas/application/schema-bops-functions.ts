@@ -69,7 +69,7 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
   }
 
   public async get (query : Record<string, unknown>) : Promise<unknown | SchemaFunctionErrorType> {
-    
+    return null;
   };
 
   public update = null;
