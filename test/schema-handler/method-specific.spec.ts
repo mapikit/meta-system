@@ -10,6 +10,7 @@ import { entityFactory } from "@test/factories/entity-factory";
 import { entityToQuery } from "@test/factories/entity-to-query";
 import { MongoClient } from "mongodb";
 import { createFakeMongo } from "@test/doubles/mongo-server";
+import { MetaRepository } from "@api/entity/domain/meta-repository";
 
 const expect = chai.expect;
 
@@ -35,7 +36,7 @@ describe("Schema Handler Methods Test", () => {
     systemName = faker.name.jobType();
     entity = entityFactory(schema.format);
     fakeClient = await createFakeMongo();
-    schemaHandler = new SchemaRoutesManager(schema, fakeClient);
+    schemaHandler = new SchemaRoutesManager(schema, new MetaRepository(fakeClient));
 
     await schemaHandler.initialize(systemName);
     await schemaHandler.router.listenOnPort(port);

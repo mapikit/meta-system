@@ -1,18 +1,32 @@
 import isNill from "@api/common/assertions/is-nill";
 import { CloudedObject } from "@api/common/types/clouded-object";
+import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
+import { FilterQuery } from "mongodb";
+import { MongoSchemaQueryBuilder } from "./query-builder/query-builder";
 
 type SchemasFunctionsTypes = {
   [key in SchemasFunctions] : Function;
 }
 
-class SchemasBopsFunctions implements SchemasFunctionsTypes {
-  private repository : MetaRepository;
+export class SchemasBopsFunctions implements SchemasFunctionsTypes {
+  private readonly repository : MetaRepository;
+  private workingSchema : SchemasType;
 
-  public async initialize (repository : MetaRepository) : Promise<void> {
-    this.repository = repository;
+  public constructor (options : { MetaRepository : MetaRepository }) {
+    this.repository = options.MetaRepository;
+
+    this.create = this.create.bind(this);
+    this.getById = this.getById.bind(this);
+    this.get = this.get.bind(this);
+    this.updateById = this.updateById.bind(this);
+    this.deleteById = this.deleteById.bind(this);
+  }
+
+  public set schema (schemaType : SchemasType) {
+    this.workingSchema = schemaType;
   }
 
   public async create (input : { entity : CloudedObject })
@@ -68,25 +82,39 @@ class SchemasBopsFunctions implements SchemasFunctionsTypes {
     return { updatedEntity: await this.repository.findById(input.id) };
   }
 
-  public get = null;
+  public async get (query : Record<string, unknown>) : Promise<unknown | SchemaFunctionErrorType> {
+    const queryBuilder = new MongoSchemaQueryBuilder(query, this.workingSchema);
+    let dbQuery : FilterQuery<unknown>;
+    let errorMessage;
+
+    try { dbQuery = queryBuilder.getFullMongoQuery(); }
+    catch { errorMessage = SchemaFunctionErrors.get.invalidSearchArgument; }
+
+    const result = await this.repository.query(dbQuery)
+      .catch(() => { errorMessage = SchemaFunctionErrors.get.genericError; });
+
+    if (errorMessage !== undefined) {
+      return ({ errorMessage });
+    }
+
+    return ({ entities: result });
+  };
+
   public update = null;
   public delete = null;
 
-  public async deleteById (id : string) : Promise<unknown | SchemaFunctionErrorType> {
-    if(isNill(id)) {
+  public async deleteById (input : { id : string }) : Promise<unknown | SchemaFunctionErrorType> {
+    if(isNill(input.id)) {
       return ({ errorMessage: SchemaFunctionErrors.deleteById.nullInput });
     };
 
-    const entity = await this.repository.findById(id);
+    const entity = await this.repository.findById(input.id);
 
     if(isNill(entity)) {
       return ({ errorMessage: SchemaFunctionErrors.deleteById.notFound });
     };
 
-    await this.repository.deleteById(id);
+    await this.repository.deleteById(input.id);
     return { deleted: entity };
   };
 };
-
-
-export const SchemaFunctions = new SchemasBopsFunctions();

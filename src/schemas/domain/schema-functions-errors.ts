@@ -50,13 +50,25 @@ const UpdateByIdErrors = {
   },
 };
 
+const GetErrors = {
+  invalidSearchArgument: {
+    errorCode: "G001",
+    message: "Invalid Search Argument",
+  },
+  genericError: {
+    errorCode: "G002",
+    message: "A unmapped error has happened. This possibly means that" +
+      " some configuration in the server was off, or the communication channel was shut down.",
+  },
+};
+
 export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   create : CreateErrors,
   getById : GetByIdErrors,
   deleteById : DeleteByIdErrors,
   updateById : UpdateByIdErrors,
+  get : GetErrors,
 
-  get : null,
   update : null,
   delete : null,
 };

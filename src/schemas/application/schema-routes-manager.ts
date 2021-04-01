@@ -2,7 +2,6 @@ import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-typ
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaRequestHandlers } from "@api/schemas/application/request-handlers";
 import MetaRouter, { HttpMethods } from "@api/common/meta-router";
-import { MongoClient } from "mongodb";
 
 export type ExtendedHttpMethods = HttpMethods | "query";
 
@@ -11,9 +10,9 @@ export class SchemaRoutesManager {
   private repository : MetaRepository;
   public router : MetaRouter;
 
-  constructor (schema : SchemasType, dbConnection : MongoClient) {
+  constructor (schema : SchemasType, metaRepository : MetaRepository) {
     this.schema = schema;
-    this.repository = new MetaRepository(dbConnection);
+    this.repository = metaRepository;
   }
 
   public async initialize (systemName : string) : Promise<void> {

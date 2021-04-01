@@ -8,6 +8,7 @@ import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-typ
 import faker from "faker";
 import { MongoClient } from "mongodb";
 import { createFakeMongo } from "@test/doubles/mongo-server";
+import { MetaRepository } from "@api/entity/domain/meta-repository";
 
 const expect = chai.expect;
 
@@ -31,7 +32,7 @@ describe("Schema Handler Initialization Test", () => {
     schema = schemaFactory({ routes: allRoutesEnabled });
     systemName = faker.name.jobType();
     fakeClient = await createFakeMongo();
-    schemaHandler = new SchemaRoutesManager(schema, fakeClient);
+    schemaHandler = new SchemaRoutesManager(schema, new MetaRepository(fakeClient));
 
   });
 
@@ -62,7 +63,7 @@ describe("Schema Handler Initialization Test", () => {
       name : "some-symbols-are-prohibited$%$!@",
     });
 
-    schemaHandler = new SchemaRoutesManager(invalidSchema, fakeClient);
+    schemaHandler = new SchemaRoutesManager(invalidSchema, new MetaRepository(fakeClient));
     await schemaHandler.initialize(systemName)
       .then(() => {
         chai.assert.fail("Route initialization successfull when expected to fail");
