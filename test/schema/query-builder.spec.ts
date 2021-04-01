@@ -1,77 +1,10 @@
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { MongoSchemaQueryBuilder } from "@api/schemas/application/query-builder/query-builder";
 import { expect } from "chai";
+import { complexExampleSchema } from "@test/schema/common-schemas/complex-example-schema";
+import { flatExampleSchema } from "@test/schema/common-schemas/flat-example-schema";
+import { deepExampleSchema } from "@test/schema/common-schemas/deep-example-schema";
 
-const flatExampleSchema : SchemasType = {
-  name: "exampleFlatSchema",
-  format: {
-    name: { type: "string" },
-    age: { type: "number" },
-    favoriteFood: { type: "string" },
-    eyeColour: { type: "string" },
-    height: { type: "number" },
-  },
-  routes: {
-    getMethodEnabled: false,
-    postMethodEnabled: false,
-    deleteMethodEnabled: false,
-    patchMethodEnabled: false,
-    putMethodEnabled: false,
-    queryParamsGetEnabled: false,
-  },
-};
-
-const deepExampleSchema : SchemasType = {
-  name: "exampleDeepSchema",
-  format: {
-    name: { type: "string" },
-    job: {
-      type: "object",
-      data: {
-        wage: { type: "number" },
-        name: { type: "string" },
-        hiredAt: { type: "date" },
-      },
-    },
-  },
-  routes: {
-    getMethodEnabled: false,
-    postMethodEnabled: false,
-    deleteMethodEnabled: false,
-    patchMethodEnabled: false,
-    putMethodEnabled: false,
-    queryParamsGetEnabled: false,
-  },
-};
-
-const complexExampleSchema : SchemasType = {
-  name: "exampleComplexSchema",
-  format: {
-    name: { type: "string" },
-    hobbies: {
-      type: "array",
-      data: "string",
-    },
-    acquaintances: {
-      type: "array",
-      data: {
-        name: { type: "string" },
-        gender: { type: "string" },
-        age: { type: "number" },
-      },
-    },
-  },
-  routes: {
-    getMethodEnabled: false,
-    postMethodEnabled: false,
-    deleteMethodEnabled: false,
-    patchMethodEnabled: false,
-    putMethodEnabled: false,
-    queryParamsGetEnabled: false,
-  },
-};
-
-describe.only("Schema Query Builder", () => {
+describe("Schema Query Builder", () => {
   it("Builds flat query successfully", () => {
     const nameAndHeightQuery = {
       name: { "equal_to": "John", "exists": true },
@@ -99,14 +32,14 @@ describe.only("Schema Query Builder", () => {
     const mongoQuery = queryBuilder.getFullMongoQuery();
 
     expect(mongoQuery.name.$eq).to.be.equal(nameAndJobDeepQuery.name.equal_to);
-    expect(mongoQuery.job.wage.$gt).to.be.equal(nameAndJobDeepQuery.job.wage.greater_than);
-    expect(mongoQuery.job.hiredAt.$lte).to.be.equal(nameAndJobDeepQuery.job.hiredAt.lower_or_equal_to);
+    expect(mongoQuery["job.wage"].$gt).to.be.equal(nameAndJobDeepQuery.job.wage.greater_than);
+    expect(mongoQuery["job.hiredAt"].$lte).to.be.equal(nameAndJobDeepQuery.job.hiredAt.lower_or_equal_to);
   });
 
   it("Builds Complex Query Successfully", () => {
     const nameAndAcquaintancesComplexQuery = {
       name: { "equal_to": "John" },
-      hobbies: { "contains_all": [] },
+      hobbies: { "contains_all": ["Piano", "Golf"] },
       acquaintances: { "contains": {
         name: "Mary",
         age: 37,
@@ -119,6 +52,7 @@ describe.only("Schema Query Builder", () => {
 
     expect(mongoQuery.name.$eq).to.be.equal(nameAndAcquaintancesComplexQuery.name.equal_to);
     expect(mongoQuery.hobbies.$all).to.be.equal(nameAndAcquaintancesComplexQuery.hobbies.contains_all);
-    expect(mongoQuery.acquaintances.$all).to.include(nameAndAcquaintancesComplexQuery.acquaintances.contains);
+    expect(mongoQuery.acquaintances.$all[0].$elemMatch).to
+      .include(nameAndAcquaintancesComplexQuery.acquaintances.contains);
   });
 });

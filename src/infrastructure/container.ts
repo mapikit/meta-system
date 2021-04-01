@@ -12,7 +12,6 @@ import EntityManager from "@api/entity/application/entity-manager";
 import { MapikitRouter } from "@api/mapikit/application/routes/routing";
 import { EntityRootRouter } from "@api/entity/application/routes/entity-root";
 
-
 const container = createContainer();
 
 // MANAGERS

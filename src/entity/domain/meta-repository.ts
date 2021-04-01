@@ -41,7 +41,7 @@ export class MetaRepository {
     return this.collection.find({ [propertyName] : propertyValue }).toArray();
   }
 
-  public async query<T> (query : Mongo.FilterQuery<T>) : Promise<unknown> {
+  public async query<T> (query : Mongo.FilterQuery<T>) : Promise<unknown[]> {
     return this.collection.find(query).toArray();
   }
 

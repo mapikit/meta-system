@@ -8,7 +8,6 @@ import { SchemaObject, SchemasType, SchemaTypeDefinition } from "@api/configurat
 import { queryTranslationMap } from "@api/schemas/application/query-builder/query-translation-type";
 import { queryValueReplace } from "@api/schemas/application/query-builder/query-value-replace";
 import { getObjectProperty } from "./get-object-property";
-import { createObjectIdentationUpToStep } from "./create-object-identation-up-to-step";
 
 export class MongoSchemaQueryBuilder {
   private readonly schemaFormat : SchemaObject;
@@ -31,22 +30,22 @@ export class MongoSchemaQueryBuilder {
       if (propertyQuery === undefined) return;
 
       const query = this.buildQuery(propertyQuery, type);
+
       this.assignQueryToResult(result, query, propertyPath);
     });
 
     return result;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   private assignQueryToResult (
     result : QuerySelector<unknown>,
     query : QuerySelector<unknown>,
     atPath : string,
   ) : QuerySelector<unknown> {
-    createObjectIdentationUpToStep(result, atPath);
-    const innerPropertyToAssign = getObjectProperty(result, atPath);
+    const resultingQuery = {};
+    resultingQuery[atPath] = query;
 
-    Object.assign(innerPropertyToAssign, query);
+    Object.assign(result, resultingQuery);
 
     return result;
   }
@@ -97,7 +96,6 @@ export class MongoSchemaQueryBuilder {
     return typeConversionMap[typeValue];
   }
 
-  // eslint-disable-next-line max-lines-per-function
   private buildQuery<T> (queryInput : PropertyQuery, type : QueryTypes) : QuerySelector<T> {
     const currentTypeQueryTranslationMap = queryTranslationMap.get(type);
 
@@ -105,6 +103,10 @@ export class MongoSchemaQueryBuilder {
 
     Object.keys(queryInput).forEach((key) => {
       const translatedQuery = currentTypeQueryTranslationMap.get(key);
+      if (translatedQuery === undefined) {
+        throw Error("[Schemas] Failed to build a query due to having an unknown query key");
+      }
+
       const query = queryValueReplace(translatedQuery, queryInput[key]);
 
       Object.assign(result, query);
@@ -112,5 +114,4 @@ export class MongoSchemaQueryBuilder {
 
     return result;
   }
-
 }

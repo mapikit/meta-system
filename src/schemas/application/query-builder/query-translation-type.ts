@@ -115,7 +115,7 @@ dateArrayQueryTranslationMap.set("contains_lower_or_equal_to", Object.freeze({ "
 
 export const objectArrayQueryTranslationMap :
 Map<keyof TypeObjectArrayQuery, QuerySelector<Array<object>>> = new Map();
-objectArrayQueryTranslationMap.set("contains", Object.freeze({ "$all": [valueToReplaceObject] }));
+objectArrayQueryTranslationMap.set("contains", Object.freeze({ "$all": [{ "$elemMatch": valueToReplaceObject }] }));
 objectArrayQueryTranslationMap.set("contains_all", Object.freeze({ "$all": valueToReplaceObjectArray }));
 objectArrayQueryTranslationMap.set("exists", Object.freeze({ "$exists": valueToReplaceBoolean }));
 objectArrayQueryTranslationMap.set("identical_to", Object.freeze({ "$eq": valueToReplaceObjectArray }));
