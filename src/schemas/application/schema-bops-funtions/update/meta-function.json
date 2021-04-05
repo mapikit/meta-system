@@ -1,0 +1,57 @@
+{
+  "functionName": "update",
+  "description": "Updates all entities in the database, filtering by the properties given",
+  "author": "mapikit",
+  "version": "0.0.1",
+  "inputParameters": [
+    {
+      "type": "cloudedObject",
+      "name": "newValue",
+      "required": true
+    },
+    {
+      "type": "cloudedObject",
+      "name": "query",
+      "required": true
+    }
+  ],
+  "outputBranches": [
+    {
+      "branchName": "default",
+      "description": "Updated entities count"
+    },
+    {
+      "branchName": "getError",
+      "description": "Error on retrieving information"
+    }
+  ],
+  "outputData": [
+    {
+      "name": "updatedCount",
+      "type": "number",
+      "branch": "default"
+    },
+    {
+      "name": "errorMessage",
+      "type": "$errorMessage",
+      "branch": "getError"
+    }
+  ],
+  "entrypoint": "index.ts",
+  "mainFunction": "main",
+  "customTypes": [
+    {
+      "name": "errorMessage",
+      "properties": [
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "errorCode",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

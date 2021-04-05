@@ -1,5 +1,5 @@
 
-import { SchemaField } from "@api/entity/domain/types/schema-field-attributes.ts";
+import { SchemaField } from "@api/entity/domain/types/schema-field-attributes";
 import { DatabaseEntity } from "@api/common/types/database-entity";
 
 export interface SchemaAttributes extends DatabaseEntity {
