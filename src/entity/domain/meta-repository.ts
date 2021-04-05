@@ -34,7 +34,7 @@ export class MetaRepository {
   }
 
   public async update<T> (newValue : unknown, filterQuery : Mongo.FilterQuery<T>) : Promise<Mongo.UpdateWriteOpResult> {
-    return this.collection.updateMany(filterQuery, newValue);
+    return this.collection.updateMany(filterQuery, { "$set": newValue });
   }
 
   public async findById (entityId : string) : Promise<unknown> {

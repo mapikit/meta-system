@@ -21,6 +21,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     this.create = this.create.bind(this);
     this.getById = this.getById.bind(this);
     this.get = this.get.bind(this);
+    this.update = this.update.bind(this);
     this.updateById = this.updateById.bind(this);
     this.deleteById = this.deleteById.bind(this);
   }
@@ -68,12 +69,12 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     let hasError = false;
     let notFound = false;
 
-    const insertResult = await this.repository.updateById(input.id, input.valuesToUpdate)
+    const updateResult = await this.repository.updateById(input.id, input.valuesToUpdate)
       .catch((result) => { hasError = true; return result; });
 
     if (hasError) { return { errorMessage: SchemaFunctionErrors.updateById.genericError }; }
 
-    if (Number.isNaN(insertResult.modifiedCount) || insertResult.modifiedCount < 1) {
+    if (Number.isNaN(updateResult.modifiedCount) || updateResult.modifiedCount < 1) {
       notFound = true;
     }
 

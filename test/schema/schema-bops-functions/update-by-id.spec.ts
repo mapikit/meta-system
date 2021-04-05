@@ -2,26 +2,13 @@ import { CloudedObject } from "@api/common/types/clouded-object";
 import { entityFactory } from "@test/factories/entity-factory";
 import { schemaFactory } from "@test/factories/schema-factory";
 import { random } from "faker";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
 import { expect } from "chai";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { MongoClient } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
-
-const randomPartialObject = (fromSchema : SchemasType) : CloudedObject => {
-  const resultObject : CloudedObject = {};
-  const computedEntity = entityFactory(fromSchema.format);
-
-  for (const propertyName in computedEntity) {
-    if (random.boolean) {
-      resultObject[propertyName] = computedEntity[propertyName];
-    }
-  }
-
-  return resultObject;
-};
+import { randomPartialObject } from "@test/schema/random-partial-object";
 
 describe("Update By Id - Schema BOPs function", () => {
   const schema = schemaFactory({});
