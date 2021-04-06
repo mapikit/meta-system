@@ -129,7 +129,26 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     return ({ updatedCount: updatedCount });
   } ;
 
-  public delete = null;
+  public async delete (input : { query : Record<string, unknown> }) : Promise<unknown | SchemaFunctionErrorType> {
+    const queryBuilder = new MongoSchemaQueryBuilder(input.query, this.workingSchema);
+
+    let dbQuery : FilterQuery<unknown>;
+    let errorMessage;
+    let deletedCount : number;
+
+    try { dbQuery = queryBuilder.getFullMongoQuery(); }
+    catch { errorMessage = SchemaFunctionErrors.delete.invalidQueryArgument; }
+
+    if (errorMessage !== undefined) return ({ errorMessage });
+
+    await this.repository.delete(dbQuery)
+      .then((result) => { deletedCount = result.deletedCount; })
+      .catch(() => { errorMessage = SchemaFunctionErrors.delete.genericError; });
+
+    if (errorMessage !== undefined) return ({ errorMessage });
+
+    return ({ updatedCount: deletedCount });
+  }
 
   public async deleteById (input : { id : string }) : Promise<unknown | SchemaFunctionErrorType> {
     if(isNill(input.id)) {
