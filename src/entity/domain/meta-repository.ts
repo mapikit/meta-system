@@ -33,6 +33,10 @@ export class MetaRepository {
     return this.collection.updateOne({ _id : new Mongo.ObjectId(entityId) }, { $set: newValue });
   }
 
+  public async update<T> (newValue : unknown, filterQuery : Mongo.FilterQuery<T>) : Promise<Mongo.UpdateWriteOpResult> {
+    return this.collection.updateMany(filterQuery, { "$set": newValue });
+  }
+
   public async findById (entityId : string) : Promise<unknown> {
     return this.collection.findOne({ _id: new Mongo.ObjectId(entityId) });
   }

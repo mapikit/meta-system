@@ -48,7 +48,7 @@ describe("Get Schema - Schemas Bops Function", () => {
       height: { "greater_than": (entity.height as number) - 10 },
     };
 
-    const result = await getFunction(nameAndHeightQuery);
+    const result = await getFunction({ query: nameAndHeightQuery });
 
     expect(Array.isArray(result["entities"])).be.true;
     expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
@@ -81,7 +81,7 @@ describe("Get Schema - Schemas Bops Function", () => {
       },
     };
 
-    const result = await getFunction(nameAndJobDeepQuery);
+    const result = await getFunction({ query: nameAndJobDeepQuery });
 
     expect(Array.isArray(result["entities"])).be.true;
     expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
@@ -117,7 +117,7 @@ describe("Get Schema - Schemas Bops Function", () => {
       } },
     };
 
-    const result = await getFunction(nameAndAcquaintancesComplexQuery);
+    const result = await getFunction({ query: nameAndAcquaintancesComplexQuery });
 
     expect(Array.isArray(result["entities"])).be.true;
     expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
@@ -144,7 +144,7 @@ describe("Get Schema - Schemas Bops Function", () => {
       name: { "equal12314_to": entity.name },
     };
 
-    const result = await getFunction(invalidQuery);
+    const result = await getFunction({ query: invalidQuery });
 
     expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.get.invalidSearchArgument);
   });
@@ -178,7 +178,7 @@ describe("Get Schema - Schemas Bops Function", () => {
       }] },
     };
 
-    const result = await getFunction(nameAndAcquaintancesComplexQuery);
+    const result = await getFunction({ query: nameAndAcquaintancesComplexQuery });
 
     expect(Array.isArray(result["entities"])).be.true;
     expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);

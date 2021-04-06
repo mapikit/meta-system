@@ -21,6 +21,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     this.create = this.create.bind(this);
     this.getById = this.getById.bind(this);
     this.get = this.get.bind(this);
+    this.update = this.update.bind(this);
     this.updateById = this.updateById.bind(this);
     this.deleteById = this.deleteById.bind(this);
   }
@@ -68,12 +69,12 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     let hasError = false;
     let notFound = false;
 
-    const insertResult = await this.repository.updateById(input.id, input.valuesToUpdate)
+    const updateResult = await this.repository.updateById(input.id, input.valuesToUpdate)
       .catch((result) => { hasError = true; return result; });
 
     if (hasError) { return { errorMessage: SchemaFunctionErrors.updateById.genericError }; }
 
-    if (Number.isNaN(insertResult.modifiedCount) || insertResult.modifiedCount < 1) {
+    if (Number.isNaN(updateResult.modifiedCount) || updateResult.modifiedCount < 1) {
       notFound = true;
     }
 
@@ -82,13 +83,18 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     return { updatedEntity: await this.repository.findById(input.id) };
   }
 
-  public async get (query : Record<string, unknown>) : Promise<unknown | SchemaFunctionErrorType> {
-    const queryBuilder = new MongoSchemaQueryBuilder(query, this.workingSchema);
+  // eslint-disable-next-line max-lines-per-function
+  public async get (input : { query : Record<string, unknown> }) : Promise<unknown | SchemaFunctionErrorType> {
+    const queryBuilder = new MongoSchemaQueryBuilder(input.query, this.workingSchema);
     let dbQuery : FilterQuery<unknown>;
     let errorMessage;
 
     try { dbQuery = queryBuilder.getFullMongoQuery(); }
     catch { errorMessage = SchemaFunctionErrors.get.invalidSearchArgument; }
+
+    if (errorMessage !== undefined) {
+      return ({ errorMessage });
+    }
 
     const result = await this.repository.query(dbQuery)
       .catch(() => { errorMessage = SchemaFunctionErrors.get.genericError; });
@@ -100,7 +106,29 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     return ({ entities: result });
   };
 
-  public update = null;
+  // eslint-disable-next-line max-lines-per-function
+  public async update (input : { query : Record<string, unknown>; newValue : Record<string, unknown> })
+    : Promise<unknown | SchemaFunctionErrorType> {
+    const queryBuilder = new MongoSchemaQueryBuilder(input.query, this.workingSchema);
+
+    let dbQuery : FilterQuery<unknown>;
+    let errorMessage;
+    let updatedCount : number;
+
+    try { dbQuery = queryBuilder.getFullMongoQuery(); }
+    catch { errorMessage = SchemaFunctionErrors.update.invalidQueryArgument; }
+
+    if (errorMessage !== undefined) return ({ errorMessage });
+
+    await this.repository.update(input.newValue, dbQuery)
+      .then((result) => { updatedCount = result.modifiedCount; })
+      .catch(() => { errorMessage = SchemaFunctionErrors.update.genericError; });
+
+    if (errorMessage !== undefined) return ({ errorMessage });
+
+    return ({ updatedCount: updatedCount });
+  } ;
+
   public delete = null;
 
   public async deleteById (input : { id : string }) : Promise<unknown | SchemaFunctionErrorType> {

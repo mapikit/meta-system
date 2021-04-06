@@ -62,13 +62,25 @@ const GetErrors = {
   },
 };
 
+const UpdateErrors = {
+  invalidQueryArgument: {
+    errorCode: "U001",
+    message: "Invalid Query Argument",
+  },
+  genericError: {
+    errorCode: "U002",
+    message: "A unmapped error has happened. This possibly means that" +
+      " some configuration in the server was off, or the communication channel was shut down.",
+  },
+};
+
 export const SchemaFunctionErrors : SchemaFunctionErrorType = {
   create : CreateErrors,
   getById : GetByIdErrors,
   deleteById : DeleteByIdErrors,
   updateById : UpdateByIdErrors,
   get : GetErrors,
+  update : UpdateErrors,
 
-  update : null,
   delete : null,
 };
