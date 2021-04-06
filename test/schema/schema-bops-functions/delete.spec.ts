@@ -8,7 +8,7 @@ import { MongoClient } from "mongodb";
 import { multipleTypesSchema } from "@test/schema/common-schemas/multiple-types-schema";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 
-describe.only("Update Schema - Schemas Bops Function", () => {
+describe("Update Schema - Schemas Bops Function", () => {
   let fakeClient : MongoClient;
   const systemName = "fakeSystem";
   let schemaManager : SchemaManager;
