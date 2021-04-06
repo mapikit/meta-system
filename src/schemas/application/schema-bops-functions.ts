@@ -23,6 +23,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     this.get = this.get.bind(this);
     this.update = this.update.bind(this);
     this.updateById = this.updateById.bind(this);
+    this.delete = this.delete.bind(this);
     this.deleteById = this.deleteById.bind(this);
   }
 
@@ -147,7 +148,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
 
     if (errorMessage !== undefined) return ({ errorMessage });
 
-    return ({ updatedCount: deletedCount });
+    return ({ deletedCount });
   }
 
   public async deleteById (input : { id : string }) : Promise<unknown | SchemaFunctionErrorType> {
