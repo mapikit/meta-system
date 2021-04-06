@@ -104,7 +104,7 @@ describe("Update Schema - Schemas Bops Function", () => {
     expect(getResult.entity).to.be.deep.equal(entity);
   });
 
-  it("Fails to update", async () => {
+  it("Fails to update - Invalid Query", async () => {
     // Setup
     await repo.initialize(multipleTypesSchema, systemName);
 

@@ -22,7 +22,7 @@
     },
     {
       "branchName": "getError",
-      "description": "Error on retrieving information"
+      "description": "Error on updating information"
     }
   ],
   "outputData": [
