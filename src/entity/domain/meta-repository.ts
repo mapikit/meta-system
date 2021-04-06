@@ -37,6 +37,10 @@ export class MetaRepository {
     return this.collection.updateMany(filterQuery, { "$set": newValue });
   }
 
+  public async delete<T> (filterQuery : Mongo.FilterQuery<T>) : Promise<Mongo.DeleteWriteOpResultObject> {
+    return this.collection.deleteMany(filterQuery);
+  }
+
   public async findById (entityId : string) : Promise<unknown> {
     return this.collection.findOne({ _id: new Mongo.ObjectId(entityId) });
   }

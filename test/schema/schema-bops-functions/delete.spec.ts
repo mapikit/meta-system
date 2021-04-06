@@ -6,8 +6,6 @@ import { entityFactory } from "@test/factories/entity-factory";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { multipleTypesSchema } from "@test/schema/common-schemas/multiple-types-schema";
-import { randomPartialObject } from "@test/schema/random-partial-object";
-import { random } from "faker";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 
 describe("Update Schema - Schemas Bops Function", () => {
@@ -15,7 +13,7 @@ describe("Update Schema - Schemas Bops Function", () => {
   const systemName = "fakeSystem";
   let schemaManager : SchemaManager;
   let createEntityFunction : SchemaManager["bopsFunctions"]["create"];
-  let updateFunction : SchemaManager["bopsFunctions"]["update"];
+  let deleteFunction : SchemaManager["bopsFunctions"]["delete"];
   let getByIdFunction : SchemaManager["bopsFunctions"]["getById"];
   let repo : MetaRepository;
 
@@ -24,7 +22,7 @@ describe("Update Schema - Schemas Bops Function", () => {
     repo = new MetaRepository(fakeClient);
   });
 
-  it("Updates Schema using our query model successfully", async () => {
+  it("Deletes Schema using our query model successfully", async () => {
     // Setup
     await repo.initialize(multipleTypesSchema, systemName);
 
@@ -37,7 +35,7 @@ describe("Update Schema - Schemas Bops Function", () => {
     schemaManager.bopsFunctions.schema = multipleTypesSchema;
 
     createEntityFunction = schemaManager.bopsFunctions.create;
-    updateFunction = schemaManager.bopsFunctions.update;
+    deleteFunction = schemaManager.bopsFunctions.delete;
     getByIdFunction = schemaManager.bopsFunctions.getById;
 
     // Test
@@ -45,26 +43,24 @@ describe("Update Schema - Schemas Bops Function", () => {
     const entity : any = entityFactory(multipleTypesSchema.format) as CloudedObject;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createResult : any = await createEntityFunction({ entity });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const partialUpdate : any = randomPartialObject(multipleTypesSchema);
 
     const nameAndHeightQuery = {
-      name: { "one_of": [entity.name, random.alphaNumeric(4)] },
-      height: { "not_equal_to": entity.age - 1 },
+      familyBirthdays: { "identical_to": entity.familyBirthdays },
+      luckyNumbers: { "contains_higher_or_equal_to": entity.luckyNumbers[0] - 1 },
     };
 
-    const result = await updateFunction({ newValue: partialUpdate, query: nameAndHeightQuery });
+    const result = await deleteFunction({ query: nameAndHeightQuery });
 
-    expect(result["updatedCount"]).to.not.be.NaN;
-    expect(result["updatedCount"]).to.be.equal(1);
+    expect(result["deletedCount"]).to.not.be.NaN;
+    expect(result["deletedCount"]).to.be.equal(1);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getResult : any = await getByIdFunction({ id: createResult.createdEntity._id });
 
-    expect(getResult.entity).to.be.deep.equal({ ...entity, ...partialUpdate });
+    expect(getResult.entity).to.be.null;
   });
 
-  it("Fails to update Schema using our query model [Nothing found]", async () => {
+  it("Fails to delete Schema using our query model [Nothing found]", async () => {
     // Setup
     await repo.initialize(multipleTypesSchema, systemName);
 
@@ -77,7 +73,7 @@ describe("Update Schema - Schemas Bops Function", () => {
     schemaManager.bopsFunctions.schema = multipleTypesSchema;
 
     createEntityFunction = schemaManager.bopsFunctions.create;
-    updateFunction = schemaManager.bopsFunctions.update;
+    deleteFunction = schemaManager.bopsFunctions.delete;
     getByIdFunction = schemaManager.bopsFunctions.getById;
 
     // Test
@@ -85,17 +81,15 @@ describe("Update Schema - Schemas Bops Function", () => {
     const entity : any = entityFactory(multipleTypesSchema.format) as CloudedObject;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createResult : any = await createEntityFunction({ entity });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const partialUpdate : any = randomPartialObject(multipleTypesSchema);
 
     const nameAndHeightQuery = {
-      name: { "not_one_of": [entity.name, random.alphaNumeric(4)] },
+      secretBoolSequence: { "size": entity.secretBoolSequence.length + 1 },
     };
 
-    const result = await updateFunction({ newValue: partialUpdate, query: nameAndHeightQuery });
+    const result = await deleteFunction({ query: nameAndHeightQuery });
 
-    expect(result["updatedCount"]).to.not.be.NaN;
-    expect(result["updatedCount"]).to.be.equal(0);
+    expect(result["deletedCount"]).to.not.be.NaN;
+    expect(result["deletedCount"]).to.be.equal(0);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getResult : any = await getByIdFunction({ id: createResult.createdEntity._id });
@@ -103,7 +97,7 @@ describe("Update Schema - Schemas Bops Function", () => {
     expect(getResult.entity).to.be.deep.equal(entity);
   });
 
-  it("Fails to update - Invalid Query", async () => {
+  it("Fails to delete - Invalid Query", async () => {
     // Setup
     await repo.initialize(multipleTypesSchema, systemName);
 
@@ -114,17 +108,15 @@ describe("Update Schema - Schemas Bops Function", () => {
     });
 
     schemaManager.bopsFunctions.schema = multipleTypesSchema;
-    updateFunction = schemaManager.bopsFunctions.update;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const partialUpdate : any = randomPartialObject(multipleTypesSchema);
+    deleteFunction = schemaManager.bopsFunctions.update;
 
     const nameAndHeightQuery = {
       name: { "-----": [] },
     };
 
-    const result = await updateFunction({ newValue: partialUpdate, query: nameAndHeightQuery });
+    const result = await deleteFunction({ query: nameAndHeightQuery });
 
-    expect(result["updatedCount"]).to.be.undefined;
+    expect(result["deletedCount"]).to.be.undefined;
     expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);
   });
 });

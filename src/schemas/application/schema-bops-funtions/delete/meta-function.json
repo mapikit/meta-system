@@ -1,0 +1,52 @@
+{
+  "functionName": "delete",
+  "description": "Deletes all entities in the database, filtering by the properties given",
+  "author": "mapikit",
+  "version": "0.0.1",
+  "inputParameters": [
+    {
+      "type": "cloudedObject",
+      "name": "query",
+      "required": true
+    }
+  ],
+  "outputBranches": [
+    {
+      "branchName": "default",
+      "description": "deleted entities count"
+    },
+    {
+      "branchName": "getError",
+      "description": "Error on deleting information"
+    }
+  ],
+  "outputData": [
+    {
+      "name": "deletedCount",
+      "type": "number",
+      "branch": "default"
+    },
+    {
+      "name": "errorMessage",
+      "type": "$errorMessage",
+      "branch": "getError"
+    }
+  ],
+  "entrypoint": "index.ts",
+  "mainFunction": "main",
+  "customTypes": [
+    {
+      "name": "errorMessage",
+      "properties": [
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "errorCode",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
