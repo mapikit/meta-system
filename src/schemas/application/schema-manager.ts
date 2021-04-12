@@ -17,6 +17,7 @@ export class SchemaManager {
     this.systemName = options.systemName;
 
     this.bopsFunctions = new SchemasBopsFunctions({ MetaRepository: options.metaRepository });
+    this.bopsFunctions.schema = options.schema;
   }
 
   public async activateSchemaRoutes () : Promise<void> {
