@@ -23,12 +23,20 @@ export interface BopsOutput {
   statusCode : number;
 }
 
-export interface BopsConstant {
+export type JsonTypeDict<T extends JsonTypes> =
+  T extends "string" ? string :
+    T extends "number" ? number :
+      T extends "boolean" ? boolean :
+        T extends "date" ? Date : never;
+
+export class BopsConstant {
   name : string;
   type : JsonTypes;
+  value : JsonTypeDict<JsonTypes>;
 }
 
 export interface BopsConfigurationEntry {
+  version ?: string;
   moduleRepo : string;
   key : number;
   inputsSource : InputsSource[];
@@ -38,6 +46,7 @@ export interface BopsConfigurationEntry {
 export interface InputsSource {
   source : string | number;
   target : string;
+  sourceOutput ?: string;
 }
 
 export interface NextFunctions {
