@@ -1,4 +1,4 @@
-import { MetaFunction } from "meta-function-helper";
+import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
 
 export const addBopsFunction = (input : { numbersToAdd : number[] }) : unknown => {
   let result = 0;
@@ -13,10 +13,9 @@ export const addBopsFunction = (input : { numbersToAdd : number[] }) : unknown =
   return ({ result });
 };
 
-export const addFunctionInformation : MetaFunction = {
+export const addFunctionInformation : InternalMetaFunction = {
   functionName: "addBopsFunction",
   version: "1.0.0",
-  author: "mapikit",
   description: "Adds numbers together",
   outputData: [
     {
@@ -42,6 +41,4 @@ export const addFunctionInformation : MetaFunction = {
     { name: "numbersToAdd", type: "array.number" },
   ],
   customTypes: [],
-  entrypoint: "",
-  mainFunction: "",
 };

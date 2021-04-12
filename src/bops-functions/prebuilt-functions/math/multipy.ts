@@ -1,4 +1,4 @@
-import { MetaFunction } from "meta-function-helper";
+import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
 
 export const multiplyBopsFunction = (input : { numbersToMultiply : number[] }) : unknown => {
   let result = 1;
@@ -13,10 +13,9 @@ export const multiplyBopsFunction = (input : { numbersToMultiply : number[] }) :
   return ({ result });
 };
 
-export const multiplyFunctionInformation : MetaFunction = {
+export const multiplyFunctionInformation : InternalMetaFunction = {
   functionName: "multiplyBopsFunction",
   version: "1.0.0",
-  author: "mapikit",
   description: "Multiply the list of numbers provided",
   outputData: [
     {
@@ -42,6 +41,4 @@ export const multiplyFunctionInformation : MetaFunction = {
     { name: "numbersToMultiply", type: "array.number" },
   ],
   customTypes: [],
-  entrypoint: "",
-  mainFunction: "",
 };

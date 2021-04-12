@@ -1,4 +1,4 @@
-import { MetaFunction } from "meta-function-helper";
+import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
 
 export const divideBopsFunction = (input : { A : number; B : number }) : unknown => {
   if (input.B === 0) {
@@ -14,10 +14,9 @@ export const divideBopsFunction = (input : { A : number; B : number }) : unknown
   return ({ result });
 };
 
-export const subtractFunctionInformation : MetaFunction = {
+export const subtractFunctionInformation : InternalMetaFunction = {
   functionName: "divideBopsFunction",
   version: "1.0.0",
-  author: "mapikit",
   description: "Divides A by B",
   outputData: [
     {
@@ -52,6 +51,4 @@ export const subtractFunctionInformation : MetaFunction = {
     { name: "B", type: "number" },
   ],
   customTypes: [],
-  entrypoint: "",
-  mainFunction: "",
 };
