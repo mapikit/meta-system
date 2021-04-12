@@ -1,6 +1,7 @@
 import { addBopsFunction } from "@api/bops-functions/prebuilt-functions/math/add";
 import { divideBopsFunction } from "@api/bops-functions/prebuilt-functions/math/divide";
 import { multiplyBopsFunction } from "@api/bops-functions/prebuilt-functions/math/multipy";
+import { roundBopsFunction } from "@api/bops-functions/prebuilt-functions/math/round";
 import { subtractBopsFunction } from "@api/bops-functions/prebuilt-functions/math/subtract";
 import { expect } from "chai";
 import { random } from "faker";
@@ -76,6 +77,56 @@ describe("Math Prebuilt Functions", () => {
 
       const result = divideBopsFunction({ A, B });
       expect(result).to.be.deep.equal({ errorDivideByZero: "Cannot divide by zero" });
+    });
+  });
+
+  describe("Round", () => {
+    it("Rounds a number with a precision of 0.01", () => {
+      const A = 3841.933321;
+
+      const result = roundBopsFunction({ input: A, precision: 0.01 });
+
+      expect(result).to.be.deep.equal({ result: 3841.93 });
+    });
+
+    it("Rounds a number with a precision of 0.0005", () => {
+      const A = 0.9915;
+
+      const result = roundBopsFunction({ input: A, precision: 0.0005 });
+
+      expect(result).to.be.deep.equal({ result: A });
+    });
+
+    it("Rounds a number with a precision of 16", () => {
+      const A = 85194;
+
+      const result = roundBopsFunction({ input: A, precision: 16 });
+
+      expect(result).to.be.deep.equal({ result: 85184 });
+    });
+
+    it("Rounds a number with a precision of 3", () => {
+      const A = 8;
+
+      const result = roundBopsFunction({ input: A, precision: 3 });
+
+      expect(result).to.be.deep.equal({ result: 6 });
+    });
+
+    it("Fails to round a negative precision", () => {
+      const A = 8;
+
+      const result = roundBopsFunction({ input: A, precision: -16 });
+
+      expect(result).to.be.deep.equal({ errorNegativePrecision: "Precision cannot be a negative value" });
+    });
+
+    it("Fails to round NaN", () => {
+      const A = "----" as unknown as number;
+
+      const result = roundBopsFunction({ input: A, precision: 0.1 });
+
+      expect(result).to.be.deep.equal({ errorNaN: "One of the arguments provided was not a number" });
     });
   });
 });
