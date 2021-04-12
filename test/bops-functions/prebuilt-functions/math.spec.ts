@@ -1,3 +1,4 @@
+import { absoluteBopsFunction } from "@api/bops-functions/prebuilt-functions/math/absolute";
 import { addBopsFunction } from "@api/bops-functions/prebuilt-functions/math/add";
 import { divideBopsFunction } from "@api/bops-functions/prebuilt-functions/math/divide";
 import { multiplyBopsFunction } from "@api/bops-functions/prebuilt-functions/math/multipy";
@@ -127,6 +128,48 @@ describe("Math Prebuilt Functions", () => {
       const result = roundBopsFunction({ input: A, precision: 0.1 });
 
       expect(result).to.be.deep.equal({ errorNaN: "One of the arguments provided was not a number" });
+    });
+  });
+
+  describe("Abosulte", () => {
+    it("Gets the absolute value of 3", () => {
+      const A = 3;
+
+      const result = absoluteBopsFunction({ input: A });
+
+      expect(result).to.be.deep.equal({ result: A });
+    });
+
+    it("Gets the absolute value of -3", () => {
+      const A = -3;
+
+      const result = absoluteBopsFunction({ input: A });
+
+      expect(result).to.be.deep.equal({ result: -A });
+    });
+
+    it("Gets the absolute value of 0.0024", () => {
+      const A = 0.0024;
+
+      const result = absoluteBopsFunction({ input: A });
+
+      expect(result).to.be.deep.equal({ result: A });
+    });
+
+    it("Gets the absolute value of -0.0024", () => {
+      const A = -0.0024;
+
+      const result = absoluteBopsFunction({ input: A });
+
+      expect(result).to.be.deep.equal({ result: -A });
+    });
+
+    it("Gets the absolute value of 0", () => {
+      const A = 0;
+
+      const result = absoluteBopsFunction({ input: A });
+
+      expect(result).to.be.deep.equal({ result: A });
     });
   });
 });
