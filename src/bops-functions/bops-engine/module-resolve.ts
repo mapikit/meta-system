@@ -3,20 +3,18 @@ import { FunctionsInstaller, ModuleKind } from "@api/bops-functions/installation
 import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
-import { MetaFunction, OutputData } from "meta-function-helper";
+import { MetaFunction } from "meta-function-helper";
 import { schemaFunctionsFolders } from "@api/bops-functions/bops-engine/schema-functions-map";
-
-export type MappedFunction = Map<string, Function>;
-
-interface ModuleManagerFileSystem {
-  installer : FunctionsInstaller;
-  schemaFunctions : FunctionFileSystem;
-  externalFunctions : FunctionFileSystem;
-}
+import {
+  MappedModules,
+  ModuleManagerFileSystem,
+  ModuleResolverOutput,
+  ModuleResolverType } from "@api/bops-functions/bops-engine/module-types";
+import { OperationNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/operation-not-found-error";
+import { SchemaNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/schema-not-found-error";
 
 export class ModuleManager {
   private schemasManager : SchemasManager;
-  public readonly mappedOutputs : Map<string, OutputData[]>
   private files : ModuleManagerFileSystem;
 
   constructor (options : {
@@ -32,55 +30,60 @@ export class ModuleManager {
     };
 
     this.schemasManager = options.SchemaManager;
-    this.mappedOutputs = new Map<string, OutputData[]>();
   }
 
-  // eslint-disable-next-line max-lines-per-function
-  private async resolveModule (moduleRepo : string, moduleVersion = "latest") : Promise<Function> {
-    const moduleName = moduleRepo.slice(1);
-    switch(moduleRepo[0]) {
-      case "@":
-        const [schema, operation] = moduleName.split("@");
-        if(!Object.keys(SchemasFunctions).includes(operation)) throw new Error(`No such operation "${operation}"`);
-
-        const functionLocation = schemaFunctionsFolders.get(operation);
-        const metaFunction = await this.files.schemaFunctions.getFunctionDescriptionFile(functionLocation);
-        const schemaFunctionConfig = JSON.parse(metaFunction) as MetaFunction;
-        this.mappedOutputs.set(moduleRepo, schemaFunctionConfig.outputData);
-        const schemaToLook = this.schemasManager.schemas.get(schema);
-        if(!schemaToLook) throw new Error("Schema not found");
-        return schemaToLook.bopsFunctions[operation];
-
-      case "#":
-        throw new Error("Not Yet Implemented");
-        // TODO MAPIKIT provided
-
-      case "%":
-        await this.files.installer.install(moduleName, moduleVersion, ModuleKind.NPM);
-        const functionJson = await this.files.externalFunctions.getFunctionDescriptionFile(moduleName);
-        const externalFunctionConfig = JSON.parse(functionJson) as MetaFunction;
-        this.mappedOutputs.set(moduleRepo, externalFunctionConfig.outputData);
-        const mainFunction = await this.files.externalFunctions.importMain(
-          moduleName,
-          externalFunctionConfig.entrypoint,
-          externalFunctionConfig.mainFunction,
-        );
-        return mainFunction;
-    }
-    throw new Error("One or more moduleRepos were invalid");
-  }
-
-  public async resolveModules (modules : BopsConfigurationEntry[]) : Promise<MappedFunction> {
-    const mappedModules = new Map<string, Function>();
+  public async resolveModules (modules : BopsConfigurationEntry[]) : Promise<MappedModules> {
+    const mappedModules = new Map<string, ModuleResolverOutput>();
     for(const module of modules) {
       if(!mappedModules.get(module.moduleRepo)) {
-        mappedModules.set(module.moduleRepo, await this.resolveModule(module.moduleRepo, module.version));
+        const resolvedModule = await moduleResolver[module.moduleRepo[0]]({
+          moduleName: module.moduleRepo.slice(1),
+          moduleVersion: module.version,
+          fileManager: this.files,
+          schemasManager: this.schemasManager,
+        });
+        mappedModules.set(module.moduleRepo, resolvedModule);
       }
     }
     return mappedModules;
   }
 }
 
+const moduleResolver : ModuleResolverType = {
+  "@": async (input) : Promise<ModuleResolverOutput> => {
+    const [schema, operation] = input.moduleName.split("@");
+    if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
 
+    const functionLocation = schemaFunctionsFolders.get(operation);
+    const metaFunction = await input.fileManager.schemaFunctions.getFunctionDescriptionFile(functionLocation);
+    const schemaFunctionConfig = JSON.parse(metaFunction) as MetaFunction;
+    const schemaToLook = input.schemasManager.schemas.get(schema);
+    if(!schemaToLook) throw new SchemaNotFoundError(schema);
+
+    return {
+      mainFunction: schemaToLook.bopsFunctions[operation],
+      outputData: schemaFunctionConfig.outputData,
+    };
+  },
+
+  "#" : () : Promise<ModuleResolverOutput> => {
+    throw new Error("NYI");
+  },
+
+  "%" : async (input) : Promise<ModuleResolverOutput> => {
+    await input.fileManager.installer.install(input.moduleName, input.moduleVersion, ModuleKind.NPM);
+    const functionJson = await input.fileManager.externalFunctions.getFunctionDescriptionFile(input.moduleName);
+    const externalFunctionConfig = JSON.parse(functionJson) as MetaFunction;
+    const mainFunction = await input.fileManager.externalFunctions.importMain(
+      input.moduleName,
+      externalFunctionConfig.entrypoint,
+      externalFunctionConfig.mainFunction,
+    );
+    return {
+      mainFunction: mainFunction,
+      outputData: externalFunctionConfig.outputData,
+    };
+  },
+};
 
 
