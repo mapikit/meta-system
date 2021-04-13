@@ -8,7 +8,7 @@ import { subtractBopsFunction } from "@api/bops-functions/prebuilt-functions/mat
 import { expect } from "chai";
 import { random } from "faker";
 
-describe.only("Math Prebuilt Functions", () => {
+describe("Math Prebuilt Functions", () => {
   const getRandomNumber = () : number => random.number({ precision: 2 });
   describe("Add", () => {
     it("Adds a list of number successfully", () => {
@@ -207,6 +207,24 @@ describe.only("Math Prebuilt Functions", () => {
       const result = modulusBopsFunction({ A, B });
 
       expect(result).to.be.deep.equal({ result: 2.1 });
+    });
+
+    it("Fails to get the remainder of NaN", () => {
+      const A = "---" as unknown as number;
+      const B = 7.3;
+
+      const result = modulusBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ errorNotANumber: "One of the arguments provided was not a number" });
+    });
+
+    it("Fails to get the remainder of a division by 0", () => {
+      const A = 22;
+      const B = 0;
+
+      const result = modulusBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ errorDivisionByZero: "Cannot Divide By Zero" });
     });
   });
 });
