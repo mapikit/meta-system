@@ -5,6 +5,7 @@ import { exponentialBopsFunction } from "@api/bops-functions/prebuilt-functions/
 import { modulusBopsFunction } from "@api/bops-functions/prebuilt-functions/math/modulus";
 import { multiplyBopsFunction } from "@api/bops-functions/prebuilt-functions/math/multipy";
 import { roundBopsFunction } from "@api/bops-functions/prebuilt-functions/math/round";
+import { squareRootBopsFunction } from "@api/bops-functions/prebuilt-functions/math/square-root";
 import { subtractBopsFunction } from "@api/bops-functions/prebuilt-functions/math/subtract";
 import { expect } from "chai";
 import { random } from "faker";
@@ -255,6 +256,32 @@ describe.only("Math Prebuilt Functions", () => {
       const result = exponentialBopsFunction({ A, B });
 
       expect(result).to.be.deep.equal({ errorMessage: "One of the arguments provided was not a number" });
+    });
+  });
+
+  describe("Square Root", () => {
+    it("Gets the Square Root of 64", () => {
+      const A = 64;
+
+      const result = squareRootBopsFunction({ A });
+
+      expect(result).to.be.deep.equal({ result: 8 });
+    });
+
+    it("Fails to get the Square Root of a negative number", () => {
+      const A = -64;
+
+      const result = squareRootBopsFunction({ A });
+
+      expect(result).to.be.deep.equal({ errorNegativeA: "Value must not be a negative number" });
+    });
+
+    it("Fails to get the Square Root of NaN", () => {
+      const A = "---" as unknown as number;
+
+      const result = squareRootBopsFunction({ A });
+
+      expect(result).to.be.deep.equal({ errorNaN: "One of the arguments provided was not a number" });
     });
   });
 });
