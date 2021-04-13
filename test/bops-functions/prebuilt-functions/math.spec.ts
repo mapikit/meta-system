@@ -1,6 +1,7 @@
 import { absoluteBopsFunction } from "@api/bops-functions/prebuilt-functions/math/absolute";
 import { addBopsFunction } from "@api/bops-functions/prebuilt-functions/math/add";
 import { divideBopsFunction } from "@api/bops-functions/prebuilt-functions/math/divide";
+import { exponentialBopsFunction } from "@api/bops-functions/prebuilt-functions/math/exponential";
 import { modulusBopsFunction } from "@api/bops-functions/prebuilt-functions/math/modulus";
 import { multiplyBopsFunction } from "@api/bops-functions/prebuilt-functions/math/multipy";
 import { roundBopsFunction } from "@api/bops-functions/prebuilt-functions/math/round";
@@ -225,6 +226,35 @@ describe.only("Math Prebuilt Functions", () => {
       const result = modulusBopsFunction({ A, B });
 
       expect(result).to.be.deep.equal({ errorDivisionByZero: "Cannot Divide By Zero" });
+    });
+  });
+
+  describe("Exponential", () => {
+    it("Raises 2 to the power of 5", () => {
+      const A = 2;
+      const B = 5;
+
+      const result = exponentialBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ result: 32 });
+    });
+
+    it("Raises 5 to the power of -2", () => {
+      const A = 5;
+      const B = -2;
+
+      const result = exponentialBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ result: 0.04 });
+    });
+
+    it("Fails due to NaN argument", () => {
+      const A = 5;
+      const B = "---" as unknown as number;
+
+      const result = exponentialBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ errorMessage: "One of the arguments provided was not a number" });
     });
   });
 });
