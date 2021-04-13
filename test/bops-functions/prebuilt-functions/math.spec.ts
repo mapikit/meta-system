@@ -90,10 +90,10 @@ describe("Math Prebuilt Functions", () => {
       expect(result).to.be.deep.equal({ result: 3841.93 });
     });
 
-    it("Rounds a number with a precision of 0.0005", () => {
+    it("Rounds a number with a precision of 0.00001", () => {
       const A = 0.9915;
 
-      const result = roundBopsFunction({ input: A, precision: 0.0005 });
+      const result = roundBopsFunction({ input: A, precision: 0.00001 });
 
       expect(result).to.be.deep.equal({ result: A });
     });
@@ -103,7 +103,15 @@ describe("Math Prebuilt Functions", () => {
 
       const result = roundBopsFunction({ input: A, precision: 16 });
 
-      expect(result).to.be.deep.equal({ result: 85184 });
+      expect(result).to.be.deep.equal({ result: 85200 });
+    });
+
+    it("Rounds a number with a precision of -16", () => {
+      const A = 85194;
+
+      const result = roundBopsFunction({ input: A, precision: -16 });
+
+      expect(result).to.be.deep.equal({ result: 85200 });
     });
 
     it("Rounds a number with a precision of 3", () => {
@@ -111,15 +119,23 @@ describe("Math Prebuilt Functions", () => {
 
       const result = roundBopsFunction({ input: A, precision: 3 });
 
-      expect(result).to.be.deep.equal({ result: 6 });
+      expect(result).to.be.deep.equal({ result: 9 });
     });
 
-    it("Fails to round a negative precision", () => {
+    it("Rounds up - precision greater than number", () => {
       const A = 8;
 
-      const result = roundBopsFunction({ input: A, precision: -16 });
+      const result = roundBopsFunction({ input: A, precision: 10 });
 
-      expect(result).to.be.deep.equal({ errorNegativePrecision: "Precision cannot be a negative value" });
+      expect(result).to.be.deep.equal({ result: 10 });
+    });
+
+    it("Rounds down - precision greater than number", () => {
+      const A = 8;
+
+      const result = roundBopsFunction({ input: A, precision: 20 });
+
+      expect(result).to.be.deep.equal({ result: 0 });
     });
 
     it("Fails to round NaN", () => {
