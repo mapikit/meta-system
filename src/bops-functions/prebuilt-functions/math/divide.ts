@@ -18,7 +18,7 @@ export const divideBopsFunction = (input : { A : number; B : number }) : unknown
   return ({ result: result.toNumber() });
 };
 
-export const subtractFunctionInformation : InternalMetaFunction = {
+export const divideFunctionInformation : InternalMetaFunction = {
   functionName: "divideBopsFunction",
   version: "1.0.0",
   description: "Divides A by B",

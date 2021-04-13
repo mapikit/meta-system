@@ -10,7 +10,7 @@ import { subtractBopsFunction } from "@api/bops-functions/prebuilt-functions/mat
 import { expect } from "chai";
 import { random } from "faker";
 
-describe.only("Math Prebuilt Functions", () => {
+describe("Math Prebuilt Functions", () => {
   const getRandomNumber = () : number => random.number({ precision: 2 });
   describe("Add", () => {
     it("Adds a list of number successfully", () => {
