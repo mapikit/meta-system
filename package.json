@@ -108,6 +108,7 @@
     "axios": "^0.21.1",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "decimal.js": "^10.2.1",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
     "faker": "^4.1.0",

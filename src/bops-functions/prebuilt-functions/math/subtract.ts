@@ -1,13 +1,15 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
+import Decimal from "decimal.js";
 
 export const subtractBopsFunction = (input : { A : number; B : number }) : unknown => {
-  const result = input.A - input.B;
-
-  if (Number.isNaN(Number(result))) {
+  if (anyIsNan(input.A, input.B)) {
     return ({ errorMessage: "One of the arguments provided was not a number" });
   }
 
-  return ({ result });
+  const result = new Decimal(input.A).sub(new Decimal(input.B));
+
+  return ({ result: result.toNumber() });
 };
 
 export const subtractFunctionInformation : InternalMetaFunction = {

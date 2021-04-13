@@ -1,7 +1,6 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
-import { getGreatestDecimalPlaces }
-  from "@api/bops-functions/prebuilt-functions/non-bops-utils/get-largest-decimal-places";
 import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
+import Decimal from "decimal.js";
 
 export const divideBopsFunction = (input : { A : number; B : number }) : unknown => {
   if (input.B === 0) {
@@ -12,12 +11,11 @@ export const divideBopsFunction = (input : { A : number; B : number }) : unknown
     return ({ errorNaN: "One of the arguments provided was not a number" });
   }
 
-  const decimalPlaces = Math.pow(10, getGreatestDecimalPlaces(input.A, input.B));
-  const A = input.A * decimalPlaces;
-  const B = input.B * decimalPlaces;
-  const result = (A/B) / decimalPlaces;
+  const A = new Decimal(input.A);
+  const B = new Decimal(input.B);
+  const result = A.div(B);
 
-  return ({ result });
+  return ({ result: result.toNumber() });
 };
 
 export const subtractFunctionInformation : InternalMetaFunction = {
