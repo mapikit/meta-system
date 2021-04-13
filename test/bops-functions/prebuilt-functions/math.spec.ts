@@ -1,13 +1,14 @@
 import { absoluteBopsFunction } from "@api/bops-functions/prebuilt-functions/math/absolute";
 import { addBopsFunction } from "@api/bops-functions/prebuilt-functions/math/add";
 import { divideBopsFunction } from "@api/bops-functions/prebuilt-functions/math/divide";
+import { modulusBopsFunction } from "@api/bops-functions/prebuilt-functions/math/modulus";
 import { multiplyBopsFunction } from "@api/bops-functions/prebuilt-functions/math/multipy";
 import { roundBopsFunction } from "@api/bops-functions/prebuilt-functions/math/round";
 import { subtractBopsFunction } from "@api/bops-functions/prebuilt-functions/math/subtract";
 import { expect } from "chai";
 import { random } from "faker";
 
-describe("Math Prebuilt Functions", () => {
+describe.only("Math Prebuilt Functions", () => {
   const getRandomNumber = () : number => random.number({ precision: 2 });
   describe("Add", () => {
     it("Adds a list of number successfully", () => {
@@ -43,9 +44,9 @@ describe("Math Prebuilt Functions", () => {
 
   describe("Multiply", () => {
     it("Multiplies the given list of numbers successfully", () => {
-      const numbersToMultiply = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
+      const numbersToMultiply = [0.2, 0.2, 5];
       const result = multiplyBopsFunction({ numbersToMultiply });
-      expect(result).to.be.deep.equal({ result: numbersToMultiply[0] * numbersToMultiply[1] * numbersToMultiply[2] });
+      expect(result).to.be.deep.equal({ result: 0.2 });
     });
 
     it("Fails to multiply NAN arguments", () => {
@@ -186,6 +187,26 @@ describe("Math Prebuilt Functions", () => {
       const result = absoluteBopsFunction({ input: A });
 
       expect(result).to.be.deep.equal({ result: A });
+    });
+  });
+
+  describe("Modulus", () => {
+    it("Gets the remainder of 5/3", () => {
+      const A = 5;
+      const B = 3;
+
+      const result = modulusBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ result: 2 });
+    });
+
+    it("Gets the remainder of 900/7.3", () => {
+      const A = 900;
+      const B = 7.3;
+
+      const result = modulusBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ result: 2.1 });
     });
   });
 });

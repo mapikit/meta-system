@@ -1,13 +1,23 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { getGreatestDecimalPlaces }
+  from "@api/bops-functions/prebuilt-functions/non-bops-utils/get-largest-decimal-places";
+import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
 
 export const multiplyBopsFunction = (input : { numbersToMultiply : number[] }) : unknown => {
+  if (anyIsNan(...input.numbersToMultiply)) {
+    return ({ errorMessage: "One of the arguments provided was not a number" });
+  }
+
   let result = 1;
-  input.numbersToMultiply.forEach((number) => {
+  const decimalPlaces = Math.pow(10, getGreatestDecimalPlaces(...input.numbersToMultiply));
+  const fixedNumbersToMultiply = input.numbersToMultiply.map((value) => value * decimalPlaces);
+
+  fixedNumbersToMultiply.forEach((number) => {
     result *= number;
   });
 
-  if (Number.isNaN(Number(result))) {
-    return ({ errorMessage: "One of the arguments provided was not a number" });
+  for (let i = 0; i <= fixedNumbersToMultiply.length -1; i ++) {
+    result /= decimalPlaces;
   }
 
   return ({ result });

@@ -1,8 +1,14 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
-import { getDecimalPlaces } from "@api/bops-functions/prebuilt-functions/non-bops-utils/get-decimal-places";
+import { getGreatestDecimalPlaces }
+  from "@api/bops-functions/prebuilt-functions/non-bops-utils/get-largest-decimal-places";
+import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
 
 export const roundBopsFunction = (input : { input : number; precision : number }) : unknown => {
-  const decimalPrecision = Math.pow(10, getDecimalPlaces(input.precision));
+  if (anyIsNan(input.input, input.precision)) {
+    return ({ errorNaN: "One of the arguments provided was not a number" });
+  }
+
+  const decimalPrecision = Math.pow(10, getGreatestDecimalPlaces(input.precision, input.input));
   const precision = Math.abs(input.precision * decimalPrecision);
   const toBeRoundedInput = input.input * decimalPrecision;
 
@@ -10,10 +16,6 @@ export const roundBopsFunction = (input : { input : number; precision : number }
   const roundingDifference = Number(modulus >= precision - modulus) * precision - modulus;
 
   const result = roundingDifference + toBeRoundedInput;
-
-  if (Number.isNaN(Number(result))) {
-    return ({ errorNaN: "One of the arguments provided was not a number" });
-  }
 
   return ({ result: result/decimalPrecision });
 };
