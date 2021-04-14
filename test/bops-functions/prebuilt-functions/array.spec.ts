@@ -1,4 +1,5 @@
 import { arrayAtBopsFunction } from "@api/bops-functions/prebuilt-functions/array/array-at";
+import { arrayFindIndexBopsFunction } from "@api/bops-functions/prebuilt-functions/array/find-index";
 import { arrayIncludesBopsFunction } from "@api/bops-functions/prebuilt-functions/array/inlcudes";
 import { arrayJoinBopsFunction } from "@api/bops-functions/prebuilt-functions/array/join";
 import { arrayLengthBopsFunction } from "@api/bops-functions/prebuilt-functions/array/length";
@@ -113,6 +114,40 @@ describe("Array BOPs functions", () => {
       const result = arrayAtBopsFunction({ array, index: "---" as unknown as number });
 
       expect(result).to.be.deep.equal({ notFoundMessage: "There is no item present at the given index" });
+    });
+  });
+
+  describe("Array Find Index", () => {
+    it("Finds an existing primitive successfully", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayFindIndexBopsFunction({ array, searchedItem: 2 });
+
+      expect(result).to.be.deep.equal({ index: 1 });
+    });
+
+    it("Fails to find a missing primitive", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayFindIndexBopsFunction({ array, searchedItem: "2" });
+
+      expect(result).to.be.deep.equal({ notFoundMessage: "No item matchs in the given array" });
+    });
+
+    it("Finds an existing object successfully", () => {
+      const array = ["1", 2, { A: "hello", B: "world" }, false, null];
+
+      const result = arrayFindIndexBopsFunction({ array, searchedItem: { A: "hello", B: "world" } });
+
+      expect(result).to.be.deep.equal({ index: 2 });
+    });
+
+    it("Fails to find a missing object", () => {
+      const array = ["1", 2, { A: "hello", B: "world" }, false, null];
+
+      const result = arrayFindIndexBopsFunction({ array, searchedItem: { A: "hello", B: "John" } });
+
+      expect(result).to.be.deep.equal({ notFoundMessage: "No item matchs in the given array" });
     });
   });
 });
