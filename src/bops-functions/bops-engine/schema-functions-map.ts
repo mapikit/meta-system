@@ -1,12 +1,20 @@
-const schemaFunctionsFolders = new Map<string, string>();
+import { MetaFunction } from "meta-function-helper";
+import create from "@api/schemas/application/schema-bops-funtions/create-function/meta-function.json";
+import getById from "@api/schemas/application/schema-bops-funtions/get-by-id-function/meta-function.json";
+import updateById from "@api/schemas/application/schema-bops-funtions/update-by-id/meta-function.json";
+import deleteById from "@api/schemas/application/schema-bops-funtions/delete-by-id/meta-function.json";
+import get from "@api/schemas/application/schema-bops-funtions/get/meta-function.json";
+import update from "@api/schemas/application/schema-bops-funtions/update/meta-function.json";
 
-schemaFunctionsFolders.set("create", "create-function");
-schemaFunctionsFolders.set("deleteById", "delete-by-id");
-schemaFunctionsFolders.set("get", "get");
-schemaFunctionsFolders.set("getById", "get-by-id-function");
-schemaFunctionsFolders.set("updateById", "update-by-id");
-//TODO rabase and add update function
+const schemaFunctionsConfig = new Map<string, MetaFunction>();
 
-export { schemaFunctionsFolders };
+schemaFunctionsConfig.set("create", create);
+schemaFunctionsConfig.set("getById", getById);
+schemaFunctionsConfig.set("updateById", updateById);
+schemaFunctionsConfig.set("deleteById", deleteById);
+schemaFunctionsConfig.set("get", get);
+schemaFunctionsConfig.set("update", update);
+
+export { schemaFunctionsConfig };
 
 

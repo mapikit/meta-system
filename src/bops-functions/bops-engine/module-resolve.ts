@@ -4,7 +4,7 @@ import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 import { MetaFunction } from "meta-function-helper";
-import { schemaFunctionsFolders } from "@api/bops-functions/bops-engine/schema-functions-map";
+import { schemaFunctionsConfig } from "@api/bops-functions/bops-engine/schema-functions-map";
 import {
   MappedFunctions,
   ModuleManagerFileSystem,
@@ -23,11 +23,9 @@ export class ModuleManager {
     FunctionsFolder : string;
     BOpsConfigFile : string;
   }) {
-    const schemaFunctionsLocation = "src/schemas/application/schema-bops-funtions";
     this.files = {
       installer : new FunctionsInstaller(options.FunctionsFolder),
       externalFunctions: new FunctionFileSystem(process.cwd(), options.FunctionsFolder, options.BOpsConfigFile),
-      schemaFunctions: new FunctionFileSystem(process.cwd(), schemaFunctionsLocation, options.BOpsConfigFile),
     };
 
     this.schemasManager = options.SchemaManager;
@@ -55,15 +53,13 @@ const moduleResolver : ModuleResolverType = {
     const [schema, operation] = input.moduleName.split("@");
     if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
 
-    const functionLocation = schemaFunctionsFolders.get(operation);
-    const metaFunction = await input.fileManager.schemaFunctions.getFunctionDescriptionFile(functionLocation);
-    const schemaFunctionConfig = JSON.parse(metaFunction) as MetaFunction;
+    const operationOutput = schemaFunctionsConfig.get(operation).outputData;
     const schemaToLook = input.schemasManager.schemas.get(schema);
     if(!schemaToLook) throw new SchemaNotFoundError(schema);
 
     return {
       main: schemaToLook.bopsFunctions[operation],
-      outputData: schemaFunctionConfig.outputData,
+      outputData: operationOutput,
     };
   },
 
