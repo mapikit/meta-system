@@ -7,7 +7,6 @@ export type MappedFunctions = Map<string, ModuleResolverOutput>;
 
 export interface ModuleManagerFileSystem {
   installer : FunctionsInstaller;
-  schemaFunctions : FunctionFileSystem;
   externalFunctions : FunctionFileSystem;
 }
 
