@@ -1,5 +1,6 @@
+import { arrayAtBopsFunction } from "@api/bops-functions/prebuilt-functions/array/array-at";
 import { arrayIncludesBopsFunction } from "@api/bops-functions/prebuilt-functions/array/inlcudes";
-import { joinBopsFunction } from "@api/bops-functions/prebuilt-functions/array/join";
+import { arrayJoinBopsFunction } from "@api/bops-functions/prebuilt-functions/array/join";
 import { arrayLengthBopsFunction } from "@api/bops-functions/prebuilt-functions/array/length";
 import { expect } from "chai";
 
@@ -8,7 +9,7 @@ describe("Array BOPs functions", () => {
     it("Joins an array with separator ( - )", () => {
       const array = ["item 1", 2, false];
 
-      const result = joinBopsFunction({ array, separator: " - " });
+      const result = arrayJoinBopsFunction({ array, separator: " - " });
 
       expect(result).to.be.deep.equal({ result: "item 1 - 2 - false" });
     });
@@ -16,13 +17,13 @@ describe("Array BOPs functions", () => {
     it("Joins an array with no separator", () => {
       const array = ["item 1", 2, false];
 
-      const result = joinBopsFunction({ array });
+      const result = arrayJoinBopsFunction({ array });
 
       expect(result).to.be.deep.equal({ result: "item 1,2,false" });
     });
   });
   describe("Length", () => {
-    it("Gets the Lenght of an array with 4 items", () => {
+    it("Gets the Length of an array with 4 items", () => {
       const array = ["item 1", 2, false, null];
 
       const result = arrayLengthBopsFunction({ array });
@@ -30,7 +31,7 @@ describe("Array BOPs functions", () => {
       expect(result).to.be.deep.equal({ result: 4 });
     });
 
-    it("Gets the Lenght of an array with no items", () => {
+    it("Gets the Length of an array with no items", () => {
       const array = [];
 
       const result = arrayLengthBopsFunction({ array });
@@ -86,6 +87,32 @@ describe("Array BOPs functions", () => {
       const result = arrayIncludesBopsFunction({ array, searchedItem: ["inner", "peace"] });
 
       expect(result).to.be.deep.equal({ result: false });
+    });
+  });
+
+  describe("Array At", () => {
+    it("Gets an item present in the array", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayAtBopsFunction({ array, index: 4 });
+
+      expect(result).to.be.deep.equal({ found: null });
+    });
+
+    it("Returns not found for an index not present in the array", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayAtBopsFunction({ array, index: 99 });
+
+      expect(result).to.be.deep.equal({ notFoundMessage: "There is no item present at the given index" });
+    });
+
+    it("Returns not found for an NaN index", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayAtBopsFunction({ array, index: "---" as unknown as number });
+
+      expect(result).to.be.deep.equal({ notFoundMessage: "There is no item present at the given index" });
     });
   });
 });

@@ -1,16 +1,16 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
 
-export const joinBopsFunction = (input : { array : unknown[]; separator ?: string }) : unknown => {
+export const arrayJoinBopsFunction = (input : { array : unknown[]; separator ?: string }) : unknown => {
   return ({ result: input.array.join(input.separator ?? ",") });
 };
 
-export const joinBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "joinBopsFunction",
+export const arrayJoinBopsFunctionInformation : InternalMetaFunction = {
+  functionName: "arrayJoinBopsFunction",
   version: "1.0.0",
   description: "Joins Items of an array",
   outputData: [
     {
-      type: "string",
+      type: "array.any",
       name: "result",
       branch: "result",
     },

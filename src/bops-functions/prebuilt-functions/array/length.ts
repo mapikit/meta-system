@@ -10,7 +10,7 @@ export const arrayLengthBopsFunctionInformation : InternalMetaFunction = {
   description: "Gets the length of the list",
   outputData: [
     {
-      type: "string",
+      type: "number",
       name: "result",
       branch: "result",
     },

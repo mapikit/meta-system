@@ -24,7 +24,7 @@ export const arrayIncludesBopsFunctionInformation : InternalMetaFunction = {
   description: "Verifies if the array contains an Item",
   outputData: [
     {
-      type: "string",
+      type: "boolean",
       name: "result",
       branch: "result",
     },

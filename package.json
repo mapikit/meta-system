@@ -80,7 +80,7 @@
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "live-plugin-manager": "^0.15.1",
-    "meta-function-helper": "0.0.9",
+    "meta-function-helper": "0.0.10",
     "module-alias": "^2.2.2",
     "mongodb": "^3.5.6",
     "nodemon": "^1.19.2",
