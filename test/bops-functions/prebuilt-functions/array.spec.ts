@@ -3,6 +3,7 @@ import { arrayFindIndexBopsFunction } from "@api/bops-functions/prebuilt-functio
 import { arrayIncludesBopsFunction } from "@api/bops-functions/prebuilt-functions/array/inlcudes";
 import { arrayJoinBopsFunction } from "@api/bops-functions/prebuilt-functions/array/join";
 import { arrayLengthBopsFunction } from "@api/bops-functions/prebuilt-functions/array/length";
+import { arrayRemoveBopsFunction } from "@api/bops-functions/prebuilt-functions/array/remove";
 import { expect } from "chai";
 
 describe("Array BOPs functions", () => {
@@ -148,6 +149,27 @@ describe("Array BOPs functions", () => {
       const result = arrayFindIndexBopsFunction({ array, searchedItem: { A: "hello", B: "John" } });
 
       expect(result).to.be.deep.equal({ notFoundMessage: "No item matchs in the given array" });
+    });
+  });
+
+  describe.only("Array Remove", () => {
+    it("Removes an existing index successfully", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayRemoveBopsFunction({ array, index: 1 });
+
+      expect(result).to.be.deep.equal({
+        resultingArray: ["1", true, false, null],
+        removedItem: array[1],
+      });
+    });
+
+    it("Fails to remove a Non Existing index", () => {
+      const array = ["1", 2, true, false, null];
+
+      const result = arrayRemoveBopsFunction({ array, index: 99 });
+
+      expect(result).to.be.deep.equal({ notFoundMessage: "There is no item present at the given index" });
     });
   });
 });

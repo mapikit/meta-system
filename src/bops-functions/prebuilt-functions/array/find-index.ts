@@ -35,7 +35,7 @@ export const arrayFindIndexBopsFunctionInformation : InternalMetaFunction = {
   description: "Find the index of a given item in the array",
   outputData: [
     {
-      type: "any",
+      type: "number",
       name: "index",
       branch: "found",
     },
