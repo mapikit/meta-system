@@ -1,16 +1,20 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
+import Decimal from "decimal.js";
 
 export const multiplyBopsFunction = (input : { numbersToMultiply : number[] }) : unknown => {
-  let result = 1;
-  input.numbersToMultiply.forEach((number) => {
-    result *= number;
-  });
-
-  if (Number.isNaN(Number(result))) {
+  if (anyIsNan(...input.numbersToMultiply)) {
     return ({ errorMessage: "One of the arguments provided was not a number" });
   }
 
-  return ({ result });
+  let result = new Decimal(1);
+  const decimalNumbersToMultiply = input.numbersToMultiply.map((value) => new Decimal(value));
+
+  decimalNumbersToMultiply.forEach((number) => {
+    result = result.mul(number);
+  });
+
+  return ({ result: result.toNumber() });
 };
 
 export const multiplyFunctionInformation : InternalMetaFunction = {

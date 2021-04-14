@@ -2,20 +2,26 @@ import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function
 import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
 import Decimal from "decimal.js";
 
-export const subtractBopsFunction = (input : { A : number; B : number }) : unknown => {
-  if (anyIsNan(input.A, input.B)) {
-    return ({ errorMessage: "One of the arguments provided was not a number" });
+export const modulusBopsFunction = (input : { A : number; B : number }) : unknown => {
+  if (input.B === 0) {
+    return({ errorDivisionByZero: "Cannot Divide By Zero" });
   }
 
-  const result = new Decimal(input.A).sub(new Decimal(input.B));
+  if (anyIsNan(input.A, input.B)) {
+    return ({ errorNotANumber: "One of the arguments provided was not a number" });
+  }
+
+  const A = new Decimal(input.A);
+  const B = new Decimal(input.B);
+  const result = A.mod(B);
 
   return ({ result: result.toNumber() });
 };
 
-export const subtractFunctionInformation : InternalMetaFunction = {
-  functionName: "subtractBopsFunction",
+export const modulusFunctionInformation : InternalMetaFunction = {
+  functionName: "modulusBopsFunction",
   version: "1.0.0",
-  description: "Subtracts B from A",
+  description: "Gets the remainder of the division of A by B",
   outputData: [
     {
       type: "number",
@@ -24,8 +30,13 @@ export const subtractFunctionInformation : InternalMetaFunction = {
     },
     {
       type: "string",
-      name: "errorMessage",
+      name: "errorNotANumber",
       branch: "notANumber",
+    },
+    {
+      type: "string",
+      name: "errorDivisionByZero",
+      branch: "divisionByZero",
     },
   ],
   outputBranches: [
@@ -34,6 +45,9 @@ export const subtractFunctionInformation : InternalMetaFunction = {
     },
     {
       branchName: "notANumber",
+    },
+    {
+      branchName: "divisionByZero",
     },
   ],
   inputParameters: [

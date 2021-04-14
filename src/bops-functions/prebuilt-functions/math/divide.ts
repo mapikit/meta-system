@@ -1,20 +1,24 @@
 import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
+import Decimal from "decimal.js";
 
 export const divideBopsFunction = (input : { A : number; B : number }) : unknown => {
   if (input.B === 0) {
     return ({ errorDivideByZero: "Cannot divide by zero" });
   }
 
-  const result = input.A / input.B;
-
-  if (Number.isNaN(Number(result))) {
+  if (anyIsNan(input.B, input.A)) {
     return ({ errorNaN: "One of the arguments provided was not a number" });
   }
 
-  return ({ result });
+  const A = new Decimal(input.A);
+  const B = new Decimal(input.B);
+  const result = A.div(B);
+
+  return ({ result: result.toNumber() });
 };
 
-export const subtractFunctionInformation : InternalMetaFunction = {
+export const divideFunctionInformation : InternalMetaFunction = {
   functionName: "divideBopsFunction",
   version: "1.0.0",
   description: "Divides A by B",
