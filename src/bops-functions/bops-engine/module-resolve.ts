@@ -6,12 +6,13 @@ import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 import { MetaFunction } from "meta-function-helper";
 import { schemaFunctionsFolders } from "@api/bops-functions/bops-engine/schema-functions-map";
 import {
-  MappedModules,
+  MappedFunctions,
   ModuleManagerFileSystem,
   ModuleResolverOutput,
   ModuleResolverType } from "@api/bops-functions/bops-engine/module-types";
 import { OperationNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/operation-not-found-error";
 import { SchemaNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/schema-not-found-error";
+import MapikitBOps from "@api/bops-functions/bops-engine/prebuilt-functions-map";
 
 export class ModuleManager {
   private schemasManager : SchemasManager;
@@ -32,7 +33,7 @@ export class ModuleManager {
     this.schemasManager = options.SchemaManager;
   }
 
-  public async resolveModules (modules : BopsConfigurationEntry[]) : Promise<MappedModules> {
+  public async resolveModules (modules : BopsConfigurationEntry[]) : Promise<MappedFunctions> {
     const mappedModules = new Map<string, ModuleResolverOutput>();
     for(const module of modules) {
       if(!mappedModules.get(module.moduleRepo)) {
@@ -61,13 +62,18 @@ const moduleResolver : ModuleResolverType = {
     if(!schemaToLook) throw new SchemaNotFoundError(schema);
 
     return {
-      mainFunction: schemaToLook.bopsFunctions[operation],
+      main: schemaToLook.bopsFunctions[operation],
       outputData: schemaFunctionConfig.outputData,
     };
   },
 
-  "#" : () : Promise<ModuleResolverOutput> => {
-    throw new Error("NYI");
+  "#" : async (input) : Promise<ModuleResolverOutput> => {
+    if(MapikitBOps.get(input.moduleName) === undefined) throw new Error("No such Mapikit Function");
+    //TODO improve this to be custom error
+    return {
+      main: MapikitBOps.get(input.moduleName).main,
+      outputData: MapikitBOps.get(input.moduleName).outputData,
+    };
   },
 
   "%" : async (input) : Promise<ModuleResolverOutput> => {
@@ -80,7 +86,7 @@ const moduleResolver : ModuleResolverType = {
       externalFunctionConfig.mainFunction,
     );
     return {
-      mainFunction: mainFunction,
+      main: mainFunction,
       outputData: externalFunctionConfig.outputData,
     };
   },

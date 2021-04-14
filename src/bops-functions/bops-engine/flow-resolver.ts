@@ -1,44 +1,38 @@
 /* eslint-disable max-lines-per-function */
-import { MappedConstants, validateConstants } from "@api/bops-functions/bops-engine/constant-validation";
+import { MappedConstants } from "@api/bops-functions/bops-engine/constant-validation";
 import { ConstantNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/constant-not-found-error";
-import { ModuleManager } from "@api/bops-functions/bops-engine/module-resolve";
-import { MappedModules } from "@api/bops-functions/bops-engine/module-types";
+import { MappedFunctions } from "@api/bops-functions/bops-engine/module-types";
 import { pickBranchOutput } from "@api/bops-functions/branch-control/define-output-branch";
-import {
-  BopsConfigurationEntry,
-  BusinessOperations,
-  InputsSource } from "@api/configuration-de-serializer/domain/business-operations-type";
-import { SchemasManager } from "@api/schemas/application/schemas-manager";
+import { BopsConfigurationEntry, InputsSource } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { inspect } from "util";
+import { performance }  from "perf_hooks";
+import timer from "@api/bops-functions/bops-engine/performance-observer";
 
 export class FlowResolver {
-  private mappedConstants : MappedConstants;
-  private mappedModules : MappedModules;
-  private moduleManager : ModuleManager;
-  private modules : {
-    results : Map<number, unknown>;
-    config : BopsConfigurationEntry[];
-  };
+  private readonly mappedConstants : MappedConstants;
+  private readonly mappedFunctions : MappedFunctions;
+  private readonly modulesConfig : BopsConfigurationEntry[];
+  private modulesResults = new Map<number, unknown>();
 
-  public async initialize (bopConfig : BusinessOperations, schemasManager : SchemasManager) : Promise<void> {
-    this.mappedConstants = validateConstants(bopConfig.constants);
-    this.moduleManager = new ModuleManager({
-      SchemaManager: schemasManager,
-      FunctionsFolder: "bops-functions",
-      BOpsConfigFile: "meta-function.json",
-    });
-    this.mappedModules = await this.moduleManager.resolveModules(bopConfig.configuration);
-    this.modules = {
-      config: bopConfig.configuration,
-      results:  new Map<number, unknown>(),
-    };
+
+  constructor (options : {
+    mappedFunctions : MappedFunctions;
+    mappedConstants : MappedConstants;
+    bopConfig : BopsConfigurationEntry[];
+  }) {
+    this.mappedFunctions = options.mappedFunctions;
+    this.mappedConstants = options.mappedConstants;
+    this.modulesConfig = options.bopConfig;
+
+    this.executeModule = performance.timerify(this.executeModule);
   }
 
   public async startFlow () : Promise<Map<number, unknown>> {
-    const firstModule = this.modules.config.find(module => module.key === 1);
+    timer.startClock();
+    const firstModule = this.modulesConfig.find(module => module.key === 1);
     await this.executeModule(firstModule);
-    console.log(inspect(this.modules.results, false, null, true));
-    return this.modules.results;
+    console.log(inspect(this.modulesResults, false, null, true));
+    return this.modulesResults;
   }
 
   public async executeModule (moduleConfig : BopsConfigurationEntry) : Promise<void> {
@@ -47,13 +41,13 @@ export class FlowResolver {
       Object.assign(moduleInput, await this.resulveInput(input));
     }
     moduleInput = this.resolveTargets(moduleInput);
-    const result = await this.mappedModules.get(moduleConfig.moduleRepo).mainFunction(moduleInput);
-    this.modules.results.set(moduleConfig.key, result);
+    const result = await this.mappedFunctions.get(moduleConfig.moduleRepo).main(moduleInput);
+    this.modulesResults.set(moduleConfig.key, result);
 
-    const branchToFollow = pickBranchOutput(this.mappedModules.get(moduleConfig.moduleRepo).outputData, result);
+    const branchToFollow = pickBranchOutput(this.mappedFunctions.get(moduleConfig.moduleRepo).outputData, result);
     const nextKey = moduleConfig.nextFunctions.find(func => func.branch === branchToFollow)?.nextKey;
     if(!nextKey) return;
-    const nextModule = this.modules.config.find(module => module.key === nextKey);
+    const nextModule = this.modulesConfig.find(module => module.key === nextKey);
     await this.executeModule(nextModule);
   }
 
@@ -66,9 +60,9 @@ export class FlowResolver {
     }
 
     if(typeof inputInfo.source === "number") {
-      let foundResult = this.modules.results.get(inputInfo.source);
+      let foundResult = this.modulesResults.get(inputInfo.source);
       if(!foundResult) {
-        const sourceModuleConfig = this.modules.config.find(module => module.key === inputInfo.source);
+        const sourceModuleConfig = this.modulesConfig.find(module => module.key === inputInfo.source);
         foundResult = await this.executeModule(sourceModuleConfig);
       };
 

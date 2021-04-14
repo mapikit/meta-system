@@ -3,7 +3,7 @@ import { FunctionsInstaller } from "@api/bops-functions/installation/functions-i
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { OutputData } from "meta-function-helper";
 
-export type MappedModules = Map<string, ModuleResolverOutput>;
+export type MappedFunctions = Map<string, ModuleResolverOutput>;
 
 export interface ModuleManagerFileSystem {
   installer : FunctionsInstaller;
@@ -12,7 +12,7 @@ export interface ModuleManagerFileSystem {
 }
 
 export interface ModuleResolverOutput {
-  mainFunction : Function;
+  main : Function;
   outputData : OutputData[];
 }
 
