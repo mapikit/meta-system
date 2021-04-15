@@ -1,19 +1,18 @@
 /* eslint-disable max-lines-per-function */
 import { MappedConstants } from "@api/bops-functions/bops-engine/constant-validation";
 import { ConstantNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/constant-not-found-error";
-import { MappedFunctions } from "@api/bops-functions/bops-engine/module-types";
+import { FlowError, FlowResult, MappedFunctions } from "@api/bops-functions/bops-engine/module-types";
 import { pickBranchOutput } from "@api/bops-functions/branch-control/define-output-branch";
 import { BopsConfigurationEntry, InputsSource } from "@api/configuration-de-serializer/domain/business-operations-type";
-import { inspect } from "util";
 import { performance }  from "perf_hooks";
-import timer from "@api/bops-functions/bops-engine/performance-observer";
+import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 
 export class FlowResolver {
+  private startingClock : number;
   private readonly mappedConstants : MappedConstants;
   private readonly mappedFunctions : MappedFunctions;
   private readonly modulesConfig : BopsConfigurationEntry[];
   private modulesResults = new Map<number, unknown>();
-
 
   constructor (options : {
     mappedFunctions : MappedFunctions;
@@ -23,22 +22,36 @@ export class FlowResolver {
     this.mappedFunctions = options.mappedFunctions;
     this.mappedConstants = options.mappedConstants;
     this.modulesConfig = options.bopConfig;
-
-    this.executeModule = performance.timerify(this.executeModule);
   }
 
-  public async startFlow () : Promise<Map<number, unknown>> {
-    timer.startClock();
+  public async startFlow () : Promise<FlowResult | FlowError> {
+    this.startingClock = performance.now();
     const firstModule = this.modulesConfig.find(module => module.key === 1);
-    await this.executeModule(firstModule);
-    console.log(inspect(this.modulesResults, false, null, true));
-    return this.modulesResults;
+    try { await this.executeModule(firstModule); }
+    catch(error) {
+      return {
+        executionError: {
+          errorName : error.name,
+          errorMessage : error.message,
+        },
+      };
+    };
+    return { results: this.modulesResults };
   }
 
   public async executeModule (moduleConfig : BopsConfigurationEntry) : Promise<void> {
+    const elapsedTime = performance.now() - this.startingClock;
+    if(elapsedTime >= 2000) throw new TTLExceededError(Math.round(elapsedTime));
     let moduleInput = {};
     for (const input of moduleConfig.inputsSource) {
-      Object.assign(moduleInput, await this.resulveInput(input));
+      const resolvedInput = await this.resulveInput(input);
+      const resTarg = input.target.replace("[$source]", "");
+      if(resolvedInput[resTarg] instanceof Array) {
+        resolvedInput[resTarg] = moduleInput[resTarg] ?
+          resolvedInput[resTarg].concat(moduleInput[resTarg]) :
+          resolvedInput[resTarg];
+      }
+      Object.assign(moduleInput, resolvedInput);
     }
     moduleInput = this.resolveTargets(moduleInput);
     const result = await this.mappedFunctions.get(moduleConfig.moduleRepo).main(moduleInput);
@@ -51,23 +64,27 @@ export class FlowResolver {
     await this.executeModule(nextModule);
   }
 
-  private async resulveInput (inputInfo : InputsSource) : Promise<object> {
+  private async resulveInput (inputInfo : InputsSource) : Promise<object> { // Improve this now
+    let valueToInput : unknown;
     if(typeof inputInfo.source === "string") {
       const constName = inputInfo.source.slice(1);
-      const constValue = this.mappedConstants.get(constName);
-      if(constValue) return { [inputInfo.target]: constValue };
-      throw new ConstantNotFoundError(constName, inputInfo.target);
+      valueToInput = this.mappedConstants.get(constName);
+      if(!valueToInput) throw new ConstantNotFoundError(constName, inputInfo.target);
     }
 
     if(typeof inputInfo.source === "number") {
-      let foundResult = this.modulesResults.get(inputInfo.source);
-      if(!foundResult) {
+      if(!this.modulesResults.get(inputInfo.source)) {
         const sourceModuleConfig = this.modulesConfig.find(module => module.key === inputInfo.source);
-        foundResult = await this.executeModule(sourceModuleConfig);
+        await this.executeModule(sourceModuleConfig);
       };
-
-      return { [inputInfo.target] : this.extractOutput(foundResult, inputInfo.sourceOutput) };
+      const foundResult = this.modulesResults.get(inputInfo.source);
+      valueToInput = this.extractOutput(foundResult, inputInfo.sourceOutput);
     }
+
+    if(inputInfo.target.includes("[$source]")) {
+      return { [inputInfo.target.replace("[$source]", "")]:[valueToInput] };
+    }
+    return { [inputInfo.target]: valueToInput };
   }
 
   private resolveTargets (obj : object) : object {
@@ -87,7 +104,10 @@ export class FlowResolver {
     if(!desiredOutput) return source;
     const targetLevels = desiredOutput.split(".");
     let current = source;
-    targetLevels.forEach(level => { current = current[level]; });
+    targetLevels.forEach(level => {
+      if(!current[level]) throw new Error(`${level} was not found in ${source}`);
+      current = current[level];
+    });
     return current;
   }
 }

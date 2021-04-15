@@ -25,3 +25,14 @@ type ModuleResolutionInput = {
 export interface ModuleResolverType {
   [repoStartingCharacter : string] : (input : ModuleResolutionInput) => Promise<ModuleResolverOutput>;
 }
+
+export interface FlowResult {
+  results : Map<number, unknown>;
+}
+
+export interface FlowError {
+  executionError : {
+    errorName : string;
+    errorMessage : string;
+  };
+}
