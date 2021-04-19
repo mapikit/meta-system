@@ -1,5 +1,6 @@
 import { createObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/create";
 import { getObjectKeysBopsFunction } from "@api/bops-functions/prebuilt-functions/object/keys";
+import { getObjectValuesBopsFunction } from "@api/bops-functions/prebuilt-functions/object/values";
 import { expect } from "chai";
 
 describe("Object Bops Functions", () => {
@@ -32,7 +33,7 @@ describe("Object Bops Functions", () => {
 
       const result = getObjectKeysBopsFunction({ object });
 
-      expect(result).to.be.deep.equal({ result: [ "name", "lastName", "age" ] });
+      expect(result).to.be.deep.equal({ keys: [ "name", "lastName", "age" ] });
     });
 
     it("Converts Non numeric Keys to String", () => {
@@ -40,7 +41,27 @@ describe("Object Bops Functions", () => {
 
       const result = getObjectKeysBopsFunction({ object });
 
-      expect(result).to.be.deep.equal({ result: [ "6" ,"name", "lastName", "age" ] });
+      expect(result).to.be.deep.equal({ keys: [ "6" ,"name", "lastName", "age" ] });
+    });
+  });
+
+  describe("Values", () => {
+    it("Gets a list of the Object Values", () => {
+      const object = {
+        date: new Date(0),
+        string: "sadafdg",
+        number: 12345,
+        object: { name: "John" },
+        null: null,
+        undefined: undefined,
+        nan: Number.NaN,
+      };
+
+      const result = getObjectValuesBopsFunction({ object });
+
+      expect(result).to.be.deep.equal(
+        { values: [new Date(0), "sadafdg", 12345, { name: "John" }, null, undefined, Number.NaN ] },
+      );
     });
   });
 });

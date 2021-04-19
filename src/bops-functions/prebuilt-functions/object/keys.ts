@@ -8,7 +8,7 @@ export const getObjectKeysBopsFunction = (input : { object : CloudedObject }) : 
     result.push(keyName.toString());
   });
 
-  return ({ result });
+  return ({ keys: result });
 };
 
 export const getObjectKeysBopsFunctionInformation : InternalMetaFunction = {
