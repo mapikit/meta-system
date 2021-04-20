@@ -174,7 +174,7 @@ describe("Array BOPs functions", () => {
     });
   });
 
-  describe.only("Array Push", () => {
+  describe("Array Push", () => {
     it("Pushes a single item into the array", () => {
       const array = ["1", 2, true, false, null];
 
