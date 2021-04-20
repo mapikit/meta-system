@@ -1,5 +1,6 @@
 import { combineObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/combine";
 import { createObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/create";
+import { getObjectPropertyValueBopsFunction } from "@api/bops-functions/prebuilt-functions/object/get-value";
 import { getObjectKeysBopsFunction } from "@api/bops-functions/prebuilt-functions/object/keys";
 import { getObjectValuesBopsFunction } from "@api/bops-functions/prebuilt-functions/object/values";
 import { expect } from "chai";
@@ -83,6 +84,24 @@ describe("Object Bops Functions", () => {
       const result = combineObjectBopsFunction({ object1, object2 });
 
       expect(result).to.be.deep.equal({ combined: { name: "John", lastName: "Cena", age: 43, job: "Actor" } });
+    });
+  });
+
+  describe("Get Property Value", () => {
+    it("Gets the value of an object Property", () => {
+      const object = { name: "John", role :"Main Character" };
+
+      const result = getObjectPropertyValueBopsFunction({ object, key: "role" });
+
+      expect(result).to.be.deep.equal({ value: "Main Character" });
+    });
+
+    it("Gets undefined when the key does not exist", () => {
+      const object = { name: "John", role :"Main Character" };
+
+      const result = getObjectPropertyValueBopsFunction({ object, key: "age" });
+
+      expect(result).to.be.deep.equal({ value: undefined });
     });
   });
 });

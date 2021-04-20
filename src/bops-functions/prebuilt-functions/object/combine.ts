@@ -13,7 +13,7 @@ export const combineObjectBopsFunction = (input : { object1 : CloudedObject; obj
 export const combineObjectBopsFunctionInformation : InternalMetaFunction = {
   functionName: "combineObjectBopsFunction",
   version: "1.0.0",
-  description: "Creates an object with the given key and value",
+  description: "Combine two objects into one, with the latter object overriding conflicting keys",
   outputData: [
     {
       type: "cloudedObject",
@@ -27,8 +27,8 @@ export const combineObjectBopsFunctionInformation : InternalMetaFunction = {
     },
   ],
   inputParameters: [
-    { name: "key", type: "string", required: false },
-    { name: "value", type: "any", required: false },
+    { name: "object1", type: "cloudedObject", required: false },
+    { name: "object2", type: "cloudedObject", required: false },
   ],
   customTypes: [],
 };
