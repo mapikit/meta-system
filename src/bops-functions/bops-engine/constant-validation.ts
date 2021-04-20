@@ -1,15 +1,30 @@
 import { ConstantTypeError } from "@api/bops-functions/bops-engine/engine-errors/constant-type-error";
 import { JsonTypes } from "@api/common/types/json-types";
 import { BopsConstant, JsonTypeDict } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { ConfigurationType } from "@api/configuration-de-serializer/domain/configuration-type";
 
-export type MappedConstants = Map<string, JsonTypeDict<JsonTypes>>;
+export type ResolvedConstants = Record<string, JsonTypeDict>;
 
-export function validateConstants (constants : BopsConstant[]) : MappedConstants {
-  const resolvedConstants = new Map<string, JsonTypeDict<JsonTypes>>();
-  constants.forEach(constant => {
-    if(typeof constant.value !== constant.type) throw new ConstantTypeError(constant); //TODO improve error
-    resolvedConstants.set(constant.name, constant.value);
-  });
-  Object.freeze(resolvedConstants);
-  return resolvedConstants;
+export class ConstantManagement {
+  private static validateConstant (constant : BopsConstant) : JsonTypeDict<JsonTypes> {
+    if(typeof constant.value !== constant.type) throw new ConstantTypeError(constant);
+    return constant.value;
+  }
+
+  private static validateConstants (constants : BopsConstant[]) : ResolvedConstants {
+    const resolvedConstants = {};
+    constants.forEach(constant => {
+      resolvedConstants[constant.name] = this.validateConstant(constant);
+    });
+    return resolvedConstants;
+  }
+
+  public static validateAllSystemConstants (systemConfig : ConfigurationType) : Record<string, ResolvedConstants> {
+    const bops = systemConfig.businessOperations;
+    const allSystemConstants : Record<string, ResolvedConstants>= {};
+    bops.forEach(bop => {
+      allSystemConstants[bop.name] = this.validateConstants(bop.constants);
+    });
+    return Object.freeze(allSystemConstants);
+  }
 }

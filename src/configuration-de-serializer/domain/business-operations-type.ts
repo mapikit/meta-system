@@ -23,7 +23,7 @@ export interface BopsOutput {
   statusCode : number;
 }
 
-export type JsonTypeDict<T extends JsonTypes> =
+export type JsonTypeDict<T = JsonTypes> =
   T extends "string" ? string :
     T extends "number" ? number :
       T extends "boolean" ? boolean :

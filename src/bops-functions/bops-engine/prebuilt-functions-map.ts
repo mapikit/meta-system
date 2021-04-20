@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-types";
+import { ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-resolver";
 import { joinBopsFunction, joinBopsFunctionInformation } from "@api/bops-functions/prebuilt-functions/array/join";
 import { absoluteBopsFunction, absoluteFunctionInformation } from "@api/bops-functions/prebuilt-functions/math/absolute";
 import { addBopsFunction, addFunctionInformation } from "@api/bops-functions/prebuilt-functions/math/add";

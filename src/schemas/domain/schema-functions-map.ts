@@ -16,5 +16,3 @@ schemaFunctionsConfig.set("get", get);
 schemaFunctionsConfig.set("update", update);
 
 export { schemaFunctionsConfig };
-
-
