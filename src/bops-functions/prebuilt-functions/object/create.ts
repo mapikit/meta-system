@@ -16,7 +16,7 @@ export const createObjectBopsFunctionInformation : InternalMetaFunction = {
   description: "Creates an object with the given key and value",
   outputData: [
     {
-      type: "any",
+      type: "cloudedObject",
       name: "created",
       branch: "created",
     },

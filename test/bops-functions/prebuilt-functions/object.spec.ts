@@ -1,3 +1,4 @@
+import { combineObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/combine";
 import { createObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/create";
 import { getObjectKeysBopsFunction } from "@api/bops-functions/prebuilt-functions/object/keys";
 import { getObjectValuesBopsFunction } from "@api/bops-functions/prebuilt-functions/object/values";
@@ -62,6 +63,26 @@ describe("Object Bops Functions", () => {
       expect(result).to.be.deep.equal(
         { values: [new Date(0), "sadafdg", 12345, { name: "John" }, null, undefined, Number.NaN ] },
       );
+    });
+  });
+
+  describe("Combine", () => {
+    it("Combines two objects", () => {
+      const object1 = { name: "John" };
+      const object2 = { lastName: "Doe" };
+
+      const result = combineObjectBopsFunction({ object1, object2 });
+
+      expect(result).to.be.deep.equal({ combined: { name: "John", lastName: "Doe" } });
+    });
+
+    it("Object 2 overrides properties with same name from object 1", () => {
+      const object1 = { name: "John", lastName: "Doe", age: 68 };
+      const object2 = { lastName: "Cena", age: 43, job: "Actor" };
+
+      const result = combineObjectBopsFunction({ object1, object2 });
+
+      expect(result).to.be.deep.equal({ combined: { name: "John", lastName: "Cena", age: 43, job: "Actor" } });
     });
   });
 });
