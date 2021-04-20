@@ -2,6 +2,7 @@ import { combineObjectBopsFunction } from "@api/bops-functions/prebuilt-function
 import { createObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/create";
 import { getObjectPropertyValueBopsFunction } from "@api/bops-functions/prebuilt-functions/object/get-value";
 import { getObjectKeysBopsFunction } from "@api/bops-functions/prebuilt-functions/object/keys";
+import { objectToStringBopsFunction } from "@api/bops-functions/prebuilt-functions/object/to-string";
 import { getObjectValuesBopsFunction } from "@api/bops-functions/prebuilt-functions/object/values";
 import { expect } from "chai";
 
@@ -102,6 +103,16 @@ describe("Object Bops Functions", () => {
       const result = getObjectPropertyValueBopsFunction({ object, key: "age" });
 
       expect(result).to.be.deep.equal({ value: undefined });
+    });
+  });
+
+  describe("To String", () => {
+    it("Transforms an object into a string", () => {
+      const object = { name: "John", lastName: "Doe" };
+
+      const result = objectToStringBopsFunction({ object });
+
+      expect(result).to.be.deep.equal({ result: "{\"name\":\"John\",\"lastName\":\"Doe\"}" });
     });
   });
 });

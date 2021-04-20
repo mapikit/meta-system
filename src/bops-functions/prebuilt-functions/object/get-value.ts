@@ -26,8 +26,8 @@ export const getObjectPropertyValueBopsFunctionInformation : InternalMetaFunctio
     },
   ],
   inputParameters: [
-    { name: "object", type: "cloudedObject", required: false },
-    { name: "key", type: "string", required: false },
+    { name: "object", type: "cloudedObject", required: true },
+    { name: "key", type: "string", required: true },
   ],
   customTypes: [],
 };

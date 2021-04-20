@@ -27,8 +27,8 @@ export const combineObjectBopsFunctionInformation : InternalMetaFunction = {
     },
   ],
   inputParameters: [
-    { name: "object1", type: "cloudedObject", required: false },
-    { name: "object2", type: "cloudedObject", required: false },
+    { name: "object1", type: "cloudedObject", required: true },
+    { name: "object2", type: "cloudedObject", required: true },
   ],
   customTypes: [],
 };
