@@ -1,16 +1,42 @@
 import { OperationNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/operation-not-found-error";
 import { SchemaNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/schema-not-found-error";
-import { ModuleResolverOutput, ModuleResolverType } from "@api/bops-functions/bops-engine/module-types";
-import { schemaFunctionsConfig } from "@api/bops-functions/bops-engine/schema-functions-map";
+import { schemaFunctionsConfig } from "@api/schemas/domain/schema-functions-map";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 import MapikitBOps from "@api/bops-functions/bops-engine/prebuilt-functions-map";
-import { ModuleKind } from "@api/bops-functions/installation/functions-installer";
+import { FunctionsInstaller, ModuleKind } from "@api/bops-functions/installation/functions-installer";
 import { ProvidedFunctionNotFound } from "@api/bops-functions/bops-engine/engine-errors/function-not-found";
+import { SchemasManager } from "@api/schemas/application/schemas-manager";
+import { OutputData } from "meta-function-helper";
+import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
+import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
 
+type ModuleResolutionInput = {
+  module : BopsConfigurationEntry;
+  functionsInstaller : FunctionsInstaller;
+  functionsFileSystem : FunctionFileSystem;
+  schemasManager : SchemasManager;
+}
+
+export interface ModuleResolverOutput {
+  main : Function;
+  outputData : OutputData[];
+}
+
+enum RepoStartingCharacter {
+  schemaFunctions = "@",
+  internalFunctions = "#",
+  externalFunctions = "%",
+  bopEngine = "*"
+}
+
+export type ModuleResolverType = {
+  [char in RepoStartingCharacter] : (input : ModuleResolutionInput) => Promise<ModuleResolverOutput>;
+}
 
 export const moduleResolver : ModuleResolverType = {
   "@": async (input) : Promise<ModuleResolverOutput> => {
-    const [schema, operation] = input.moduleName.split("@");
+    const moduleName = input.module.moduleRepo.slice(1);
+    const [schema, operation] = moduleName.split("@");
     if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
 
     const operationOutput = schemaFunctionsConfig.get(operation).outputData;
@@ -24,8 +50,9 @@ export const moduleResolver : ModuleResolverType = {
   },
 
   "#" : async (input) : Promise<ModuleResolverOutput> => {
-    const foundFunction = MapikitBOps.get(input.moduleName);
-    if(!foundFunction) throw new ProvidedFunctionNotFound(input.moduleName);
+    const functionName = input.module.moduleRepo.slice(1);
+    const foundFunction = MapikitBOps.get(functionName);
+    if(!foundFunction) throw new ProvidedFunctionNotFound(input.module.moduleRepo);
     return {
       main: foundFunction.main,
       outputData: foundFunction.outputData,
@@ -33,11 +60,12 @@ export const moduleResolver : ModuleResolverType = {
   },
 
   "%" : async (input) : Promise<ModuleResolverOutput> => {
-    await input.fileManager.installer.install(input.moduleName, input.moduleVersion, ModuleKind.NPM);
-    const functionJson = await input.fileManager.externalFunctions.getFunctionDescriptionFile(input.moduleName);
+    const moduleName = input.module.moduleRepo.slice(1);
+    await input.functionsInstaller.install(moduleName, input.module.version, ModuleKind.NPM);
+    const functionJson = await input.functionsFileSystem.getFunctionDescriptionFile(moduleName);
     const externalFunctionConfig = JSON.parse(functionJson);
-    const mainFunction = await input.fileManager.externalFunctions.importMain(
-      input.moduleName,
+    const mainFunction = await input.functionsFileSystem.importMain(
+      moduleName,
       externalFunctionConfig.entrypoint,
       externalFunctionConfig.mainFunction,
     );
@@ -45,5 +73,11 @@ export const moduleResolver : ModuleResolverType = {
       main: mainFunction,
       outputData: externalFunctionConfig.outputData,
     };
+  },
+
+  "*" : async () : Promise<ModuleResolverOutput> => {
+    // BOpEngine is mapped after instantiated
+    // "*" symbol is temporary, will likely be changed later
+    return;
   },
 };

@@ -2,43 +2,55 @@ import { FunctionFileSystem } from "@api/bops-functions/installation/function-fi
 import { FunctionsInstaller } from "@api/bops-functions/installation/functions-installer";
 import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
-import {
-  MappedFunctions,
-  ModuleManagerFileSystem,
-  ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-types";
-import { moduleResolver } from "@api/bops-functions/bops-engine/module-resolver";
+import { moduleResolver, ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-resolver";
+import { MappedFunctions } from "@api/bops-functions/bops-engine/bops-engine";
+import { ConfigurationType } from "@api/configuration-de-serializer/domain/configuration-type";
 
 export class ModuleManager {
   private schemasManager : SchemasManager;
-  private files : ModuleManagerFileSystem;
+  private functionsInstaller : FunctionsInstaller;
+  private functionsFileSystem : FunctionFileSystem;
 
   constructor (options : {
     SchemaManager : SchemasManager;
     FunctionsInstaller : FunctionsInstaller;
     FunctionsFileSystem : FunctionFileSystem;
   }) {
-    this.files = {
-      installer : options.FunctionsInstaller,
-      externalFunctions: options.FunctionsFileSystem,
-    };
-
+    this.functionsFileSystem = options.FunctionsFileSystem;
+    this.functionsInstaller = options.FunctionsInstaller;
     this.schemasManager = options.SchemaManager;
+  }
+
+  public async resolveModule (module : BopsConfigurationEntry) : Promise<ModuleResolverOutput> {
+    const startingChar = module.moduleRepo[0];
+    return moduleResolver[startingChar]({
+      module: module,
+      functionsInstaller: this.functionsInstaller,
+      functionsFileSystem: this.functionsFileSystem,
+      schemasManager: this.schemasManager,
+    });
   }
 
   public async resolveModules (modules : BopsConfigurationEntry[]) : Promise<MappedFunctions> {
     const mappedModules = new Map<string, ModuleResolverOutput>();
     for(const module of modules) {
       if(!mappedModules.get(module.moduleRepo)) {
-        const startingChar = module.moduleRepo[0];
-        mappedModules.set(module.moduleRepo, await moduleResolver[startingChar]({
-          moduleName: module.moduleRepo.slice(1),
-          moduleVersion: module.version,
-          fileManager: this.files,
-          schemasManager: this.schemasManager,
-        }));
+        mappedModules.set(module.moduleRepo, await this.resolveModule(module));
       }
     }
     return mappedModules;
+  }
+
+  public async resolveSystemModules (systemConfig : ConfigurationType) : Promise<MappedFunctions> {
+    const systemBops = systemConfig.businessOperations;
+    const functionMap = new Map<string, ModuleResolverOutput>();
+    for(const bop of systemBops) {
+      const bopFunctions = await this.resolveModules(bop.configuration);
+      bopFunctions.forEach((funct, key) => {
+        functionMap.set(key, funct);
+      });
+    }
+    return functionMap;
   }
 }
 

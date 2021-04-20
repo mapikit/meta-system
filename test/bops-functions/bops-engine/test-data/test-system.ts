@@ -5,6 +5,8 @@ import { mapikitProvidedBop } from "@test/bops-functions/bops-engine/test-data/b
 import { schemaFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/schema-functions-bop";
 import { externalFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/external-functions";
 import { mixedFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/mixed-functions";
+import { timeoutBop } from "@test/bops-functions/bops-engine/test-data/business-operations/ttl-exceeded";
+import { bopception } from "@test/bops-functions/bops-engine/test-data/business-operations/meta-bop";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -34,6 +36,8 @@ export const testSystem : ConfigurationType = {
     mapikitProvidedBop,
     externalFunctionsBop,
     mixedFunctionsBop,
+    timeoutBop,
+    bopception,
   ],
 };
 
