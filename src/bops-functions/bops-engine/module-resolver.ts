@@ -2,7 +2,7 @@ import { OperationNotFoundError } from "@api/bops-functions/bops-engine/engine-e
 import { SchemaNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/schema-not-found-error";
 import { schemaFunctionsConfig } from "@api/schemas/domain/schema-functions-map";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
-import MapikitBOps from "@api/bops-functions/bops-engine/prebuilt-functions-map";
+import MapikitBOps from "@api/bops-functions/prebuilt-functions/prebuilt-functions-map";
 import { FunctionsInstaller, ModuleKind } from "@api/bops-functions/installation/functions-installer";
 import { ProvidedFunctionNotFound } from "@api/bops-functions/bops-engine/engine-errors/function-not-found";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
