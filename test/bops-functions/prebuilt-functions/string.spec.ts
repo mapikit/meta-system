@@ -1,5 +1,6 @@
 import { charAtBopsFunction } from "@api/bops-functions/prebuilt-functions/string/char-at";
 import { indexOfStringFunction } from "@api/bops-functions/prebuilt-functions/string/index-of";
+import { stringReplaceFunction } from "@api/bops-functions/prebuilt-functions/string/replace";
 import { expect } from "chai";
 
 describe("String BOPs functions", () => {
@@ -39,6 +40,28 @@ describe("String BOPs functions", () => {
       const result = indexOfStringFunction({ string, search });
 
       expect(result).to.be.deep.equal({ index: -1 });
+    });
+  });
+
+  describe("Replace", () => {
+    it("Replaces an existing substring", () => {
+      const baseString = "Welcome to the Jungle";
+      const search = "to the Jungle";
+      const replacer = "to my den";
+
+      const result = stringReplaceFunction({ baseString, search, replacer });
+
+      expect(result).to.be.deep.equal({ result: "Welcome to my den" });
+    });
+
+    it("Does not replace a substring that does not exist", () => {
+      const baseString = "Welcome to the Jungle";
+      const search = "to the jungle"; // Lower case
+      const replacer = "oops";
+
+      const result = stringReplaceFunction({ baseString, search, replacer });
+
+      expect(result).to.be.deep.equal({ result: "Welcome to the Jungle" });
     });
   });
 });

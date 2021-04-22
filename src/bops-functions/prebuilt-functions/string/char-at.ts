@@ -35,7 +35,7 @@ export const charAtBopsFunctionInformation : InternalMetaFunction = {
     },
   ],
   inputParameters: [
-    { name: "array", type: "string", required: true },
+    { name: "string", type: "string", required: true },
     { name: "index", type: "number", required: true },
   ],
   customTypes: [],
