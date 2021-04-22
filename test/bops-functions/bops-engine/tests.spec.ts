@@ -12,7 +12,7 @@ import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/
 import { performance } from "perf_hooks";
 import { ConstantManagement } from "@api/bops-functions/bops-engine/constant-validation";
 
-describe.only("Bops Engine Testing", () => {
+describe("Bops Engine Testing", () => {
   let fakeMongo : MongoClient;
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
