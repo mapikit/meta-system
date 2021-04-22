@@ -2,6 +2,7 @@ import { charAtBopsFunction } from "@api/bops-functions/prebuilt-functions/strin
 import { countStringFunction } from "@api/bops-functions/prebuilt-functions/string/count";
 import { indexOfStringFunction } from "@api/bops-functions/prebuilt-functions/string/index-of";
 import { stringReplaceFunction } from "@api/bops-functions/prebuilt-functions/string/replace";
+import { stringToNumberBopsFunction } from "@api/bops-functions/prebuilt-functions/string/to-number";
 import { expect } from "chai";
 
 describe("String BOPs functions", () => {
@@ -83,6 +84,32 @@ describe("String BOPs functions", () => {
       const result = countStringFunction({ string, search });
 
       expect(result).to.be.deep.equal({ count: 0 });
+    });
+  });
+
+  describe("String to Number", () => {
+    it("Converts Successfully a valid string", () => {
+      const string = "0.1235888189918";
+
+      const result = stringToNumberBopsFunction({ string });
+
+      expect(result).to.be.deep.equal({ result: 0.1235888189918 });
+    });
+
+    it("Converts Successfully a scientific notation string", () => {
+      const string = "1.344e-14";
+
+      const result = stringToNumberBopsFunction({ string });
+
+      expect(result).to.be.deep.equal({ result: Number("1.344e-14") });
+    });
+
+    it("Fails to convert an invalid String", () => {
+      const string = "1.1414x";
+
+      const result = stringToNumberBopsFunction({ string });
+
+      expect(result).to.be.deep.equal({ errorMessage: "Given string is not convertible to a number" });
     });
   });
 });
