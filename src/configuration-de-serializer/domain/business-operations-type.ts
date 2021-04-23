@@ -14,7 +14,7 @@ export interface BusinessOperations {
 export interface BopsInput {
   name : string;
   type : string;
-  localization : "uri" | "body";
+  localization ?: "uri" | "body";
 }
 
 export interface BopsOutput {

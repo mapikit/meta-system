@@ -3,8 +3,9 @@ import { FunctionsInstaller } from "@api/bops-functions/installation/functions-i
 import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { moduleResolver, ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-resolver";
-import { MappedFunctions } from "@api/bops-functions/bops-engine/bops-engine";
 import { ConfigurationType } from "@api/configuration-de-serializer/domain/configuration-type";
+
+export type MappedFunctions = Map<string, ModuleResolverOutput>;
 
 export class ModuleManager {
   private schemasManager : SchemasManager;

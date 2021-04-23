@@ -1,5 +1,4 @@
 import { ResolvedConstants } from "@api/bops-functions/bops-engine/constant-validation";
-import { ConstantNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/constant-not-found-error";
 import { pickBranchOutput } from "@api/bops-functions/branch-control/define-output-branch";
 import {
   BopsConfigurationEntry,
@@ -7,18 +6,19 @@ import {
   InputsSource } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { performance }  from "perf_hooks";
 import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
-import { inspect } from "util";
 import constants from "@api/mapikit/constants";
-import { ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-resolver";
 import { CloudedObject } from "@api/common/types/clouded-object";
+import { ObjectResolver } from "@api/bops-functions/bops-engine/object-manipulator";
+import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
 
-export type MappedFunctions = Map<string, ModuleResolverOutput>;
 type ResultsType = { [moduleKey : number ] : CloudedObject & FlowResult }
 type FlowErrorType = {
   partialResults : ResultsType;
   errorName : string;
   errorMessage : string;
 }
+
+interface FlowInfo { bopConfig : BusinessOperations; inputs ?: CloudedObject }
 
 export interface FlowResult {
   results ?: ResultsType;
@@ -48,7 +48,7 @@ export class BopsEngine {
   private mapBopsEngineFunctions () : void {
     this.mappedFunctions.forEach((map, key) => {
       if(key.includes("+")) {
-        const engineFunction = async (inputs : object, results : object) : Promise<FlowResult> => {
+        const engineFunction = async (inputs : object, results : ResultsType) : Promise<FlowResult> => {
           return this.startFlow({ bopConfig: this.constants[key] as BusinessOperations, ...inputs }, results);
         };
         map.main = engineFunction;
@@ -56,99 +56,90 @@ export class BopsEngine {
     });
   }
 
-  public async startFlow (input : { bopConfig : BusinessOperations }, results = {}) : Promise<FlowResult> {
+  /**
+   * Starts the execution flow for the given BOp. Flow starts at key 1, but ending depends
+   * on the results and configured branching.
+   *
+   * @returns An object with all the flow results. Object keys match modules keys and object values
+   * correspond to the results. ( [moduleKey] : [moduleResult] )
+   */
+  public async startFlow (input : FlowInfo, results = {}) : Promise<FlowResult> {
     this.startingClock = performance.now();
     const firstModule = input.bopConfig.configuration.find(module => module.key === 1);
-    return this.executeModule(firstModule, results, input.bopConfig)
+    const inputs = ObjectResolver.validateConfiguredInputs(input.bopConfig.inputs, input.inputs);
+    return this.executeModule(firstModule, { bopConfig: input.bopConfig, inputs }, results)
       .then(() => { return { results: results }; })
-      .catch(err => {
-        return { executionError: {
-          errorName: err.name,
-          errorMessage: err.message,
-          partialResults: results,
-        } }; });
+      .catch(err => { return { executionError: {
+        errorName: err.name,
+        errorMessage: err.message,
+        partialResults: results,
+      } }; });
   }
 
+  /**
+   * Executes the given module grabing required inputs from constants or other modules.
+   * When done proceeds to nextFunction if present
+   */
   public async executeModule (
     moduleConfig : BopsConfigurationEntry,
-    results : object,
-    bopConfig : BusinessOperations) : Promise<void> {
+    flowInfo : FlowInfo,
+    results : ResultsType) : Promise<void> {
+
     const elapsedTime = performance.now() - this.startingClock;
     if(elapsedTime >= this.maxExecutionTime) throw new TTLExceededError(Math.round(elapsedTime));
 
-    const moduleInput = await this.resolveInputs(moduleConfig.inputsSource, results, bopConfig);
+    const moduleInput = await this.resolveInputs(moduleConfig.inputsSource, flowInfo, results);
     const result = await this.mappedFunctions.get(moduleConfig.moduleRepo).main(moduleInput);
     results[moduleConfig.key] = result;
 
     const branchToFollow = pickBranchOutput(this.mappedFunctions.get(moduleConfig.moduleRepo).outputData, result);
     const nextKey = moduleConfig.nextFunctions.find(func => func.branch === branchToFollow)?.nextKey;
     if(!nextKey) return;
-    const nextModule = bopConfig.configuration.find(module => module.key === nextKey);
-    await this.executeModule(nextModule, results, bopConfig);
+    const nextModule = flowInfo.bopConfig.configuration.find(module => module.key === nextKey);
+    await this.executeModule(nextModule, flowInfo, results);
   }
 
-  private async resolveInputs (
-    inputs : InputsSource[],
-    results : object,
-    bopConfig : BusinessOperations) : Promise<unknown> {
+  /**
+   * Resolves all module inputs, returning the apropiate object to be used as a module input
+   */
+  private async resolveInputs (inputs : InputsSource[], flowInfo : FlowInfo, results : ResultsType) : Promise<unknown> {
     for (const input of inputs) {
-      const resolved = await this.resulveInput(input, results, bopConfig);
+      const resolved = await this.resulveInput(input, flowInfo, results);
       const objectKey = Object.keys(resolved)[0];
       if(resolved[objectKey] instanceof Array) {
         resolved[objectKey] = [...(inputs[objectKey] ?? []), ...resolved[objectKey]];
       }
       Object.assign(inputs, resolved);
     }
-    return this.resolveTargets(inputs);
+    return ObjectResolver.resolveTargets(inputs);
   }
 
-  // eslint-disable-next-line max-lines-per-function
-  private async resulveInput (
-    inputInfo : InputsSource,
-    results : object,
-    bopConfig : BusinessOperations) : Promise<Record<string, unknown>|Record<string, unknown>[]> {
-    let valueToInput : unknown;
-    switch (typeof inputInfo.source) {
+  /**
+   * Resolves the given input, as an object property or an array as cofigured
+   */
+  private async resulveInput (input : InputsSource, flowInfo : FlowInfo, results : ResultsType) : Promise<unknown> {
+
+    const inputValue = await this.getInputValue(input, flowInfo, results);
+    const targetIsArray : boolean = input.target.includes(constants.ARRAY_INDICATOR);
+    return { [input.target.replace(constants.ARRAY_INDICATOR, "")]: targetIsArray ? [inputValue] : inputValue };
+  }
+
+  /**
+   * Returns the value of the given input. If required, will execute the funcion from which the value
+   * will be extracted
+   */
+  private async getInputValue (input : InputsSource, flowInfo : FlowInfo, results : ResultsType) : Promise<unknown> {
+    switch (typeof input.source) {
       case "string":
-        const constName = inputInfo.source.slice(1);
-        valueToInput = this.constants[bopConfig.name][constName];
-        if(!valueToInput) throw new ConstantNotFoundError(constName, inputInfo.target);
-        break;
+        const constName = input.source.slice(1);
+        return this.constants[flowInfo.bopConfig.name][constName] || flowInfo.inputs[constName];
 
       case "number":
-        if(!results[inputInfo.source]) {
-          const sourceModuleConfig = bopConfig.configuration.find(module => module.key === inputInfo.source);
-          await this.executeModule(sourceModuleConfig, results, bopConfig);
+        if(!results[input.source]) {
+          const sourceModuleConfig = flowInfo.bopConfig.configuration.find(module => module.key === input.source);
+          await this.executeModule(sourceModuleConfig, flowInfo, results);
         };
-        valueToInput = this.extractOutput(results[inputInfo.source], inputInfo.sourceOutput);
-        break;
+        return ObjectResolver.extractOutput(results[input.source], input.sourceOutput);
     }
-
-    const targetIsArray = inputInfo.target.includes(constants.ARRAY_INDICATOR);
-    return { [inputInfo.target.replace(constants.ARRAY_INDICATOR, "")]: targetIsArray ? [valueToInput] : valueToInput };
-  }
-
-  private resolveTargets (source : unknown) : unknown {
-    const res = {};
-    for(const key of Object.keys(source)) {
-      const targetLevels = key.split(".");
-      let current = res;
-      targetLevels.forEach((level, index) => {
-        current[level] = (index == targetLevels.length-1) ? source[key] : current[level] || {};
-        current = current[level];
-      });
-    }
-    return res;
-  }
-
-  private extractOutput (source : unknown, desiredOutput ?: string) : unknown {
-    if(!desiredOutput) return source;
-    const targetLevels = desiredOutput.split(".");
-    let current = source;
-    targetLevels.forEach(level => {
-      if(!current[level]) throw new Error(`${level} was not found in ${inspect(source, false, null)}`);
-      current = current[level];
-    });
-    return current;
   }
 }

@@ -105,7 +105,8 @@ describe("Bops Engine Testing", () => {
     expect(flow.executionError.errorMessage).to.contain("Time limit exceeded after");
     expect(flow.executionError.partialResults[1].results).not.to.be.undefined;
     expect(flow.executionError.partialResults[2]["customGreetings"]).to.be.true;
-    expect(flow.executionError.partialResults[3].executionError.errorName).to.be.equal(TTLExceededError.name);
-    expect(flow.executionError.partialResults[4]).to.be.undefined;
+    expect(flow.executionError.partialResults[3].results).not.to.be.undefined;
+    expect(flow.executionError.partialResults[4].executionError.errorName).to.be.equal(TTLExceededError.name);
+    expect(flow.executionError.partialResults[5]).to.be.undefined;
   });
 });

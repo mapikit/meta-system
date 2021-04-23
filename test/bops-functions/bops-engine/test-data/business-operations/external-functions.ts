@@ -2,7 +2,9 @@ import { BusinessOperations } from "@api/configuration-de-serializer/domain/busi
 
 export const externalFunctionsBop : BusinessOperations = {
   name: "external-functions",
-  inputs: [],
+  inputs: [
+    { name: "externalInput", type: "string" },
+  ],
   outputs: [],
   route: "/cars/:carId/sell",
   constants: [
@@ -33,7 +35,9 @@ export const externalFunctionsBop : BusinessOperations = {
     {
       moduleRepo: "%bops-function-hello-world",
       key: 3,
-      inputsSource: [],
+      inputsSource: [
+        { source: "!externalInput", target: "nameToGreet" },
+      ],
       nextFunctions: [],
     },
   ],
