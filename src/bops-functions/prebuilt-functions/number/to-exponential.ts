@@ -41,6 +41,7 @@ export const toExponentialBopsFunctionInformation : InternalMetaFunction = {
   ],
   inputParameters: [
     { name: "string", type: "string", required: true },
+    { name: "decimalPlaces", type: "number", required: false },
   ],
   customTypes: [],
 };

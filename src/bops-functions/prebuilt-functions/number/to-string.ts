@@ -33,7 +33,7 @@ export const numberToStringFunctionInformation : InternalMetaFunction = {
     },
   ],
   inputParameters: [
-    { name: "string", type: "string", required: true },
+    { name: "number", type: "number", required: true },
   ],
   customTypes: [],
 };

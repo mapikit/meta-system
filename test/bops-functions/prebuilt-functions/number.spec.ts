@@ -1,3 +1,4 @@
+import { randomNumberBopsFunction } from "@api/bops-functions/prebuilt-functions/number/random";
 import { toExponentialBopsFunction } from "@api/bops-functions/prebuilt-functions/number/to-exponential";
 import { numberToStringFunction } from "@api/bops-functions/prebuilt-functions/number/to-string";
 import { expect } from "chai";
@@ -49,6 +50,17 @@ describe("Number BOPs Function", () => {
       const result = toExponentialBopsFunction({ number });
 
       expect(result).to.be.deep.equal({ errorMessage: "Cannot make NaN exponential" });
+    });
+  });
+
+  describe("Random", () => {
+    it("Generates a random number between 0 and 1", () => {
+      const result = randomNumberBopsFunction();
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((result as any).result).to.be.lte(1);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((result as any).result).to.be.gte(0);
     });
   });
 });
