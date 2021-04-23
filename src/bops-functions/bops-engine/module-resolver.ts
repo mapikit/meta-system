@@ -9,6 +9,7 @@ import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { OutputData } from "meta-function-helper";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
 import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { bopsEngineInfo } from "@api/bops-functions/bops-engine/meta-function";
 
 type ModuleResolutionInput = {
   module : BopsConfigurationEntry;
@@ -26,7 +27,7 @@ enum RepoStartingCharacter {
   schemaFunctions = "@",
   internalFunctions = "#",
   externalFunctions = "%",
-  bopEngine = "*"
+  bopEngine = "+"
 }
 
 export type ModuleResolverType = {
@@ -75,9 +76,10 @@ export const moduleResolver : ModuleResolverType = {
     };
   },
 
-  "*" : async () : Promise<ModuleResolverOutput> => {
-    // BOpEngine is mapped after instantiated
-    // "*" symbol is temporary, will likely be changed later
-    return;
+  "+" : async () : Promise<ModuleResolverOutput> => {
+    return {
+      main: undefined, // Will be defined after BopsEngine instantiation
+      outputData: bopsEngineInfo.outputData,
+    };
   },
 };

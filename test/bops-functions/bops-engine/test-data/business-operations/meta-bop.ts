@@ -5,15 +5,39 @@ export const bopception : BusinessOperations = {
   inputs: [],
   outputs: [],
   route: "/cars/:carId/sell",
-  constants: [
-    { name: "incorrectType", type: "string", value: "configurationShouldBeAnArrayOfObjects" },
-  ],
+  constants: [],
   configuration: [
     {
-      moduleRepo: "*bops-engine",
+      moduleRepo: "+prebuilt-functions",
       key: 1,
+      inputsSource: [],
+      nextFunctions: [
+        { nextKey: 2, branch: "default" },
+      ],
+    },
+    {
+      moduleRepo: "%bops-function-hello-world",
+      key: 2,
       inputsSource: [
-        { source: "!incorrectType", target: "bopConfig.configuration" },
+        { source: 1, sourceOutput: "results.4.result", target: "nameToGreet" },
+      ],
+      nextFunctions: [
+        { nextKey: 3, branch: "default" },
+      ],
+    },
+    {
+      moduleRepo: "+timeout",
+      key: 3,
+      inputsSource: [],
+      nextFunctions: [
+        { branch: "errorBranch", nextKey: 4 },
+      ],
+    },
+    { //This should not be executed since previous module fails
+      moduleRepo: "%bops-function-hello-world",
+      key: 4,
+      inputsSource: [
+        { source: 3, sourceOutput: "executionError.errorMessage", target : "nameToGreet" }
       ],
       nextFunctions: [],
     },

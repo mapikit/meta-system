@@ -50,10 +50,10 @@ describe("Bops Engine Testing", () => {
     const schemaFunctionsBop = testSystem.businessOperations.find(bop => bop.name === "schema-functions");
     const flow = await flowResolver.startFlow({ bopConfig: schemaFunctionsBop });
 
-    const secondInsertionId = flow.results[2]["createdEntity"]._id;
+    const secondInsertionId = flow.results[2]["createdEntity"]["_id"];
     expect(flow.results[3]["found"]).to.be.true;
-    expect(flow.results[3]["entity"]._id).to.be.deep.equal(secondInsertionId);
-    expect(flow.results[4]["updatedEntity"]._id).to.be.deep.equal(secondInsertionId);
+    expect(flow.results[3]["entity"]["_id"]).to.be.deep.equal(secondInsertionId);
+    expect(flow.results[4]["updatedEntity"]["_id"]).to.be.deep.equal(secondInsertionId);
     expect(flow.results[6]["entities"]).to.be.empty;
   });
 
@@ -96,12 +96,16 @@ describe("Bops Engine Testing", () => {
     expect(flow.executionError.errorMessage).to.contain("Time limit exceeded");
   });
 
-  it("Executes an internal BopEngine (Internal engine fails due to invalid config)", async () => {
+  it("Executes two internal BopEngines - One succeeds and Another Fails with TTLExpired", async () => {
     const bopception = testSystem.businessOperations.find(bop => bop.name === "bopception");
     const flow = await flowResolver.startFlow({ bopConfig: bopception });
 
-    expect(flow["results"]).to.be.undefined;
-    expect(flow.executionError.errorName).to.be.equal("TypeError");
-    expect(flow.executionError.errorMessage).to.be.equal("this.bopConfig.configuration.find is not a function");
+    expect(flow.results).to.be.undefined;
+    expect(flow.executionError.errorName).to.be.equal(TTLExceededError.name);
+    expect(flow.executionError.errorMessage).to.contain("Time limit exceeded after");
+    expect(flow.executionError.partialResults[1].results).not.to.be.undefined;
+    expect(flow.executionError.partialResults[2]["customGreetings"]).to.be.true;
+    expect(flow.executionError.partialResults[3].executionError.errorName).to.be.equal(TTLExceededError.name);
+    expect(flow.executionError.partialResults[4]).to.be.undefined;
   });
 });

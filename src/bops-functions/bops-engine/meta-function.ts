@@ -45,6 +45,10 @@ export const bopsEngineInfo : InternalMetaFunction = {
           name: "errorMessage",
           type: "string",
         },
+        {
+          name: "partialResults",
+          type: "cloudedObject",
+        },
       ],
     },
   ],

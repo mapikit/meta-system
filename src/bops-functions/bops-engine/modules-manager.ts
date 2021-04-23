@@ -21,7 +21,7 @@ export class ModuleManager {
     this.schemasManager = options.SchemaManager;
   }
 
-  public async resolveModule (module : BopsConfigurationEntry) : Promise<ModuleResolverOutput> {
+  private async resolveModule (module : BopsConfigurationEntry) : Promise<ModuleResolverOutput> {
     const startingChar = module.moduleRepo[0];
     return moduleResolver[startingChar]({
       module: module,

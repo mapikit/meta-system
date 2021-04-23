@@ -8,68 +8,91 @@ import {
 import { performance }  from "perf_hooks";
 import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 import { inspect } from "util";
-import { bopsEngineInfo } from "@api/bops-functions/bops-engine/meta-function";
 import constants from "@api/mapikit/constants";
 import { ModuleResolverOutput } from "@api/bops-functions/bops-engine/module-resolver";
+import { CloudedObject } from "@api/common/types/clouded-object";
 
 export type MappedFunctions = Map<string, ModuleResolverOutput>;
+type ResultsType = { [moduleKey : number ] : CloudedObject & FlowResult }
+type FlowErrorType = {
+  partialResults : ResultsType;
+  errorName : string;
+  errorMessage : string;
+}
 
 export interface FlowResult {
-  results ?: { [moduleKey : number] : unknown };
-  executionError ?: {
-    errorName : string;
-    errorMessage : string;
-  };
+  results ?: ResultsType;
+  executionError ?: FlowErrorType;
 }
 
 export class BopsEngine {
   private startingClock : number;
   private readonly maxExecutionTime : number
-  private readonly constants : Record<string, ResolvedConstants>;
+  private readonly constants : Record<string, ResolvedConstants | BusinessOperations>;
   private readonly mappedFunctions : MappedFunctions;
-  private bopConfig : BusinessOperations;
-  private results : { [moduleKey : number] : unknown };
 
   constructor (options : {
     MappedFunctions : MappedFunctions;
-    MappedConstants : Record<string, ResolvedConstants>;
+    MappedConstants : Record<string, ResolvedConstants | BusinessOperations>;
     MaxExecutionTime ?: number;
   }) {
     this.constants = options.MappedConstants;
     this.mappedFunctions = options.MappedFunctions;
     this.maxExecutionTime = options.MaxExecutionTime ?? 2000;
 
-    this.mappedFunctions.set("*bops-engine", { main: this.startFlow, outputData: bopsEngineInfo.outputData });
+    this.startFlow = this.startFlow.bind(this);
+
+    this.mapBopsEngineFunctions();
   }
 
-  public async startFlow (input : { bopConfig : BusinessOperations }) : Promise<FlowResult> {
-    this.results = {};
-    this.bopConfig = input.bopConfig;
+  private mapBopsEngineFunctions () : void {
+    this.mappedFunctions.forEach((map, key) => {
+      if(key.includes("+")) {
+        const engineFunction = async (inputs : object, results : object) : Promise<FlowResult> => {
+          return this.startFlow({ bopConfig: this.constants[key] as BusinessOperations, ...inputs }, results);
+        };
+        map.main = engineFunction;
+      }
+    });
+  }
+
+  public async startFlow (input : { bopConfig : BusinessOperations }, results = {}) : Promise<FlowResult> {
     this.startingClock = performance.now();
-    const firstModule = this.bopConfig.configuration.find(module => module.key === 1);
-    return this.executeModule(firstModule)
-      .then(() => { return { results: this.results }; })
-      .catch(err => { return { executionError: { errorName: err.name, errorMessage: err.message } }; });
+    const firstModule = input.bopConfig.configuration.find(module => module.key === 1);
+    return this.executeModule(firstModule, results, input.bopConfig)
+      .then(() => { return { results: results }; })
+      .catch(err => {
+        return { executionError: {
+          errorName: err.name,
+          errorMessage: err.message,
+          partialResults: results,
+        } }; });
   }
 
-  public async executeModule (moduleConfig : BopsConfigurationEntry) : Promise<void> {
+  public async executeModule (
+    moduleConfig : BopsConfigurationEntry,
+    results : object,
+    bopConfig : BusinessOperations) : Promise<void> {
     const elapsedTime = performance.now() - this.startingClock;
     if(elapsedTime >= this.maxExecutionTime) throw new TTLExceededError(Math.round(elapsedTime));
 
-    const moduleInput = await this.resolveInputs(moduleConfig.inputsSource);
+    const moduleInput = await this.resolveInputs(moduleConfig.inputsSource, results, bopConfig);
     const result = await this.mappedFunctions.get(moduleConfig.moduleRepo).main(moduleInput);
-    this.results[moduleConfig.key] = result;
+    results[moduleConfig.key] = result;
 
     const branchToFollow = pickBranchOutput(this.mappedFunctions.get(moduleConfig.moduleRepo).outputData, result);
     const nextKey = moduleConfig.nextFunctions.find(func => func.branch === branchToFollow)?.nextKey;
     if(!nextKey) return;
-    const nextModule = this.bopConfig.configuration.find(module => module.key === nextKey);
-    await this.executeModule(nextModule);
+    const nextModule = bopConfig.configuration.find(module => module.key === nextKey);
+    await this.executeModule(nextModule, results, bopConfig);
   }
 
-  private async resolveInputs (inputs : InputsSource[]) : Promise<unknown> {
+  private async resolveInputs (
+    inputs : InputsSource[],
+    results : object,
+    bopConfig : BusinessOperations) : Promise<unknown> {
     for (const input of inputs) {
-      const resolved = await this.resulveInput(input);
+      const resolved = await this.resulveInput(input, results, bopConfig);
       const objectKey = Object.keys(resolved)[0];
       if(resolved[objectKey] instanceof Array) {
         resolved[objectKey] = [...(inputs[objectKey] ?? []), ...resolved[objectKey]];
@@ -80,21 +103,24 @@ export class BopsEngine {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private async resulveInput (inputInfo : InputsSource) : Promise<Record<string, unknown>|Record<string, unknown>[]> {
+  private async resulveInput (
+    inputInfo : InputsSource,
+    results : object,
+    bopConfig : BusinessOperations) : Promise<Record<string, unknown>|Record<string, unknown>[]> {
     let valueToInput : unknown;
     switch (typeof inputInfo.source) {
       case "string":
         const constName = inputInfo.source.slice(1);
-        valueToInput = this.constants[this.bopConfig.name][constName];
+        valueToInput = this.constants[bopConfig.name][constName];
         if(!valueToInput) throw new ConstantNotFoundError(constName, inputInfo.target);
         break;
 
       case "number":
-        if(!this.results[inputInfo.source]) {
-          const sourceModuleConfig = this.bopConfig.configuration.find(module => module.key === inputInfo.source);
-          await this.executeModule(sourceModuleConfig);
+        if(!results[inputInfo.source]) {
+          const sourceModuleConfig = bopConfig.configuration.find(module => module.key === inputInfo.source);
+          await this.executeModule(sourceModuleConfig, results, bopConfig);
         };
-        valueToInput = this.extractOutput(this.results[inputInfo.source], inputInfo.sourceOutput);
+        valueToInput = this.extractOutput(results[inputInfo.source], inputInfo.sourceOutput);
         break;
     }
 
