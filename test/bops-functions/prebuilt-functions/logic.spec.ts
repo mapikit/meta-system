@@ -1,3 +1,4 @@
+import { lowerOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-or-equal-to";
 import { lowerThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-than";
 import { expect } from "chai";
 
@@ -28,6 +29,35 @@ describe("Logic BOPs function", () => {
       const result = lowerThanBopsFunction({ A, B });
 
       expect(result).to.be.deep.equal({ isNotLower: true });
+    });
+  });
+
+  describe("Lower Or Equal To", () => {
+    it("Verifies If returns true for a lower comparison (A < B)", () => {
+      const A = 1;
+      const B = 7;
+
+      const result = lowerOrEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isLowerOrEqual: true });
+    });
+
+    it("Verifies If returns false for a higher comparison (A < B)", () => {
+      const A = 99301;
+      const B = 1;
+
+      const result = lowerOrEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isNotLowerOrEqual: true });
+    });
+
+    it("Verifies If returns true for an equal comparison (A < B)", () => {
+      const A = Math.PI;
+      const B = A;
+
+      const result = lowerOrEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isLowerOrEqual: true });
     });
   });
 });
