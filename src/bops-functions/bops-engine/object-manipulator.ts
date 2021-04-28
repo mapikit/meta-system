@@ -3,22 +3,22 @@ import { BopsInput } from "@api/configuration-de-serializer/domain/business-oper
 import { inspect } from "util";
 
 export class ObjectResolver {
-  public static resolveTargets (source : unknown) : unknown {
-    const res = {};
+  public static flattenObject (source : unknown) : unknown {
+    const result = {};
     for(const key of Object.keys(source)) {
       const targetLevels = key.split(".");
-      let current = res;
+      let current = result;
       targetLevels.forEach((level, index) => {
-        current[level] = (index == targetLevels.length-1) ? source[key] : current[level] || {};
+        current[level] = (index === targetLevels.length-1) ? source[key] : current[level] || {};
         current = current[level];
       });
     }
-    return res;
+    return result;
   }
 
-  public static extractOutput (source : unknown, desiredOutput ?: string) : unknown {
-    if(!desiredOutput) return source;
-    const targetLevels = desiredOutput.split(".");
+  public static extractProperty (source : unknown, outputPath ?: string) : unknown {
+    if(!outputPath) return source;
+    const targetLevels = outputPath.split(".");
     let current = source;
     targetLevels.forEach(level => {
       if(!current[level]) throw new Error(`${level} was not found in ${inspect(source, false, null, true)}`);

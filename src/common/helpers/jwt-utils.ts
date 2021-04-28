@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import constants from "@api/mapikit/constants";
+import constants from "@api/common/constants";
 import { TokenClient } from "@api/entity/domain/types/authorized-client";
 
 interface TokenOutput extends TokenClient {
