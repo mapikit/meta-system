@@ -1,3 +1,4 @@
+import { isEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/equal";
 import { higherOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-or-equal-to";
 import { higherThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-than";
 import { lowerOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-or-equal-to";
@@ -118,6 +119,62 @@ describe("Logic BOPs function", () => {
       const result = higherThanBopsFunction({ A, B });
 
       expect(result).to.be.deep.equal({ isNotHigher: true });
+    });
+  });
+
+  describe("Equal", () => {
+    it("Verifies string equality", () => {
+      const A = "Hello";
+      const B = A;
+
+      const result = isEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isEqual: true });
+    });
+
+    it("Verifies string inequality", () => {
+      const A = "Hello";
+      const B = "World";
+
+      const result = isEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isNotEqual: true });
+    });
+
+    it("Verifies object equality", () => {
+      const A = { name: "John", eyeColor: "blue" };
+      const B = { name: "John", eyeColor: "blue" };
+
+      const result = isEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isEqual: true });
+    });
+
+    it("Verifies object inequality", () => {
+      const A = { name: "John", eyeColor: "blue" };
+      const B = { name: "John", eyeColor: "brown" };
+
+      const result = isEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isNotEqual: true });
+    });
+
+    it("Verifies array equality", () => {
+      const A = [4, false, ["a"]];
+      const B = [4, false, ["a"]];
+
+      const result = isEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isEqual: true });
+    });
+
+    it("Verifies array inequality", () => {
+      const A = [4, true, null];
+      const B = [[4], true, null];
+
+      const result = isEqualToBopsFunction({ A, B });
+
+      expect(result).to.be.deep.equal({ isNotEqual: true });
     });
   });
 });
