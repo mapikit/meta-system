@@ -4,6 +4,7 @@ import { higherOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functi
 import { higherThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-than";
 import { lowerOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-or-equal-to";
 import { lowerThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-than";
+import { orGateBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/or";
 import { expect } from "chai";
 
 describe("Logic BOPs function", () => {
@@ -203,6 +204,33 @@ describe("Logic BOPs function", () => {
       const result = andGateBopsFunction({ A , B });
 
       expect(result).to.be.deep.equal({ andFalse: true });
+    });
+  });
+
+  describe("Or Gate", () => {
+    it("A or B", () => {
+      const A = true;
+      const B = true;
+
+      const result = orGateBopsFunction({ A , B });
+
+      expect(result).to.be.deep.equal({ orTrue: true });
+    });
+    it("A or !B", () => {
+      const A = true;
+      const B = false;
+
+      const result = orGateBopsFunction({ A , B });
+
+      expect(result).to.be.deep.equal({ orTrue: true });
+    });
+    it("!A or !B", () => {
+      const A = false;
+      const B = false;
+
+      const result = orGateBopsFunction({ A , B });
+
+      expect(result).to.be.deep.equal({ orFalse: true });
     });
   });
 });
