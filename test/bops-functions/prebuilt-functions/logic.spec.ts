@@ -1,3 +1,4 @@
+import { andGateBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/and";
 import { isEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/equal";
 import { higherOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-or-equal-to";
 import { higherThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-than";
@@ -175,6 +176,33 @@ describe("Logic BOPs function", () => {
       const result = isEqualToBopsFunction({ A, B });
 
       expect(result).to.be.deep.equal({ isNotEqual: true });
+    });
+  });
+
+  describe("And Gate", () => {
+    it("A and B", () => {
+      const A = true;
+      const B = true;
+
+      const result = andGateBopsFunction({ A , B });
+
+      expect(result).to.be.deep.equal({ andTrue: true });
+    });
+    it("A and !B", () => {
+      const A = true;
+      const B = false;
+
+      const result = andGateBopsFunction({ A , B });
+
+      expect(result).to.be.deep.equal({ andFalse: true });
+    });
+    it("!A and !B", () => {
+      const A = false;
+      const B = false;
+
+      const result = andGateBopsFunction({ A , B });
+
+      expect(result).to.be.deep.equal({ andFalse: true });
     });
   });
 });
