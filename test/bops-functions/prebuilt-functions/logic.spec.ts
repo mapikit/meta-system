@@ -4,6 +4,7 @@ import { higherOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functi
 import { higherThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-than";
 import { lowerOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-or-equal-to";
 import { lowerThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-than";
+import { notBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/not";
 import { orGateBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/or";
 import { expect } from "chai";
 
@@ -231,6 +232,23 @@ describe("Logic BOPs function", () => {
       const result = orGateBopsFunction({ A , B });
 
       expect(result).to.be.deep.equal({ orFalse: true });
+    });
+  });
+
+  describe("Not", () => {
+    it("Inverts false to true", () => {
+      const A = false;
+
+      const result = notBopsFunction({ A });
+
+      expect(result).to.be.deep.equal({ result: true });
+    });
+    it("Inverts true to false", () => {
+      const A = true;
+
+      const result = notBopsFunction({ A });
+
+      expect(result).to.be.deep.equal({ result: false });
     });
   });
 });
