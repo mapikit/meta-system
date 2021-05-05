@@ -1,5 +1,5 @@
 import { MongoClient, Db, Collection } from "mongodb";
-import constants from "@api/mapikit/constants";
+import constants from "@api/common/constants";
 import { MongoRepositoryAttributes } from "@api/entity/domain/repositories/mongo-repository";
 import { EntityAttributes } from "@api/entity/domain/types/entity-attributes";
 import { Entity } from "@api/entity/domain/models/entity";
