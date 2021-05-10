@@ -27,6 +27,20 @@ import { countStringFunction, countStringFunctionInformation } from "@api/bops-f
 import { indexOfStringFunction, indexOfStringFunctionInformation } from "@api/bops-functions/prebuilt-functions/string/index-of";
 import { stringReplaceFunction, stringReplaceFunctionInformation } from "@api/bops-functions/prebuilt-functions/string/replace";
 import { stringToNumberBopsFunction, stringToNumberBopsFunctionInformation } from "@api/bops-functions/prebuilt-functions/string/to-number";
+import { boolToNumberBopsFunction, boolToNumberBopsFunctionInformation } from "@api/bops-functions/prebuilt-functions/boolean/bool-to-number";
+import { boolToStringBopsFunction, boolToStringBopsFunctionInformation } from "@api/bops-functions/prebuilt-functions/boolean/bool-to-string";
+import { randomNumberBopsFunction, randomNumberBopsFunctionInformation } from "./number/random";
+import { toExponentialBopsFunction, toExponentialBopsFunctionInformation } from "./number/to-exponential";
+import { numberToStringFunction, numberToStringFunctionInformation } from "./number/to-string";
+import { andGateBopsFunction, andGateBopsFunctionInformation } from "./logic/and";
+import { isEqualToBopsFunction, isEqualToBopsFunctionInformation } from "./logic/equal";
+import { higherOrEqualToBopsFunction, higherOrEqualToBopsFunctionInformation } from "./logic/higher-or-equal-to";
+import { higherThanBopsFunction, higherThanBopsFunctionInformation } from "./logic/higher-than";
+import { ifBopsFunction, ifBopsFunctionInformation } from "./logic/if";
+import { lowerOrEqualToBopsFunction, lowerOrEqualToBopsFunctionInformation } from "./logic/lower-or-equal-to";
+import { lowerThanBopsFunction, lowerThanBopsFunctionInformation } from "./logic/lower-than";
+import { notBopsFunction, notBopsFunctionInformation } from "./logic/not";
+import { orGateBopsFunction, orGateBopsFunctionInformation } from "./logic/or";
 
 const prebuiltFuntions = new Map<string, ModuleResolverOutput>();
 
@@ -42,8 +56,13 @@ prebuiltFuntions.set("round", { main: roundBopsFunction, outputData: roundFuncti
 prebuiltFuntions.set("sqrt", { main: squareRootBopsFunction, outputData: squareRootFunctionInformation.outputData });
 
 // Boolean Functions
+prebuiltFuntions.set("boolToNumber", { main: boolToNumberBopsFunction, outputData: boolToNumberBopsFunctionInformation.outputData });
+prebuiltFuntions.set("boolToString", { main: boolToStringBopsFunction, outputData: boolToStringBopsFunctionInformation.outputData });
 
 // Number Functions
+prebuiltFuntions.set("randomNumber", { main: randomNumberBopsFunction, outputData: randomNumberBopsFunctionInformation.outputData });
+prebuiltFuntions.set("toExponential", { main: toExponentialBopsFunction, outputData: toExponentialBopsFunctionInformation.outputData });
+prebuiltFuntions.set("numberToString", { main: numberToStringFunction, outputData: numberToStringFunctionInformation.outputData });
 
 // String Functions
 prebuiltFuntions.set("charAt", { main: charAtBopsFunction, outputData: charAtBopsFunctionInformation.outputData });
@@ -69,5 +88,15 @@ prebuiltFuntions.set("arrayLength", { main: arrayLengthBopsFunction, outputData:
 prebuiltFuntions.set("push", { main: arrayPushBopsFunction, outputData: arrayPushBopsFunctionInformation.outputData });
 prebuiltFuntions.set("arrayRemove", { main: arrayRemoveBopsFunction, outputData: arrayRemoveBopsFunctionInformation.outputData });
 
+// Logic Functions
+prebuiltFuntions.set("and", { main: andGateBopsFunction, outputData: andGateBopsFunctionInformation.outputData });
+prebuiltFuntions.set("equalTo", { main: isEqualToBopsFunction, outputData: isEqualToBopsFunctionInformation.outputData });
+prebuiltFuntions.set("higherThan", { main: higherThanBopsFunction, outputData: higherThanBopsFunctionInformation.outputData });
+prebuiltFuntions.set("higherOrEqualTo", { main: higherOrEqualToBopsFunction, outputData: higherOrEqualToBopsFunctionInformation.outputData });
+prebuiltFuntions.set("if", { main: ifBopsFunction, outputData: ifBopsFunctionInformation.outputData });
+prebuiltFuntions.set("lowerOrEqualTo", { main: lowerOrEqualToBopsFunction, outputData: lowerOrEqualToBopsFunctionInformation.outputData });
+prebuiltFuntions.set("lowerThan", { main: lowerThanBopsFunction, outputData: lowerThanBopsFunctionInformation.outputData });
+prebuiltFuntions.set("not", { main: notBopsFunction, outputData: notBopsFunctionInformation.outputData });
+prebuiltFuntions.set("or", { main: orGateBopsFunction, outputData: orGateBopsFunctionInformation.outputData });
 
 export default prebuiltFuntions;
