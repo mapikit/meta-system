@@ -10,6 +10,7 @@ import constants from "@api/common/constants";
 import { CloudedObject } from "@api/common/types/clouded-object";
 import { ObjectResolver } from "@api/bops-functions/bops-engine/object-manipulator";
 import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
+import { ResultNotFoundError } from "./engine-errors/result-not-found";
 
 type ResultsType = { [moduleKey : number ] : CloudedObject & FlowResult }
 type FlowErrorType = {
@@ -150,10 +151,8 @@ export class BopsEngine {
 
     "number": async (input, flowInfo, results) => {
       const requiredModuleResult = results[input.source];
-      if(requiredModuleResult === undefined) {
-        const sourceModuleConfig = flowInfo.bopConfig.configuration.find(module => module.key === input.source);
-        await this.executeFunctionPipeline(sourceModuleConfig, flowInfo, results);
-      };
+      if(requiredModuleResult === undefined) throw new ResultNotFoundError(input.source as number, input.target);
+
       return ObjectResolver.extractProperty(results[input.source], input.sourceOutput);
     },
   }
