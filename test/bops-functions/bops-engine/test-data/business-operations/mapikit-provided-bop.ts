@@ -25,7 +25,7 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: "!numericEight", target: "B" },
       ],
       nextFunctions: [
-        { nextKey: 2, branch: "result" },
+        { nextKey: 4, branch: "result" },
       ],
     },
     {
@@ -36,7 +36,7 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: 3, target: "B", sourceOutput: "result" },
       ],
       nextFunctions: [
-        { nextKey: 5, branch: "result" },
+        { nextKey: 6, branch: "result" },
       ],
     },
     {
@@ -46,7 +46,9 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: "!numericThree", target: "numbersToMultiply[$source]" },
         { source: 4, target: "numbersToMultiply[$source]", sourceOutput: "result" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 2, branch: "result" },
+      ],
     },
     {
       moduleRepo: "#exponential",
@@ -55,7 +57,9 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: "!numericThree", target: "B" },
         { source: "!numericEight", target: "A" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 3, branch: "result" },
+      ],
     },
     {
       moduleRepo: "#multiply",
@@ -75,7 +79,9 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: "!numericThree", target: "numbersToAdd[$source]" },
         { source: "!numericThree", target: "numbersToAdd[$source]" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 8, branch: "result" },
+      ],
     },
     {
       moduleRepo: "#add",
@@ -84,7 +90,9 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: 8, target: "numbersToAdd[$source]", sourceOutput:"result" },
         { source: 8, target: "numbersToAdd[$source]", sourceOutput:"result" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 5, branch: "result" },
+      ],
     },
     {
       moduleRepo: "#subtract",
@@ -93,7 +101,9 @@ export const mapikitProvidedBop : BusinessOperations = {
         { source: "!numericEight", target: "A" },
         { source: "!numericThree", target: "B" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 7, branch: "result" },
+      ],
     },
     {
       moduleRepo: "#add",
