@@ -12,28 +12,12 @@ export const numberToStringFunctionInformation : InternalMetaFunction = {
   functionName: "numberToStringFunction",
   version: "1.0.0",
   description: "Gets the index of a substring in the string",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "default",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "errorNaN",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "default",
-    },
-    {
-      branchName: "errorNaN",
-    },
-  ],
-  inputParameters: [
-    { name: "number", type: "number", required: true },
-  ],
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage: { type: "string", required: false },
+  },
+  inputParameters: {
+    number: { type: "number", required: true },
+  },
   customTypes: [],
 };
