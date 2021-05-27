@@ -13,10 +13,10 @@ export const mixedFunctionsBop : BusinessOperations = {
   configuration: [
     {
       moduleRepo: "@car@create",
-      key: 1,
+      key: 2,
       inputsSource: [
         { source: "!randomModel", target: "entity.model" },
-        { source: 2, sourceOutput: "result", target: "entity.year" },
+        { source: 1, sourceOutput: "result", target: "entity.year" },
       ],
       nextFunctions: [
         { nextKey: 3, branch: "default" },
@@ -24,22 +24,24 @@ export const mixedFunctionsBop : BusinessOperations = {
     },
     {
       moduleRepo: "#sqrt",
-      key: 2,
+      key: 1,
       inputsSource: [
         { source: "!numericNine", target: "A" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 2, branch: "result" },
+      ],
     },
     {
       moduleRepo: "@car@updateById",
       key: 3,
       inputsSource: [
-        { source: 1, sourceOutput: "createdEntity._id", target: "id" },
+        { source: 2, sourceOutput: "createdEntity._id", target: "id" },
         { source: "!modelToUpdate", target: "valuesToUpdate.model" },
-        { source: 2, sourceOutput: "result", target: "valuesToUpdate.year" },
+        { source: 1, sourceOutput: "result", target: "valuesToUpdate.year" },
       ],
       nextFunctions: [
-        { nextKey: 4, branch: "default" },
+        { nextKey: 5, branch: "default" },
       ],
     },
     {
@@ -56,7 +58,9 @@ export const mixedFunctionsBop : BusinessOperations = {
       inputsSource: [
         { source: 3, sourceOutput: "updatedEntity._id", target: "id" },
       ],
-      nextFunctions: [],
+      nextFunctions: [
+        { nextKey: 4, branch: "default" },
+      ],
     },
   ],
   usedAsRoute: true,

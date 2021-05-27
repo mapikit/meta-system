@@ -7,14 +7,13 @@ export class ValidateBopsPipelineFlowCommand {
   private mappedPaths : number[][] = [];
 
   public execute (businessOperation : BusinessOperation) : void {
-    this. businessOperation = businessOperation;
+    this.businessOperation = businessOperation;
 
     this.extractModules();
     this.validateKeys();
-    this.mapFunctionPipelinePath(
-      this.functions.get(1),
-      [],
-    );
+    const outputFunction = this.getOutputFunction();
+    this.mapFunctionPipelinePath(outputFunction);
+    this.checkForUnusedModules();
   }
 
   private extractModules () : void {
@@ -24,29 +23,16 @@ export class ValidateBopsPipelineFlowCommand {
   }
 
   // All keys should be positive greater than 0 integers
-  // There should be a key to start the sequence at the value "1"
   private validateKeys () : void {
-    let startKeyExists = false;
-
     this.functions.forEach((module) => {
       if (module.key <= 0) {
         throw Error(`Invalid Key Index @ BOPS ${this.businessOperation.name} - Repository ${module.moduleRepo}`);
       }
-
-      if (module.key === 1) {
-        startKeyExists = true;
-      }
     });
-
-    if (!startKeyExists) {
-      throw Error(`No starting key to the pipeline of BOPS ${this.businessOperation.name}`);
-    }
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private mapFunctionPipelinePath (
-    currentFunction : BopsConfigurationEntry, currentPath : number[], nextFunctionPointer = 0,
-  ) : number[] {
+  private mapFunctionPipelinePath (currentFunction : BopsConfigurationEntry, currentPath : number[] = []) : number[] {
     const path = [...currentPath];
 
     if (path.includes(currentFunction.key)) {
@@ -55,30 +41,43 @@ export class ValidateBopsPipelineFlowCommand {
 
     path.push(currentFunction.key);
 
-    const isEndingNode = currentFunction.moduleRepo.charAt(0) === "%";
-    if (isEndingNode) {
-      this.mappedPaths.push(path);
-      return path;
-    }
-
-    if (currentFunction.nextFunctions.length === 1) {
-      const next = this.functions.get(currentFunction.nextFunctions[nextFunctionPointer].nextKey);
-
-      if (!next) {
-        throw Error(`Unmapped next modules found at BOPS ${this.businessOperation.name}`);
+    currentFunction.inputsSource.forEach((input) => {
+      if(typeof input.source === "string") {
+        this.mappedPaths.push(path);
+        return path;
       }
 
-      return this.mapFunctionPipelinePath(next, path);
-    }
+      const dependentOn = this.functions.get(input.source);
 
-    currentFunction.nextFunctions.forEach((nextFunctionPath) => {
-      const next = this.functions.get(nextFunctionPath.nextKey);
-
-      if (!next) {
-        throw Error(`Unmapped next modules found at BOPS ${this.businessOperation.name}`);
+      if (!dependentOn) {
+        throw Error(`Unmapped dependency modules found at BOPS ${this.businessOperation.name}`);
       }
 
-      return this.mapFunctionPipelinePath(next, path);
+      return this.mapFunctionPipelinePath(dependentOn, path);
     });
+    return path;
+  }
+
+  private checkForUnusedModules () : void {
+    for(const functionKey of Array.from(this.functions.keys())) {
+      if(!this.mappedPaths.some(path => path.includes(functionKey))) {
+        console.warn(`Function with key ${functionKey} in "${this.businessOperation.name}" ` +
+        "is not part of any execution flow and will therefore not be executed");
+      }
+    }
+  }
+
+  private getOutputFunction () : BopsConfigurationEntry {
+    const iterator = this.functions.values();
+    let current : IteratorResult<BopsConfigurationEntry>;
+
+    do  {
+      current = iterator.next();
+    } while(!current.done && !current.value.moduleRepo.startsWith("%"));
+
+    if(current.value === undefined) {
+      throw Error(`BOp "${this.businessOperation.name}" has no output function`);
+    }
+    return current.value;
   }
 }

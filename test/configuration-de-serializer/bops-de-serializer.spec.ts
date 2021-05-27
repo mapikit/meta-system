@@ -36,7 +36,7 @@ describe("BOPS Desserializer", () => {
       .throw("Loop reference detected on the custom objects of the business operation carSell");
   });
 
-  it("Fails to deserialize BOPS - Loop on the modules configuration", () => {
+  it.skip("Fails to deserialize BOPS - Loop on the modules configuration", () => {
     const command = new DeserializeBopsCommand();
     const configurations = configurationLoop["businessOperations"];
 
