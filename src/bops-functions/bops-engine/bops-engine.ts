@@ -10,7 +10,7 @@ import constants from "@api/common/constants";
 import { CloudedObject } from "@api/common/types/clouded-object";
 import { ObjectResolver } from "@api/bops-functions/bops-engine/object-manipulator";
 import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
-import { ResultNotFoundError } from "./engine-errors/result-not-found";
+import { ResultNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/result-not-found";
 
 type ResultsType = { [moduleKey : number ] : CloudedObject & FlowResult }
 type FlowErrorType = {

@@ -71,8 +71,9 @@ export class ValidateBopsPipelineFlowCommand {
     const iterator = this.functions.values();
     let current : IteratorResult<BopsConfigurationEntry>;
 
-    do current = iterator.next();
-    while(!current.done && !current.value.moduleRepo.startsWith("%"));
+    do  {
+      current = iterator.next();
+    } while(!current.done && !current.value.moduleRepo.startsWith("%"));
 
     if(current.value === undefined) {
       throw Error(`BOp "${this.businessOperation.name}" has no output function`);
