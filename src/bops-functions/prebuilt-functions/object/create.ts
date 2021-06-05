@@ -14,21 +14,11 @@ export const createObjectBopsFunctionInformation : InternalMetaFunction = {
   functionName: "createObjectBopsFunction",
   version: "1.0.0",
   description: "Creates an object with the given key and value",
-  outputData: [
-    {
-      type: "cloudedObject",
-      name: "created",
-      branch: "created",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "created",
-    },
-  ],
-  inputParameters: [
-    { name: "key", type: "string", required: false },
-    { name: "value", type: "any", required: false },
-  ],
-  customTypes: [],
+  inputParameters: {
+    key: { type: "string",  required: false  },
+    value: { type: "any",  required: false  },
+  },
+  outputData: {
+    created: { type: "cloudedObject",  required: true },
+  },
 };
