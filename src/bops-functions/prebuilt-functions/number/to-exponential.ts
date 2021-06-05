@@ -27,5 +27,4 @@ export const toExponentialBopsFunctionInformation : InternalMetaFunction = {
     string: { type: "string", required: true },
     decimalPlaces: { type: "number", required: false },
   },
-  customTypes: [],
 };

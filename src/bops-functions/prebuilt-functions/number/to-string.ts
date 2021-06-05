@@ -19,5 +19,4 @@ export const numberToStringFunctionInformation : InternalMetaFunction = {
   inputParameters: {
     number: { type: "number", required: true },
   },
-  customTypes: [],
 };
