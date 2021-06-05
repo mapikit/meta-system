@@ -14,29 +14,12 @@ export const charAtBopsFunctionInformation : InternalMetaFunction = {
   functionName: "charAtBopsFunction",
   version: "1.0.0",
   description: "Gets the character in the string at the index given",
-  outputData: [
-    {
-      type: "string",
-      name: "found",
-      branch: "found",
-    },
-    {
-      type: "string",
-      name: "notFoundMessage",
-      branch: "notFound",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "found",
-    },
-    {
-      branchName: "notFound",
-    },
-  ],
-  inputParameters: [
-    { name: "string", type: "string", required: true },
-    { name: "index", type: "number", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    string: { type: "string", required: true },
+    index: { type: "number", required: true },
+  },
+  outputData: {
+    found: { type: "string", required: false },
+    notFoundMessage: { type: "string", required: false },
+  },
 };

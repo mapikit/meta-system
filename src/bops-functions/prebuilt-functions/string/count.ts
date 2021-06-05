@@ -20,21 +20,11 @@ export const countStringFunctionInformation : InternalMetaFunction = {
   functionName: "countStringFunction",
   version: "1.0.0",
   description: "Gets the amount of times a substring appears in the string",
-  outputData: [
-    {
-      type: "number",
-      name: "count",
-      branch: "default",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "default",
-    },
-  ],
-  inputParameters: [
-    { name: "string", type: "string", required: true },
-    { name: "search", type: "string", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    string: { type: "string", required: true },
+    search: { type: "string", required: true },
+  },
+  outputData: {
+    count: { type: "number", required: true },
+  },
 };

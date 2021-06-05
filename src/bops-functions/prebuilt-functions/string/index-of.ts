@@ -8,21 +8,11 @@ export const indexOfStringFunctionInformation : InternalMetaFunction = {
   functionName: "indexOfStringFunction",
   version: "1.0.0",
   description: "Gets the index of a substring in the string",
-  outputData: [
-    {
-      type: "number",
-      name: "index",
-      branch: "default",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "default",
-    },
-  ],
-  inputParameters: [
-    { name: "string", type: "string", required: true },
-    { name: "search", type: "string", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    string: { type: "string", required: true },
+    search: { type: "string", required: true },
+  },
+  outputData: {
+    index: { type: "number", required: true },
+  },
 };

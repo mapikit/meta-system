@@ -14,28 +14,11 @@ export const stringToNumberBopsFunctionInformation : InternalMetaFunction = {
   functionName: "stringToNumberBopsFunction",
   version: "1.0.0",
   description: "Converts a given string to a Number",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "couldNotCovert",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "couldNotCovert",
-    },
-  ],
-  inputParameters: [
-    { name: "string", type: "string", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    string: { type: "string", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage: { type: "string", required: false },
+  },
 };
