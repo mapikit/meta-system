@@ -24,29 +24,12 @@ export const roundFunctionInformation : InternalMetaFunction = {
   functionName: "roundBopsFunction",
   version: "1.0.0",
   description: "Rounds Input to a given precision",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorNaN",
-      branch: "notANumber",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-  ],
-  inputParameters: [
-    { name: "input", type: "number", required: true },
-    { name: "precision", type: "number", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    input: { type: "number",  required: true  },
+    precision: { type: "number",  required: true  },
+  },
+  outputData: {
+    result: { type: "number",  required: false },
+    errorNaN: { type: "string",  required: false },
+  },
 };

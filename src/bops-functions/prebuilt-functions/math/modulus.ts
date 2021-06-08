@@ -22,37 +22,13 @@ export const modulusFunctionInformation : InternalMetaFunction = {
   functionName: "modulusBopsFunction",
   version: "1.0.0",
   description: "Gets the remainder of the division of A by B",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorNotANumber",
-      branch: "notANumber",
-    },
-    {
-      type: "string",
-      name: "errorDivisionByZero",
-      branch: "divisionByZero",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-    {
-      branchName: "divisionByZero",
-    },
-  ],
-  inputParameters: [
-    { name: "A", type: "number" },
-    { name: "B", type: "number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    A: { type: "number", required: true },
+    B: { type: "number", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: false },
+    errorNotANumber: { type: "string", required: false },
+    errorDivisionByZero: { type: "string", required: false },
+  },
 };

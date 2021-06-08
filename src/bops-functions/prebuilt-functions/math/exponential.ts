@@ -19,29 +19,12 @@ export const exponentialFunctionInformation : InternalMetaFunction = {
   functionName: "exponentialBopsFunction",
   version: "1.0.0",
   description: "Raises A to the power of B",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "notANumber",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-  ],
-  inputParameters: [
-    { name: "A", type: "number" },
-    { name: "B", type: "number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    A: { type: "number", required: true },
+    B: { type: "number", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage: { type: "string", required: false },
+  },
 };

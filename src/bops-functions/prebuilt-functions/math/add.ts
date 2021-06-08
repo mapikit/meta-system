@@ -21,28 +21,11 @@ export const addFunctionInformation : InternalMetaFunction = {
   functionName: "addBopsFunction",
   version: "1.0.0",
   description: "Adds numbers together",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "notANumber",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-  ],
-  inputParameters: [
-    { name: "numbersToAdd", type: "array.number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    numbersToAdd: { type: "array.number", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage: { type: "string", required: false },
+  },
 };

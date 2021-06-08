@@ -14,28 +14,11 @@ export const absoluteFunctionInformation : InternalMetaFunction = {
   functionName: "absoluteBopsFunction",
   version: "1.0.0",
   description: "Gets the absolute value of a number",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "notANumber",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-  ],
-  inputParameters: [
-    { name: "input", type: "number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    input: { type: "number", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage: { type: "string", required: false },
+  },
 };
