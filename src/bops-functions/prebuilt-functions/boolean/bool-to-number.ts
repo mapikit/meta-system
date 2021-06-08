@@ -8,20 +8,10 @@ export const boolToNumberBopsFunctionInformation : InternalMetaFunction = {
   functionName: "boolToNumberBopsFunction",
   version: "1.0.0",
   description: "Converts a boolean to its numerical representation",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "boolean", type: "boolean", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    boolean: { type: "boolean", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: true },
+  },
 };
