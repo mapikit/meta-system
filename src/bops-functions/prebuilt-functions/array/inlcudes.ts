@@ -22,21 +22,11 @@ export const arrayIncludesBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayIncludesBopsFunction",
   version: "1.0.0",
   description: "Verifies if the array contains an Item",
-  outputData: [
-    {
-      type: "boolean",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "array", type: "array.any", required: true },
-    { name: "searchedItem", type: "any", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    array: { type: "array.any", required: true },
+    searchedItem: { type: "any", required: true },
+  },
+  outputData: {
+    result: { type: "boolean", required: true },
+  },
 };

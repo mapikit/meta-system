@@ -8,20 +8,10 @@ export const arrayLengthBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayLengthBopsFunction",
   version: "1.0.0",
   description: "Gets the length of the list",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "array", type: "array.any", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    array: { type: "array.any", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: true },
+  },
 };

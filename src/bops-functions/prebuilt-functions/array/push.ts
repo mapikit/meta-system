@@ -18,22 +18,12 @@ export const arrayPushBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayPushBopsFunction",
   version: "1.0.0",
   description: "Pushes items into the array",
-  outputData: [
-    {
-      type: "array.any",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "targetArray", type: "array.any", required: false },
-    { name: "newItems", type: "array.any", required: false },
-    { name: "item", type: "any", required: false },
-  ],
-  customTypes: [],
+  inputParameters: {
+    targetArray: { type: "array.any", required: true },
+    newItems: { type: "array.any", required: false },
+    item: { type: "any", required: false },
+  },
+  outputData: {
+    result: { type: "array.any", required: true },
+  },
 };
