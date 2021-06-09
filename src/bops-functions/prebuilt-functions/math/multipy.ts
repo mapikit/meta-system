@@ -21,28 +21,11 @@ export const multiplyFunctionInformation : InternalMetaFunction = {
   functionName: "multiplyBopsFunction",
   version: "1.0.0",
   description: "Multiply the list of numbers provided",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "notANumber",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-  ],
-  inputParameters: [
-    { name: "numbersToMultiply", type: "array.number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    numbersToMultiply: { type: "array", subtype: "number",  required: true },
+  },
+  outputData: {
+    result: { type: "number",  required: false },
+    errorMessage: { type: "string",  required: false },
+  },
 };

@@ -22,37 +22,13 @@ export const divideFunctionInformation : InternalMetaFunction = {
   functionName: "divideBopsFunction",
   version: "1.0.0",
   description: "Divides A by B",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorNaN",
-      branch: "notANumber",
-    },
-    {
-      type: "string",
-      name: "errorDivideByZero",
-      branch: "bIsZero",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-    {
-      branchName: "bIsZero",
-    },
-  ],
-  inputParameters: [
-    { name: "A", type: "number" },
-    { name: "B", type: "number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    A: { type: "number", required: true },
+    B: { type: "number", required: true },
+  },
+  outputData: {
+    result: { type: "number", required: false },
+    errorNaN: { type: "string", required: false },
+    errorDivideByZero: { type: "string",  required: false },
+  },
 };

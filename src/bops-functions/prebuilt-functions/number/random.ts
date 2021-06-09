@@ -11,18 +11,7 @@ export const randomNumberBopsFunctionInformation : InternalMetaFunction = {
   functionName: "randomNumberBopsFunction",
   version: "1.0.0",
   description: "Generates a Pseudo Random number ([0, 1]) using Mersenne-Twister Algorithm",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "default",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "default",
-    },
-  ],
-  inputParameters: [],
-  customTypes: [],
+  outputData: {
+    result: { type: "number", required: true },
+  },
 };

@@ -13,21 +13,11 @@ export const getObjectPropertyValueBopsFunctionInformation : InternalMetaFunctio
   functionName: "getObjectPropertyValueBopsFunction",
   version: "1.0.0",
   description: "Get a value of an object's propery by one Key",
-  outputData: [
-    {
-      type: "cloudedObject",
-      name: "value",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "object", type: "cloudedObject", required: true },
-    { name: "key", type: "string", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    object: { type: "cloudedObject",  required: true  },
+    key: { type: "string",  required: true  },
+  },
+  outputData: {
+    value: { type: "cloudedObject",  required: true },
+  },
 };

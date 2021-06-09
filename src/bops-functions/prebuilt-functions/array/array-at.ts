@@ -14,29 +14,12 @@ export const arrayAtBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayAtBopsFunction",
   version: "1.0.0",
   description: "Gets the item in the array at the index given",
-  outputData: [
-    {
-      type: "any",
-      name: "found",
-      branch: "found",
-    },
-    {
-      type: "string",
-      name: "notFoundMessage",
-      branch: "notFound",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "found",
-    },
-    {
-      branchName: "notFound",
-    },
-  ],
-  inputParameters: [
-    { name: "array", type: "array.any", required: true },
-    { name: "index", type: "number", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    array: { type: "array", subtype: "any", required: true },
+    index: { type: "number", required: true },
+  },
+  outputData: {
+    found: { type: "any", required: false },
+    notFoundMessage: { type: "string", required: false },
+  },
 };

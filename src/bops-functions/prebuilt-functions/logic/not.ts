@@ -8,20 +8,10 @@ export const notBopsFunctionInformation : InternalMetaFunction = {
   functionName: "notBopsFunction",
   version: "1.0.0",
   description: "Inverts the boolean value of A",
-  outputData: [
-    {
-      type: "boolean",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "A", type: "boolean", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    A: { type: "boolean", required: true },
+  },
+  outputData: {
+    result: { type: "boolean", required: true },
+  },
 };

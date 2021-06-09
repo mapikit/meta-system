@@ -22,36 +22,12 @@ export const squareRootFunctionInformation : InternalMetaFunction = {
   functionName: "squareRootBopsFunction",
   version: "1.0.0",
   description: "Gets the Square Root of A",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorNaN",
-      branch: "notANumber",
-    },
-    {
-      type: "string",
-      name: "errorNegativeA",
-      branch: "negativeValue",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-    {
-      branchName: "negativeValue",
-    },
-  ],
-  inputParameters: [
-    { name: "A", type: "number" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    A: { type: "number",  required: true },
+  },
+  outputData: {
+    result: { type: "number",  required: false },
+    errorNaN: { type: "string",  required: false },
+    errorNegativeA: { type: "string",  required: false },
+  },
 };

@@ -15,20 +15,10 @@ export const getObjectKeysBopsFunctionInformation : InternalMetaFunction = {
   functionName: "getObjectKeysBopsFunction",
   version: "1.0.0",
   description: "Get a list of the keys of the given object",
-  outputData: [
-    {
-      type: "array.string",
-      name: "keys",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "object", type: "cloudedObject", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    object: { type: "cloudedObject",  required: true  },
+  },
+  outputData: {
+    keys: { type: "array", subtype: "string",  required: true },
+  },
 };

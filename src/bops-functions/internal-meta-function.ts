@@ -1,15 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { CustomType, InputParameters, MetaFunction, OutputBranches, OutputData } from "meta-function-helper";
+import { MetaFunction } from "meta-function-helper";
 
-export interface InternalMetaFunction {
-  functionName : string;
-  description : string;
-  version : string;
-  inputParameters : InputParameters[];
-  outputBranches : OutputBranches[];
-  outputData : OutputData[];
-  customTypes : CustomType[];
-};
+export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction">;
 
 // This section is just to ensure that the interfaces are interchangeable when MetaFunction
 // is correcly fulfilled.
@@ -17,33 +8,17 @@ const metaFunctionType : MetaFunction = {
   functionName: "",
   version: "1.0.0",
   description: "this is a test meta-function",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "result",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "notANumber",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-    {
-      branchName: "notANumber",
-    },
-  ],
-  inputParameters: [
-    { name: "numberToRound", type: "number" },
-    { name: "precision", type: "number", required: false },
-  ],
-  customTypes: [],
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage: { type: "string", required: false },
+  },
+  inputParameters: {
+    numberToRound: { type: "number", required: true },
+    precision: { type: "number", required: false },
+  },
   entrypoint: "",
   mainFunction: "",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const convertedMetaFunction : InternalMetaFunction = metaFunctionType;

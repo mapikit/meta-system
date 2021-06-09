@@ -19,29 +19,12 @@ export const toExponentialBopsFunctionInformation : InternalMetaFunction = {
   functionName: "toExponentialBopsFunction",
   version: "1.0.0",
   description: "Gets the index of a substring in the string",
-  outputData: [
-    {
-      type: "number",
-      name: "result",
-      branch: "default",
-    },
-    {
-      type: "string",
-      name: "errorMessage",
-      branch: "errorNaN",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "default",
-    },
-    {
-      branchName: "errorNaN",
-    },
-  ],
-  inputParameters: [
-    { name: "string", type: "string", required: true },
-    { name: "decimalPlaces", type: "number", required: false },
-  ],
-  customTypes: [],
+  outputData: {
+    result: { type: "number", required: false },
+    errorMessage : { type: "string", required: false },
+  },
+  inputParameters: {
+    string: { type: "string", required: true },
+    decimalPlaces: { type: "number", required: false },
+  },
 };

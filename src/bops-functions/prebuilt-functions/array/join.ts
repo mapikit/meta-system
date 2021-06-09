@@ -8,21 +8,11 @@ export const arrayJoinBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayJoinBopsFunction",
   version: "1.0.0",
   description: "Joins Items of an array",
-  outputData: [
-    {
-      type: "array.any",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "array", type: "array.any", required: true },
-    { name: "separator", type: "string" },
-  ],
-  customTypes: [],
+  inputParameters: {
+    array: { type: "array", subtype: "any", required: true },
+    separator: { type: "string", required: false },
+  },
+  outputData: {
+    result: { type: "array", subtype: "any", required: true },
+  },
 };

@@ -33,29 +33,12 @@ export const arrayFindIndexBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayFindIndexBopsFunction",
   version: "1.0.0",
   description: "Find the index of a given item in the array",
-  outputData: [
-    {
-      type: "number",
-      name: "index",
-      branch: "found",
-    },
-    {
-      type: "string",
-      name: "notFoundMessage",
-      branch: "notFound",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "found",
-    },
-    {
-      branchName: "notFound",
-    },
-  ],
-  inputParameters: [
-    { name: "array", type: "array.any", required: true },
-    { name: "searchedItem", type: "any", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    array: { type: "array", subtype: "any", required: true },
+    searchedItem: { type: "any", required: true },
+  },
+  outputData: {
+    index: { type: "number", required: false },
+    notFoundMessage: { type: "string", required: false },
+  },
 };

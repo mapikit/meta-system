@@ -9,22 +9,12 @@ export const stringReplaceFunctionInformation : InternalMetaFunction = {
   functionName: "stringReplaceFunction",
   version: "1.0.0",
   description: "Replaces a part of a string",
-  outputData: [
-    {
-      type: "string",
-      name: "result",
-      branch: "result",
-    },
-  ],
-  outputBranches: [
-    {
-      branchName: "result",
-    },
-  ],
-  inputParameters: [
-    { name: "baseString", type: "string", required: true },
-    { name: "search", type: "string", required: true },
-    { name: "replacer", type: "string", required: true },
-  ],
-  customTypes: [],
+  inputParameters: {
+    baseString: { type: "string", required: true },
+    search: { type: "string", required: true },
+    replacer: { type: "string", required: true },
+  },
+  outputData: {
+    result: { type: "string", required: true },
+  },
 };
