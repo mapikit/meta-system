@@ -19,6 +19,6 @@ export const getObjectValuesBopsFunctionInformation : InternalMetaFunction = {
     object: { type: "cloudedObject",  required: true  },
   },
   outputData: {
-    values: { type: "array.any",  required: true },
+    values: { type: "array", subtype: "any",  required: true },
   },
 };

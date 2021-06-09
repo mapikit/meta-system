@@ -15,7 +15,7 @@ export const arrayAtBopsFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Gets the item in the array at the index given",
   inputParameters: {
-    array: { type: "array.any", required: true },
+    array: { type: "array", subtype: "any", required: true },
     index: { type: "number", required: true },
   },
   outputData: {

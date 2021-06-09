@@ -22,7 +22,7 @@ export const addFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Adds numbers together",
   inputParameters: {
-    numbersToAdd: { type: "array.number", required: true },
+    numbersToAdd: { type: "array", subtype: "number", required: true },
   },
   outputData: {
     result: { type: "number", required: false },

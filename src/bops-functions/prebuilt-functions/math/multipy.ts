@@ -22,7 +22,7 @@ export const multiplyFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Multiply the list of numbers provided",
   inputParameters: {
-    numbersToMultiply: { type: "array.number",  required: true },
+    numbersToMultiply: { type: "array", subtype: "number",  required: true },
   },
   outputData: {
     result: { type: "number",  required: false },

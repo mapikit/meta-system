@@ -19,11 +19,11 @@ export const arrayPushBopsFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Pushes items into the array",
   inputParameters: {
-    targetArray: { type: "array.any", required: true },
-    newItems: { type: "array.any", required: false },
+    targetArray: { type: "array", subtype: "any", required: true },
+    newItems: { type: "array", subtype: "any", required: false },
     item: { type: "any", required: false },
   },
   outputData: {
-    result: { type: "array.any", required: true },
+    result: { type: "array", subtype: "any", required: true },
   },
 };

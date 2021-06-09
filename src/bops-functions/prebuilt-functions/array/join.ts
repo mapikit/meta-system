@@ -9,10 +9,10 @@ export const arrayJoinBopsFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Joins Items of an array",
   inputParameters: {
-    array: { type: "array.any", required: true },
+    array: { type: "array", subtype: "any", required: true },
     separator: { type: "string", required: false },
   },
   outputData: {
-    result: { type: "array.any", required: true },
+    result: { type: "array", subtype: "any", required: true },
   },
 };

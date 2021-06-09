@@ -19,11 +19,11 @@ export const arrayRemoveBopsFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Removes the item at the given index from the array",
   inputParameters: {
-    array: { type: "array.any", required: true },
+    array: { type: "array", subtype: "any", required: true },
     index: { type: "number", required: true },
   },
   outputData: {
-    resultingArray: { type: "array.any", required: false },
+    resultingArray: { type: "array", subtype: "any", required: false },
     removedItem: { type: "any", required: false },
     notFoundMessage: { type: "string", required: false },
   },
