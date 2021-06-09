@@ -34,7 +34,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
   public async create (input : { entity : CloudedObject })
     : Promise<unknown | SchemaFunctionErrorType> {
     if(isNill(input.entity) || Object.keys(input.entity).length === 0) {
-      return ({ errorMessage: SchemaFunctionErrors.create.nullInput });
+      return ({ createError: SchemaFunctionErrors.create.nullInput });
     }
 
     const insertionResult = await this.repository.insert(input.entity);
@@ -49,7 +49,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     if (isNill(input.id)) {
       return ({
         found,
-        errorMessage: SchemaFunctionErrors.getById.nullInput,
+        getError: SchemaFunctionErrors.getById.nullInput,
       });
     }
 
@@ -73,13 +73,13 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     const updateResult = await this.repository.updateById(input.id, input.valuesToUpdate)
       .catch((result) => { hasError = true; return result; });
 
-    if (hasError) { return { errorMessage: SchemaFunctionErrors.updateById.genericError }; }
+    if (hasError) { return { updateError: SchemaFunctionErrors.updateById.genericError }; }
 
     if (Number.isNaN(updateResult.modifiedCount) || updateResult.modifiedCount < 1) {
       notFound = true;
     }
 
-    if (notFound) { return { errorMessage: SchemaFunctionErrors.updateById.notFound }; }
+    if (notFound) { return { updateError: SchemaFunctionErrors.updateById.notFound }; }
 
     return { updatedEntity: await this.repository.findById(input.id) };
   }
@@ -94,21 +94,21 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     catch { errorMessage = SchemaFunctionErrors.get.invalidSearchArgument; }
 
     if (errorMessage !== undefined) {
-      return ({ errorMessage });
+      return ({ getError: errorMessage });
     }
 
     const result = await this.repository.query(dbQuery)
       .catch(() => { errorMessage = SchemaFunctionErrors.get.genericError; });
 
     if (errorMessage !== undefined) {
-      return ({ errorMessage });
+      return ({ getError: errorMessage });
     }
 
-    return ({ entities: result });
+    return ({ results: result });
   };
 
   // eslint-disable-next-line max-lines-per-function
-  public async update (input : { query : Record<string, unknown>; newValue : Record<string, unknown> })
+  public async update (input : { query : Record<string, unknown>; valuesToUpdate : Record<string, unknown> })
     : Promise<unknown | SchemaFunctionErrorType> {
     const queryBuilder = new MongoSchemaQueryBuilder(input.query, this.workingSchema);
 
@@ -119,13 +119,13 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     try { dbQuery = queryBuilder.getFullMongoQuery(); }
     catch { errorMessage = SchemaFunctionErrors.update.invalidQueryArgument; }
 
-    if (errorMessage !== undefined) return ({ errorMessage });
+    if (errorMessage !== undefined) return ({ updateError: errorMessage });
 
-    await this.repository.update(input.newValue, dbQuery)
+    await this.repository.update(input.valuesToUpdate, dbQuery)
       .then((result) => { updatedCount = result.modifiedCount; })
       .catch(() => { errorMessage = SchemaFunctionErrors.update.genericError; });
 
-    if (errorMessage !== undefined) return ({ errorMessage });
+    if (errorMessage !== undefined) return ({ updateError: errorMessage });
 
     return ({ updatedCount: updatedCount });
   } ;
@@ -140,26 +140,26 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
     try { dbQuery = queryBuilder.getFullMongoQuery(); }
     catch { errorMessage = SchemaFunctionErrors.delete.invalidQueryArgument; }
 
-    if (errorMessage !== undefined) return ({ errorMessage });
+    if (errorMessage !== undefined) return ({ deleteError: errorMessage });
 
     await this.repository.delete(dbQuery)
       .then((result) => { deletedCount = result.deletedCount; })
       .catch(() => { errorMessage = SchemaFunctionErrors.delete.genericError; });
 
-    if (errorMessage !== undefined) return ({ errorMessage });
+    if (errorMessage !== undefined) return ({ deleteError: errorMessage });
 
     return ({ deletedCount });
   }
 
   public async deleteById (input : { id : string }) : Promise<unknown | SchemaFunctionErrorType> {
     if(isNill(input.id)) {
-      return ({ errorMessage: SchemaFunctionErrors.deleteById.nullInput });
+      return ({ deleteError: SchemaFunctionErrors.deleteById.nullInput });
     };
 
     const entity = await this.repository.findById(input.id);
 
     if(isNill(entity)) {
-      return ({ errorMessage: SchemaFunctionErrors.deleteById.notFound });
+      return ({ deleteError: SchemaFunctionErrors.deleteById.notFound });
     };
 
     await this.repository.deleteById(input.id);
