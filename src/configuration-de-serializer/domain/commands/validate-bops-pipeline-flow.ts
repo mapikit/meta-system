@@ -36,21 +36,27 @@ export class ValidateBopsPipelineFlowCommand {
     const path = [...currentPath];
 
     if (path.includes(currentFunction.key)) {
-      throw Error(`Duplicated entry in one the branches of the configuration for BOPS ${this.businessOperation.name}`);
+      throw Error(
+        `Circular dependency found in BOps "${this.businessOperation.name}" configuration.`
+        + `[ key ${currentFunction.key} ]`,
+      );
     }
 
     path.push(currentFunction.key);
 
-    currentFunction.inputsSource.forEach((input) => {
-      if(typeof input.source === "string") {
+    currentFunction.dependencies.forEach((input) => {
+      if(typeof input.origin === "string") {
         this.mappedPaths.push(path);
         return path;
       }
 
-      const dependentOn = this.functions.get(input.source);
+      const dependentOn = this.functions.get(input.origin);
 
       if (!dependentOn) {
-        throw Error(`Unmapped dependency modules found at BOPS ${this.businessOperation.name}`);
+        throw Error(
+          `Unmapped dependency modules found at BOPS ${this.businessOperation.name}`
+          + ` Tried to get key [${input.origin}] but it does not exist.`,
+        );
       }
 
       return this.mapFunctionPipelinePath(dependentOn, path);

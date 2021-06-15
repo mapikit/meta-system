@@ -1,20 +1,17 @@
 import { BusinessOperations } from "@api/configuration-de-serializer/domain/business-operations-type";
 import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
-import { isBopsInput } from "./is-bops-input";
-import { isBopsOutput } from "./is-bops-output";
 import { isBopsConstants } from "./is-bops-constants";
 import { isBopsCustomObjects } from "./is-bops-custom-objects";
 import { isBopsConfigurationEntry } from "./is-bops-configuration";
+import { isObjectDefinition } from "meta-function-helper/dist/src/object-definition/is-object-definition";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [
   "configuration",
   "constants",
   "customObjects",
-  "inputs",
+  "input",
   "name",
-  "outputs",
-  "route",
-  "usedAsRoute",
+  "output",
 ];
 
 // eslint-disable-next-line max-lines-per-function
@@ -34,14 +31,9 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
   const businessOperationInput = input as BusinessOperations;
 
   isType("string", "Business Operation with incorrect format", businessOperationInput.name);
-  isType("boolean", "Business Operation with incorrect format", businessOperationInput.usedAsRoute);
 
-  if (businessOperationInput.usedAsRoute) {
-    isType("string", "Business Operation with incorrect format", businessOperationInput.route);
-  }
-
-  isBopsInput(businessOperationInput.inputs);
-  isBopsOutput(businessOperationInput.outputs);
+  isObjectDefinition(businessOperationInput.input);
+  isObjectDefinition(businessOperationInput.output);
   isBopsConstants(businessOperationInput.constants);
   isBopsCustomObjects(businessOperationInput.customObjects);
   isBopsConfigurationEntry(businessOperationInput.configuration);
