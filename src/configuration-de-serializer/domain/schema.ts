@@ -2,7 +2,7 @@ import { SchemaObject, SchemasType, SchemaTypeDefinition } from "./schemas-type"
 
 const getRef = (typeDefinition : SchemaTypeDefinition) : string[] => {
   if (typeDefinition.type === "object") {
-    return Schema.findRefs(typeDefinition.data);
+    return Schema.findRefs(typeDefinition.subtype);
   }
 
   if (typeDefinition.refName !== undefined) {

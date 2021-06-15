@@ -5,13 +5,13 @@ import { isSchemaFormat } from "./is-schema-format";
 export function isSchemaTypeArray (input : object) : asserts input is SchemaTypeDefinitionArray {
   const schemaTypeDefinition = input as SchemaTypeDefinitionArray;
 
-  if (schemaTypeDefinition.data === undefined) {
-    throw TypeError("Schema with incorrect format found: 'Data is not defined for Array type'");
+  if (schemaTypeDefinition.subtype === undefined) {
+    throw TypeError("Schema with incorrect format found: 'subtype is not defined for Array type'");
   }
 
   if (schemaTypeDefinition.refName !== undefined) {
-    if (schemaTypeDefinition.data !== "string") {
-      throw new TypeError("Schema with incorrect format found: 'Data must be \"string\" with a refName defined'");
+    if (schemaTypeDefinition.subtype !== "string") {
+      throw new TypeError("Schema with incorrect format found: 'subtype must be \"string\" with a refName defined'");
     }
 
     if (typeof schemaTypeDefinition.refName !== "string") {
@@ -19,7 +19,7 @@ export function isSchemaTypeArray (input : object) : asserts input is SchemaType
     }
   }
 
-  if (typeof schemaTypeDefinition.data === "object") {
-    isSchemaFormat(schemaTypeDefinition.data);
+  if (typeof schemaTypeDefinition.subtype === "object") {
+    isSchemaFormat(schemaTypeDefinition.subtype);
   }
 };

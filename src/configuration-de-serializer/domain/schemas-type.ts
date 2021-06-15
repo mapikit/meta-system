@@ -21,16 +21,19 @@ export type SchemaTypeDefinition = SchemaTypeDefinitionParameter
 
 export type SchemaTypeDefinitionParameter = {
   type : "string" | "boolean" | "number" | "date";
+  required ?: boolean;
   refName ?: string;
 }
 
 export type SchemaTypeDefinitionArray = {
   type : "array";
-  data : "string" | "boolean" | "number" | "date" | Record<string, SchemaTypeDefinition>;
+  subtype : "string" | "boolean" | "number" | "date" | Record<string, SchemaTypeDefinition>;
+  required ?: boolean;
   refName ?: string;
 }
 
 export type SchemaTypeDefinitionObject = {
   type : "object";
-  data : SchemaObject;
+  required ?: boolean;
+  subtype : SchemaObject;
 }
