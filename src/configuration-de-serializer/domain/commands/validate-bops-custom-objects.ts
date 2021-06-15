@@ -23,7 +23,7 @@ export class ValidateBopsCustomObjectsCommand {
     this.businessOperation.customObjects.forEach((customObject) => {
       names.push(customObject.name);
 
-      customObject.properties.forEach((objectProperty) => {
+      Object.values(customObject.properties).forEach((objectProperty) => {
         if (objectProperty.type.charAt(0) === "$") {
           queriedNames.push(objectProperty.type.substring(1));
         }
@@ -42,7 +42,7 @@ export class ValidateBopsCustomObjectsCommand {
     this.businessOperation.customObjects.forEach((customObject) => {
       this.objectMap.set(customObject.name, customObject);
 
-      customObject.properties.forEach((objectProperty) => {
+      Object.values(customObject.properties).forEach((objectProperty) => {
         if (objectProperty.type.charAt(0) === "$") {
           this.objectsToValidate.add(customObject);
         }
@@ -63,7 +63,7 @@ export class ValidateBopsCustomObjectsCommand {
       throw Error(`Bops Configuration Problem: There is an unreferenced object at "${this.businessOperation.name}"`);
     }
 
-    object.properties.forEach((property) => {
+    Object.values(object.properties).forEach((property) => {
       if (property.type.charAt(0) === "$") {
         const referencedName = property.type.substring(1);
 

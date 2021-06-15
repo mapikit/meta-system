@@ -1,8 +1,10 @@
+import "module-alias/register";
 import { Configuration } from "@api/configuration-de-serializer/domain/configuration";
 import { isConfigurationType }
   from "@api/configuration-de-serializer/domain/assertions/configuration/is-configuration-type";
 import { DeserializeSchemasCommand } from "./de-serialize-schemas";
 import { DeserializeBopsCommand } from "./de-serialize-bops";
+import { CheckBopsFunctionsDependenciesCommand } from "./check-bops-functions-dependencies";
 
 export class DeserializeConfigurationCommand {
   private _result : Configuration;
@@ -11,6 +13,7 @@ export class DeserializeConfigurationCommand {
     return this._result;
   };
 
+  // eslint-disable-next-line max-lines-per-function
   public execute (input : unknown) : void {
     isConfigurationType(input);
 
@@ -19,6 +22,12 @@ export class DeserializeConfigurationCommand {
 
     const bopsValidationCommand =  new DeserializeBopsCommand();
     bopsValidationCommand.execute(input.businessOperations);
+
+    const dependencyValidation = new CheckBopsFunctionsDependenciesCommand(input.schemas);
+
+    bopsValidationCommand.bopsResults.forEach((bop) => {
+      dependencyValidation.execute(bop);
+    });
 
     this._result = new Configuration(
       {

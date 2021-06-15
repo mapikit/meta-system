@@ -65,9 +65,11 @@ export class CheckBopsFunctionsDependenciesCommand {
         outputs: "%",
       };
 
-      bopsFunctionConfig.inputsSource.forEach((inputSource) => {
-        if (typeof inputSource.source === "string") {
-          configurationalDependencies.push(inputSource.source);
+      bopsFunctionConfig.dependencies.forEach((dependency) => {
+        if (dependency.origin === "constant" || dependency.origin === "input") {
+          configurationalDependencies.push(
+            this.fromPropertyPathToType(dependency.originPath),
+          );
         }
       });
 
@@ -99,17 +101,16 @@ export class CheckBopsFunctionsDependenciesCommand {
   private checkConfigurationalDependencies () : void {
     // This method should only check for the presence of the field, thus, should disregard types
     // and property accesses such as "!data.property", needing only to verify the "!data" part
-    const availableOutputFunctions = this.businessOperation.outputs.map((output) => {
-      return `%${output.name}`;
-    });
+    const availableOutputFunctions = ["%output"];
 
     const availableInputAndConstantsData = [];
-    this.businessOperation.inputs.forEach((input) => {
-      availableInputAndConstantsData.push(`!${input.name}`);
+
+    Object.keys(this.businessOperation.input).forEach((inputName) => {
+      availableInputAndConstantsData.push(`${inputName}`);
     });
 
     this.businessOperation.constants.forEach((constantDeclaration) => {
-      availableInputAndConstantsData.push(`!${constantDeclaration.name}`);
+      availableInputAndConstantsData.push(`${constantDeclaration.name}`);
     });
 
     this.dependencies.fromConfigurations.forEach((configurationDependency) => {

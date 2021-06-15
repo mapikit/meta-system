@@ -1,9 +1,8 @@
+import { ObjectDefinition } from "meta-function-helper";
 import {
   BopsConfigurationEntry,
   BopsConstant,
   BopsCustomObject,
-  BopsInput,
-  BopsOutput,
   BusinessOperations,
 } from "./business-operations-type";
 
@@ -16,22 +15,18 @@ interface ModuleRepositoriesData {
 
 export class BusinessOperation implements BusinessOperations {
   public name : string;
-  public inputs : BopsInput[];
-  public outputs : BopsOutput[];
-  public route ?: string;
+  public input : ObjectDefinition;
+  public output : ObjectDefinition;
   public constants : BopsConstant[];
   public configuration : BopsConfigurationEntry[];
-  public usedAsRoute : boolean;
   public customObjects : BopsCustomObject[];
 
   public constructor (parameters : BusinessOperations) {
     this.name = parameters.name;
-    this.inputs = parameters.inputs;
-    this.outputs = parameters.outputs;
-    this.route = parameters.route;
+    this.input = parameters.input;
+    this.output = parameters.output;
     this.constants = parameters.constants;
     this.configuration = parameters.configuration;
-    this.usedAsRoute = parameters.usedAsRoute;
     this.customObjects = parameters.customObjects;
   }
 
