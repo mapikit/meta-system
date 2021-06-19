@@ -1,5 +1,6 @@
 import { JsonTypes } from "@api/common/types/json-types";
 import { ObjectDefinition } from "meta-function-helper";
+import { ProtocolConfigType } from "@api/configuration-de-serializer/domain/protocol-config-type";
 
 export interface BusinessOperations {
   name : string;
@@ -8,6 +9,7 @@ export interface BusinessOperations {
   constants : BopsConstant[];
   configuration : BopsConfigurationEntry[];
   customObjects : BopsCustomObject[];
+  protocols ?: ProtocolConfigType[];
 }
 
 export type JsonTypeDict<T = JsonTypes> =
