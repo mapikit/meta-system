@@ -1,7 +1,7 @@
 import {
   availableProtocols,
   ProtocolConfigurations,
-} from "@api/configuration-de-serializer/protocols/available-protocols-enum";
+} from "@api/configuration/protocols/available-protocols-enum";
 
 
 export interface ProtocolConfigType {

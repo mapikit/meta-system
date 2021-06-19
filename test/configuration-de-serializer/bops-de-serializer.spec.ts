@@ -1,5 +1,5 @@
 require("module-alias/register");
-import { DeserializeBopsCommand } from "@api/configuration-de-serializer/domain/commands/de-serialize-bops";
+import { DeserializeBopsCommand } from "@api/configuration/domain/commands/de-serialize-bops";
 import { expect } from "chai";
 
 /* eslint-disable @typescript-eslint/no-var-requires */

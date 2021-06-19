@@ -1,4 +1,4 @@
-import { BopsConstant } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { BopsConstant } from "@api/configuration/domain/business-operations-type";
 
 export class ConstantTypeError extends Error {
   constructor (constant : BopsConstant) {

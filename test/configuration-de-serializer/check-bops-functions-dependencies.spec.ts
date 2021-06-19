@@ -1,5 +1,5 @@
 import { CheckBopsFunctionsDependenciesCommand } from
-  "@api/configuration-de-serializer/domain/commands/check-bops-functions-dependencies";
+  "@api/configuration/domain/commands/check-bops-functions-dependencies";
 import { expect } from "chai";
 
 

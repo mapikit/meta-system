@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import "module-alias/register";
-import { ConfigurationType } from "@api/configuration-de-serializer/domain/configuration-type";
+import { ConfigurationType } from "@api/configuration/domain/configuration-type";
 import { mapikitProvidedBop } from "@test/bops-functions/bops-engine/test-data/business-operations/mapikit-provided-bop";
 import { schemaFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/schema-functions-bop";
 import { externalFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/external-functions";

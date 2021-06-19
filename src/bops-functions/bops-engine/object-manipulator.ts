@@ -1,5 +1,5 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { BopsInput } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { BopsInput } from "@api/configuration/domain/business-operations-type";
 import { inspect } from "util";
 
 export class ObjectResolver {

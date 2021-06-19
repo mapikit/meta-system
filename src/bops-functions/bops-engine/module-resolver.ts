@@ -8,7 +8,7 @@ import { ProvidedFunctionNotFound } from "@api/bops-functions/bops-engine/engine
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { OutputData } from "meta-function-helper";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { BopsConfigurationEntry } from "@api/configuration/domain/business-operations-type";
 import { bopsEngineInfo } from "@api/bops-functions/bops-engine/meta-function";
 
 export interface ModuleResolverInputs {

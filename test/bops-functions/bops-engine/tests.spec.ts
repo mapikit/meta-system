@@ -6,12 +6,12 @@ import { createFakeMongo } from "@test/doubles/mongo-server";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { testSystem } from "@test/bops-functions/bops-engine/test-data/test-system";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType } from "@api/configuration/domain/schemas-type";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
 import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 import { performance } from "perf_hooks";
 import { ResolvedConstants, StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { BusinessOperations } from "@api/configuration/domain/business-operations-type";
 
 interface BopsEngineInput {
   StaticInfo : Record<string, ResolvedConstants | BusinessOperations>;

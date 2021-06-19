@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import "module-alias/register";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType } from "@api/configuration/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { MongoClient } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";

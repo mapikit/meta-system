@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import { SchemaObject } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaObject } from "@api/configuration/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { RequestHandler } from "express";
 import { parseQuery } from "@api/common/query-parser";

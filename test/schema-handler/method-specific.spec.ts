@@ -4,7 +4,7 @@ import chai from "chai";
 import { SchemaRoutesManager } from "@api/schemas/application/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios from "axios";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType } from "@api/configuration/domain/schemas-type";
 import faker from "faker";
 import { entityFactory } from "@test/factories/entity-factory";
 import { entityToQuery } from "@test/factories/entity-to-query";

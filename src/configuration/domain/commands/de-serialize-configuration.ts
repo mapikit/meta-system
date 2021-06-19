@@ -1,7 +1,7 @@
 import "module-alias/register";
-import { Configuration } from "@api/configuration-de-serializer/domain/configuration";
+import { Configuration } from "@api/configuration/domain/configuration";
 import { isConfigurationType }
-  from "@api/configuration-de-serializer/domain/assertions/configuration/is-configuration-type";
+  from "@api/configuration/domain/assertions/configuration/is-configuration-type";
 import { DeserializeSchemasCommand } from "./de-serialize-schemas";
 import { DeserializeBopsCommand } from "./de-serialize-bops";
 import { CheckBopsFunctionsDependenciesCommand } from "./check-bops-functions-dependencies";

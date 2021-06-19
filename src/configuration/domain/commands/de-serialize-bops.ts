@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-len
-import { isBusinessOperations } from "@api/configuration-de-serializer/domain/assertions/business-operations/is-business-operations";
-import { BusinessOperation } from "@api/configuration-de-serializer/domain/business-operation";
+import { isBusinessOperations } from "@api/configuration/domain/assertions/business-operations/is-business-operations";
+import { BusinessOperation } from "@api/configuration/domain/business-operation";
 import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects";
 import { ValidateBopsPipelineFlowCommand } from "./validate-bops-pipeline-flow";
 

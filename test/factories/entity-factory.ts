@@ -1,5 +1,5 @@
 import faker from "faker";
-import { SchemasType, SchemaTypeDefinition } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType, SchemaTypeDefinition } from "@api/configuration/domain/schemas-type";
 
 export const entityFactory = (schemaFormat : SchemasType["format"]) : object => {
   const entity = {};

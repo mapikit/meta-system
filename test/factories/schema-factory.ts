@@ -1,5 +1,5 @@
 import faker from "faker";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType } from "@api/configuration/domain/schemas-type";
 import { schemaFormatFactory } from "./schema-format-factory";
 
 

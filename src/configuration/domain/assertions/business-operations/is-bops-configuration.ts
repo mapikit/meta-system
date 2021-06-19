@@ -1,5 +1,5 @@
-import { BopsConfigurationEntry, Dependency } from "@api/configuration-de-serializer/domain/business-operations-type";
-import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
+import { BopsConfigurationEntry, Dependency } from "@api/configuration/domain/business-operations-type";
+import { isType } from "@api/configuration/domain/assertions/is-type";
 
 function isDependencies (input : unknown) : asserts input is Dependency[] {
   if (!Array.isArray(input)) {

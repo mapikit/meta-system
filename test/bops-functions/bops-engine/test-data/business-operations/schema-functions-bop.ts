@@ -1,4 +1,4 @@
-import { BusinessOperations } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { BusinessOperations } from "@api/configuration/domain/business-operations-type";
 
 export const schemaFunctionsBop : BusinessOperations = {
   name: "schema-functions",
