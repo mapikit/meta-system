@@ -1,5 +1,5 @@
-import { BusinessOperations } from "./business-operations-type";
-import { SchemasType } from "./schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
 
 export interface ConfigurationType {
   name : string;

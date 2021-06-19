@@ -1,6 +1,6 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 import { isSchemaRoutesConfiguration } from
-  "@api/configuration/domain/assertions/schema/is-schema-routes-configuration";
+  "@api/configuration/assertions/schema/is-schema-routes-configuration";
 import { isSchemaFormat } from "./is-schema-format";
 
 /**

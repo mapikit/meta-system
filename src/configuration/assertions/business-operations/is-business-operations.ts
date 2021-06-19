@@ -1,5 +1,5 @@
-import { BusinessOperations } from "@api/configuration/domain/business-operations-type";
-import { isType } from "@api/configuration/domain/assertions/is-type";
+import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
+import { isType } from "@api/configuration/assertions/is-type";
 import { isBopsConstants } from "./is-bops-constants";
 import { isBopsCustomObjects } from "./is-bops-custom-objects";
 import { isBopsConfigurationEntry } from "./is-bops-configuration";

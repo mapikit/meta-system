@@ -1,6 +1,6 @@
-import { BopsConstant } from "@api/configuration/domain/business-operations-type";
-import { isType } from "@api/configuration/domain/assertions/is-type";
-import { stringIsOneOf } from "@api/configuration/domain/assertions/string-is-one-of";
+import { BopsConstant } from "@api/configuration/business-operations/business-operations-type";
+import { isType } from "@api/configuration/assertions/is-type";
+import { stringIsOneOf } from "@api/configuration/assertions/string-is-one-of";
 
 export function isBopsConstants (input : unknown) : asserts input is BopsConstant[] {
   if (!Array.isArray(input)) {

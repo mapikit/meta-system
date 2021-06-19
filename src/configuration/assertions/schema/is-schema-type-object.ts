@@ -1,5 +1,5 @@
-import { SchemaTypeDefinitionObject } from "@api/configuration/domain/schemas-type";
-import { isSchemaFormat } from "@api/configuration/domain/assertions/schema/is-schema-format";
+import { SchemaTypeDefinitionObject } from "@api/configuration/schemas/schemas-type";
+import { isSchemaFormat } from "@api/configuration/assertions/schema/is-schema-format";
 
 export function isSchemaTypeObject (input : unknown) : asserts input is SchemaTypeDefinitionObject {
   const schemaTypeDefinition = input as SchemaTypeDefinitionObject;

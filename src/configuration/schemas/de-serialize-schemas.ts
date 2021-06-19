@@ -1,6 +1,6 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
-import { isSchema } from "@api/configuration/domain/assertions/schema/is-schema";
-import { Schema } from "@api/configuration/domain/schema";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { isSchema } from "@api/configuration/assertions/schema/is-schema";
+import { Schema } from "@api/configuration/schemas/schema";
 
 export class DeserializeSchemasCommand {
   private result : Schema[] = [];

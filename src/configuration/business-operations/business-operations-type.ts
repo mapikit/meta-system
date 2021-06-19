@@ -1,6 +1,6 @@
 import { JsonTypes } from "@api/common/types/json-types";
 import { ObjectDefinition } from "meta-function-helper";
-import { ProtocolConfigType } from "@api/configuration/domain/protocol-config-type";
+import { ProtocolConfigType } from "@api/configuration/protocols/protocol-config-type";
 
 export interface BusinessOperations {
   name : string;
