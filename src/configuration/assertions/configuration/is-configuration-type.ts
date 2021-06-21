@@ -1,5 +1,5 @@
-import { ConfigurationType } from "@api/configuration-de-serializer/domain/configuration-type";
-import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
+import { ConfigurationType } from "@api/configuration/configuration-type";
+import { isType } from "@api/configuration/assertions/is-type";
 import { isEnvironmentVariable } from "./is-environment-variable";
 
 // eslint-disable-next-line max-lines-per-function

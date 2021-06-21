@@ -1,4 +1,4 @@
-import { SchemaTypeDefinitionParameter } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaTypeDefinitionParameter } from "@api/configuration/domain/schemas-type";
 
 export function isSchemaTypeDefault (input : object) : asserts input is SchemaTypeDefinitionParameter {
   const schemaProperty = input as SchemaTypeDefinitionParameter;

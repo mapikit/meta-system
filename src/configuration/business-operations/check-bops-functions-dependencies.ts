@@ -1,5 +1,5 @@
-import { BusinessOperation } from "@api/configuration-de-serializer/domain/business-operation";
-import { Schema } from "@api/configuration-de-serializer/domain/schema";
+import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
+import { Schema } from "@api/configuration/schemas/schema";
 import { externalFunctionIsLoaded } from "@api/external-functions/domain/external-function-is-loaded";
 import { checkInternalFunctionExist } from "@api/internal-functions";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";

@@ -1,4 +1,4 @@
-import { SchemaObject } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaObject } from "@api/configuration/domain/schemas-type";
 import { FilterQuery } from "mongodb";
 
 export function  parseQuery<T> (query : FilterQuery<T>, schema : SchemaObject) : FilterQuery<T> {

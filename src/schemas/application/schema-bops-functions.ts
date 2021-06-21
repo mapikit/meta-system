@@ -1,6 +1,6 @@
 import isNill from "@api/common/assertions/is-nill";
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType } from "@api/configuration/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";

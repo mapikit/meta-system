@@ -3,7 +3,7 @@ import { pickBranchOutput } from "@api/bops-functions/branch-control/define-outp
 import {
   BopsConfigurationEntry,
   BusinessOperations,
-  InputsSource } from "@api/configuration-de-serializer/domain/business-operations-type";
+  InputsSource } from "@api/configuration/domain/business-operations-type";
 import { performance }  from "perf_hooks";
 import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 import constants from "@api/common/constants";

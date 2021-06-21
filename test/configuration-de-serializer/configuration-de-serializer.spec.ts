@@ -1,5 +1,5 @@
 import { DeserializeConfigurationCommand } from
-  "@api/configuration-de-serializer/domain/commands/de-serialize-configuration";
+  "@api/configuration/domain/commands/de-serialize-configuration";
 import { expect } from "chai";
 
 /* eslint-disable @typescript-eslint/no-var-requires */

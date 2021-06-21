@@ -1,6 +1,6 @@
 require("module-alias/register");
-import { DeserializeSchemasCommand } from "@api/configuration-de-serializer/domain/commands/de-serialize-schemas";
-import { SchemaTypeDefinitionObject } from "@api/configuration-de-serializer/domain/schemas-type";
+import { DeserializeSchemasCommand } from "@api/configuration/schemas/de-serialize-schemas";
+import { SchemaTypeDefinitionObject } from "@api/configuration/schemas/schemas-type";
 import { expect } from "chai";
 
 /* eslint-disable @typescript-eslint/no-var-requires */

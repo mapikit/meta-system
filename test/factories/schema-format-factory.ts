@@ -3,7 +3,7 @@ import {
   SchemaObject,
   SchemaTypeDefinitionArray,
   SchemaTypeDefinitionObject,
-} from "@api/configuration-de-serializer/domain/schemas-type";
+} from "@api/configuration/domain/schemas-type";
 import { ExtendedJsonTypes, JsonTypes } from "@api/common/types/json-types";
 
 const basicStrings : JsonTypes[] = ["boolean", "string", "number", "date"];

@@ -1,5 +1,5 @@
-import { BusinessOperation } from "@api/configuration-de-serializer/domain/business-operation";
-import { BopsConfigurationEntry } from "@api/configuration-de-serializer/domain/business-operations-type";
+import { BusinessOperation } from "@api/configuration/domain/business-operation";
+import { BopsConfigurationEntry } from "@api/configuration/domain/business-operations-type";
 
 export class ValidateBopsPipelineFlowCommand {
   private businessOperation : BusinessOperation;

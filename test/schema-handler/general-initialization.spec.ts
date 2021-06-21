@@ -4,7 +4,7 @@ import chai from "chai";
 import { ExtendedHttpMethods, SchemaRoutesManager } from "@api/schemas/application/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios, { AxiosResponse } from "axios";
-import { SchemasType } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemasType } from "@api/configuration/domain/schemas-type";
 import faker from "faker";
 import { MongoClient } from "mongodb";
 import { createFakeMongo } from "@test/doubles/mongo-server";

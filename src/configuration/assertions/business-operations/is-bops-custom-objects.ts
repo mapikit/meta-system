@@ -1,6 +1,6 @@
 import { BopsCustomObject } from
-  "@api/configuration-de-serializer/domain/business-operations-type";
-import { isType } from "@api/configuration-de-serializer/domain/assertions/is-type";
+  "@api/configuration/business-operations/business-operations-type";
+import { isType } from "@api/configuration/assertions/is-type";
 import { isObjectDefinition } from "meta-function-helper/dist/src/object-definition/is-object-definition";
 
 export function isBopsCustomObjects (input : unknown) : asserts input is BopsCustomObject[] {

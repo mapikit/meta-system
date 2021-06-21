@@ -1,10 +1,11 @@
 import "module-alias/register";
-import { Configuration } from "@api/configuration-de-serializer/domain/configuration";
+import { Configuration } from "@api/configuration/configuration";
 import { isConfigurationType }
-  from "@api/configuration-de-serializer/domain/assertions/configuration/is-configuration-type";
-import { DeserializeSchemasCommand } from "./de-serialize-schemas";
-import { DeserializeBopsCommand } from "./de-serialize-bops";
-import { CheckBopsFunctionsDependenciesCommand } from "./check-bops-functions-dependencies";
+  from "@api/configuration/assertions/configuration/is-configuration-type";
+import { DeserializeSchemasCommand } from "@api/configuration/schemas/de-serialize-schemas";
+import { DeserializeBopsCommand } from "@api/configuration/business-operations/de-serialize-bops";
+import { CheckBopsFunctionsDependenciesCommand }
+  from "@api/configuration/business-operations/check-bops-functions-dependencies";
 
 export class DeserializeConfigurationCommand {
   private _result : Configuration;

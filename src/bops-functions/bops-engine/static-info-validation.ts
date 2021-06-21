@@ -4,8 +4,8 @@ import { JsonTypes } from "@api/common/types/json-types";
 import {
   BopsConstant,
   BusinessOperations,
-  JsonTypeDict } from "@api/configuration-de-serializer/domain/business-operations-type";
-import { ConfigurationType } from "@api/configuration-de-serializer/domain/configuration-type";
+  JsonTypeDict } from "@api/configuration/domain/business-operations-type";
+import { ConfigurationType } from "@api/configuration/domain/configuration-type";
 
 export type ResolvedConstants = Record<string, unknown>;
 /**

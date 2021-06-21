@@ -1,4 +1,4 @@
-import { SchemaObject, SchemaTypeDefinition } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaObject, SchemaTypeDefinition } from "@api/configuration/domain/schemas-type";
 import { isSchemaTypeArray } from "./is-schema-type-array";
 import { isSchemaTypeDefault } from "./is-schema-type-default";
 import { isSchemaTypeObject } from "./is-schema-type-object";

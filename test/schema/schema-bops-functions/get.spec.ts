@@ -1,5 +1,5 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { SchemaObject } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaObject } from "@api/configuration/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";

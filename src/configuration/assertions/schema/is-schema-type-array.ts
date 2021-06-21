@@ -1,4 +1,4 @@
-import { SchemaTypeDefinitionArray } from "@api/configuration-de-serializer/domain/schemas-type";
+import { SchemaTypeDefinitionArray } from "@api/configuration/domain/schemas-type";
 import { isSchemaFormat } from "./is-schema-format";
 
 // eslint-disable-next-line max-lines-per-function
