@@ -1,4 +1,3 @@
-import "module-alias/register";
 import { HTTPRouteConfiguration } from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
 import { Request, Response, Router } from "express";
 import { HTTPJsonBodyInputMap } from "@api/configuration/protocols/HTTP_JSONBODY/input-map";

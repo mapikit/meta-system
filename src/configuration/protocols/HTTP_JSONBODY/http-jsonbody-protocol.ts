@@ -2,6 +2,8 @@ import { MetaProtocol } from "@api/configuration/protocols/meta-protocol";
 import { HTTP_JSONBODY_CONFIGURATION } from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
 import { HTTPJsonBodyRoute } from "@api/configuration/protocols/HTTP_JSONBODY/http-jsonbody-route";
 import express = require("express");
+import { ishttpJsonBodyConfiguration }
+  from "@api/configuration/protocols/HTTP_JSONBODY/http-jsonbody-configuration-validation";
 
 export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATION> {
   public constructor (
@@ -11,7 +13,7 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
   }
 
   public validateConfiguration () : void {
-    throw new Error("Method not implemented.");
+    ishttpJsonBodyConfiguration(this.protocolConfiguration);
   }
 
   public start () : void {
