@@ -1,10 +1,11 @@
 import { SchemasType } from "@api/configuration/schemas/schemas-type";
 import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
+import { ProtocolConfigType } from "@api/configuration/protocols/protocol-config-type";
 
 export interface ConfigurationType {
   name : string;
   version : string;
-  port : number;
+  protocols : ProtocolConfigType[];
   envs : EnvironmentVariable[];
   dbConnectionString : string;
   schemas : SchemasType[];
