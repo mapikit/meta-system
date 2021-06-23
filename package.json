@@ -1,7 +1,7 @@
 {
-  "name": "apimarketplace",
+  "name": "meta-system",
   "version": "0.0.1",
-  "description": "API for simplifying the creation of marketplace backend",
+  "description": "A system to be any system",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -79,6 +79,7 @@
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
+    "just-clone": "^3.2.1",
     "live-plugin-manager": "^0.15.1",
     "mersenne-twister": "^1.1.0",
     "meta-function-helper": "^0.1.0",
