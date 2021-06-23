@@ -1,159 +1,102 @@
+import "module-alias/register";
+
 import { ResolvedConstants } from "@api/bops-functions/bops-engine/static-info-validation";
-import { pickBranchOutput } from "@api/bops-functions/branch-control/define-output-branch";
-import {
-  BopsConfigurationEntry,
-  BusinessOperations,
-  InputsSource } from "@api/configuration/domain/business-operations-type";
-import { performance }  from "perf_hooks";
-import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
+import { BusinessOperations, Dependency } from "@api/configuration/business-operations/business-operations-type";
 import constants from "@api/common/constants";
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { ObjectResolver } from "@api/bops-functions/bops-engine/object-manipulator";
 import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
-import { ResultNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/result-not-found";
+import { ObjectResolver } from "./object-manipulator";
+import { addTimeout } from "./timer";
 
-type ResultsType = { [moduleKey : number ] : CloudedObject & FlowResult }
-type FlowErrorType = {
-  partialResults : ResultsType;
-  errorName : string;
-  errorMessage : string;
-}
-
-interface FlowInfo { bopConfig : BusinessOperations; inputs ?: CloudedObject }
-
-export interface FlowResult {
-  results ?: ResultsType;
-  executionError ?: FlowErrorType;
-}
-
-type SourceValueGetter = {
-  [typeAsString in "string" | "number"] :
-  (input : InputsSource, flowInfo : FlowInfo, results : ResultsType) => Promise<unknown>;
+type RelevantBopInfo = {
+  constants : ResolvedConstants;
+  config : BusinessOperations["configuration"];
 }
 
 export class BopsEngine {
-  private startingTimestamp : number;
-  private readonly maxExecutionTime : number
-  private readonly staticInfo : Record<string, ResolvedConstants | BusinessOperations>;
+  private readonly constants : Record<string, ResolvedConstants>;
   private readonly mappedFunctions : MappedFunctions;
+  private readonly bopsConfigs : BusinessOperations[];
+  private workingBopContext : RelevantBopInfo;
 
   constructor (options : {
     MappedFunctions : MappedFunctions;
-    StaticInfo : Record<string, ResolvedConstants | BusinessOperations>;
-    MaxExecutionTime ?: number;
+    MappedConstants : Record<string, ResolvedConstants>;
+    BopsConfigs : BusinessOperations[];
   }) {
-    this.staticInfo = options.StaticInfo;
+    this.constants = options.MappedConstants;
     this.mappedFunctions = options.MappedFunctions;
-    this.maxExecutionTime = options.MaxExecutionTime ?? constants.ENGINE_TTL;
-
-    this.startFlow = this.startFlow.bind(this);
-
-    this.mapBopsEngineFunctions();
+    this.bopsConfigs = options.BopsConfigs;
   }
 
-  private mapBopsEngineFunctions () : void {
-    this.mappedFunctions.forEach((map, key) => {
-      if(key.includes("+")) {
-        const engineFunction = async (inputs : object, results : ResultsType) : Promise<FlowResult> => {
-          return this.startFlow({ bopConfig: this.staticInfo[key] as BusinessOperations, ...inputs }, results);
-        };
-        map.main = engineFunction;
+  public stich (operation : BusinessOperations) : Function {
+    this.mapInternalBOps(operation);
+    const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
+
+    this.workingBopContext = {
+      config: operation.configuration,
+      constants: this.constants[operation.name],
+    };
+
+    const stiched = async (_inputs : object) : Promise<unknown> => {
+      return Object.assign(await this.getInputs(output.dependencies, _inputs));
+    };
+
+    return addTimeout(constants.ENGINE_TTL, stiched);
+  }
+
+  private mapInternalBOps (currentBop : BusinessOperations) : void {
+    currentBop.configuration.forEach(module => {
+      const isInternalBop = module.moduleRepo.startsWith("+");
+      if(isInternalBop && !this.mappedFunctions.has(module.moduleRepo)) {
+        const refBop = this.bopsConfigs.find(bop => bop.name === module.moduleRepo.slice(1));
+        this.mappedFunctions.set(module.moduleRepo, this.stich(refBop));
       }
     });
   }
 
-  /**
-   * Starts the execution flow for the given BOp. Flow starts at key 1, but ending depends
-   * on the results and configured branching.
-   *
-   * @returns An object with all the flow results. Object keys match modules keys and object values
-   * correspond to the results. ( [moduleKey] : [moduleResult] )
-   */
-  public async startFlow (input : FlowInfo, results = {}) : Promise<FlowResult> {
-    this.startingTimestamp = performance.now();
-    const firstModule = input.bopConfig.configuration.find(module => module.key === 1);
-    const inputs = ObjectResolver.validateConfiguredInputs(input.bopConfig.inputs, input.inputs);
-    return this.executeFunctionPipeline(firstModule, { bopConfig: input.bopConfig, inputs }, results)
-      .then(() => { return { results: results }; })
-      .catch(err => { return { executionError: {
-        errorName: err.name,
-        errorMessage: err.message,
-        partialResults: results,
-      } }; });
+  private async getInputs (inputs : Dependency[], _inputs : object) : Promise<object> {
+    const inputsArray = inputs.map(async input => {
+      if(typeof input.origin === "string") return this.solveStaticInput(input, _inputs);
+      if (typeof input.origin === "number") return this.solveModularInput(input, _inputs);
+    });
+
+    const resolved = await Promise.all(inputsArray);
+    return ObjectResolver.flattenObject(Object.assign({}, ...resolved));
   }
 
-  /**
-   * Executes the given module grabbing required inputs from constants or other modules.
-   * When done proceeds to nextFunction if present
-   */
   // eslint-disable-next-line max-lines-per-function
-  public async executeFunctionPipeline (
-    moduleConfig : BopsConfigurationEntry,
-    flowInfo : FlowInfo,
-    results : ResultsType) : Promise<void> {
-
-    const elapsedTime = performance.now() - this.startingTimestamp;
-    if(elapsedTime >= this.maxExecutionTime) throw new TTLExceededError(Math.round(elapsedTime));
-
-    const moduleInput = await this.resolveSources(moduleConfig.inputsSource, flowInfo, results);
-    const moduleFunction = this.mappedFunctions.get(moduleConfig.moduleRepo);
-    const result = await moduleFunction.main(moduleInput);
-    results[moduleConfig.key] = result;
-
-    const branchToFollow = pickBranchOutput(moduleFunction.outputData, result);
-    const nextKey = moduleConfig.nextFunctions.find(func => func.branch === branchToFollow)?.nextKey;
-    if(!nextKey) return;
-    const nextModule = flowInfo.bopConfig.configuration.find(module => module.key === nextKey);
-    await this.executeFunctionPipeline(nextModule, flowInfo, results);
-  }
-
-  /**
-   * Resolves all module inputs, returning the apropiate object to be used as a module input
-   */
-  private async resolveSources (inputs : InputsSource[], flowInfo : FlowInfo, results : ResultsType)
-    : Promise<unknown> {
-    for (const input of inputs) {
-      const resolvedInput = await this.resolveInput(input, flowInfo, results);
-      const objectKey = Object.keys(resolvedInput)[0];
-      if(resolvedInput[objectKey] instanceof Array) {
-        const alreadyStoredInInputs = inputs[objectKey] ?? [];
-        resolvedInput[objectKey] = [...alreadyStoredInInputs, ...resolvedInput[objectKey]];
-      }
-      Object.assign(inputs, resolvedInput);
+  private async solveModularInput (input : Dependency, _inputs : object) : Promise<object> {
+    const dependency = this.workingBopContext.config.find(module => module.key === input.origin);
+    const funct = this.mappedFunctions.get(dependency.moduleRepo.slice(1));
+    const path = input.originPath.slice(7);
+    const resolvedInputs = await this.getInputs(dependency.dependencies, _inputs);
+    if(input.originPath.startsWith("result")) {
+      const results = await funct(resolvedInputs);
+      return { [input.targetPath]: ObjectResolver.extractProperty(results, path) };
     }
-    return ObjectResolver.flattenObject(inputs);
+    if(input.originPath.startsWith("module")) {
+      const wrappedFunction = this.wrapFunction(funct, resolvedInputs, path);
+      return { [input.targetPath]: wrappedFunction };
+    }
+    if(input.originPath === undefined) {
+      await funct(await this.getInputs(dependency.dependencies, _inputs));
+      return;
+    }
   }
 
-  /**
-   * Resolves the given input, as an object property or an array as cofigured
-   */
-  private async resolveInput (input : InputsSource, flowInfo : FlowInfo, results : ResultsType) : Promise<unknown> {
-
-    const sourceType = typeof input.source;
-    const inputValue = await this.getSourceValue[sourceType](input, flowInfo, results);
-
-    const targetIsArray : boolean = input.target.includes(constants.ARRAY_INDICATOR);
-    return { [input.target.replace(constants.ARRAY_INDICATOR, "")]: targetIsArray ? [inputValue] : inputValue };
+  private solveStaticInput (input : Dependency, _inputs : object) : object  {
+    switch (input.origin) {
+      case "constants":
+        const foundConstant = this.workingBopContext.constants[input.originPath];
+        return { [input.targetPath]: foundConstant };
+      case "inputs":
+        return { [input.targetPath]: _inputs[input.originPath] };
+    }
   }
 
-  /**
-   * Returns the value of the given input. If required, will execute the function from which the value
-   * will be extracted
-   */
-  private  getSourceValue : SourceValueGetter  = {
-    "string": (input, flowInfo) => {
-      const constName = (input.source as string).slice(1);
-      const constantValueFound = this.staticInfo[flowInfo.bopConfig.name][constName];
-      const foundInputValue =  constantValueFound || flowInfo.inputs[constName];
-
-      return foundInputValue;
-    },
-
-    "number": async (input, flowInfo, results) => {
-      const requiredModuleResult = results[input.source];
-      if(requiredModuleResult === undefined) throw new ResultNotFoundError(input.source as number, input.target);
-
-      return ObjectResolver.extractProperty(results[input.source], input.sourceOutput);
-    },
-  }
-}
+  private wrapFunction (fn : Function, params : unknown, select : string) : () => Promise<unknown> {
+    return async function () : Promise<unknown> {
+      return ObjectResolver.extractProperty(await fn(params), select);
+    };
+  };
+};

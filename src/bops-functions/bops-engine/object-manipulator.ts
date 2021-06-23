@@ -1,9 +1,8 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { BopsInput } from "@api/configuration/domain/business-operations-type";
 import { inspect } from "util";
 
 export class ObjectResolver {
-  public static flattenObject (source : unknown) : unknown {
+  public static flattenObject (source : unknown) : CloudedObject {
     const result = {};
     for(const key of Object.keys(source)) {
       const targetLevels = key.split(".");
@@ -27,13 +26,13 @@ export class ObjectResolver {
     return current;
   }
 
-  public static validateConfiguredInputs (configuredInputs : BopsInput[], inputs : CloudedObject) : CloudedObject {
-    const validatedInputs = {};
-    configuredInputs.forEach(configuredInput => {
-      if(inputs && typeof inputs[configuredInput.name] === configuredInput.type) {
-        validatedInputs[configuredInput.name] = inputs[configuredInput.name];
-      }
-    });
-    return validatedInputs;
-  }
+  // public static validateConfiguredInputs (configuredInputs : BopsInput[], inputs : CloudedObject) : CloudedObject {
+  //   const validatedInputs = {};
+  //   configuredInputs.forEach(configuredInput => {
+  //     if(inputs && typeof inputs[configuredInput.name] === configuredInput.type) {
+  //       validatedInputs[configuredInput.name] = inputs[configuredInput.name];
+  //     }
+  //   });
+  //   return validatedInputs;
+  // }
 }
