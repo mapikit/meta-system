@@ -4,8 +4,6 @@ import { isConfigurationType }
   from "@api/configuration/assertions/configuration/is-configuration-type";
 import { DeserializeSchemasCommand } from "@api/configuration/schemas/de-serialize-schemas";
 import { DeserializeBopsCommand } from "@api/configuration/business-operations/de-serialize-bops";
-import { CheckBopsFunctionsDependenciesCommand }
-  from "@api/configuration/business-operations/check-bops-functions-dependencies";
 
 export class DeserializeConfigurationCommand {
   private _result : Configuration;
@@ -23,12 +21,6 @@ export class DeserializeConfigurationCommand {
 
     const bopsValidationCommand =  new DeserializeBopsCommand();
     bopsValidationCommand.execute(input.businessOperations);
-
-    const dependencyValidation = new CheckBopsFunctionsDependenciesCommand(input.schemas);
-
-    bopsValidationCommand.bopsResults.forEach((bop) => {
-      dependencyValidation.execute(bop);
-    });
 
     this._result = new Configuration(
       {

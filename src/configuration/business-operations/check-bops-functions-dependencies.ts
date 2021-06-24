@@ -10,6 +10,7 @@ interface BopsDependencies {
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
   external : string[];
+  fromBops : string[];
 }
 
 /**
@@ -18,32 +19,43 @@ interface BopsDependencies {
  * Dependencies are code or information that resides outside the configuration for
  * the meta-system, be it a runtime attribute or a function described at it.
  */
-export class CheckBopsFunctionsDependenciesCommand {
+export class CheckBopsFunctionsDependencies {
   private schemas : Set<string> = new Set();
+  private bops : Set<string> = new Set();
   private businessOperation : BusinessOperation;
   private dependencies : BopsDependencies;
 
-  public constructor (schemas : Schema[]) {
-    schemas.forEach((schema) => {
-      this.schemas.add(schema.name);
-    });
+  public get bopsDependencies () : BopsDependencies {
+    return this.dependencies;
   }
 
-  public execute (businessOperation : BusinessOperation) : void {
-    this.businessOperation = businessOperation;
+  public constructor (
+    allSchemas : Schema[],
+    allBusinessOperations : BusinessOperation[],
+    currentBusinessOperation : BusinessOperation,
+  ) {
+    allSchemas.forEach((schema) => {
+      this.schemas.add(schema.name);
+    });
+
+    allBusinessOperations.forEach((Bop) => {
+      this.bops.add(Bop.name);
+    });
+
+    this.businessOperation = currentBusinessOperation;
     this.extractDependencies();
+  }
 
-    // Check if required configurational functions/data exists
-    this.checkConfigurationalDependencies();
+  public CheckAllDependencies () : boolean {
+    const results = [
+      this.checkConfigurationalDependenciesMet(),
+      this.checkInternalFunctionsDependenciesMet(),
+      this.checkSchemaFunctionsDependenciesMet(),
+      this.checkExternalRequiredFunctionsMet(),
+      this.checkOutputDependencyMet(),
+    ];
 
-    // Check if required internal functions exist
-    this.checkInternalFunctionsDependencies();
-
-    // Check if required schema functions exists
-    this.checkSchemaFunctionsDependencies();
-
-    // Check if required external functions exists and are valid
-    this.checkExternalRequiredFunctions();
+    return !results.includes(false);
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -53,6 +65,7 @@ export class CheckBopsFunctionsDependenciesCommand {
     const outputsDependencies = [];
     const schemasDependencies = [];
     const configurationalDependencies = [];
+    const bopsDependencies = [];
 
     // eslint-disable-next-line max-lines-per-function
     this.businessOperation.configuration.forEach((bopsFunctionConfig) => {
@@ -61,7 +74,7 @@ export class CheckBopsFunctionsDependenciesCommand {
       const typeCharsEnum = {
         internal: "#",
         schema: "@",
-        parameters: "!",
+        bops: "+",
         outputs: "%",
       };
 
@@ -85,6 +98,10 @@ export class CheckBopsFunctionsDependenciesCommand {
         return schemasDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
+      if (typeChar === typeCharsEnum.bops) {
+        return bopsDependencies.push(bopsFunctionConfig.moduleRepo);
+      }
+
       externalDependencies.push(bopsFunctionConfig.moduleRepo);
     });
 
@@ -94,15 +111,14 @@ export class CheckBopsFunctionsDependenciesCommand {
       fromOutputs: outputsDependencies,
       fromSchemas: schemasDependencies,
       fromConfigurations: configurationalDependencies,
+      fromBops: bopsDependencies,
     };
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private checkConfigurationalDependencies () : void {
+  public checkConfigurationalDependenciesMet () : boolean {
     // This method should only check for the presence of the field, thus, should disregard types
     // and property accesses such as "!data.property", needing only to verify the "!data" part
-    const availableOutputFunctions = ["%output"];
-
     const availableInputAndConstantsData = [];
 
     Object.keys(this.businessOperation.input).forEach((inputName) => {
@@ -113,28 +129,27 @@ export class CheckBopsFunctionsDependenciesCommand {
       availableInputAndConstantsData.push(`${constantDeclaration.name}`);
     });
 
-    this.dependencies.fromConfigurations.forEach((configurationDependency) => {
+    let result = true;
+
+    for (const configurationDependency of this.dependencies.fromConfigurations) {
       const configurationToVerify = this.fromPropertyPathToType(configurationDependency);
+      result = availableInputAndConstantsData.includes(configurationToVerify);
+      if (!result) { return result; }
+    }
 
-      const configurationExists = availableInputAndConstantsData
-        .includes(configurationToVerify);
+    return true;
+  }
 
-      if (!configurationExists) {
-        // eslint-disable-next-line max-len
-        throw Error(`There is an error on the configuration: Unmet dependency from inputs or constants "${configurationToVerify}"`);
-      }
-    });
+  public checkOutputDependencyMet () : boolean {
+    let result = true;
+    const availableOutputFunction = "%output";
 
-    this.dependencies.fromOutputs.forEach((outputDependency) => {
-      const outputToVerify= this.fromPropertyPathToType(outputDependency);
+    for (const outputDependency of this.dependencies.fromOutputs) {
+      result = outputDependency === availableOutputFunction;
+      if (!result) { return result; }
+    }
 
-      const outputExists = availableOutputFunctions
-        .includes(outputToVerify);
-
-      if (!outputExists) {
-        throw Error(`There is an error on the configuration: Unmet dependency from outputs "${outputToVerify}"`);
-      }
-    });
+    return true;
   }
 
   /**
@@ -153,38 +168,63 @@ export class CheckBopsFunctionsDependenciesCommand {
     return fullPath.substring(0, firstAccessIndex);
   }
 
-  private checkInternalFunctionsDependencies () : void {
-    this.dependencies.internal.forEach((internalDependencyName) => {
-      const functionExists = checkInternalFunctionExist(internalDependencyName);
+  public checkInternalFunctionsDependenciesMet () : boolean {
+    let result = true;
 
-      if (!functionExists) {
-        throw Error (`Required internal function "${internalDependencyName}" does not exist internally`);
-      }
-    });
+    for (const internalDependencyName of this.dependencies.internal) {
+      result = checkInternalFunctionExist(internalDependencyName);
+
+      if (!result) { return result; }
+    }
+
+    return true;
   }
 
-  private checkSchemaFunctionsDependencies () : void {
-    this.dependencies.fromSchemas.forEach((schemaDependecy) => {
+  public checkSchemaFunctionsDependenciesMet () : boolean {
+    let result = true;
+
+    for (const schemaDependecy of this.dependencies.fromSchemas) {
       const requiredSchema = schemaDependecy.substring(1,
         schemaDependecy.lastIndexOf("@"),
       );
 
-      if (!this.schemas.has(requiredSchema)) {
-        throw Error(`Required Schema "${requiredSchema}" was not provided in the configuration`);
-      }
-
       const requiredFunction = schemaDependecy
         .substring(schemaDependecy.lastIndexOf("@") + 1);
 
-      if (!(requiredFunction in SchemasFunctions)) {
-        throw Error(`The schema operation required "${requiredFunction}" at "${schemaDependecy}" does not exist`);
-      }
-    });
+
+      result = this.schemas.has(requiredSchema);
+      if (!result) { return result; }
+
+      result = (requiredFunction in SchemasFunctions);
+      if (!result) { return result; }
+    }
+
+    return true;
   }
 
-  private checkExternalRequiredFunctions () : void {
-    this.dependencies.external.forEach((externalDependency) => {
-      externalFunctionIsLoaded(externalDependency);
-    });
+  public checkBopsFunctionsDependenciesMet () : boolean {
+    let result = true;
+
+    for (const bopsDependency of this.dependencies.fromBops) {
+      const requiredBop = bopsDependency.substring(1);
+
+      result = this.bops.has(requiredBop);
+
+      if (!result) { return result; }
+    }
+
+    return true;
+  }
+
+  private checkExternalRequiredFunctionsMet () : boolean {
+    let result = true;
+
+    for (const externalDependency of this.dependencies.external) {
+      result = externalFunctionIsLoaded(externalDependency);
+
+      if (!result) { return result; }
+    }
+
+    return true;
   }
 }
