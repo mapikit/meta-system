@@ -17,9 +17,9 @@ export interface ModuleResolverInputs {
 enum RepoStartingCharacter {
   schemaFunctions = "@",
   internalFunctions = "#",
-  externalFunctions = "%",
-  bopEngine = "+"
+  externalFunctions = ":",
 }
+// Internal Bops (stating with '+') and Bop Output (starting with '%') are resolved separately
 
 export type ModuleResolverType = {
   [char in RepoStartingCharacter] : (module : BopsConfigurationEntry) => Promise<Function>;
@@ -55,7 +55,7 @@ export class ModuleResolver {
       return foundFunction;
     },
 
-    "%" : async (module) : Promise<Function> => {
+    ":" : async (module) : Promise<Function> => {
       const moduleName = module.moduleRepo.slice(1);
       await this.functionsInstaller.install(moduleName, module.version, ModuleKind.NPM);
       const functionJson = await this.functionsFileSystem.getFunctionDescriptionFile(moduleName);
@@ -66,10 +66,6 @@ export class ModuleResolver {
         externalFunctionConfig.mainFunction,
       );
       return mainFunction;
-    },
-
-    "+" : async () : Promise<Function> => {
-      return undefined;
     },
   }
 }

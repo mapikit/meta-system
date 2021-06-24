@@ -4,7 +4,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": ["es6"],
     "types": ["node", "mocha", "reflect-metadata"],
     "moduleResolution": "node",
     "experimentalDecorators": true,

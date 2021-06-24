@@ -22,7 +22,9 @@ export class ModuleManager {
     : Promise<void> {
     for(const module of modules) {
       if(!existingMap.get(module.moduleRepo)) {
-        existingMap.set(module.moduleRepo, await this.resolveModule(module));
+        if(!["%", "+"].includes(module.moduleRepo[0])) {
+          existingMap.set(module.moduleRepo, await this.resolveModule(module));
+        }
       }
     }
   }

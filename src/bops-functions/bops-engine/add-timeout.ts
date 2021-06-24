@@ -2,7 +2,7 @@ import { TTLExceededError } from "./engine-errors/execution-time-exceeded";
 
 export function addTimeout (timeoutMs : number, promise : Function) : Function {
   let timeoutHandle : NodeJS.Timeout;
-  const timeoutPromise = new Promise((resolve, reject) => {
+  const timeoutPromise = new Promise((_resolve, reject) => {
     timeoutHandle = setTimeout(() => reject(new TTLExceededError(timeoutMs)), timeoutMs);
   });
 
