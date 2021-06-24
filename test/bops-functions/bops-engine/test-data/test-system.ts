@@ -1,8 +1,10 @@
 /* eslint-disable max-len */
 import "module-alias/register";
-import { mapikitProvidedBop } from "@test/bops-functions/bops-engine/test-data/business-operations/mapikit-provided-bop";
+import { mapikitProvidedBop } from "@test/bops-functions/bops-engine/test-data/business-operations/prebuilt-bop";
 import { ConfigurationType } from "@api/configuration/configuration-type";
 import { internalBop } from "./business-operations/internal-bop";
+import { schemaBop } from "./business-operations/schema-bop";
+import { externalBop } from "./business-operations/external-bop";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -30,6 +32,8 @@ export const testSystem : ConfigurationType = {
   businessOperations: [
     mapikitProvidedBop,
     internalBop,
+    schemaBop,
+    externalBop,
   ],
 };
 

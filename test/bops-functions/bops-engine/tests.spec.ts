@@ -7,13 +7,14 @@ import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { testSystem } from "@test/bops-functions/bops-engine/test-data/test-system";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 import { ResolvedConstants, StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
 import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { mapikitProvidedBop } from "./test-data/business-operations/mapikit-provided-bop";
+import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
 import { internalBop } from "./test-data/business-operations/internal-bop";
-
+import { schemaBop } from "./test-data/business-operations/schema-bop";
+import { externalBop } from "./test-data/business-operations/external-bop";
+import faker from "faker";
 
 interface EngineInput {
   MappedFunctions : MappedFunctions;
@@ -56,20 +57,41 @@ describe.only("Bops Engine Testing", () => {
     fakeMongo = await createFakeMongo();
   });
 
-  it("Test of schema functions", async () => {
+  it("Test of prebuilt functions", async () => {
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
-    const res = await stitched({ aNumber: 8 });
+    const randomNumber = Math.round(Math.random()*10);
+    const res = await stitched({ aNumber: randomNumber });
 
-    console.log(res);
+    expect(res["output"]).to.be.equal(Math.pow(3, randomNumber));
   });
 
-  it("Test of internal BOps", async () => {
+  it("Test of BOp as internal function", async () => {
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
     const res = await stitched();
 
-    console.log(res);
+    expect(res["output"]).to.be.equal(73);
+  });
+
+  it("Test of schema BOps functions", async () => {
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(schemaBop, maxExecutionTime);
+    const randomYear = Math.round(Math.random()*2100);
+    const car = { model: "fakeModel", year: randomYear };
+    const res = await stitched({ aCar: car });
+
+    expect(res["output"]["deletedCount"]).to.be.equal(1);
+  });
+
+  it("Test of external BOps functions", async () => {
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(externalBop, maxExecutionTime);
+    const randomName = faker.name.firstName();
+    const res = await stitched({ myName: randomName });
+
+    expect(res["wasGreeted"]).to.be.true;
+    expect(res["greetings"]).to.be.equal("Hello " + randomName);
   });
 });
 
