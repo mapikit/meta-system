@@ -134,7 +134,7 @@ export class CheckBopsFunctionsDependencies {
     for (const configurationDependency of this.dependencies.fromConfigurations) {
       const configurationToVerify = this.fromPropertyPathToType(configurationDependency);
       result = availableInputAndConstantsData.includes(configurationToVerify);
-      if (!result) { return result; }
+      if (!result) { return false; }
     }
 
     return true;
@@ -146,7 +146,7 @@ export class CheckBopsFunctionsDependencies {
 
     for (const outputDependency of this.dependencies.fromOutputs) {
       result = outputDependency === availableOutputFunction;
-      if (!result) { return result; }
+      if (!result) { return false; }
     }
 
     return true;
@@ -174,7 +174,7 @@ export class CheckBopsFunctionsDependencies {
     for (const internalDependencyName of this.dependencies.internal) {
       result = checkInternalFunctionExist(internalDependencyName);
 
-      if (!result) { return result; }
+      if (!result) { return false; }
     }
 
     return true;
@@ -193,10 +193,10 @@ export class CheckBopsFunctionsDependencies {
 
 
       result = this.schemas.has(requiredSchema);
-      if (!result) { return result; }
+      if (!result) { return false; }
 
       result = (requiredFunction in SchemasFunctions);
-      if (!result) { return result; }
+      if (!result) { return false; }
     }
 
     return true;
@@ -210,7 +210,7 @@ export class CheckBopsFunctionsDependencies {
 
       result = this.bops.has(requiredBop);
 
-      if (!result) { return result; }
+      if (!result) { return false; }
     }
 
     return true;
@@ -222,7 +222,7 @@ export class CheckBopsFunctionsDependencies {
     for (const externalDependency of this.dependencies.external) {
       result = externalFunctionIsLoaded(externalDependency);
 
-      if (!result) { return result; }
+      if (!result) { return false; }
     }
 
     return true;
