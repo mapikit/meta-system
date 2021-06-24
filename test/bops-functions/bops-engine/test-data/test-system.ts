@@ -1,12 +1,8 @@
 /* eslint-disable max-len */
 import "module-alias/register";
-import { ConfigurationType } from "@api/configuration/domain/configuration-type";
 import { mapikitProvidedBop } from "@test/bops-functions/bops-engine/test-data/business-operations/mapikit-provided-bop";
-import { schemaFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/schema-functions-bop";
-import { externalFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/external-functions";
-import { mixedFunctionsBop } from "@test/bops-functions/bops-engine/test-data/business-operations/mixed-functions";
-import { timeoutBop } from "@test/bops-functions/bops-engine/test-data/business-operations/ttl-exceeded";
-import { bopception } from "@test/bops-functions/bops-engine/test-data/business-operations/meta-bop";
+import { ConfigurationType } from "@api/configuration/configuration-type";
+import { internalBop } from "./business-operations/internal-bop";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -32,12 +28,8 @@ export const testSystem : ConfigurationType = {
   ],
   dbConnectionString: "mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin",
   businessOperations: [
-    schemaFunctionsBop,
     mapikitProvidedBop,
-    externalFunctionsBop,
-    mixedFunctionsBop,
-    timeoutBop,
-    bopception,
+    internalBop,
   ],
 };
 

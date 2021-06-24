@@ -6,11 +6,13 @@ import { createFakeMongo } from "@test/doubles/mongo-server";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { testSystem } from "@test/bops-functions/bops-engine/test-data/test-system";
-import { SchemasType } from "@api/configuration/domain/schemas-type";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
 import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 import { ResolvedConstants, StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations } from "@api/configuration/domain/business-operations-type";
+import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { mapikitProvidedBop } from "./test-data/business-operations/mapikit-provided-bop";
+import { internalBop } from "./test-data/business-operations/internal-bop";
 
 
 interface EngineInput {
@@ -55,11 +57,19 @@ describe.only("Bops Engine Testing", () => {
   });
 
   it("Test of schema functions", async () => {
-    const schemaFunctionsBop = testSystem.businessOperations.find(bop => bop.name === "schema-functions");
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const stitched = bopsEngine.stich(schemaFunctionsBop);
+    const stitched = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
+    const res = await stitched({ aNumber: 8 });
+
+    console.log(res);
+  });
+
+  it("Test of internal BOps", async () => {
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
     const res = await stitched();
 
     console.log(res);
   });
 });
+
