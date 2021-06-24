@@ -4,7 +4,7 @@ import {
   QueryType,
   QueryTypes,
 } from "@api/schemas/application/schema-bops-funtions/query-type";
-import { SchemaObject, SchemasType, SchemaTypeDefinition } from "@api/configuration/domain/schemas-type";
+import { SchemaObject, SchemasType, SchemaTypeDefinition } from "@api/configuration/schemas/schemas-type";
 import { queryTranslationMap } from "@api/schemas/application/query-builder/query-translation-type";
 import { queryValueReplace } from "@api/schemas/application/query-builder/query-value-replace";
 import { getObjectProperty } from "./get-object-property";
