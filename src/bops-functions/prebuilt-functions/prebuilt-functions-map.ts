@@ -40,6 +40,7 @@ import { lowerOrEqualToBopsFunction } from "./logic/lower-or-equal-to";
 import { lowerThanBopsFunction } from "./logic/lower-than";
 import { notBopsFunction } from "./logic/not";
 import { orGateBopsFunction } from "./logic/or";
+import { tryCatchBopsFunction } from "./flux-control/try-catch";
 
 const prebuiltFuntions = new Map<string, Function>();
 
@@ -92,10 +93,13 @@ prebuiltFuntions.set("and", andGateBopsFunction);
 prebuiltFuntions.set("equalTo", isEqualToBopsFunction);
 prebuiltFuntions.set("higherThan", higherThanBopsFunction);
 prebuiltFuntions.set("higherOrEqualTo", higherOrEqualToBopsFunction);
-prebuiltFuntions.set("if", ifBopsFunction);
 prebuiltFuntions.set("lowerOrEqualTo", lowerOrEqualToBopsFunction);
 prebuiltFuntions.set("lowerThan", lowerThanBopsFunction);
 prebuiltFuntions.set("not", notBopsFunction);
 prebuiltFuntions.set("or", orGateBopsFunction);
+
+// Flux-Control Functions
+prebuiltFuntions.set("if", ifBopsFunction);
+prebuiltFuntions.set("tryCatch", tryCatchBopsFunction);
 
 export default prebuiltFuntions;
