@@ -1,5 +1,4 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { SchemaObject } from "@api/configuration/domain/schemas-type";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
@@ -10,6 +9,7 @@ import { MongoClient } from "mongodb";
 import { complexExampleSchema } from "@test/schema/common-schemas/complex-example-schema";
 import { flatExampleSchema } from "@test/schema/common-schemas/flat-example-schema";
 import { deepExampleSchema } from "@test/schema/common-schemas/deep-example-schema";
+import { SchemaObject } from "@api/configuration/schemas/schemas-type";
 
 describe("Get Schema - Schemas Bops Function", () => {
   let fakeClient : MongoClient;

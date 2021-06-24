@@ -1,10 +1,7 @@
 import faker from "faker";
-import {
-  SchemaObject,
-  SchemaTypeDefinitionArray,
-  SchemaTypeDefinitionObject,
-} from "@api/configuration/domain/schemas-type";
 import { ExtendedJsonTypes, JsonTypes } from "@api/common/types/json-types";
+import { SchemaObject, SchemaTypeDefinitionArray, SchemaTypeDefinitionObject }
+  from "@api/configuration/schemas/schemas-type";
 
 const basicStrings : JsonTypes[] = ["boolean", "string", "number", "date"];
 const advancedStrings : Exclude<ExtendedJsonTypes, JsonTypes>[] = ["array", "object"];
@@ -27,7 +24,7 @@ const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
   object: (maxDepth : number) : SchemaTypeDefinitionObject => {
     return {
       type: "object",
-      data: {
+      subtype: {
         ...schemaFormatFactory(maxDepth-1),
       },
     };
@@ -36,7 +33,7 @@ const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
   array: (maxDepth : number) : SchemaTypeDefinitionArray => {
     return {
       type: "array",
-      data:  faker.random.arrayElement([...basicStrings, typeFactory.object(maxDepth-1).data]),
+      subtype:  faker.random.arrayElement([...basicStrings, typeFactory.object(maxDepth-1).data]),
     };
   },
 };

@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 
 export const complexExampleSchema : SchemasType = {
   name: "exampleComplexSchema",
@@ -6,11 +6,11 @@ export const complexExampleSchema : SchemasType = {
     name: { type: "string" },
     hobbies: {
       type: "array",
-      data: "string",
+      subtype: "string",
     },
     acquaintances: {
       type: "array",
-      data: {
+      subtype: {
         name: { type: "string" },
         gender: { type: "string" },
         age: { type: "number" },

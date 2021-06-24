@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 import * as Mongo from "mongodb";
 
 export class MetaRepository {

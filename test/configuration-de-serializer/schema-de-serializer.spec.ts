@@ -20,22 +20,22 @@ describe("Schemas De-Serializer", () => {
     expect(command.resultSchemas.length).to.be.above(0);
   });
 
-  it("Desserializes schema with deep nested properties", () => {
-    const command = new DeserializeSchemasCommand();
+  // it("Desserializes schema with deep nested properties", () => {
+  //   const command = new DeserializeSchemasCommand();
 
-    command.execute(deepObjectSchema["schemas"]);
+  //   command.execute(deepObjectSchema["schemas"]);
 
-    expect(command.resultSchemas.length).to.be.equal(1);
-    const schema = command.resultSchemas[0];
+  //   expect(command.resultSchemas.length).to.be.equal(1);
+  //   const schema = command.resultSchemas[0];
 
-    expect(schema.format["oneLevelDeepProperty"]["type"] === "object").to.to.true;
-    expect(schema.format["twoLevelDeepProperty"]["type"] === "object").to.to.true;
+  //   expect(schema.format["oneLevelDeepProperty"]["type"] === "object").to.to.true;
+  //   expect(schema.format["twoLevelDeepProperty"]["type"] === "object").to.to.true;
 
-    const reallyDeepProperty = ((schema.format.twoLevelDeepProperty as SchemaTypeDefinitionObject)
-      .data["nestedDeepProperty"] as SchemaTypeDefinitionObject).data["reallyDeepNestedProp"];
+  //   const reallyDeepProperty = ((schema.format.twoLevelDeepProperty as SchemaTypeDefinitionObject)
+  //     .data["nestedDeepProperty"] as SchemaTypeDefinitionObject).data["reallyDeepNestedProp"];
 
-    expect(reallyDeepProperty).to.not.be.undefined;
-  });
+  //   expect(reallyDeepProperty).to.not.be.undefined;
+  // });
 
   it ("Desserializes schema with array types", () => {
     const command = new DeserializeSchemasCommand();

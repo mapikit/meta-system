@@ -2,7 +2,6 @@ import { andGateBopsFunction } from "@api/bops-functions/prebuilt-functions/logi
 import { isEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/equal";
 import { higherOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-or-equal-to";
 import { higherThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/higher-than";
-import { ifBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/if";
 import { lowerOrEqualToBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-or-equal-to";
 import { lowerThanBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/lower-than";
 import { notBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/not";
@@ -253,20 +252,20 @@ describe("Logic BOPs function", () => {
     });
   });
 
-  describe("if", () => {
-    it("Branches to True", () => {
-      const conditional = true;
+  // describe("if", () => {
+  //   it("Branches to True", () => {
+  //     const conditional = true;
 
-      const result = ifBopsFunction({ conditional });
+  //     const result = ifBopsFunction({ conditional });
 
-      expect(result).to.be.deep.equal({ conditionResultTrue: true });
-    });
-    it("Branches to False", () => {
-      const conditional = false;
+  //     expect(result).to.be.deep.equal({ conditionResultTrue: true });
+  //   });
+  //   it("Branches to False", () => {
+  //     const conditional = false;
 
-      const result = ifBopsFunction({ conditional });
+  //     const result = ifBopsFunction({ conditional });
 
-      expect(result).to.be.deep.equal({ conditionResultFalse: true });
-    });
-  });
+  //     expect(result).to.be.deep.equal({ conditionResultFalse: true });
+  //   });
+  // });
 });

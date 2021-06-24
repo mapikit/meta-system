@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 
 export const multipleTypesSchema : SchemasType = {
   name: "exampleFlatSchema",
@@ -9,19 +9,19 @@ export const multipleTypesSchema : SchemasType = {
     isRegistered: { type: "boolean" },
     hobbies: {
       type: "array",
-      data: "string",
+      subtype: "string",
     },
     luckyNumbers: {
       type: "array",
-      data: "number",
+      subtype: "number",
     },
     familyBirthdays: {
       type: "array",
-      data: "date",
+      subtype: "date",
     },
     secretBoolSequence: {
       type: "array",
-      data: "boolean",
+      subtype: "boolean",
     },
   },
   routes: {

@@ -1,5 +1,6 @@
-import { BusinessOperation } from "@api/configuration/domain/business-operation";
-import { BopsCustomObject } from "@api/configuration/domain/business-operations-type";
+import { BusinessOperation } from "./business-operation";
+import { BopsCustomObject } from "./business-operations-type";
+
 
 export class ValidateBopsCustomObjectsCommand {
   private businessOperation : BusinessOperation;

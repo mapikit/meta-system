@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 
 export const deepExampleSchema : SchemasType = {
   name: "exampleDeepSchema",
@@ -6,7 +6,7 @@ export const deepExampleSchema : SchemasType = {
     name: { type: "string" },
     job: {
       type: "object",
-      data: {
+      subtype: {
         wage: { type: "number" },
         name: { type: "string" },
         hiredAt: { type: "date" },
