@@ -3,55 +3,23 @@
   "description": "Updates the values of properties of an entity based on a provided ID.",
   "author": "mapikit",
   "version": "0.0.1",
-  "inputParameters": [
-    {
-      "type": "string",
-      "name": "id",
-      "required": true
-    },
-    {
-      "type": "cloudedObject",
-      "name": "valuesToUpdate",
-      "required": true
-    }
-  ],
-  "outputBranches": [
-    {
-      "branchName": "default",
-      "description": "The updated entity"
-    },
-    {
-      "branchName": "updateError",
-      "description": "Error on updating information"
-    }
-  ],
-  "outputData": [
-    {
-      "name": "updatedEntity",
-      "type": "cloudedObject",
-      "branch": "default"
-    },
-    {
-      "name": "errorMessage",
-      "type": "$errorMessage",
-      "branch": "updateError"
-    }
-  ],
+  "inputParameters": {
+    "id": { "type": "string", "required": true },
+    "valuesToUpdate": { "type": "cloudedObject", "required": true }
+  },
+  "outputData": {
+    "errorMessage": { "type": "$errorMessage", "required": false },
+    "updatedEntity": { "type": "cloudedObject", "required": false }
+  },
   "entrypoint": "index.ts",
   "mainFunction": "main",
   "customTypes": [
     {
       "name": "errorMessage",
-      "properties": [
-        {
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "name": "errorCode",
-          "type": "string"
-        }
-      ]
+      "type": {
+        "message": { "type": "string" },
+        "errorCode": { "type": "string" }
+      }
     }
   ]
 }

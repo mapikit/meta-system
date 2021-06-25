@@ -47,7 +47,7 @@ const setupBopsEngineRequisites = async () : Promise<EngineInput> => {
   return bopsEngineInputOptions;
 };
 
-describe.only("Bops Engine Testing", () => {
+describe("Bops Engine Testing", () => {
   before(async () => {
     fakeMongo = await createFakeMongo();
     bopsEnginePrerequisites = await setupBopsEngineRequisites();

@@ -4,12 +4,12 @@
       "name": "test1",
       "format": {
         "shallowProperty": { "type": "string" },
-        "oneLevelDeepProperty": { "type": "object", "data": {
+        "oneLevelDeepProperty": { "type": "object", "subtype": {
           "nestedProperty": { "type": "string" },
           "anotherNestedProperty": { "type": "number" }
         } },
-        "twoLevelDeepProperty": { "type": "object", "data": {
-          "nestedDeepProperty": { "type": "object", "data": {
+        "twoLevelDeepProperty": { "type": "object", "subtype": {
+          "nestedDeepProperty": { "type": "object", "subtype": {
             "reallyDeepNestedProp": { "type": "boolean" }
           } }
         } }

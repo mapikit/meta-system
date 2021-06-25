@@ -11,7 +11,6 @@ export function isConfigurationType (input : unknown) : asserts input is Configu
   isType("string", "\"dbConnectionString\" should be a string", configurationTypeInput.dbConnectionString);
   isType("string", "\"name\" should be a string", configurationTypeInput.name);
   isType("string", "\"version\" should be a string", configurationTypeInput.version);
-  isType("number", "\"port\" should be a number", configurationTypeInput.port);
 
   if (!Array.isArray(configurationTypeInput.envs)) {
     throw Error("\"envs\" should be an array");

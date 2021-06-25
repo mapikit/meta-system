@@ -1,5 +1,5 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import { createFakeMongo } from "@test/doubles/mongo-server";
@@ -50,8 +50,8 @@ describe("Get Schema - Schemas Bops Function", () => {
 
     const result = await getFunction({ query: nameAndHeightQuery });
 
-    expect(Array.isArray(result["entities"])).be.true;
-    expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
+    expect(Array.isArray(result["results"])).be.true;
+    expect(result["results"][0]._id).to.be.deep.equal(createdEntity["_id"]);
   });
 
   it("Gets Deep Schema using our query model successfully", async () => {
@@ -83,8 +83,8 @@ describe("Get Schema - Schemas Bops Function", () => {
 
     const result = await getFunction({ query: nameAndJobDeepQuery });
 
-    expect(Array.isArray(result["entities"])).be.true;
-    expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
+    expect(Array.isArray(result["results"])).be.true;
+    expect(result["results"][0]._id).to.be.deep.equal(createdEntity["_id"]);
   });
 
   it("Gets Complex Schema using our query model successfully", async () => {
@@ -119,8 +119,8 @@ describe("Get Schema - Schemas Bops Function", () => {
 
     const result = await getFunction({ query: nameAndAcquaintancesComplexQuery });
 
-    expect(Array.isArray(result["entities"])).be.true;
-    expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
+    expect(Array.isArray(result["results"])).be.true;
+    expect(result["results"][0]._id).to.be.deep.equal(createdEntity["_id"]);
   });
 
   it("Fails to get Schema", async () => {
@@ -146,7 +146,7 @@ describe("Get Schema - Schemas Bops Function", () => {
 
     const result = await getFunction({ query: invalidQuery });
 
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.get.invalidSearchArgument);
+    expect(result["getError"]).to.be.deep.equal(SchemaFunctionErrors.get.invalidSearchArgument);
   });
 
   it("Gets Complex Schema [contains_all embedded documents] using our query model successfully", async () => {
@@ -180,7 +180,7 @@ describe("Get Schema - Schemas Bops Function", () => {
 
     const result = await getFunction({ query: nameAndAcquaintancesComplexQuery });
 
-    expect(Array.isArray(result["entities"])).be.true;
-    expect(result["entities"][0]._id).to.be.deep.equal(createdEntity["_id"]);
+    expect(Array.isArray(result["results"])).be.true;
+    expect(result["results"][0]._id).to.be.deep.equal(createdEntity["_id"]);
   });
 });

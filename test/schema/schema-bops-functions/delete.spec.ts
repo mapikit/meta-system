@@ -1,5 +1,5 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { entityFactory } from "@test/factories/entity-factory";
@@ -8,7 +8,7 @@ import { MongoClient } from "mongodb";
 import { multipleTypesSchema } from "@test/schema/common-schemas/multiple-types-schema";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 
-describe("Update Schema - Schemas Bops Function", () => {
+describe("Delete Schema - Schemas Bops Function", () => {
   let fakeClient : MongoClient;
   const systemName = "fakeSystem";
   let schemaManager : SchemaManager;
@@ -108,7 +108,7 @@ describe("Update Schema - Schemas Bops Function", () => {
     });
 
     schemaManager.bopsFunctions.schema = multipleTypesSchema;
-    deleteFunction = schemaManager.bopsFunctions.update;
+    deleteFunction = schemaManager.bopsFunctions.delete;
 
     const nameAndHeightQuery = {
       name: { "-----": [] },
@@ -117,6 +117,6 @@ describe("Update Schema - Schemas Bops Function", () => {
     const result = await deleteFunction({ query: nameAndHeightQuery });
 
     expect(result["deletedCount"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);
+    expect(result["deleteError"]).to.be.deep.equal(SchemaFunctionErrors.delete.invalidQueryArgument);
   });
 });

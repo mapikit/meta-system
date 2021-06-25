@@ -6,7 +6,7 @@ import { entityFactory } from "@test/factories/entity-factory";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import faker from "faker";
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { MongoClient, ObjectId } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
@@ -55,8 +55,9 @@ describe("Bops Function - Delete by Id", () => {
     const fakeId = faker.random.alphaNumeric(12);
 
     const result = await deleteFunction({ id:  fakeId });
+
     expect(result["deleted"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.notFound);
+    expect(result["deleteError"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.notFound);
   });
 
   it("Fails to delete entity - no id given", async () => {
@@ -64,6 +65,6 @@ describe("Bops Function - Delete by Id", () => {
     await createEntityFunction({ entity });
     const result = await deleteFunction({ id : undefined });
     expect(result["deleted"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.nullInput);
+    expect(result["deleteError"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.nullInput);
   });
 });

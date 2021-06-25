@@ -1,5 +1,5 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { entityFactory } from "@test/factories/entity-factory";
@@ -125,6 +125,6 @@ describe("Update Schema - Schemas Bops Function", () => {
     const result = await updateFunction({ valuesToUpdate: partialUpdate, query: nameAndHeightQuery });
 
     expect(result["updatedCount"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);
+    expect(result["updateError"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);
   });
 });

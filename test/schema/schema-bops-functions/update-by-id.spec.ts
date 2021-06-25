@@ -4,7 +4,7 @@ import { schemaFactory } from "@test/factories/schema-factory";
 import { random } from "faker";
 import { expect } from "chai";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { MongoClient } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
@@ -58,13 +58,13 @@ describe("Update By Id - Schema BOPs function", () => {
     const result = await updateByIdFunction({ id: null, valuesToUpdate: { fake: "property" } });
 
     expect(result["updatedEntity"]).be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.nullInput);
+    expect(result["updateError"]).to.be.deep.equal(SchemaFunctionErrors.updateById.nullInput);
   });
 
   it("Fails to update due to ID Not found", async () => {
     const result = await updateByIdFunction({ id: random.alphaNumeric(12), valuesToUpdate: { fake: "property" } });
 
     expect(result["updatedEntity"]).be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.updateById.notFound);
+    expect(result["updateError"]).to.be.deep.equal(SchemaFunctionErrors.updateById.notFound);
   });
 });

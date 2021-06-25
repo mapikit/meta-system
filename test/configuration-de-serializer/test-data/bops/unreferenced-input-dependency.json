@@ -1,28 +1,18 @@
 {
   "name": "car-system-mgmt",
-  "version": "1.0.2",
-  "port": 8080,
+  "version": "1.0.3",
   "envs": [
     {"key": "NODE_ENV", "value": "production"}
   ],
   "schemas": [
     {
-      "name": "customer",
+      "name": "client",
       "format": {
         "id": { "type": "string" },
         "name": { "type": "string" },
         "phone": { "type": "string" },
         "email": { "type": "string" },
-        "purchases": { "type": "array", "data": "string", "refName": "purchase" },
         "birthdate": { "type": "date" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     },
     {
@@ -31,15 +21,9 @@
         "id": { "type": "string" },
         "date": { "type": "date" },
         "value": { "type": "number" },
-        "productId": { "type": "string" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": false,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": false,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
+        "productId": { "type": "string" },
+        "clientId": { "type": "string" },
+        "employeeId": { "type": "string" }
       }
     },
     {
@@ -47,16 +31,7 @@
       "format": {
         "id": { "type": "string" },
         "name": { "type": "string" },
-        "salary": { "type": "number" },
-        "confirmedSales": { "type": "array", "data": "string", "refName": "purchase" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": true,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
+        "salary": { "type": "number" }
       }
     },
     {
@@ -69,14 +44,6 @@
         "color": { "type": "string" },
         "description": { "type": "string" },
         "sold": { "type": "boolean" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": true,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": true,
-        "queryParamsGetEnabled": true
       }
     }
   ],
@@ -84,236 +51,164 @@
   "businessOperations": [
     {
       "name": "car-sell",
-      "inputs": [
-        { "name": "carId", "alias": "Id do Carro", "type": "string", "localization": "uri" },
-        { "name": "jsonBody", "alias": "Corpo da Requisição", "type": "$carSellBody", "localization": "body" }
-       ],
-      "outputs": [
-        { "name": "success", "type": "string", "statusCode": 200 },
-        { "name": "systemFailure", "type": "string", "statusCode": 500 }
-      ],
-      "route": "/cars/:carId/sell",
+      "input": {
+        "carId": { "type": "string", "required": true },
+        "jsonBody": { "type": "$carSellBody", "required": true }
+      },
+      "output": {
+        "message": { "type": "string", "required": true },
+        "statusCode": { "type": "number", "requried": true }
+      },
       "constants": [
-        { "name": "emptyArrayLength", "type": "number", "value": 0 },
+        { "name": "trueValue", "type": "boolean", "value": true },
         { "name": "successMessage", "type": "string", "value": "Success on performing purchase" },
         { "name": "failureMessage", "type": "string", "value": "Failure" },
-        { "name": "firstArrayItemIndex", "type": "number", "value": 0 },
-        { "name": "carSoldStatus", "type": "boolean", "value": true }
+        { "name": "failureCode", "type": "number", "value": 500 },
+        { "name": "successCode", "type": "number", "value": 200 }
       ],
       "configuration": [
         {
-          "moduleRepo": "@car@get",
           "key": 1,
-          "inputsSource": [
-            { "source": "!carId", "target": "id" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 2, "branch": "get" }
+          "moduleRepo": "%output",
+          "dependencies": [
+            { "origin": 2, "originPath": "result.value", "targetPath": "message" },
+            { "origin": 3, "originPath": "result.value", "targetPath": "statusCode" }
           ]
         },
         {
-          "moduleRepo": "#higherThan",
           "key": 2,
-          "inputsSource": [
-            { "source": 1, "sourceOutput": "result.lenght", "target": "input" },
-            { "source": "!emptyArrayLength", "target": "targetValue" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 10, "branch": "higherThanValue" },
-            { "nextKey": 6, "branch": "equalOrLowerThanValue" }
+          "moduleRepo": "#if",
+          "dependencies": [
+            { "origin": "constant", "originPath": "failureMessage", "targetPath": "ifTrue" },
+            { "origin": "constant", "originPath": "successMessage", "targetPath": "ifFalse" },
+            { "origin": 4, "originPath": "result.value", "targetPath": "boolean" }
           ]
         },
         {
-          "moduleRepo": "%success",
+          "key": 3,
+          "moduleRepo": "#if",
+          "dependencies": [
+            { "origin": "constant", "originPath": "failureCode", "targetPath": "ifTrue" },
+            { "origin": "constant", "originPath": "successCode", "targetPath": "ifFalse" },
+            { "origin": 4, "originPath": "result.value", "targetPath": "boolean" }
+          ]
+        },
+        {
+          "key": 4,
+          "moduleRepo": "#if",
+          "dependencies": [
+            { "origin": "constant", "originPath": "trueValue", "targetPath": "ifTrue" },
+            { "origin": 13, "originPath": "module", "targetPath": "ifFalse" },
+            { "origin": 5, "originPath": "result.value", "targetPath": "boolean" }
+          ]
+        },
+        {
           "key": 5,
-          "inputsSource": [ { "source": "!successMessage", "target": "value" } ]
+          "moduleRepo": "#or",
+          "dependencies": [
+            { "origin": 6, "originPath": "result.value", "targetPath": "comparison[$origin]" },
+            { "origin": 10, "originPath": "result.entity.sold", "targetPath": "comparison[$origin]" }
+          ]
         },
         {
-          "moduleRepo": "%systemFailure",
           "key": 6,
-          "inputsSource": [ { "source": "!failureMessage", "target": "value" } ]
-        },
-        {
-          "moduleRepo": "#boolCheck",
-          "key": 10,
-          "inputsSource": [
-            { "source": 9, "sourceOutput": "item.sold", "target": "boolean" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 22, "branch": "false" },
-            { "nextKey": 6, "branch": "true" }
+          "moduleRepo": "#or",
+          "dependencies": [
+            { "origin": 7, "originPath": "result.value", "targetPath": "comparison[$origin]" },
+            { "origin": 8, "originPath": "result.value", "targetPath": "comparison[$origin]" },
+            { "origin": 9, "originPath": "result.value", "targetPath": "comparison[$origin]" }
           ]
         },
         {
-          "moduleRepo": "#arrayIndex",
-          "key": 9,
-          "inputsSource": [
-            { "source": "!firstArrayItemIndex", "target": "index" },
-            { "source": 1, "sourceOutput": "result","target": "array" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 10 }
-          ]
-        },
-        {
-          "moduleRepo": "#timestamp",
-          "key": 22,
-          "inputsSource": [],
-          "nextFunctions": [
-            { "nextKey": 7 }
-          ]
-        },
-        {
-          "moduleRepo": "@purchase@create",
           "key": 7,
-          "inputsSource": [
-            { "source": 22, "sourceOutput": "date", "target": "date" },
-            { "source": 9 , "sourceOutput": "item.id", "target": "productId"},
-            { "source": 9, "sourceOutput": "item.price", "target": "value" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 11 }
+          "moduleRepo": "#not",
+          "dependencies": [
+            { "origin": 10, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
-          "moduleRepo": "@customer@get",
+          "key": 8,
+          "moduleRepo": "#not",
+          "dependencies": [
+            { "origin": 11, "originPath": "result.found", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 9,
+          "moduleRepo": "#not",
+          "dependencies": [
+            { "origin": 12, "originPath": "result.found", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 10,
+          "moduleRepo": "@car@getById",
+          "dependencies": [
+            { "origin": "input", "originPath": "inexistentInput", "targetPath": "id" }
+          ]
+        },
+        {
           "key": 11,
-          "inputsSource": [
-            { "source": "!jsonBody.clientId", "target": "id" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 12 }
+          "moduleRepo": "@client@getById",
+          "dependencies": [
+            { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "id" }
           ]
         },
         {
-          "moduleRepo": "#higherThan",
           "key": 12,
-          "inputsSource": [
-            { "source": 11, "sourceOutput": "result.lenght", "target": "input" },
-            { "source": "!emptyArrayLength", "target": "targetValue" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 13, "branch": "higherThanValue" },
-            { "nextKey": 6, "branch": "equalOrLowerThanValue" }
+          "moduleRepo": "@employee@getById",
+          "dependencies": [
+            { "origin": "input", "originPath": "jsonBody.employee", "targetPath": "id" }
           ]
         },
         {
-          "moduleRepo": "#arrayIndex",
           "key": 13,
-          "inputsSource": [
-            { "source": "!firstArrayItemIndex", "target": "index" },
-            { "source": 11, "sourceOutput": "result", "target": "array" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 14 }
+          "moduleRepo": "#not",
+          "dependencies": [
+            { "origin": 14, "originPath": "result.value", "targetPath": "input" }
           ]
         },
         {
-          "moduleRepo": "#arrayAppend",
           "key": 14,
-          "inputsSource": [
-            { "source": 13, "sourceOutput": "item.purchases", "target": "array" },
-            { "source": 7, "sourceOutput": "created.id", "target": "elementToAppend" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 15 }
+          "moduleRepo": "#isNill",
+          "dependencies": [
+            { "origin": 15, "originPath": "result.updateError", "targetPath": "input" }
           ]
         },
         {
-          "moduleRepo": "@employee@get",
           "key": 15,
-          "inputsSource": [
-            { "source": "!jsonBody.employeeId", "target": "id" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 16 }
+          "moduleRepo": "@car@updateById",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "id" },
+            { "origin": "constants", "originPath": "trueValue", "targetPath": "sold" },
+            { "origin": 16 }
           ]
         },
         {
-          "moduleRepo": "#higherThan",
           "key": 16,
-          "inputsSource": [
-            { "source": 15, "sourceOutput": "result.lenght", "target": "input" },
-            { "source": "!emptyArrayLength", "target": "targetValue" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 17, "branch": "higherThanValue" },
-            { "nextKey": 6, "branch": "equalOrLowerThanValue" }
-          ]
-        },
-        {
-          "moduleRepo": "#arrayIndex",
-          "key": 17,
-          "inputsSource": [
-            { "source": "!firstArrayItemIndex", "target": "index" },
-            { "source": 15, "sourceOutput": "result", "target": "array" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 18 }
-          ]
-        },
-        {
-          "moduleRepo": "#arrayAppend",
-          "key": 18,
-          "inputsSource": [
-            { "source": 17, "sourceOutput": "item.confirmedSales", "target": "array" },
-            { "source": 7, "sourceOutput": "created.id", "target": "elementToAppend" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 19 }
-          ]
-        },
-        {
-          "moduleRepo": "@car@update",
-          "key": 19,
-          "inputsSource": [
-            { "source": 9, "sourceOutput": "item.id", "target": "id" },
-            { "source": "!unreferenced", "target": "sold" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 20 }
-          ]
-        },
-        {
-          "moduleRepo": "@employee@update",
-          "key": 20,
-          "inputsSource": [
-            { "source": 17, "sourceOutput": "item.id", "target": "id" },
-            { "source": 18, "sourceOutput": "result", "target": "confirmedSales" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 21 }
-          ]
-        },
-        {
-          "moduleRepo": "@customer@update",
-          "key": 21,
-          "inputsSource": [
-            { "source": 13, "sourceOutput": "item.id", "target": "id" },
-            { "source": 14, "sourceOutput": "result", "target": "purchases" }
-          ],
-          "nextFunctions": [
-            { "nextKey": 5 }
+          "moduleRepo": "@purchase@create",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "productId" },
+            { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "clientId" },
+            { "origin": "input", "originPath": "jsonBody.employeeId", "targetPath": "employeeId" }
           ]
         }
       ],
-      "usedAsRoute": true,
       "customObjects": [
         {
           "name": "carSellBody",
-          "properties": [
-            { "name": "clientId", "type": "string" },
-            { "name": "employeeId", "type": "string" }
-          ]
-        },
-        {
-          "name": "carPurchaseData",
-          "properties": [
-            { "name": "transaction", "type": "$carSellBody" },
-            { "name": "employeeId", "type": "string" }
-          ]
+          "properties": {
+            "clientId": { "type": "string", "required": true },
+            "employeeId": { "type": "string", "required": true }
+          }
         }
       ]
+    }
+  ],
+  "protocols": [
+    {
+      "protocolType": "HTTP_JSONBODY",
+      "configuration": { }
     }
   ]
 }

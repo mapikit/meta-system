@@ -25,7 +25,7 @@ describe("Logic BOPs function", () => {
 
       const result = lowerThanBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotLower: true });
+      expect(result).to.be.deep.equal({ isLower: false });
     });
 
     it("Verifies If returns false for an equal comparison (A < B)", () => {
@@ -34,7 +34,7 @@ describe("Logic BOPs function", () => {
 
       const result = lowerThanBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotLower: true });
+      expect(result).to.be.deep.equal({ isLower: false });
     });
   });
 
@@ -54,7 +54,7 @@ describe("Logic BOPs function", () => {
 
       const result = lowerOrEqualToBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotLowerOrEqual: true });
+      expect(result).to.be.deep.equal({ isLowerOrEqual: false });
     });
 
     it("Verifies If returns true for an equal comparison (A <= B)", () => {
@@ -74,7 +74,7 @@ describe("Logic BOPs function", () => {
 
       const result = higherOrEqualToBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotHigherOrEqual: true });
+      expect(result).to.be.deep.equal({ isHigherOrEqual: false });
     });
 
     it("Verifies If returns true for a higher comparison (A >= B)", () => {
@@ -103,7 +103,7 @@ describe("Logic BOPs function", () => {
 
       const result = higherThanBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotHigher: true });
+      expect(result).to.be.deep.equal({ isHigher: false });
     });
 
     it("Verifies If returns true for a higher comparison (A > B)", () => {
@@ -121,7 +121,7 @@ describe("Logic BOPs function", () => {
 
       const result = higherThanBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotHigher: true });
+      expect(result).to.be.deep.equal({ isHigher: false });
     });
   });
 
@@ -141,7 +141,7 @@ describe("Logic BOPs function", () => {
 
       const result = isEqualToBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotEqual: true });
+      expect(result).to.be.deep.equal({ isEqual: false });
     });
 
     it("Verifies object equality", () => {
@@ -159,7 +159,7 @@ describe("Logic BOPs function", () => {
 
       const result = isEqualToBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotEqual: true });
+      expect(result).to.be.deep.equal({ isEqual: false });
     });
 
     it("Verifies array equality", () => {
@@ -177,7 +177,7 @@ describe("Logic BOPs function", () => {
 
       const result = isEqualToBopsFunction({ A, B });
 
-      expect(result).to.be.deep.equal({ isNotEqual: true });
+      expect(result).to.be.deep.equal({ isEqual: false });
     });
   });
 
@@ -188,7 +188,7 @@ describe("Logic BOPs function", () => {
 
       const result = andGateBopsFunction({ A , B });
 
-      expect(result).to.be.deep.equal({ andTrue: true });
+      expect(result).to.be.deep.equal({ bothTrue: true });
     });
     it("A and !B", () => {
       const A = true;
@@ -196,7 +196,7 @@ describe("Logic BOPs function", () => {
 
       const result = andGateBopsFunction({ A , B });
 
-      expect(result).to.be.deep.equal({ andFalse: true });
+      expect(result).to.be.deep.equal({ bothTrue: false });
     });
     it("!A and !B", () => {
       const A = false;
@@ -204,7 +204,7 @@ describe("Logic BOPs function", () => {
 
       const result = andGateBopsFunction({ A , B });
 
-      expect(result).to.be.deep.equal({ andFalse: true });
+      expect(result).to.be.deep.equal({ bothTrue: false });
     });
   });
 
@@ -215,7 +215,7 @@ describe("Logic BOPs function", () => {
 
       const result = orGateBopsFunction({ A , B });
 
-      expect(result).to.be.deep.equal({ orTrue: true });
+      expect(result).to.be.deep.equal({ eitherIsTrue: true });
     });
     it("A or !B", () => {
       const A = true;
@@ -223,7 +223,7 @@ describe("Logic BOPs function", () => {
 
       const result = orGateBopsFunction({ A , B });
 
-      expect(result).to.be.deep.equal({ orTrue: true });
+      expect(result).to.be.deep.equal({ eitherIsTrue: true });
     });
     it("!A or !B", () => {
       const A = false;
@@ -231,7 +231,7 @@ describe("Logic BOPs function", () => {
 
       const result = orGateBopsFunction({ A , B });
 
-      expect(result).to.be.deep.equal({ orFalse: true });
+      expect(result).to.be.deep.equal({ eitherIsTrue: false });
     });
   });
 

@@ -3,49 +3,22 @@
   "description": "Inserts the given entity in the database",
   "author": "mapikit",
   "version": "0.0.1",
-  "inputParameters": [
-    {
-      "name": "entity",
-      "type": "cloudedObject"
-    }
-  ],
-  "outputBranches": [
-    {
-      "branchName": "default",
-      "description": "The inserted entity"
-    },
-    {
-      "branchName": "createError",
-      "description": "Insertion fails due to null input value"
-    }
-  ],
-  "outputData": [
-    {
-      "name": "errorMessage",
-      "type": "$errorMessage",
-      "branch": "createError"
-    },
-    {
-      "name": "createdEntity",
-      "type": "cloudedObject",
-      "branch": "default"
-    }
-  ],
+  "inputParameters": {
+    "entity": { "type": "cloudedObject", "required": true }
+  },
+  "outputData": {
+    "errorMessage": { "type": "$errorMessage", "required": false },
+    "createdEntity": { "type": "cloudedObject", "required": false }
+  },
   "entrypoint": "index.ts",
   "mainFunction": "main",
   "customTypes": [
     {
       "name": "errorMessage",
-      "properties": [
-        {
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "name": "errorCode",
-          "type": "string"
-        }
-      ]
+      "type": {
+        "message": { "type": "string" },
+        "errorCode": { "type": "string" }
+      }
     }
   ]
 }
