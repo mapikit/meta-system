@@ -46,7 +46,7 @@ export class CheckBopsFunctionsDependencies {
     this.extractDependencies();
   }
 
-  public CheckAllDependencies () : boolean {
+  public checkAllDependencies () : boolean {
     const results = [
       this.checkConfigurationalDependenciesMet(),
       this.checkInternalFunctionsDependenciesMet(),

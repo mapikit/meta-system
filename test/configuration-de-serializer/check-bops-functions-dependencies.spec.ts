@@ -1,5 +1,5 @@
 import {
-  CheckBopsFunctionsDependenciesCommand,
+  CheckBopsFunctionsDependencies,
 } from "@api/configuration/business-operations/check-bops-functions-dependencies";
 import { expect } from "chai";
 
@@ -12,33 +12,39 @@ const unreferencedInput =
 
 describe("Check BOPS functions dependencies", () => {
   it("Successfully fetches and checks all dependencies", () => {
-    const command = new CheckBopsFunctionsDependenciesCommand(
+    const command = new CheckBopsFunctionsDependencies(
       configurationExample["schemas"],
+      configurationExample["businessOperations"],
+      configurationExample["businessOperations"][0],
     );
 
-    command.execute(configurationExample["businessOperations"][0]);
+    const result = command.checkAllDependencies();
+
+    expect(result).to.be.true;
   });
 
   it("Fails to check dependencies - inexistent Schema", () => {
-    const command = new CheckBopsFunctionsDependenciesCommand(
+    const command = new CheckBopsFunctionsDependencies(
       [],
+      configurationExample["businessOperations"],
+      configurationExample["businessOperations"][0],
     );
 
-    const execution = () : void => command.execute(configurationExample["businessOperations"][0]);
+    const result = command.checkAllDependencies();
 
-    expect(execution).to.throw("Required Schema \"car\" was not provided in the configuration");
+    expect(result).to.be.false;
   });
 
   it("Fails to check dependencies - unreferenced input", () => {
-    const command = new CheckBopsFunctionsDependenciesCommand(
+    const command = new CheckBopsFunctionsDependencies(
       unreferencedInput["schemas"],
+      unreferencedInput["businessOperations"],
+      unreferencedInput["businessOperations"][0],
     );
 
-    const execution = () : void => command.execute(unreferencedInput["businessOperations"][0]);
+    const result = command.checkAllDependencies();
 
-    expect(execution).to.throw(
-      "There is an error on the configuration: Unmet dependency from inputs or constants \"!unreferenced\"",
-    );
+    expect(result).to.be.false;
   });
 });
 

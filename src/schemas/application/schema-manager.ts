@@ -1,5 +1,5 @@
 import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { SchemasBopsFunctions } from "@api/schemas/application/schema-bops-functions";
 
 export class SchemaManager {

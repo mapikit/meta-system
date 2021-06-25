@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { random } from "faker";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import isNill from "@api/common/assertions/is-nill";
 import { SchemaManager } from "@api/schemas/application/schema-manager";

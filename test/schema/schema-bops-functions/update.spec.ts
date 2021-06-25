@@ -1,5 +1,5 @@
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { entityFactory } from "@test/factories/entity-factory";

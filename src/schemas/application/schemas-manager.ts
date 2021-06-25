@@ -1,4 +1,4 @@
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { MongoClient } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
 import { SchemasType } from "@api/configuration/schemas/schemas-type";

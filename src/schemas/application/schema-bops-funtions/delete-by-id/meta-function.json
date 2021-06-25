@@ -3,49 +3,22 @@
   "description": "Deletes the entity associated with the given Id",
   "author": "mapikit",
   "version": "0.0.1",
-  "inputParameters": [
-    {
-      "name" : "id",
-      "type" : "string"
-    }
-  ],
-  "outputBranches": [
-    {
-      "branchName": "default",
-      "description": "The deleted entity"
-    },
-    {
-      "branchName": "deleteError",
-      "description": "deletion fails due to null input value or no entity found"
-    }
-  ],
-  "outputData": [
-    {
-      "name": "errorMessage",
-      "type": "$errorMessage",
-      "branch": "deleteError"
-    },
-    {
-      "name": "deleted",
-      "type": "cloudedObject",
-      "branch": "default"
-    }
-  ],
+  "inputParameters": {
+    "id": { "type": "string", "required": true }
+  },
+  "outputData": {
+    "errorMessage": { "type": "$errorMessage", "required": false },
+    "deletedCount": { "type": "number", "required": false }
+  },
   "entrypoint": "index.ts",
   "mainFunction": "main",
   "customTypes": [
     {
       "name": "errorMessage",
-      "properties": [
-        {
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "name": "errorCode",
-          "type": "string"
-        }
-      ]
+      "type": {
+        "message": { "type": "string" },
+        "errorCode": { "type": "string" }
+      }
     }
   ]
 }

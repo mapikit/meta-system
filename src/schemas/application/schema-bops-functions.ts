@@ -1,7 +1,7 @@
 import isNill from "@api/common/assertions/is-nill";
 import { CloudedObject } from "@api/common/types/clouded-object";
 import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 import { FilterQuery } from "mongodb";

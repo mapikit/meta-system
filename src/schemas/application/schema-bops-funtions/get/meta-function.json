@@ -3,50 +3,22 @@
   "description": "Gets an entity from the database by the properties given",
   "author": "mapikit",
   "version": "0.0.1",
-  "inputParameters": [
-    {
-      "type": "cloudedObject",
-      "name": "query",
-      "required": true
-    }
-  ],
-  "outputBranches": [
-    {
-      "branchName": "default",
-      "description": "The query result"
-    },
-    {
-      "branchName": "getError",
-      "description": "Error on retrieving information"
-    }
-  ],
-  "outputData": [
-    {
-      "name": "entities",
-      "type": "array:cloudedObject",
-      "branch": "default"
-    },
-    {
-      "name": "errorMessage",
-      "type": "$errorMessage",
-      "branch": "getError"
-    }
-  ],
+  "inputParameters": {
+    "query": { "type": "cloudedObject", "required": true }
+  },
+  "outputData": {
+    "errorMessage": { "type": "$errorMessage", "required": false },
+    "entities": { "type": "array", "required": false, "subtype": "cloudedObject" }
+  },
   "entrypoint": "index.ts",
   "mainFunction": "main",
   "customTypes": [
     {
       "name": "errorMessage",
-      "properties": [
-        {
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "name": "errorCode",
-          "type": "string"
-        }
-      ]
+      "type": {
+        "message": { "type": "string" },
+        "errorCode": { "type": "string" }
+      }
     }
   ]
 }

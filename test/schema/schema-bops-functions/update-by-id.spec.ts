@@ -4,7 +4,7 @@ import { schemaFactory } from "@test/factories/schema-factory";
 import { random } from "faker";
 import { expect } from "chai";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { MongoClient } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";

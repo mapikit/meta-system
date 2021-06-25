@@ -6,7 +6,7 @@ import { entityFactory } from "@test/factories/entity-factory";
 import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
 import faker from "faker";
 import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { MetaRepository } from "@api/common/meta-repository";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { MongoClient, ObjectId } from "mongodb";
 import { SchemaManager } from "@api/schemas/application/schema-manager";
