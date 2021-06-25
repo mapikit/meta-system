@@ -1,6 +1,4 @@
 import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { isSchemaRoutesConfiguration } from
-  "@api/configuration/assertions/schema/is-schema-routes-configuration";
 import { isSchemaFormat } from "./is-schema-format";
 
 /**
@@ -10,25 +8,24 @@ import { isSchemaFormat } from "./is-schema-format";
 // eslint-disable-next-line max-lines-per-function
 export function isSchema (input : unknown) : asserts input is SchemasType {
   if (typeof input !== "object") {
-    throw this.defaultError;
+    throw TypeError("Schema with wrong format found - Not an object");
   }
 
-  const schemasRequiredKeys : Array<keyof SchemasType> = ["name", "format", "routes"];
+  const schemasRequiredKeys : Array<keyof SchemasType> = ["name", "format"];
   const inputKeys = Object.keys(input);
   const hasAllRequiredKeys = schemasRequiredKeys.some((requiredKey) =>
     inputKeys.includes(requiredKey),
   );
 
   if (!hasAllRequiredKeys) {
-    throw this.defaultError;
+    throw TypeError("Schemas must contain both keys \"name\" and \"format\"");
   }
 
   const schemaLikeInput = input as SchemasType;
 
   if (typeof schemaLikeInput.name !== "string") {
-    throw this.defaultError;
+    throw TypeError("Schema name must be a string");
   }
 
-  isSchemaRoutesConfiguration(schemaLikeInput.routes);
   isSchemaFormat(schemaLikeInput.format);
 };

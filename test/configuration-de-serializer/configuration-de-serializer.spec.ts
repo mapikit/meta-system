@@ -8,7 +8,7 @@ const badConfigurationExample =
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Configuration Deserializer", () => {
-  // This just tests the base type - the Schemas and BOPS tests are written in other suites
+  // This suite just tests the base type - the Schemas and BOPS tests are written in other suites
   it("Successfully deserializes a valid configuration file", () => {
     const command = new DeserializeConfigurationCommand();
 
