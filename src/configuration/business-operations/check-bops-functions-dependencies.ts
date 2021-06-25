@@ -134,7 +134,10 @@ export class CheckBopsFunctionsDependencies {
     for (const configurationDependency of this.dependencies.fromConfigurations) {
       const configurationToVerify = this.fromPropertyPathToType(configurationDependency);
       result = availableInputAndConstantsData.includes(configurationToVerify);
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`[Dependency Check] Unmet Inputs/Constants dependency: "${configurationDependency}"`);
+        return false;
+      }
     }
 
     return true;
@@ -146,7 +149,10 @@ export class CheckBopsFunctionsDependencies {
 
     for (const outputDependency of this.dependencies.fromOutputs) {
       result = outputDependency === availableOutputFunction;
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`[Dependency Check] Unmet output dependency: "${outputDependency}"`);
+        return false;
+      }
     }
 
     return true;
@@ -174,12 +180,16 @@ export class CheckBopsFunctionsDependencies {
     for (const internalDependencyName of this.dependencies.internal) {
       result = checkInternalFunctionExist(internalDependencyName);
 
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
+        return false;
+      }
     }
 
     return true;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public checkSchemaFunctionsDependenciesMet () : boolean {
     let result = true;
 
@@ -193,10 +203,16 @@ export class CheckBopsFunctionsDependencies {
 
 
       result = this.schemas.has(requiredSchema);
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`[Dependency Check] Unmet schema dependency: "${requiredSchema}" - Missing Schema`);
+        return false;
+      }
 
       result = (requiredFunction in SchemasFunctions);
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
+        return false;
+      }
     }
 
     return true;
@@ -210,7 +226,10 @@ export class CheckBopsFunctionsDependencies {
 
       result = this.bops.has(requiredBop);
 
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`[Dependency Check] Unmet BOp dependency: "${bopsDependency}"`);
+        return false;
+      }
     }
 
     return true;
@@ -222,7 +241,10 @@ export class CheckBopsFunctionsDependencies {
     for (const externalDependency of this.dependencies.external) {
       result = externalFunctionIsLoaded(externalDependency);
 
-      if (!result) { return false; }
+      if (!result) {
+        console.error(`Dependency Check] Unmet external dependency: "${externalDependency}"`);
+        return false;
+      }
     }
 
     return true;

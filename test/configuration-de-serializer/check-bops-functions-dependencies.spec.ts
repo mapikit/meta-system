@@ -30,7 +30,7 @@ describe("Check BOPS functions dependencies", () => {
       configurationExample["businessOperations"][0],
     );
 
-    const result = command.checkAllDependencies();
+    const result = command.checkSchemaFunctionsDependenciesMet();
 
     expect(result).to.be.false;
   });
@@ -42,7 +42,7 @@ describe("Check BOPS functions dependencies", () => {
       unreferencedInput["businessOperations"][0],
     );
 
-    const result = command.checkAllDependencies();
+    const result = command.checkConfigurationalDependenciesMet();
 
     expect(result).to.be.false;
   });

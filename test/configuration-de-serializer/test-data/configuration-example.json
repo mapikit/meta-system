@@ -80,7 +80,7 @@
           "moduleRepo": "#if",
           "dependencies": [
             { "origin": "constant", "originPath": "failureMessage", "targetPath": "ifTrue" },
-            { "origin": "constant", "originPath": "sucessMessage", "targetPath": "ifFalse" },
+            { "origin": "constant", "originPath": "successMessage", "targetPath": "ifFalse" },
             { "origin": 4, "originPath": "result.value", "targetPath": "boolean" }
           ]
         },
@@ -89,7 +89,7 @@
           "moduleRepo": "#if",
           "dependencies": [
             { "origin": "constant", "originPath": "failureCode", "targetPath": "ifTrue" },
-            { "origin": "constant", "originPath": "sucessCode", "targetPath": "ifFalse" },
+            { "origin": "constant", "originPath": "successCode", "targetPath": "ifFalse" },
             { "origin": 4, "originPath": "result.value", "targetPath": "boolean" }
           ]
         },
