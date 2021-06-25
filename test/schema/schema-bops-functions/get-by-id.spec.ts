@@ -55,6 +55,6 @@ describe("Schemas BOPS functions - Get By ID", () => {
 
     expect(result["found"]).be.false;
     expect(result["entity"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.equal(SchemaFunctionErrors.getById["nullInput"]);
+    expect(result["getError"]).to.be.equal(SchemaFunctionErrors.getById["nullInput"]);
   });
 });

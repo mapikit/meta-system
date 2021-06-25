@@ -64,7 +64,7 @@ export class SchemasBopsFunctions implements SchemasFunctionsTypes {
   public async updateById (input : { id : string; valuesToUpdate : CloudedObject })
     : Promise<unknown | SchemaFunctionErrorType> {
     if (isNill(input.id)) {
-      return { errorMessage: SchemaFunctionErrors.updateById.nullInput };
+      return { updateError: SchemaFunctionErrors.updateById.nullInput };
     }
 
     let hasError = false;

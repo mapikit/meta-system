@@ -40,7 +40,8 @@ describe("Bops Function - Create", () => {
     const createEntityFunction = schemaManager.bopsFunctions.create;
 
     const createdEntity = await createEntityFunction({ entity: undefined });
-    expect(createdEntity["errorMessage"]).not.to.be.undefined;
-    expect(createdEntity["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.create.nullInput);
+
+    expect(createdEntity["createError"]).not.to.be.undefined;
+    expect(createdEntity["createError"]).to.be.deep.equal(SchemaFunctionErrors.create.nullInput);
   });
 });

@@ -55,8 +55,9 @@ describe("Bops Function - Delete by Id", () => {
     const fakeId = faker.random.alphaNumeric(12);
 
     const result = await deleteFunction({ id:  fakeId });
+
     expect(result["deleted"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.notFound);
+    expect(result["deleteError"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.notFound);
   });
 
   it("Fails to delete entity - no id given", async () => {
@@ -64,6 +65,6 @@ describe("Bops Function - Delete by Id", () => {
     await createEntityFunction({ entity });
     const result = await deleteFunction({ id : undefined });
     expect(result["deleted"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.nullInput);
+    expect(result["deleteError"]).to.be.deep.equal(SchemaFunctionErrors.deleteById.nullInput);
   });
 });

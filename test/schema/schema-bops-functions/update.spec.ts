@@ -125,6 +125,6 @@ describe("Update Schema - Schemas Bops Function", () => {
     const result = await updateFunction({ valuesToUpdate: partialUpdate, query: nameAndHeightQuery });
 
     expect(result["updatedCount"]).to.be.undefined;
-    expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);
+    expect(result["updateError"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);
   });
 });

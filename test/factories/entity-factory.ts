@@ -4,7 +4,7 @@ import faker from "faker";
 export const entityFactory = (schemaFormat : SchemasType["format"]) : object => {
   const entity = {};
   for(const prop in schemaFormat) {
-    entity[prop] = typeCreation[schemaFormat[prop].type](schemaFormat[prop]["data"]);
+    entity[prop] = typeCreation[schemaFormat[prop].type](schemaFormat[prop]["subtype"]);
   }
   return entity;
 };
@@ -27,7 +27,7 @@ const typeCreation = {
   object: (dataType : Record<string, SchemaTypeDefinition>) : object => {
     const object = {};
     for(const prop in dataType) {
-      object[prop] = typeCreation[dataType[prop].type](dataType[prop]["data"]);
+      object[prop] = typeCreation[dataType[prop].type](dataType[prop]["subtype"]);
     }
     return object;
   },
