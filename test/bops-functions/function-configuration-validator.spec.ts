@@ -7,7 +7,7 @@ import Path from "path";
 
 describe("BOps Function Configuration Validator", () =>{
   const testFunctionName = "bops-function-hello-world";
-  const testFunctionVersion = "1.0.0";
+  const testFunctionVersion = "1.1.1";
   const functionInstallLocation = "./test-functions";
   const workingDirectory = process.cwd();
   const configurationFileName = "meta-function.json";

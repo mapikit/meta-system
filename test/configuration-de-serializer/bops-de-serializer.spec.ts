@@ -10,7 +10,7 @@ const configurationLoop = require("@test/configuration-de-serializer/test-data/b
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("BOPS Desserializer", () => {
-  it("Desserializes a valid BOPS", () => {
+  it("Desserializes a valid BOp", () => {
     const command = new DeserializeBopsCommand();
     const configurations = configurationExample["businessOperations"];
 
@@ -19,7 +19,7 @@ describe("BOPS Desserializer", () => {
     expect(command.bopsResults.length).to.be.at.least(1);
   });
 
-  it("Fails to deserialize faulty BOPS [name wrong type]", () => {
+  it("Fails to deserialize faulty BOp [name wrong type]", () => {
     const command = new DeserializeBopsCommand();
     const configurations = faultyBops["businessOperations"];
 
@@ -28,19 +28,19 @@ describe("BOPS Desserializer", () => {
     );
   });
 
-  it("Fails to deserialize BOPS - Custom Objects Loop", () => {
+  it("Fails to deserialize BOp - Custom Objects Loop", () => {
     const command = new DeserializeBopsCommand();
     const configurations = customObjectLoop["businessOperations"];
 
     expect(() => command.execute(configurations)).to
-      .throw("Loop reference detected on the custom objects of the business operation carSell");
+      .throw("Loop reference detected on the custom objects of the business operation car-sell");
   });
 
-  it.skip("Fails to deserialize BOPS - Loop on the modules configuration", () => {
+  it.skip("Fails to deserialize BOp - Loop on the modules configuration", () => {
     const command = new DeserializeBopsCommand();
     const configurations = configurationLoop["businessOperations"];
 
     expect(() => command.execute(configurations)).to
-      .throw("Duplicated entry in one the branches of the configuration for BOPS carSell");
+      .throw("Duplicated entry in one the branches of the configuration for BOPS car-sell");
   });
 });
