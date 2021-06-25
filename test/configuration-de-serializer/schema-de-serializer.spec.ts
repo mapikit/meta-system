@@ -1,7 +1,7 @@
 require("module-alias/register");
 import { DeserializeSchemasCommand } from "@api/configuration/schemas/de-serialize-schemas";
-import { SchemaTypeDefinitionObject } from "@api/configuration/schemas/schemas-type";
 import { expect } from "chai";
+import { ObjectDefinition } from "meta-function-helper";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const configurationExample = require("@test/configuration-de-serializer/test-data/configuration-example.json");
@@ -20,22 +20,22 @@ describe("Schemas De-Serializer", () => {
     expect(command.resultSchemas.length).to.be.above(0);
   });
 
-  // it("Desserializes schema with deep nested properties", () => {
-  //   const command = new DeserializeSchemasCommand();
+  it("Desserializes schema with deep nested properties", () => {
+    const command = new DeserializeSchemasCommand();
 
-  //   command.execute(deepObjectSchema["schemas"]);
+    command.execute(deepObjectSchema["schemas"]);
 
-  //   expect(command.resultSchemas.length).to.be.equal(1);
-  //   const schema = command.resultSchemas[0];
+    expect(command.resultSchemas.length).to.be.equal(1);
+    const schema = command.resultSchemas[0];
 
-  //   expect(schema.format["oneLevelDeepProperty"]["type"] === "object").to.to.true;
-  //   expect(schema.format["twoLevelDeepProperty"]["type"] === "object").to.to.true;
+    expect(schema.format["oneLevelDeepProperty"]["type"] === "object").to.to.true;
+    expect(schema.format["twoLevelDeepProperty"]["type"] === "object").to.to.true;
 
-  //   const reallyDeepProperty = ((schema.format.twoLevelDeepProperty as SchemaTypeDefinitionObject)
-  //     .data["nestedDeepProperty"] as SchemaTypeDefinitionObject).data["reallyDeepNestedProp"];
+    const reallyDeepProperty = ((schema.format.twoLevelDeepProperty as unknown as ObjectDefinition)
+      .subtype["nestedDeepProperty"] as ObjectDefinition).subtype["reallyDeepNestedProp"];
 
-  //   expect(reallyDeepProperty).to.not.be.undefined;
-  // });
+    expect(reallyDeepProperty).to.not.be.undefined;
+  });
 
   it ("Desserializes schema with array types", () => {
     const command = new DeserializeSchemasCommand();
