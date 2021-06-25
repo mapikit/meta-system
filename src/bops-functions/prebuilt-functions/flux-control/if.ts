@@ -2,13 +2,18 @@ import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function
 
 type InputType = {
   boolean : boolean;
-  valueIfTrue : unknown;
-  valueIfFalse : unknown;
+  ifTrue : Function | unknown;
+  ifFalse : Function | unknown;
 }
 
-export const ifBopsFunction = (input : InputType) : unknown => {
+async function getValue (valueOrFunction : Function | unknown) : Promise<unknown> {
+  if(typeof valueOrFunction === "function") return valueOrFunction();
+  return valueOrFunction;
+}
+
+export const ifBopsFunction = async (input : InputType) : Promise<unknown> => {
   const isBooleanTrue = input.boolean;
-  const outputValue = isBooleanTrue ? input.valueIfTrue : input.valueIfFalse;
+  const outputValue = isBooleanTrue ? await getValue(input.ifTrue) : await getValue(input.ifFalse);
 
   return ({ outputValue });
 };

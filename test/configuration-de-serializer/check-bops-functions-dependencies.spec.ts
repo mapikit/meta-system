@@ -1,5 +1,6 @@
-import { CheckBopsFunctionsDependenciesCommand } from
-  "@api/configuration/domain/commands/check-bops-functions-dependencies";
+import {
+  CheckBopsFunctionsDependenciesCommand,
+} from "@api/configuration/business-operations/check-bops-functions-dependencies";
 import { expect } from "chai";
 
 

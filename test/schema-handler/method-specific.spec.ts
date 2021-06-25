@@ -4,13 +4,13 @@ import chai from "chai";
 import { SchemaRoutesManager } from "@api/schemas/application/schema-routes-manager";
 import { schemaFactory } from "@test/factories/schema-factory";
 import axios from "axios";
-import { SchemasType } from "@api/configuration/domain/schemas-type";
 import faker from "faker";
 import { entityFactory } from "@test/factories/entity-factory";
 import { entityToQuery } from "@test/factories/entity-to-query";
 import { MongoClient } from "mongodb";
 import { createFakeMongo } from "@test/doubles/mongo-server";
 import { MetaRepository } from "@api/entity/domain/meta-repository";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 
 const expect = chai.expect;
 

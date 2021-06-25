@@ -53,7 +53,7 @@ describe("Update Schema - Schemas Bops Function", () => {
       height: { "not_equal_to": entity.age - 1 },
     };
 
-    const result = await updateFunction({ newValue: partialUpdate, query: nameAndHeightQuery });
+    const result = await updateFunction({ valuesToUpdate: partialUpdate, query: nameAndHeightQuery });
 
     expect(result["updatedCount"]).to.not.be.NaN;
     expect(result["updatedCount"]).to.be.equal(1);
@@ -92,7 +92,7 @@ describe("Update Schema - Schemas Bops Function", () => {
       name: { "not_one_of": [entity.name, random.alphaNumeric(4)] },
     };
 
-    const result = await updateFunction({ newValue: partialUpdate, query: nameAndHeightQuery });
+    const result = await updateFunction({ valuesToUpdate: partialUpdate, query: nameAndHeightQuery });
 
     expect(result["updatedCount"]).to.not.be.NaN;
     expect(result["updatedCount"]).to.be.equal(0);
@@ -122,7 +122,7 @@ describe("Update Schema - Schemas Bops Function", () => {
       name: { "-----": [] },
     };
 
-    const result = await updateFunction({ newValue: partialUpdate, query: nameAndHeightQuery });
+    const result = await updateFunction({ valuesToUpdate: partialUpdate, query: nameAndHeightQuery });
 
     expect(result["updatedCount"]).to.be.undefined;
     expect(result["errorMessage"]).to.be.deep.equal(SchemaFunctionErrors.update.invalidQueryArgument);

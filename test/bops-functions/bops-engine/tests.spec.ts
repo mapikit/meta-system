@@ -6,24 +6,27 @@ import { createFakeMongo } from "@test/doubles/mongo-server";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { testSystem } from "@test/bops-functions/bops-engine/test-data/test-system";
-import { SchemasType } from "@api/configuration/domain/schemas-type";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { TTLExceededError } from "@api/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
-import { performance } from "perf_hooks";
 import { ResolvedConstants, StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations } from "@api/configuration/domain/business-operations-type";
+import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
+import { internalBop } from "./test-data/business-operations/internal-bop";
+import { schemaBop } from "./test-data/business-operations/schema-bop";
+import { externalBop } from "./test-data/business-operations/external-bop";
+import faker from "faker";
 
-interface BopsEngineInput {
-  StaticInfo : Record<string, ResolvedConstants | BusinessOperations>;
+interface EngineInput {
   MappedFunctions : MappedFunctions;
-  MaxExecutionTime : number;
+  MappedConstants : Record<string, ResolvedConstants>;
+  BopsConfigs : BusinessOperations[];
 }
 
-let bopsEnginePrerequisites : BopsEngineInput;
+let bopsEnginePrerequisites : EngineInput;
 let fakeMongo : MongoClient;
 const maxExecutionTime = 100;
 
-const setupBopsEngineRequisites = async () : Promise<BopsEngineInput> => {
+const setupBopsEngineRequisites = async () : Promise<EngineInput> => {
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
   const fileSystem = new FunctionFileSystem(process.cwd(), functionsFolder, "meta-function.json");
@@ -37,14 +40,14 @@ const setupBopsEngineRequisites = async () : Promise<BopsEngineInput> => {
   });
 
   const bopsEngineInputOptions = {
-    StaticInfo: StaticSystemInfo.validateSystemStaticInfo(testSystem),
     MappedFunctions: await moduleManager.resolveSystemModules(testSystem),
-    MaxExecutionTime: maxExecutionTime,
+    MappedConstants: StaticSystemInfo.validateSystemStaticInfo(testSystem),
+    BopsConfigs: testSystem.businessOperations,
   };
   return bopsEngineInputOptions;
 };
 
-describe("Bops Engine Testing", () => {
+describe.only("Bops Engine Testing", () => {
   before(async () => {
     fakeMongo = await createFakeMongo();
     bopsEnginePrerequisites = await setupBopsEngineRequisites();
@@ -54,73 +57,41 @@ describe("Bops Engine Testing", () => {
     fakeMongo = await createFakeMongo();
   });
 
-  it("Test of schema functions", async () => {
-    const schemaFunctionsBop = testSystem.businessOperations.find(bop => bop.name === "schema-functions");
+  it("Test of prebuilt functions", async () => {
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const flow = await bopsEngine.startFlow({ bopConfig: schemaFunctionsBop });
+    const stitched = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
+    const randomNumber = Math.round(Math.random()*10);
+    const res = await stitched({ aNumber: randomNumber });
 
-    const secondInsertionId = flow.results[2]["createdEntity"]["_id"];
-    expect(flow.results[3]["found"]).to.be.true;
-    expect(flow.results[3]["entity"]["_id"]).to.be.deep.equal(secondInsertionId);
-    expect(flow.results[4]["updatedEntity"]["_id"]).to.be.deep.equal(secondInsertionId);
-    expect(flow.results[6]["entities"]).to.be.empty;
+    expect(res["output"]).to.be.equal(Math.pow(3, randomNumber));
   });
 
-  it("Test of mapikit provided functions", async () => {
-    const providedFunctionsBop = testSystem.businessOperations.find(bop => bop.name === "prebuilt-functions");
+  it("Test of BOp as internal function", async () => {
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const flow = await bopsEngine.startFlow({ bopConfig: providedFunctionsBop });
+    const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
+    const res = await stitched();
 
-    expect(flow.results[2]["result"]).to.be.equal(5025);
-    expect(flow.results[6]["result"]).to.be.equal(6);
-    expect(flow.results[10]["result"]).to.be.equal(5093);
+    expect(res["output"]).to.be.equal(73);
   });
 
-  it("Test of external functions", async () => {
-    const externalFunctionsBop = testSystem.businessOperations.find(bop => bop.name === "external-functions");
+  it("Test of schema BOps functions", async () => {
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const flow = await bopsEngine.startFlow({ bopConfig: externalFunctionsBop });
+    const stitched = bopsEngine.stitch(schemaBop, maxExecutionTime);
+    const randomYear = Math.round(Math.random()*2100);
+    const car = { model: "fakeModel", year: randomYear };
+    const res = await stitched({ aCar: car });
 
-    expect(flow.results[1]["customGreetings"]).to.be.true;
-    expect(flow.results[2]["customGreetings"]).to.be.true;
-    expect(flow.results[3]["customGreetings"]).to.be.false;
+    expect(res["output"]["deletedCount"]).to.be.equal(1);
   });
 
-  it("Successfully tests mixed functions (schema, provided and external)", async () => {
-    const mixedFunctionsBop = testSystem.businessOperations.find(bop => bop.name === "mixed-functions");
+  it("Test of external BOps functions", async () => {
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const flow = await bopsEngine.startFlow({ bopConfig: mixedFunctionsBop });
+    const stitched = bopsEngine.stitch(externalBop, maxExecutionTime);
+    const randomName = faker.name.firstName();
+    const res = await stitched({ myName: randomName });
 
-    expect(flow.results[5]["entity"]["year"]).to.be.equal(3);
-    expect(flow.results[5]["entity"]["model"]).to.be.equal("Onix");
-    expect(flow.results[4]["customGreetings"]).to.be.true;
-  });
-
-  it("Fails to execute flow - Timed Out", async () => {
-    const timeoutBop = testSystem.businessOperations.find(bop => bop.name === "timeout");
-    const startedAt = performance.now();
-    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const flow = await bopsEngine.startFlow({ bopConfig: timeoutBop });
-    const elapsedTime = performance.now() - startedAt;
-
-    expect(elapsedTime).to.be.at.least(maxExecutionTime);
-    expect(flow["results"]).to.be.undefined;
-    expect(flow.executionError.errorName).to.be.equal(TTLExceededError.name);
-    expect(flow.executionError.errorMessage).to.contain("Time limit exceeded");
-  });
-
-  it("Executes two internal BopEngines - One succeeds and Another Fails with TTLExpired", async () => {
-    const bopception = testSystem.businessOperations.find(bop => bop.name === "bopception");
-    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    const flow = await bopsEngine.startFlow({ bopConfig: bopception });
-
-    expect(flow.results).to.be.undefined;
-    expect(flow.executionError.errorName).to.be.equal(TTLExceededError.name);
-    expect(flow.executionError.errorMessage).to.contain("Time limit exceeded after");
-    expect(flow.executionError.partialResults[1].results).not.to.be.undefined;
-    expect(flow.executionError.partialResults[2]["customGreetings"]).to.be.true;
-    expect(flow.executionError.partialResults[3].results).not.to.be.undefined;
-    expect(flow.executionError.partialResults[4].executionError.errorName).to.be.equal(TTLExceededError.name);
-    expect(flow.executionError.partialResults[5]).to.be.undefined;
+    expect(res["wasGreeted"]).to.be.true;
+    expect(res["greetings"]).to.be.equal("Hello " + randomName);
   });
 });
+

@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/domain/schemas-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 
 // eslint-disable-next-line max-lines-per-function
 export function isSchemaRoutesConfiguration (input : unknown) : asserts input is SchemasType["routes"] {

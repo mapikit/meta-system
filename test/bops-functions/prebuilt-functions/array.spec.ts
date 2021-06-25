@@ -183,14 +183,14 @@ describe("Array BOPs functions", () => {
       expect(result).to.be.deep.equal({ result: ["1", 2, true, false, null, "Hello World"] });
     });
 
-    it("Pushes a list of items into the array", () => {
-      const array = ["1", 2, true, false, null];
-      const newItems = [new Date(), 42];
+    // it("Pushes a list of items into the array", () => {
+    //   const array = ["1", 2, true, false, null];
+    //   const newItems = [new Date(), 42];
 
-      const result = arrayPushBopsFunction({ targetArray: array, newItems });
+    //   const result = arrayPushBopsFunction({ targetArray: array, newItems });
 
-      expect(result).to.be.deep.equal({ result: ["1", 2, true, false, null, ... newItems] });
-    });
+    //   expect(result).to.be.deep.equal({ result: ["1", 2, true, false, null, ... newItems] });
+    // });
 
     it("Pushes a single item into a new array", () => {
       const result = arrayPushBopsFunction({ item: "Hello World" });
@@ -198,23 +198,23 @@ describe("Array BOPs functions", () => {
       expect(result).to.be.deep.equal({ result: ["Hello World"] });
     });
 
-    it("Pushes a list of items into a new array", () => {
-      const newItems = [new Date(), 42];
+    // it("Pushes a list of items into a new array", () => {
+    //   const newItems = [new Date(), 42];
 
-      const result = arrayPushBopsFunction({ newItems });
+    //   const result = arrayPushBopsFunction({ newItems });
 
-      expect(result).to.be.deep.equal({ result: [... newItems] });
-    });
+    //   expect(result).to.be.deep.equal({ result: [... newItems] });
+    // });
 
-    it("Pushes a single item and a list of items into the array", () => {
-      const array = ["1", 2, true, false, null];
-      const newItems = [new Date(), 42];
-      const item = "Hello World";
+    // it("Pushes a single item and a list of items into the array", () => {
+    //   const array = ["1", 2, true, false, null];
+    //   const newItems = [new Date(), 42];
+    //   const item = "Hello World";
 
-      const result = arrayPushBopsFunction({ targetArray: array, item, newItems });
+    //   const result = arrayPushBopsFunction({ targetArray: array, item, newItems });
 
-      expect(result).to.be.deep.equal({ result: [...array, item, ...newItems] });
-    });
+    //   expect(result).to.be.deep.equal({ result: [...array, item, ...newItems] });
+    // });
 
     it("Returns an empty array for an empty execution", () => {
       const result = arrayPushBopsFunction({});
