@@ -55,7 +55,7 @@ export class MongoSchemaQueryBuilder {
     const mapSchemaProperties = (schemaFormat : SchemaObject, propertyPath ?: string) : void => {
       Object.keys(schemaFormat).forEach((key) => {
         if (schemaFormat[key].type === "object") {
-          mapSchemaProperties(schemaFormat[key]["data"], key);
+          mapSchemaProperties(schemaFormat[key]["subtype"], key);
           return;
         }
 
@@ -65,7 +65,7 @@ export class MongoSchemaQueryBuilder {
 
         this.availableQueryPaths.set(mapKey, this.convertSchemaTypeToQueryTypes(
           schemaFormat[key].type,
-          schemaFormat[key]["data"],
+          schemaFormat[key]["subtype"],
         ));
       });
     };
@@ -74,7 +74,7 @@ export class MongoSchemaQueryBuilder {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private convertSchemaTypeToQueryTypes (type : SchemaTypeDefinition["type"], data ?: string | object) : QueryTypes {
+  private convertSchemaTypeToQueryTypes (type : SchemaTypeDefinition["type"], subtype ?: string | object) : QueryTypes {
     const typeConversionMap = {
       "number": QueryTypes.number,
       "string": QueryTypes.string,
@@ -88,7 +88,7 @@ export class MongoSchemaQueryBuilder {
       "array.object": QueryTypes.objectArray,
     };
 
-    const dataValue = (typeof data === "object" ? "object" : data) ?? "";
+    const dataValue = (typeof subtype === "object" ? "object" : subtype) ?? "";
 
     const typeValue = type === "array" ?
       `array.${dataValue}` : type;
