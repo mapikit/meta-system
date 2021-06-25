@@ -1,15 +1,15 @@
-import "module-alias/register";
-
 import { ResolvedConstants } from "@api/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations, Dependency } from "@api/configuration/business-operations/business-operations-type";
 import constants from "@api/common/constants";
 import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
 import { ObjectResolver } from "./object-manipulator";
 import { addTimeout } from "./add-timeout";
+import { InternalBopNotFound } from "./engine-errors/internal-bop-not-found";
 
 type RelevantBopInfo = {
   constants : ResolvedConstants;
   config : BusinessOperations["configuration"];
+  results : Map<number, unknown>;
 }
 
 export class BopsEngine {
@@ -27,7 +27,6 @@ export class BopsEngine {
     this.bopsConfigs = options.BopsConfigs;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
     this.mapInternalBOps(operation);
     const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
@@ -35,9 +34,10 @@ export class BopsEngine {
     const workingBopContext : RelevantBopInfo = {
       config: operation.configuration,
       constants: this.constants[operation.name],
+      results : new Map<number, unknown>(),
     };
 
-    const stiched = async (_inputs : object) : Promise<unknown> => {
+    const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
       return Object.assign(await this.getInputs(output.dependencies, workingBopContext, _inputs));
     };
     return addTimeout(msTimeout, stiched);
@@ -48,42 +48,53 @@ export class BopsEngine {
       const isInternalBop = module.moduleRepo.startsWith("+");
       if(isInternalBop && !this.mappedFunctions.has(module.moduleRepo)) {
         const refBop = this.bopsConfigs.find(bop => bop.name === module.moduleRepo.slice(1));
+        if(!refBop) throw new InternalBopNotFound(module.moduleRepo.slice(1));
         this.mappedFunctions.set(module.moduleRepo, this.stitch(refBop));
       }
     });
   }
 
   private async getInputs (inputs : Dependency[], currentBop : RelevantBopInfo, _inputs : object) : Promise<object> {
-    const inputsArray = inputs.map(async input => {
-      if(typeof input.origin === "string") return this.solveStaticInput(input, currentBop, _inputs);
-      if (typeof input.origin === "number") return this.solveModularInput(input, currentBop, _inputs);
-    });
+    const resolved = new Array<object>();
+    for(const input of inputs) {
+      if(typeof input.origin === "string") resolved.push(this.solveStaticInput(input, currentBop, _inputs));
+      if(typeof input.origin === "number") resolved.push(await this.solveModularInput(input, currentBop, _inputs));
+    }
 
-    const resolved = await Promise.all(inputsArray);
     return ObjectResolver.flattenObject(Object.assign({}, ...resolved));
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private async solveModularInput (input : Dependency, currentBop : RelevantBopInfo, _inputs : object) : Promise<object> {
+  private async solveModularInput (
+    input : Dependency,
+    currentBop : RelevantBopInfo,
+    _inputs : object) : Promise<object> {
     const dependency = currentBop.config.find(module => module.key === input.origin);
-    const funct = this.mappedFunctions.get(dependency.moduleRepo);
-    const path = input.originPath.slice(7);
+    const moduleFunction = this.mappedFunctions.get(dependency.moduleRepo);
+    const [origin, ...paths] = input.originPath.split(".");
     const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
-    if(input.originPath.startsWith("result")) {
-      const results = await funct(resolvedInputs);
-      return { [input.targetPath]: ObjectResolver.extractProperty(results, path) };
+
+    if(origin === "result") {
+      const results = currentBop.results.get(dependency.key) ?? await moduleFunction(resolvedInputs);
+      currentBop.results.set(dependency.key, results);
+      return { [input.targetPath]: ObjectResolver.extractProperty(results, paths) };
     }
-    if(input.originPath.startsWith("module")) {
-      const wrappedFunction = this.wrapFunction(funct, resolvedInputs, path);
+
+    if(origin === "module") {
+      const wrappedFunction = this.wrapFunction(moduleFunction, resolvedInputs, paths);
       return { [input.targetPath]: wrappedFunction };
     }
-    if(input.originPath === undefined) {
-      await funct(await this.getInputs(dependency.dependencies, currentBop, _inputs));
+
+    if(origin === undefined) {
+      await moduleFunction(await this.getInputs(dependency.dependencies, currentBop, _inputs));
       return;
     }
+
+    throw new Error("Incorrect originPath configuration");
   }
 
-  private solveStaticInput (input : Dependency, currentBop : RelevantBopInfo, _inputs : object) : object  {
+  private solveStaticInput (
+    input : Dependency, currentBop : RelevantBopInfo, _inputs : object) : object {
     switch (input.origin) {
       case "constants":
         const foundConstant = currentBop.constants[input.originPath];
@@ -93,9 +104,9 @@ export class BopsEngine {
     }
   }
 
-  private wrapFunction (fn : Function, params : unknown, select : string) : () => Promise<unknown> {
+  private wrapFunction (fn : Function, params : unknown, path : string[]) : () => Promise<unknown> {
     return async function () : Promise<unknown> {
-      return ObjectResolver.extractProperty(await fn(params), select);
+      return ObjectResolver.extractProperty(await fn(params), path);
     };
   };
 };

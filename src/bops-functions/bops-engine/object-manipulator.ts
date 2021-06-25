@@ -15,11 +15,10 @@ export class ObjectResolver {
     return result;
   }
 
-  public static extractProperty (source : unknown, outputPath ?: string) : unknown {
-    if(!outputPath) return source;
-    const targetLevels = outputPath.split(".");
+  public static extractProperty (source : unknown, path ?: string[]) : unknown {
+    if(!path) return source;
     let current = source;
-    targetLevels.forEach(level => {
+    path.forEach(level => {
       if(!current[level]) throw new Error(`${level} was not found in ${inspect(source, false, null, true)}`);
       current = current[level];
     });
