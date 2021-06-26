@@ -72,26 +72,18 @@
     "url": "https://github.com/mapikit/meta-system/issues"
   },
   "dependencies": {
-    "awilix": "^4.2.5",
-    "bcrypt": "^5.0.0",
-    "birbs": "^0.9.1",
     "class-validator": "^0.11.1",
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
-    "jsonwebtoken": "^8.5.1",
     "just-clone": "^3.2.1",
     "live-plugin-manager": "^0.15.1",
     "mersenne-twister": "^1.1.0",
     "meta-function-helper": "^0.1.0",
     "module-alias": "^2.2.2",
     "mongodb": "^3.5.6",
-    "nodemon": "^1.19.2",
-    "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.24",
     "uuid": "^3.4.0",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2"
+    "decimal.js": "^10.3.1"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {
@@ -111,7 +103,6 @@
     "axios": "^0.21.1",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "decimal.js": "^10.2.1",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
     "faker": "^4.1.0",
