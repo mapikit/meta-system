@@ -1,7 +1,11 @@
+import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
+import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
+import { FunctionsInstaller } from "@api/bops-functions/installation/functions-installer";
 import {
   CheckBopsFunctionsDependencies,
 } from "@api/configuration/business-operations/check-bops-functions-dependencies";
 import { expect } from "chai";
+import Path from "path";
 
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -11,11 +15,18 @@ const unreferencedInput =
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Check BOPS functions dependencies", () => {
+  const functionsFolder = "test-functions";
+  const installationHandler = new FunctionsInstaller(functionsFolder);
+  const installPath = Path.join(process.cwd(), functionsFolder);
+  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json");
+  const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
+
   it("Successfully fetches and checks all dependencies", () => {
     const command = new CheckBopsFunctionsDependencies(
       configurationExample["schemas"],
       configurationExample["businessOperations"],
       configurationExample["businessOperations"][0],
+      externalFunctionHandler,
     );
 
     const result = command.checkAllDependencies();
@@ -28,6 +39,7 @@ describe("Check BOPS functions dependencies", () => {
       [],
       configurationExample["businessOperations"],
       configurationExample["businessOperations"][0],
+      externalFunctionHandler,
     );
 
     const result = command.checkSchemaFunctionsDependenciesMet();
@@ -40,6 +52,7 @@ describe("Check BOPS functions dependencies", () => {
       unreferencedInput["schemas"],
       unreferencedInput["businessOperations"],
       unreferencedInput["businessOperations"][0],
+      externalFunctionHandler,
     );
 
     const result = command.checkConfigurationalDependenciesMet();

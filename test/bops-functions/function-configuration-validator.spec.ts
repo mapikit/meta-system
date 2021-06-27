@@ -11,10 +11,9 @@ describe("BOps Function Configuration Validator", () =>{
   const functionInstallLocation = "./test-functions";
   const workingDirectory = process.cwd();
   const configurationFileName = "meta-function.json";
+  const installationPath = Path.join(workingDirectory, functionInstallLocation);
 
-  const installationHandler = new FunctionsInstaller(
-    Path.join(workingDirectory, functionInstallLocation),
-  );
+  const installationHandler = new FunctionsInstaller(installationPath);
 
   afterEach(async () => {
     await installationHandler.purgePackages();
@@ -23,16 +22,14 @@ describe("BOps Function Configuration Validator", () =>{
   it("Validates successfully a valid meta-function.json", async () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
-    const functionFileSystem = new FunctionFileSystem(
-      workingDirectory, functionInstallLocation, configurationFileName,
-    );
+    const functionFileSystem = new FunctionFileSystem(installationPath, configurationFileName);
 
     const metaFunctionContent = await functionFileSystem
       .getFunctionDescriptionFile(testFunctionName);
 
     const validator = new MetaFunctionDescriptionValidation(metaFunctionContent);
 
-    const execution = () : void => validator.validate();
+    const execution = () : unknown => validator.validate();
 
     expect(execution).to.not.throw;
   });
@@ -40,9 +37,7 @@ describe("BOps Function Configuration Validator", () =>{
   it("Validates successfully a valid meta-function.json", async () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
-    const functionFileSystem = new FunctionFileSystem(
-      workingDirectory, functionInstallLocation, configurationFileName,
-    );
+    const functionFileSystem = new FunctionFileSystem(installationPath, configurationFileName);
 
     const metaFunctionContent = await functionFileSystem
       .getFunctionDescriptionFile(testFunctionName);

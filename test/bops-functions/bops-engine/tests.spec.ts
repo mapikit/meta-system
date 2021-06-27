@@ -15,6 +15,11 @@ import { internalBop } from "./test-data/business-operations/internal-bop";
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
 import faker from "faker";
+import Path from "path";
+import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
+import { CheckBopsFunctionsDependencies }
+  from "@api/configuration/business-operations/check-bops-functions-dependencies";
+import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
 
 interface EngineInput {
   MappedFunctions : MappedFunctions;
@@ -26,18 +31,33 @@ let bopsEnginePrerequisites : EngineInput;
 let fakeMongo : MongoClient;
 const maxExecutionTime = 100;
 
-const setupBopsEngineRequisites = async () : Promise<EngineInput> => {
+const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<EngineInput> => {
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
-  const fileSystem = new FunctionFileSystem(process.cwd(), functionsFolder, "meta-function.json");
+  const installPath = Path.join(process.cwd(), functionsFolder);
+  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json");
+  const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
 
   const schemasManager = new SchemasManager(testSystem.name, fakeMongo);
   await schemasManager.addSystemSchemas(testSystem.schemas as SchemasType[]);
   const moduleManager = new ModuleManager({
     SchemasManager: schemasManager,
-    FunctionsInstaller: installationHandler,
-    FunctionsFileSystem: fileSystem,
+    ExternalFunctionManager: externalFunctionHandler,
   });
+
+  const businessOperations = testSystem.businessOperations
+    .map((plainBop) => { return new BusinessOperation(plainBop) ;});
+
+  const bopsDependencies = new CheckBopsFunctionsDependencies(
+    testSystem.schemas,
+    businessOperations,
+    new BusinessOperation(bop),
+    externalFunctionHandler,
+  ).bopsDependencies;
+
+  for (const externalDependency of bopsDependencies.external) {
+    await externalFunctionHandler.add(externalDependency.name.slice(1), externalDependency.version);
+  }
 
   const bopsEngineInputOptions = {
     MappedFunctions: await moduleManager.resolveSystemModules(testSystem),
@@ -50,7 +70,6 @@ const setupBopsEngineRequisites = async () : Promise<EngineInput> => {
 describe("Bops Engine Testing", () => {
   before(async () => {
     fakeMongo = await createFakeMongo();
-    bopsEnginePrerequisites = await setupBopsEngineRequisites();
   });
 
   afterEach(async () => {
@@ -58,6 +77,7 @@ describe("Bops Engine Testing", () => {
   });
 
   it("Test of prebuilt functions", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(mapikitProvidedBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
     const randomNumber = Math.round(Math.random()*10);
@@ -67,6 +87,7 @@ describe("Bops Engine Testing", () => {
   });
 
   it("Test of BOp as internal function", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
     const res = await stitched();
@@ -75,6 +96,7 @@ describe("Bops Engine Testing", () => {
   });
 
   it("Test of schema BOps functions", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(schemaBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(schemaBop, maxExecutionTime);
     const randomYear = Math.round(Math.random()*2100);
@@ -85,6 +107,7 @@ describe("Bops Engine Testing", () => {
   });
 
   it("Test of external BOps functions", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(externalBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(externalBop, maxExecutionTime);
     const randomName = faker.name.firstName();

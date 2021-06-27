@@ -12,9 +12,10 @@ describe("File System BOps", () => {
   const configurationFileName = "meta-function.json";
   const mainFunctionName = "main";
   const entrypoint = "dist/index.js";
+  const installationPath = Path.join(workingDirectory, functionInstallLocation);
 
   const installationHandler = new FunctionsInstaller(
-    Path.join(workingDirectory, functionInstallLocation),
+    installationPath,
   );
 
   afterEach(async () => {
@@ -25,7 +26,7 @@ describe("File System BOps", () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
     const functionFileSystem = new FunctionFileSystem(
-      workingDirectory, functionInstallLocation, configurationFileName,
+      installationPath, configurationFileName,
     );
 
     const result = await functionFileSystem.getFunctionDescriptionFile(testFunctionName);
@@ -38,7 +39,7 @@ describe("File System BOps", () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
     const functionFileSystem = new FunctionFileSystem(
-      workingDirectory, functionInstallLocation, configurationFileName,
+      installationPath, configurationFileName,
     );
 
     const mainFunction = await functionFileSystem

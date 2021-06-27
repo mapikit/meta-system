@@ -1,6 +1,6 @@
+import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
 import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
 import { Schema } from "@api/configuration/schemas/schema";
-import { externalFunctionIsLoaded } from "@api/external-functions/domain/external-function-is-loaded";
 import { checkInternalFunctionExist } from "@api/internal-functions";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 
@@ -9,7 +9,7 @@ interface BopsDependencies {
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
-  external : string[];
+  external : Array<{ name : string; version : string }>;
   fromBops : string[];
 }
 
@@ -29,10 +29,12 @@ export class CheckBopsFunctionsDependencies {
     return this.dependencies;
   }
 
+  // eslint-disable-next-line max-params
   public constructor (
     allSchemas : Schema[],
     allBusinessOperations : BusinessOperation[],
     currentBusinessOperation : BusinessOperation,
+    private externalFunctionManager : ExternalFunctionManagerClass,
   ) {
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
@@ -102,7 +104,10 @@ export class CheckBopsFunctionsDependencies {
         return bopsDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      externalDependencies.push(bopsFunctionConfig.moduleRepo);
+      externalDependencies.push({
+        name: bopsFunctionConfig.moduleRepo,
+        version: bopsFunctionConfig.version,
+      });
     });
 
     this.dependencies = {
@@ -239,10 +244,13 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const externalDependency of this.dependencies.external) {
-      result = externalFunctionIsLoaded(externalDependency);
+      result = this.externalFunctionManager
+        .functionIsInstalled(externalDependency.name, externalDependency.version);
 
       if (!result) {
-        console.error(`Dependency Check] Unmet external dependency: "${externalDependency}"`);
+        console.error(
+          `[Dependency Check] Unmet external dependency: "${externalDependency.name}@${externalDependency.version}"`,
+        );
         return false;
       }
     }
