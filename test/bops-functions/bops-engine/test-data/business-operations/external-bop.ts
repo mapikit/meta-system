@@ -9,6 +9,7 @@ export const externalBop : BusinessOperations = {
   constants: [],
   configuration: [
     {
+      version: "1.1.1",
       moduleRepo: ":bops-function-hello-world",
       key: 6,
       dependencies: [

@@ -8,10 +8,11 @@ export class MetaFunctionDescriptionValidation {
     private readonly descriptionFileContent : string,
   ) { }
 
-  public validate () : void {
+  public validate () : this {
     MetaFunctionHelper.validateStringConfiguration(this.descriptionFileContent);
-
     this.validated = true;
+
+    return this;
   }
 
   public getFunctionConfiguration () : MetaFunction {

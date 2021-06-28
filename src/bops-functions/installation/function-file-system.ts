@@ -6,17 +6,14 @@ import Path from "path";
 const fsPromise = FS.promises;
 
 export class FunctionFileSystem {
-  private readonly functionsFolder : string;
   private readonly customFunctionsLocation : string;
   private readonly configurationFileName : string;
 
   public constructor (
-    homeDirectory : string,
-    functionsFolder : string,
+    customFunctionsLocation : string,
     configurationFileName : string,
   ) {
-    this.functionsFolder = functionsFolder;
-    this.customFunctionsLocation = Path.join(homeDirectory, this.functionsFolder);
+    this.customFunctionsLocation = customFunctionsLocation;
     this.configurationFileName = configurationFileName;
   }
 
