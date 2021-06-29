@@ -8,21 +8,21 @@ describe("Assertion BOps Functions", () => {
 
       const result = isNillBopsFunction({ value });
 
-      expect(result).to.be.equal({ isNill: false });
+      expect(result).to.be.deep.equal({ isNill: false });
     });
     it("Validates undefined is nill", () => {
       const value = undefined;
 
       const result = isNillBopsFunction({ value });
 
-      expect(result).to.be.equal({ isNill: true });
+      expect(result).to.be.deep.equal({ isNill: true });
     });
     it("Validates null is nill", () => {
       const value = null;
 
       const result = isNillBopsFunction({ value });
 
-      expect(result).to.be.equal({ isNill: true });
+      expect(result).to.be.deep.equal({ isNill: true });
     });
   });
 });
