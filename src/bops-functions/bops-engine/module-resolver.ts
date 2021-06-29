@@ -1,7 +1,6 @@
 import { OperationNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/operation-not-found-error";
 import { SchemaNotFoundError } from "@api/bops-functions/bops-engine/engine-errors/schema-not-found-error";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
-import PrebuiltFunctions from "@api/bops-functions/prebuilt-functions/prebuilt-functions-map";
 import { ProvidedFunctionNotFound } from "@api/bops-functions/bops-engine/engine-errors/function-not-found";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { BopsConfigurationEntry } from "@api/configuration/business-operations/business-operations-type";
@@ -9,6 +8,7 @@ import { FunctionManager } from "@api/bops-functions/function-managers/function-
 
 export interface ModuleResolverInputs {
   ExternalFunctionManager : FunctionManager;
+  InternalFunctionManager : FunctionManager;
   SchemasManager : SchemasManager;
 }
 
@@ -25,10 +25,12 @@ export type ModuleResolverType = {
 
 export class ModuleResolver {
   private externalFunctionManager : FunctionManager;
+  private internalFunctionManager : FunctionManager;
   private schemasManager : SchemasManager;
 
   constructor (options : ModuleResolverInputs)  {
     this.externalFunctionManager = options.ExternalFunctionManager;
+    this.internalFunctionManager = options.InternalFunctionManager;
     this.schemasManager = options.SchemasManager;
   }
 
@@ -46,7 +48,7 @@ export class ModuleResolver {
 
     "#" : async (module) : Promise<Function> => {
       const functionName = module.moduleRepo.slice(1);
-      const foundFunction = PrebuiltFunctions.get(functionName);
+      const foundFunction = this.internalFunctionManager.get(functionName);
       if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleRepo);
       return foundFunction;
     },

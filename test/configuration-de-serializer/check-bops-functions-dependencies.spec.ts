@@ -1,4 +1,5 @@
 import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
+import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
 import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
 import { FunctionsInstaller } from "@api/bops-functions/installation/functions-installer";
 import {
@@ -27,6 +28,7 @@ describe("Check BOPS functions dependencies", () => {
       configurationExample["businessOperations"],
       configurationExample["businessOperations"][0],
       externalFunctionHandler,
+      internalFunctionManager,
     );
 
     const result = command.checkAllDependencies();
@@ -40,6 +42,7 @@ describe("Check BOPS functions dependencies", () => {
       configurationExample["businessOperations"],
       configurationExample["businessOperations"][0],
       externalFunctionHandler,
+      internalFunctionManager,
     );
 
     const result = command.checkSchemaFunctionsDependenciesMet();
@@ -53,6 +56,7 @@ describe("Check BOPS functions dependencies", () => {
       unreferencedInput["businessOperations"],
       unreferencedInput["businessOperations"][0],
       externalFunctionHandler,
+      internalFunctionManager,
     );
 
     const result = command.checkConfigurationalDependenciesMet();

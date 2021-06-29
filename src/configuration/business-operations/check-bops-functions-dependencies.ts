@@ -1,7 +1,7 @@
 import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
+import { InternalFunctionManagerClass } from "@api/bops-functions/function-managers/internal-function-manager";
 import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
 import { Schema } from "@api/configuration/schemas/schema";
-import { checkInternalFunctionExist } from "@api/internal-functions";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 
 interface BopsDependencies {
@@ -29,12 +29,13 @@ export class CheckBopsFunctionsDependencies {
     return this.dependencies;
   }
 
-  // eslint-disable-next-line max-params
+  // eslint-disable-next-line max-lines-per-function, max-params
   public constructor (
     allSchemas : Schema[],
     allBusinessOperations : BusinessOperation[],
     currentBusinessOperation : BusinessOperation,
     private externalFunctionManager : ExternalFunctionManagerClass,
+    private internalFunctionManager : InternalFunctionManagerClass,
   ) {
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
@@ -183,7 +184,8 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const internalDependencyName of this.dependencies.internal) {
-      result = checkInternalFunctionExist(internalDependencyName);
+      const functionName = internalDependencyName.slice(1);
+      result = this.internalFunctionManager.functionIsInstalled(functionName);
 
       if (!result) {
         console.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);

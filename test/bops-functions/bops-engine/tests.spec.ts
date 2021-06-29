@@ -20,6 +20,7 @@ import { ExternalFunctionManagerClass } from "@api/bops-functions/function-manag
 import { CheckBopsFunctionsDependencies }
   from "@api/configuration/business-operations/check-bops-functions-dependencies";
 import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
+import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
 
 interface EngineInput {
   MappedFunctions : MappedFunctions;
@@ -43,6 +44,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   const moduleManager = new ModuleManager({
     SchemasManager: schemasManager,
     ExternalFunctionManager: externalFunctionHandler,
+    InternalFunctionManager: internalFunctionManager,
   });
 
   const businessOperations = testSystem.businessOperations
@@ -53,6 +55,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     businessOperations,
     new BusinessOperation(bop),
     externalFunctionHandler,
+    internalFunctionManager,
   ).bopsDependencies;
 
   for (const externalDependency of bopsDependencies.external) {
