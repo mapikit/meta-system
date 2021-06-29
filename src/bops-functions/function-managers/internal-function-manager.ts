@@ -41,6 +41,7 @@ import { lowerThanBopsFunction } from "@api/bops-functions/prebuilt-functions/lo
 import { notBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/not";
 import { orGateBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/or";
 import { tryCatchBopsFunction } from "@api/bops-functions/prebuilt-functions/flux-control/try-catch";
+import { isNillBopsFunction } from "@api/bops-functions/prebuilt-functions/assertion/is-nill";
 
 export class InternalFunctionManagerClass implements FunctionManager {
   private functionMap = new Map<string, Function>()
@@ -70,6 +71,9 @@ internalFunctionManager.add("exponential", exponentialBopsFunction);
 internalFunctionManager.add("modulus", modulusBopsFunction);
 internalFunctionManager.add("round", roundBopsFunction);
 internalFunctionManager.add("sqrt", squareRootBopsFunction);
+
+// Assertion Functions
+internalFunctionManager.add("isNill", isNillBopsFunction);
 
 // Boolean Functions
 internalFunctionManager.add("boolToNumber", boolToNumberBopsFunction);

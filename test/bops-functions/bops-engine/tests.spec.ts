@@ -55,6 +55,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     businessOperations,
     new BusinessOperation(bop),
     externalFunctionHandler,
+    internalFunctionManager,
   ).bopsDependencies;
 
   for (const externalDependency of bopsDependencies.external) {
