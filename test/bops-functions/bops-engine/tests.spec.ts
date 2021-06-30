@@ -26,7 +26,6 @@ import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-man
 interface EngineInput {
   MappedFunctions : MappedFunctions;
   MappedConstants : Record<string, ResolvedConstants>;
-  BopsConfigs : BusinessOperations[];
 }
 
 let bopsEnginePrerequisites : EngineInput;
@@ -68,7 +67,6 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   const bopsEngineInputOptions = {
     MappedFunctions: await moduleManager.resolveSystemModules(testSystem),
     MappedConstants: StaticSystemInfo.validateSystemStaticInfo(testSystem),
-    BopsConfigs: testSystem.businessOperations,
   };
   return bopsEngineInputOptions;
 };

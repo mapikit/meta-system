@@ -5,8 +5,8 @@ import { ProtocolConfigType } from "@api/configuration/protocols/protocol-config
 export interface ConfigurationType {
   name : string;
   version : string;
-  protocols : ProtocolConfigType[];
-  envs : EnvironmentVariable[];
+  protocols ?: ProtocolConfigType[];
+  envs ?: EnvironmentVariable[];
   dbConnectionString : string;
   schemas : SchemasType[];
   businessOperations : BusinessOperations[];
