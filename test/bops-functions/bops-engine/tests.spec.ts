@@ -21,6 +21,7 @@ import { CheckBopsFunctionsDependencies }
   from "@api/configuration/business-operations/check-bops-functions-dependencies";
 import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
 import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
+import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-manager";
 
 interface EngineInput {
   MappedFunctions : MappedFunctions;
@@ -38,6 +39,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   const installPath = Path.join(process.cwd(), functionsFolder);
   const fileSystem = new FunctionFileSystem(installPath, "meta-function.json");
   const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
+  const bopsManager = new BopsManagerClass();
 
   const schemasManager = new SchemasManager(testSystem.name, fakeMongo);
   await schemasManager.addSystemSchemas(testSystem.schemas as SchemasType[]);
@@ -45,6 +47,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     SchemasManager: schemasManager,
     ExternalFunctionManager: externalFunctionHandler,
     InternalFunctionManager: internalFunctionManager,
+    BopsManager: bopsManager,
   });
 
   const businessOperations = testSystem.businessOperations
@@ -92,6 +95,11 @@ describe("Bops Engine Testing", () => {
   it("Test of BOp as internal function", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    // <<<<< This was done to avoid coding the entire bootstrap process inside of these tests
+    const provided = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
+    const mappedFunctions = bopsEnginePrerequisites.MappedFunctions;
+    mappedFunctions.set("+prebuilt-functions", provided);
+    // >>>>> End
     const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
     const res = await stitched();
 

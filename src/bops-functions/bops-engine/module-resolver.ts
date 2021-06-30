@@ -10,12 +10,14 @@ export interface ModuleResolverInputs {
   ExternalFunctionManager : FunctionManager;
   InternalFunctionManager : FunctionManager;
   SchemasManager : SchemasManager;
+  BopsManager : FunctionManager;
 }
 
 enum RepoStartingCharacter {
   schemaFunctions = "@",
   internalFunctions = "#",
   externalFunctions = ":",
+  bops = "+"
 }
 // Internal Bops (stating with '+') and Bop Output (starting with '%') are resolved separately
 
@@ -27,14 +29,19 @@ export class ModuleResolver {
   private externalFunctionManager : FunctionManager;
   private internalFunctionManager : FunctionManager;
   private schemasManager : SchemasManager;
+  private bopsManager : FunctionManager;
 
   constructor (options : ModuleResolverInputs)  {
     this.externalFunctionManager = options.ExternalFunctionManager;
     this.internalFunctionManager = options.InternalFunctionManager;
     this.schemasManager = options.SchemasManager;
+    this.bopsManager = options.BopsManager;
   }
 
   public resolve : ModuleResolverType = {
+    "+": async (module) : Promise<Function> => {
+      return this.bopsManager.get(module.moduleRepo.slice(1));
+    },
     "@": async (module) : Promise<Function> => {
       const moduleName = module.moduleRepo.slice(1);
       const [schema, operation] = moduleName.split("@");
