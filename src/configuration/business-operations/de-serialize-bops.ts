@@ -1,6 +1,8 @@
 // eslint-disable-next-line max-len
 import { isBusinessOperations } from "@api/configuration/assertions/business-operations/is-business-operations";
 import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
+import { BusinessOperations } from "./business-operations-type";
+import { BopsCyclicDependencyCheck } from "./cyclic-dependency-check";
 import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects";
 import { ValidateBopsPipelineFlowCommand } from "./validate-bops-pipeline-flow";
 
@@ -18,8 +20,9 @@ export class DeserializeBopsCommand {
 
       new ValidateBopsCustomObjectsCommand(businessOperationInstance).execute();
       new ValidateBopsPipelineFlowCommand().execute(businessOperationInstance);
-
       this.result.push(businessOperationInstance);
     });
+
+    new BopsCyclicDependencyCheck(businessOperations as BusinessOperations[]).checkAllBops();
   }
 }
