@@ -2,10 +2,12 @@ import { HTTPRouteConfiguration } from "@api/configuration/protocols/HTTP_JSONBO
 import { Request, Response, Router } from "express";
 import { HTTPJsonBodyInputMap } from "@api/configuration/protocols/HTTP_JSONBODY/input-map";
 import { HTTPJsonBodyOutputMap } from "@api/configuration/protocols/HTTP_JSONBODY/output-map";
+import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
 
 export class HTTPJsonBodyRoute {
   public constructor (
     private routeConfigurations : HTTPRouteConfiguration,
+    private functionManager : FunctionManager,
   ) { }
 
   public setupRouter () : Router {
@@ -22,13 +24,12 @@ export class HTTPJsonBodyRoute {
   }
 
   private wrapFunctionInProtocol () : (req : Request, res : Response) => Promise<void> {
-    // TODO get actual function
-    const getBop = (data : unknown) : object => ({ a: this.routeConfigurations.businessOperation, data });
+    const bop = this.functionManager.get(this.routeConfigurations.businessOperation);
 
     return (async (req : Request, res : Response) : Promise<void> => {
       const functionInputs = HTTPJsonBodyInputMap.mapInputs(req, this.routeConfigurations);
 
-      const result = await getBop(functionInputs);
+      const result = await bop(functionInputs);
 
       HTTPJsonBodyOutputMap.resolveOutput(result, res, this.routeConfigurations);
     });

@@ -4,12 +4,14 @@ import { HTTPJsonBodyRoute } from "@api/configuration/protocols/HTTP_JSONBODY/ht
 import express = require("express");
 import { ishttpJsonBodyConfiguration }
   from "@api/configuration/protocols/HTTP_JSONBODY/http-jsonbody-configuration-validation";
+import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
 
 export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATION> {
   public constructor (
     protocolConfiguration : HTTP_JSONBODY_CONFIGURATION,
+    functionManager : FunctionManager,
   ) {
-    super(protocolConfiguration);
+    super(protocolConfiguration, functionManager);
   }
 
   public validateConfiguration () : void {
@@ -20,7 +22,7 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
     const httpApp = express();
 
     const routes = this.protocolConfiguration.routes.map((routeConfig) => {
-      return new HTTPJsonBodyRoute(routeConfig).setupRouter();
+      return new HTTPJsonBodyRoute(routeConfig, this.functionManager).setupRouter();
     });
 
     httpApp.use(routes);
