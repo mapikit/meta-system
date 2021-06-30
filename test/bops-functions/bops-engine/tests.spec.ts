@@ -95,6 +95,11 @@ describe("Bops Engine Testing", () => {
   it("Test of BOp as internal function", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    // <<<<< This was done to avoid coding the entire bootstrap process inside of these tests
+    const provided = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
+    const mappedFunctions = bopsEnginePrerequisites.MappedFunctions;
+    mappedFunctions.set("+prebuilt-functions", provided);
+    // >>>>> End
     const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
     const res = await stitched();
 

@@ -21,10 +21,9 @@ export class ModuleManager {
   private async resolveModules (modules : BopsConfigurationEntry[], existingMap : Map<string, Function>)
     : Promise<void> {
     for(const module of modules) {
-      if(!existingMap.get(module.moduleRepo)) {
-        if(!["%", "+"].includes(module.moduleRepo[0])) {
-          existingMap.set(module.moduleRepo, await this.resolveModule(module));
-        }
+      const isNotOutput = module.moduleRepo[0] !== "%";
+      if(!existingMap.has(module.moduleRepo) && isNotOutput) {
+        existingMap.set(module.moduleRepo, await this.resolveModule(module));
       }
     }
   }

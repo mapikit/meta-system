@@ -4,7 +4,6 @@ import constants from "@api/common/constants";
 import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
 import { ObjectResolver } from "./object-manipulator";
 import { addTimeout } from "./add-timeout";
-import { InternalBopNotFound } from "./engine-errors/internal-bop-not-found";
 
 type RelevantBopInfo = {
   constants : ResolvedConstants;
@@ -15,20 +14,16 @@ type RelevantBopInfo = {
 export class BopsEngine {
   private readonly constants : Record<string, ResolvedConstants>;
   private readonly mappedFunctions : MappedFunctions;
-  private readonly bopsConfigs : BusinessOperations[];
 
   constructor (options : {
     MappedFunctions : MappedFunctions;
     MappedConstants : Record<string, ResolvedConstants>;
-    BopsConfigs : BusinessOperations[];
   }) {
     this.constants = options.MappedConstants;
     this.mappedFunctions = options.MappedFunctions;
-    this.bopsConfigs = options.BopsConfigs;
   }
 
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
-    this.mapInternalBOps(operation);
     const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
 
     const workingBopContext : RelevantBopInfo = {
@@ -41,17 +36,6 @@ export class BopsEngine {
       return Object.assign(await this.getInputs(output.dependencies, workingBopContext, _inputs));
     };
     return addTimeout(msTimeout, stiched);
-  }
-
-  private mapInternalBOps (currentBop : BusinessOperations) : void {
-    currentBop.configuration.forEach(module => {
-      const isInternalBop = module.moduleRepo.startsWith("+");
-      if(isInternalBop && !this.mappedFunctions.has(module.moduleRepo)) {
-        const refBop = this.bopsConfigs.find(bop => bop.name === module.moduleRepo.slice(1));
-        if(!refBop) throw new InternalBopNotFound(module.moduleRepo.slice(1));
-        this.mappedFunctions.set(module.moduleRepo, this.stitch(refBop));
-      }
-    });
   }
 
   private async getInputs (inputs : Dependency[], currentBop : RelevantBopInfo, _inputs : object) : Promise<object> {
