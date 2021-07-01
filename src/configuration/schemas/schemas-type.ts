@@ -1,14 +1,6 @@
 export interface SchemasType {
   name : string;
   format : SchemaObject;
-  routes : {
-    getMethodEnabled : boolean;
-    postMethodEnabled : boolean;
-    deleteMethodEnabled : boolean;
-    patchMethodEnabled : boolean;
-    putMethodEnabled : boolean;
-    queryParamsGetEnabled : boolean;
-  };
 }
 
 export type SchemaObject = {

@@ -1,12 +1,14 @@
 import { TTLExceededError } from "./engine-errors/execution-time-exceeded";
 
+// eslint-disable-next-line max-lines-per-function
 export function addTimeout (timeoutMs : number, promise : Function) : Function {
   let timeoutHandle : NodeJS.Timeout;
-  const timeoutPromise = new Promise((_resolve, reject) => {
-    timeoutHandle = setTimeout(() => reject(new TTLExceededError(timeoutMs)), timeoutMs);
-  });
 
-  return async function (inputs : unknown) : Promise<unknown> {
+  const result = (inputs : unknown) : Promise<unknown> => {
+    const timeoutPromise = new Promise((_resolve, reject) => {
+      timeoutHandle = setTimeout(() => reject(new TTLExceededError(timeoutMs)), timeoutMs);
+    });
+
     return Promise.race([
       timeoutPromise,
       promise(inputs),
@@ -15,4 +17,6 @@ export function addTimeout (timeoutMs : number, promise : Function) : Function {
       return res;
     });
   };
+
+  return result;
 };

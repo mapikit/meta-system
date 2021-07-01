@@ -4,13 +4,14 @@ import { BusinessOperation } from "@api/configuration/business-operations/busine
 import { Schema } from "@api/configuration/schemas/schema";
 import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 
-interface BopsDependencies {
+export interface BopsDependencies {
   fromSchemas : string[];
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
   external : Array<{ name : string; version : string }>;
   fromBops : string[];
+  bopName : string;
 }
 
 /**
@@ -118,6 +119,7 @@ export class CheckBopsFunctionsDependencies {
       fromSchemas: schemasDependencies,
       fromConfigurations: configurationalDependencies,
       fromBops: bopsDependencies,
+      bopName: this.businessOperation.name,
     };
   }
 
@@ -242,12 +244,12 @@ export class CheckBopsFunctionsDependencies {
     return true;
   }
 
-  private checkExternalRequiredFunctionsMet () : boolean {
+  public checkExternalRequiredFunctionsMet () : boolean {
     let result = true;
 
     for (const externalDependency of this.dependencies.external) {
       result = this.externalFunctionManager
-        .functionIsInstalled(externalDependency.name, externalDependency.version);
+        .functionIsInstalled(externalDependency.name.slice(1), externalDependency.version);
 
       if (!result) {
         console.error(

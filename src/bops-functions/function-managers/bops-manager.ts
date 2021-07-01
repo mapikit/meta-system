@@ -3,8 +3,12 @@ import { FunctionManager } from "@api/bops-functions/function-managers/function-
 export class BopsManagerClass implements FunctionManager {
   private bopsMap = new Map<string, Function>();
 
-  public get (funcitonName : string) : Function {
-    return this.bopsMap.get(funcitonName);
+  public get (functionName : string) : Function {
+    if (functionName.charAt(0) === "+") {
+      return this.bopsMap.get(functionName.slice(1));
+    }
+
+    return this.bopsMap.get(functionName);
   }
 
   public add (functionName : string, declaration : Function) : void {

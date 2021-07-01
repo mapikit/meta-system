@@ -17,12 +17,4 @@ export const complexExampleSchema : SchemasType = {
       },
     },
   },
-  routes: {
-    getMethodEnabled: false,
-    postMethodEnabled: false,
-    deleteMethodEnabled: false,
-    patchMethodEnabled: false,
-    putMethodEnabled: false,
-    queryParamsGetEnabled: false,
-  },
 };

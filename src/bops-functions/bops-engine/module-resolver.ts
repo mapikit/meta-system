@@ -22,7 +22,7 @@ enum RepoStartingCharacter {
 // Internal Bops (stating with '+') and Bop Output (starting with '%') are resolved separately
 
 export type ModuleResolverType = {
-  [char in RepoStartingCharacter] : (module : BopsConfigurationEntry) => Promise<Function>;
+  [char in RepoStartingCharacter] : (module : BopsConfigurationEntry) => Function;
 }
 
 export class ModuleResolver {
@@ -39,10 +39,12 @@ export class ModuleResolver {
   }
 
   public resolve : ModuleResolverType = {
-    "+": async (module) : Promise<Function> => {
-      return this.bopsManager.get(module.moduleRepo.slice(1));
+    "+": (module) : Function => {
+      const result = this.bopsManager.get(module.moduleRepo.slice(1));
+
+      return result;
     },
-    "@": async (module) : Promise<Function> => {
+    "@": (module) : Function => {
       const moduleName = module.moduleRepo.slice(1);
       const [schema, operation] = moduleName.split("@");
       if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
@@ -53,14 +55,14 @@ export class ModuleResolver {
       return schemaToLook.bopsFunctions[operation];
     },
 
-    "#" : async (module) : Promise<Function> => {
+    "#" : (module) : Function => {
       const functionName = module.moduleRepo.slice(1);
       const foundFunction = this.internalFunctionManager.get(functionName);
       if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleRepo);
       return foundFunction;
     },
 
-    ":" : async (module) : Promise<Function> => {
+    ":" : (module) : Function => {
       return this.externalFunctionManager.get(module.moduleRepo.slice(1));
     },
   }

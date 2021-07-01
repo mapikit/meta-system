@@ -106,3 +106,4 @@ dist
 /test-functions
 ./vscode
 /bops-functions
+/external-functions

@@ -11,28 +11,12 @@
           "nestedArrayProperty": { "type": "string" }
         } },
         "referencedArray": { "type":"array", "subtype": "string", "refName": "other" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     },
     {
       "name": "other",
       "format": {
         "aProperty": { "type": "boolean" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     }
   ]

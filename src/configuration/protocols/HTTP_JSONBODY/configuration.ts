@@ -19,6 +19,6 @@ export type InputMap = {
 
 export type ResultMap = {
   statusCode : string | number;
-  headers : Array<Record<string, string>>;
+  headers : Array<Record<string, unknown>>;
   body : Record<string, unknown>;
 }

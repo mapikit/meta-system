@@ -13,14 +13,6 @@
             "reallyDeepNestedProp": { "type": "boolean" }
           } }
         } }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     }
   ]
