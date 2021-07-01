@@ -1,5 +1,5 @@
 import { BopsEngine } from "@api/bops-functions/bops-engine/bops-engine";
-import { MappedFunctions, ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
+import { ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
 import { FunctionsInstaller } from "@api/bops-functions/installation/functions-installer";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { createFakeMongo } from "@test/doubles/mongo-server";
@@ -11,7 +11,7 @@ import { ResolvedConstants, StaticSystemInfo } from "@api/bops-functions/bops-en
 import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
 import { SchemasType } from "@api/configuration/schemas/schemas-type";
 import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
-import { internalBop } from "./test-data/business-operations/internal-bop";
+// import { internalBop } from "./test-data/business-operations/internal-bop";
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
 import faker from "faker";
@@ -22,10 +22,12 @@ import { CheckBopsFunctionsDependencies }
 import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
 import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
 import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-manager";
+import { ConfigurationType } from "@api/configuration/configuration-type";
 
 interface EngineInput {
-  MappedFunctions : MappedFunctions;
+  ModuleManager : ModuleManager;
   MappedConstants : Record<string, ResolvedConstants>;
+  SystemConfig : ConfigurationType;
 }
 
 let bopsEnginePrerequisites : EngineInput;
@@ -64,10 +66,12 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     await externalFunctionHandler.add(externalDependency.name.slice(1), externalDependency.version);
   }
 
-  const bopsEngineInputOptions = {
-    MappedFunctions: await moduleManager.resolveSystemModules(testSystem),
+  const bopsEngineInputOptions : EngineInput = {
+    ModuleManager: moduleManager,
     MappedConstants: StaticSystemInfo.validateSystemStaticInfo(testSystem),
+    SystemConfig: testSystem,
   };
+
   return bopsEngineInputOptions;
 };
 
@@ -90,19 +94,18 @@ describe("Bops Engine Testing", () => {
     expect(res["output"]).to.be.equal(Math.pow(3, randomNumber));
   });
 
-  it("Test of BOp as internal function", async () => {
-    bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
-    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-    // <<<<< This was done to avoid coding the entire bootstrap process inside of these tests
-    const provided = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
-    const mappedFunctions = bopsEnginePrerequisites.MappedFunctions;
-    mappedFunctions.set("+prebuilt-functions", provided);
-    // >>>>> End
-    const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
-    const res = await stitched();
+  // it("Test of BOp as internal function", async () => {
+  //   bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
+  //   const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+  //   // <<<<< This was done to avoid coding the entire bootstrap process inside of these tests
+  //   const provided = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
+  //   const mappedFunctions = bopsEnginePrerequisites.ModuleManager.set("+prebuilt-functions", provided);
+  //   // >>>>> End
+  //   const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
+  //   const res = await stitched();
 
-    expect(res["output"]).to.be.equal(73);
-  });
+  //   expect(res["output"]).to.be.equal(73);
+  // });
 
   it("Test of schema BOps functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(schemaBop);

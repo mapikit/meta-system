@@ -14,20 +14,11 @@ const getRef = (typeDefinition : SchemaTypeDefinition) : string[] => {
 
 export class Schema implements SchemasType {
   public readonly name : string;
-  public readonly routes : {
-    getMethodEnabled : boolean;
-    postMethodEnabled : boolean;
-    deleteMethodEnabled : boolean;
-    patchMethodEnabled : boolean;
-    putMethodEnabled : boolean;
-    queryParamsGetEnabled : boolean;
-  };
 
   public readonly format : SchemaObject;
 
   public constructor (schema : SchemasType) {
     this.name = schema.name;
-    this.routes = schema.routes;
     this.format = schema.format;
   }
 

@@ -15,14 +15,6 @@
         "email": { "type": "string" },
         "purchases": { "type": "array", "data": "string", "refName": "purchase" },
         "birthdate": { "type": "date" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     },
     {
@@ -32,14 +24,6 @@
         "date": { "type": "date" },
         "value": { "type": "number" },
         "productId": { "type": "string" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": false,
-        "deleteMethodEnabled": false,
-        "patchMethodEnabled": false,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     },
     {
@@ -49,14 +33,6 @@
         "name": { "type": "string" },
         "salary": { "type": "number" },
         "confirmedSales": { "type": "array", "data": "string", "refName": "purchase" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": true,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": false,
-        "queryParamsGetEnabled": true
       }
     },
     {
@@ -69,14 +45,6 @@
         "color": { "type": "string" },
         "description": { "type": "string" },
         "sold": { "type": "boolean" }
-      },
-      "routes": {
-        "getMethodEnabled": true,
-        "postMethodEnabled": true,
-        "deleteMethodEnabled": true,
-        "patchMethodEnabled": true,
-        "putMethodEnabled": true,
-        "queryParamsGetEnabled": true
       }
     }
   ],

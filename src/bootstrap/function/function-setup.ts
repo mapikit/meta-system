@@ -9,6 +9,7 @@ import { BusinessOperation } from "@api/configuration/business-operations/busine
 import { BopsDependencies, CheckBopsFunctionsDependencies }
   from "@api/configuration/business-operations/check-bops-functions-dependencies";
 import { ConfigurationType } from "@api/configuration/configuration-type";
+import { SchemasType } from "@api/configuration/schemas/schemas-type";
 import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { MongoClient } from "mongodb";
 
@@ -25,6 +26,10 @@ export class FunctionSetup {
 
   // eslint-disable-next-line max-lines-per-function
   public async setup () : Promise<void> {
+    console.log(`[Function Setup] Starting bootstrap process for BOps functions in system "${
+      this.systemConfiguration.name
+    }"`);
+
     const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
     this.checkInternalDependencies();
     this.checkSchemaDependencies();
@@ -36,7 +41,7 @@ export class FunctionSetup {
       ExternalFunctionManager: this.externalFunctionManager,
       InternalFunctionManager: this.internalFunctionManager,
       BopsManager: this.bopsManager,
-      SchemasManager: this.createSchemasManager(),
+      SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
     });
 
     const mappedConstants = StaticSystemInfo.validateSystemStaticInfo(this.systemConfiguration);
@@ -47,7 +52,10 @@ export class FunctionSetup {
       SystemConfig: this.systemConfiguration,
     });
 
+    console.log("[Function Setup] Starting BOps build process");
+
     this.buildBops();
+    console.log("[Function Setup] Success - Setup complete");
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -75,6 +83,7 @@ export class FunctionSetup {
   }
 
   private checkInternalDependencies () : void {
+    console.log("[Function Setup] Checking BOps internal dependencies");
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkInternalFunctionsDependenciesMet();
 
@@ -85,6 +94,7 @@ export class FunctionSetup {
   }
 
   private checkExternalDependencies () : void {
+    console.log("[Function Setup] Checking BOps external dependencies");
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkExternalRequiredFunctionsMet();
 
@@ -97,6 +107,12 @@ export class FunctionSetup {
   private checkSchemaDependencies () : void {
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkSchemaFunctionsDependenciesMet();
+      const schemaDeps =  depCheck.bopsDependencies.fromSchemas.join(", ");
+      const schemaDepsName = schemaDeps === "" ? "NO SCHEMA DEPENDENCIES" : schemaDeps;
+
+      console.log(`[Function Setup] Checking schema function dependencies for BOp "${
+        depCheck.bopsDependencies.bopName
+      }": "${schemaDepsName}"`);
 
       if (!result) {
         throw Error(`Unmet Schema dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
@@ -104,7 +120,9 @@ export class FunctionSetup {
     });
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private async bootstrapExternalDependencies (allBopsDependencies : BopsDependencies[]) : Promise<void> {
+    console.log("[Function Setup] Starting Bootstrap sequence for all system external dependencies");
     const externalDependenciesArray = allBopsDependencies
       .map((bopDependencies) => bopDependencies.external);
 
@@ -124,7 +142,8 @@ export class FunctionSetup {
     }
   }
 
-  private createSchemasManager () : SchemasManager {
+  // eslint-disable-next-line max-lines-per-function
+  private async createSchemasManager (systemSchemas : SchemasType[]) : Promise<SchemasManager> {
     const dbConnection = new MongoClient(
       this.systemConfiguration.dbConnectionString,
       {
@@ -132,10 +151,17 @@ export class FunctionSetup {
       },
     );
 
-    return new SchemasManager(
+    const manager = new SchemasManager(
       this.systemConfiguration.name,
       dbConnection,
     );
+
+    const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");
+    console.log(`[Schemas Setup] Adding shemas to the system: "${schemasNames}"`);
+
+    await manager.addSystemSchemas(systemSchemas);
+
+    return manager;
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -144,11 +170,12 @@ export class FunctionSetup {
       return bopConfig.name;
     }).filter((bopName) => !this.bopsManager.functionIsDeclared(bopName));
 
-    console.log(`[BOps Build] Remaining functions: [${unbuiltBopsNames.join(", ")}]`);
-
     if (unbuiltBopsNames.length === 0) {
+      console.log("[BOps Build] All BOps are built");
       return;
     }
+
+    console.log(`[BOps Build] Remaining BOps: [${unbuiltBopsNames.join(", ")}]`);
 
     const bopsWithMetDependencies = unbuiltBopsNames.filter((bopName) => {
       const bopsDependencies = this.bopsDependencyCheck.get(bopName).bopsDependencies;

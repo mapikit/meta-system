@@ -9,12 +9,4 @@ export const flatExampleSchema : SchemasType = {
     eyeColour: { type: "string" },
     height: { type: "number" },
   },
-  routes: {
-    getMethodEnabled: false,
-    postMethodEnabled: false,
-    deleteMethodEnabled: false,
-    patchMethodEnabled: false,
-    putMethodEnabled: false,
-    queryParamsGetEnabled: false,
-  },
 };

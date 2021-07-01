@@ -7,14 +7,6 @@ export const schemaFactory = (predefined : Partial<SchemasType>) : SchemasType =
 
   const creationInput : SchemasType = {
     name: predefined.name ?? faker.name.jobArea(),
-    routes: {
-      getMethodEnabled: predefined.routes?.getMethodEnabled ?? faker.random.boolean(),
-      postMethodEnabled: predefined.routes?.postMethodEnabled ?? faker.random.boolean(),
-      putMethodEnabled: predefined.routes?.postMethodEnabled ?? faker.random.boolean(),
-      patchMethodEnabled: predefined.routes?.postMethodEnabled ?? faker.random.boolean(),
-      deleteMethodEnabled: predefined.routes?.postMethodEnabled ?? faker.random.boolean(),
-      queryParamsGetEnabled: predefined.routes?.postMethodEnabled ?? faker.random.boolean(),
-    },
     format : predefined.format ?? schemaFormatFactory(),
   };
 

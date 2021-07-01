@@ -42,6 +42,7 @@ import { notBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/no
 import { orGateBopsFunction } from "@api/bops-functions/prebuilt-functions/logic/or";
 import { tryCatchBopsFunction } from "@api/bops-functions/prebuilt-functions/flux-control/try-catch";
 import { isNillBopsFunction } from "@api/bops-functions/prebuilt-functions/assertion/is-nill";
+import { dateNowBopsFunction } from "@api/bops-functions/prebuilt-functions/date/date-now";
 
 export class InternalFunctionManagerClass implements FunctionManager {
   private functionMap = new Map<string, Function>()
@@ -121,5 +122,8 @@ internalFunctionManager.add("or", orGateBopsFunction);
 // Flux-Control Functions
 internalFunctionManager.add("if", ifBopsFunction);
 internalFunctionManager.add("tryCatch", tryCatchBopsFunction);
+
+// Date Functions
+internalFunctionManager.add("dateNow", dateNowBopsFunction);
 
 export default internalFunctionManager;

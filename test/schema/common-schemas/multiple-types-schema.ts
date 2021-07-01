@@ -24,12 +24,4 @@ export const multipleTypesSchema : SchemasType = {
       subtype: "boolean",
     },
   },
-  routes: {
-    getMethodEnabled: false,
-    postMethodEnabled: false,
-    deleteMethodEnabled: false,
-    patchMethodEnabled: false,
-    putMethodEnabled: false,
-    queryParamsGetEnabled: false,
-  },
 };

@@ -8,8 +8,16 @@ import { HTTPJsonBodyProtocol } from "./configuration/protocols/HTTP_JSONBODY/ht
 
 const sysConfig : ConfigurationType = {
   name: "aluguel",
-  dbConnectionString: "",
-  schemas: [],
+  dbConnectionString: "mongodb://api-development:apipass@localhost:27017",
+  schemas: [
+    {
+      name: "failedPayment",
+      format: {
+        amount: { type: "number" },
+        date: { type: "date" },
+      },
+    },
+  ],
   version: "0.0.1",
   businessOperations: [
     {
@@ -38,11 +46,17 @@ const sysConfig : ConfigurationType = {
         amount: { type: "number" },
       },
       output: {
-        paymentAmount: { type: "number" },
+        remainingValue: { type: "number" },
+        stausCode: { type: "number" },
+        message: { type: "string" },
       },
       constants: [
         { type: "number", name: "baseValue", value: 499 },
         { type: "number", name: "logThreshold", value: 300 },
+        { type: "string", name: "failMessage", value: "Not enough paid" },
+        { type: "string", name: "successMessage", value: "Paid" },
+        { type: "number", name: "failCode", value: 412 },
+        { type: "number", name: "successCode", value: 200 },
       ],
       configuration: [
         {
@@ -74,7 +88,21 @@ const sysConfig : ConfigurationType = {
           dependencies: [
             { origin: 13, originPath: "result.isHigher", targetPath: "boolean" },
             { origin: 12, originPath: "module", targetPath: "ifTrue" },
+            { origin: 28, originPath: "module", targetPath: "ifFalse" },
           ],
+        },
+        {
+          key: 28,
+          moduleRepo: "@failedPayment@create",
+          dependencies: [
+            { origin: 2, originPath: "result.result", targetPath: "entity.amount" },
+            { origin: 29, originPath: "result.now", targetPath: "entity.date" },
+          ],
+        },
+        {
+          key: 29,
+          moduleRepo: "#dateNow",
+          dependencies: [],
         },
         {
           key: 12,
@@ -82,10 +110,30 @@ const sysConfig : ConfigurationType = {
           dependencies: [],
         },
         {
+          key: 99,
+          moduleRepo: "#if",
+          dependencies: [
+            { origin: 13, originPath: "result.isHigher", targetPath: "boolean" },
+            { origin: "constants", originPath: "successCode", targetPath: "ifTrue" },
+            { origin: "constants", originPath: "failCode", targetPath: "ifFalse" },
+          ],
+        },
+        {
+          key: 100,
+          moduleRepo: "#if",
+          dependencies: [
+            { origin: 13, originPath: "result.isHigher", targetPath: "boolean" },
+            { origin: "constants", originPath: "successMessage", targetPath: "ifTrue" },
+            { origin: "constants", originPath: "failMessage", targetPath: "ifFalse" },
+          ],
+        },
+        {
           key: 1,
           moduleRepo: "%output",
           dependencies: [
             { origin: 23, originPath: "result.result", targetPath: "remainingValue" },
+            { origin: 99, originPath: "result.outputValue", targetPath: "statusCode" },
+            { origin: 100, originPath: "result.outputValue", targetPath: "message" },
             { origin: 444 },
           ],
         },
@@ -117,8 +165,8 @@ const main = async () : Promise<void> => {
           { origin: "route", originPath: "amount", targetPath: "amount" },
         ],
         resultMapConfiguration: {
-          body: { result: "remainingValue" },
-          statusCode: 200,
+          body: { result: "remainingValue", message: "message" },
+          statusCode: "statusCode",
           headers: [],
         },
       },
