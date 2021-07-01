@@ -15,7 +15,7 @@ import { MongoClient } from "mongodb";
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();
   private bopsEngine : BopsEngine;
-  private bopsDependencyCheck : CheckBopsFunctionsDependencies[] = [];
+  private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
 
   public constructor (
     private internalFunctionManager : InternalFunctionManagerClass,
@@ -43,13 +43,11 @@ export class FunctionSetup {
 
     this.bopsEngine = new BopsEngine({
       MappedConstants: mappedConstants,
-      MappedFunctions: await moduleManager.resolveSystemModules(this.systemConfiguration),
+      ModuleManager: moduleManager,
+      SystemConfig: this.systemConfiguration,
     });
 
-    // Start BOps build pipeline:
-    // - Try to build bops with no unmet BOps dependencies
-    // - Now Check bops that already has BOps dependencies met and build them
-    // - Loop until all bops built
+    this.buildBops();
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -68,7 +66,7 @@ export class FunctionSetup {
         this.internalFunctionManager,
       );
 
-      this.bopsDependencyCheck.push(dependencyCheck);
+      this.bopsDependencyCheck.set(bopsConfig.name, dependencyCheck);
 
       result.push(dependencyCheck.bopsDependencies);
     });
@@ -115,13 +113,13 @@ export class FunctionSetup {
       currentValue.forEach((value) => currentDependency.push(value));
 
       return currentDependency;
-    });
+    }, []);
 
     for (const dependency of externalDependencies) {
       const exists = this.externalFunctionManager.functionIsInstalled(dependency.name, dependency.version);
 
       if (!exists) {
-        await this.externalFunctionManager.add(dependency.name, dependency.version);
+        await this.externalFunctionManager.add(dependency.name.slice(1), dependency.version);
       }
     }
   }
@@ -138,6 +136,43 @@ export class FunctionSetup {
       this.systemConfiguration.name,
       dbConnection,
     );
+  }
+
+  // eslint-disable-next-line max-lines-per-function
+  private buildBops () : void {
+    const unbuiltBopsNames = this.systemConfiguration.businessOperations.map((bopConfig) => {
+      return bopConfig.name;
+    }).filter((bopName) => !this.bopsManager.functionIsDeclared(bopName));
+
+    console.log(`[BOps Build] Remaining functions: [${unbuiltBopsNames.join(", ")}]`);
+
+    if (unbuiltBopsNames.length === 0) {
+      return;
+    }
+
+    const bopsWithMetDependencies = unbuiltBopsNames.filter((bopName) => {
+      const bopsDependencies = this.bopsDependencyCheck.get(bopName).bopsDependencies;
+      for (const bopDependencyFromBops of bopsDependencies.fromBops) {
+        if (!this.bopsManager.functionIsDeclared(bopDependencyFromBops.slice(1))) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    bopsWithMetDependencies.forEach((bopName) => {
+      const currentBopConfig = this.systemConfiguration.businessOperations
+        .find((bopConfig) => bopConfig.name === bopName);
+      console.log(`[BOps Build] Stitching "${bopName}"`);
+
+      this.bopsManager.add(
+        bopName,
+        this.bopsEngine.stitch(currentBopConfig),
+      );
+    });
+
+    this.buildBops();
   }
 
   public getBopsManager () : FunctionManager {

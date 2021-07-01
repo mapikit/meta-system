@@ -13,26 +13,26 @@ export class ModuleManager {
     this.moduleResolver = new ModuleResolver(options);
   }
 
-  private async resolveModule (module : BopsConfigurationEntry) : Promise<Function> {
+  private resolveModule (module : BopsConfigurationEntry) : Function {
     const startingChar = module.moduleRepo[0];
     return this.moduleResolver.resolve[startingChar](module);
   }
 
-  private async resolveModules (modules : BopsConfigurationEntry[], existingMap : Map<string, Function>)
-    : Promise<void> {
+  private resolveModules (modules : BopsConfigurationEntry[], existingMap : Map<string, Function>)
+    : void {
     for(const module of modules) {
       const isNotOutput = module.moduleRepo[0] !== "%";
       if(!existingMap.has(module.moduleRepo) && isNotOutput) {
-        existingMap.set(module.moduleRepo, await this.resolveModule(module));
+        existingMap.set(module.moduleRepo, this.resolveModule(module));
       }
     }
   }
 
-  public async resolveSystemModules (systemConfig : ConfigurationType) : Promise<MappedFunctions> {
+  public resolveSystemModules (systemConfig : ConfigurationType) : MappedFunctions {
     const systemBops = systemConfig.businessOperations;
     const functionMap = new Map<string, Function>();
     for(const bop of systemBops) {
-      await this.resolveModules(bop.configuration, functionMap);
+      this.resolveModules(bop.configuration, functionMap);
     }
     return functionMap;
   }

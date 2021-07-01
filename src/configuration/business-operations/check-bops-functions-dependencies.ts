@@ -249,7 +249,7 @@ export class CheckBopsFunctionsDependencies {
 
     for (const externalDependency of this.dependencies.external) {
       result = this.externalFunctionManager
-        .functionIsInstalled(externalDependency.name, externalDependency.version);
+        .functionIsInstalled(externalDependency.name.slice(1), externalDependency.version);
 
       if (!result) {
         console.error(

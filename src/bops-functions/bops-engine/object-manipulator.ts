@@ -19,7 +19,9 @@ export class ObjectResolver {
     if(!path) return source;
     let current = source;
     path.forEach(level => {
-      if(!current[level]) throw new Error(`${level} was not found in ${inspect(source, false, null, true)}`);
+      const isFound = current[level] !== undefined && current[level] !== null;
+
+      if(!isFound) throw new Error(`${level} was not found in ${inspect(source, false, null, true)}`);
       current = current[level];
     });
     return current;

@@ -1,9 +1,10 @@
 import { ResolvedConstants } from "@api/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations, Dependency } from "@api/configuration/business-operations/business-operations-type";
 import constants from "@api/common/constants";
-import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
+import { MappedFunctions, ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
 import { ObjectResolver } from "./object-manipulator";
 import { addTimeout } from "./add-timeout";
+import { ConfigurationType } from "@api/configuration/configuration-type";
 
 type RelevantBopInfo = {
   constants : ResolvedConstants;
@@ -13,26 +14,32 @@ type RelevantBopInfo = {
 
 export class BopsEngine {
   private readonly constants : Record<string, ResolvedConstants>;
-  private readonly mappedFunctions : MappedFunctions;
+  private readonly moduleManager : ModuleManager;
+  private mappedFunctions ?: MappedFunctions;
+  private systemConfig : ConfigurationType;
 
   constructor (options : {
-    MappedFunctions : MappedFunctions;
+    ModuleManager : ModuleManager;
     MappedConstants : Record<string, ResolvedConstants>;
+    SystemConfig : ConfigurationType;
   }) {
     this.constants = options.MappedConstants;
-    this.mappedFunctions = options.MappedFunctions;
+    this.moduleManager = options.ModuleManager;
+    this.systemConfig = options.SystemConfig;
   }
 
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
+    this.mappedFunctions = this.moduleManager.resolveSystemModules(this.systemConfig);
+
     const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
 
-    const workingBopContext : RelevantBopInfo = {
-      config: operation.configuration,
-      constants: this.constants[operation.name],
-      results : new Map<number, unknown>(),
-    };
-
     const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
+      const workingBopContext : RelevantBopInfo = {
+        config: operation.configuration,
+        constants: this.constants[operation.name],
+        results : new Map<number, unknown>(),
+      };
+
       return Object.assign(await this.getInputs(output.dependencies, workingBopContext, _inputs));
     };
     return addTimeout(msTimeout, stiched);
@@ -55,6 +62,14 @@ export class BopsEngine {
     _inputs : object) : Promise<object> {
     const dependency = currentBop.config.find(module => module.key === input.origin);
     const moduleFunction = this.mappedFunctions.get(dependency.moduleRepo);
+
+    if(input.originPath === undefined) {
+      const inputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
+
+      await moduleFunction(inputs);
+      return;
+    }
+
     const [origin, ...paths] = input.originPath.split(".");
     const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
 
@@ -67,11 +82,6 @@ export class BopsEngine {
     if(origin === "module") {
       const wrappedFunction = this.wrapFunction(moduleFunction, resolvedInputs, paths);
       return { [input.targetPath]: wrappedFunction };
-    }
-
-    if(origin === undefined) {
-      await moduleFunction(await this.getInputs(dependency.dependencies, currentBop, _inputs));
-      return;
     }
 
     throw new Error("Incorrect originPath configuration");

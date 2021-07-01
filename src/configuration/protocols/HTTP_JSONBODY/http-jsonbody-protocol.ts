@@ -22,11 +22,18 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
     const httpApp = express();
 
     const routes = this.protocolConfiguration.routes.map((routeConfig) => {
+      console.log(`[HTTP_JSONBODY_PROTOCOL] Mapping route "${routeConfig.route}" at port ${
+        this.protocolConfiguration.port
+      }`);
       return new HTTPJsonBodyRoute(routeConfig, this.functionManager).setupRouter();
     });
 
     httpApp.use(routes);
 
-    httpApp.listen(this.protocolConfiguration.port);
+    httpApp.listen(this.protocolConfiguration.port, () => {
+      console.log(`[HTTP_JSONBODY_PROTOCOL] Finished mapping all routes for port ${
+        this.protocolConfiguration.port
+      }`);
+    });
   }
 }

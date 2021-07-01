@@ -52,7 +52,10 @@ export class HTTPJsonBodyOutputMap {
     routeConfiguration.resultMapConfiguration.headers.forEach((headerInfo) => {
       const headerName = Object.keys(headerInfo)[0];
       const headerValue = headerInfo[headerName];
-      response.setHeader(headerName, getObjectProperty(outputData, headerValue));
+      const getValue = typeof headerValue === "string"
+        ? getObjectProperty(outputData, headerValue) ?? headerValue
+        : headerValue;
+      response.set(headerName, getValue as string);
     });
   }
 }
