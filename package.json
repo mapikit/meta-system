@@ -1,19 +1,18 @@
 {
   "name": "meta-system",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A system to be any system",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm ci && npx tsc",
     "test": "mocha --exit --sort",
-    "watch-test": "mocha --watch",
-    "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'",
-    "coverage": "nyc npm run test",
-    "run": "nodemon"
+    "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'"
+  },
+  "bin": {
+    "meta-system": "./dist/bin/index.js"
   },
   "_moduleAliases": {
-    "@api": "src",
-    "@test": "test"
+    "@api": "./dist"
   },
   "mocha": {
     "require": [
@@ -72,7 +71,7 @@
     "url": "https://github.com/mapikit/meta-system/issues"
   },
   "dependencies": {
-    "class-validator": "^0.11.1",
+    "decimal.js": "^10.3.1",
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
     "just-clone": "^3.2.1",
@@ -81,9 +80,7 @@
     "meta-function-helper": "^0.1.0",
     "module-alias": "^2.2.2",
     "mongodb": "^3.5.6",
-    "reflect-metadata": "^0.1.13",
-    "uuid": "^3.4.0",
-    "decimal.js": "^10.3.1"
+    "reflect-metadata": "^0.1.13"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {
