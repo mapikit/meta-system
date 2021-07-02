@@ -1,0 +1,9 @@
+/src/*
+/external-functions
+/node_modules
+/test
+/test-configs
+/test-functions
+.eslintrc
+nodemon.json
+tsconfig.json
