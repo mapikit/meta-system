@@ -12,8 +12,8 @@
     "run": "nodemon"
   },
   "_moduleAliases": {
-    "@api": "src",
-    "@test": "test"
+    "@api": "./dist/src",
+    "@test": "./dist/test"
   },
   "mocha": {
     "require": [

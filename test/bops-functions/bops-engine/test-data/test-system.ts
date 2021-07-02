@@ -5,7 +5,7 @@ import { ConfigurationType } from "@api/configuration/configuration-type";
 import { internalBop } from "./business-operations/internal-bop";
 import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";
-import { availableProtocols } from "@api/configuration/protocols/available-protocols-enum";
+import { availableProtocolsNames } from "@api/configuration/protocols/available-protocols-enum";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -29,7 +29,7 @@ export const testSystem : ConfigurationType = {
   ],
   protocols: [
     {
-      protocolType: availableProtocols.HTTP_JSONBODY,
+      protocolType: availableProtocolsNames.HTTP_JSONBODY,
       configuration: {
         port: 8080,
         routes: [],
