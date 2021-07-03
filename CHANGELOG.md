@@ -1,4 +1,7 @@
 # Changelog
+
+## 0.1.2
+Fixes bug [#44](https://github.com/mapikit/meta-system/issues/44).
 ## 0.1.1
 No change on the code. Meta-System repo is now licenced through GPL-3.0
 

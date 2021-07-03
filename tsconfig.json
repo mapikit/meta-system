@@ -3,6 +3,7 @@
     "module": "commonjs",
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "declaration": true,
     "target": "es5",
     "lib": ["es6"],
     "types": ["node", "mocha", "reflect-metadata"],
@@ -27,7 +28,8 @@
     }
   },
   "exclude": [
-    "test/*"
+    "test/*",
+    "dist/*"
   ],
   "inlcude": [
     "src/*"
