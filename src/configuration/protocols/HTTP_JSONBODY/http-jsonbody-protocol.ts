@@ -5,6 +5,7 @@ import express = require("express");
 import { ishttpJsonBodyConfiguration }
   from "@api/configuration/protocols/HTTP_JSONBODY/http-jsonbody-configuration-validation";
 import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
+import { json } from "body-parser";
 
 export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATION> {
   public constructor (
@@ -18,8 +19,10 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
     ishttpJsonBodyConfiguration(this.protocolConfiguration);
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public start () : void {
     const httpApp = express();
+    httpApp.use(json());
 
     const routes = this.protocolConfiguration.routes.map((routeConfig) => {
       console.log(`[HTTP_JSONBODY_PROTOCOL] Mapping route "${routeConfig.route}" at port ${
