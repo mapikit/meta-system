@@ -3,6 +3,7 @@ import {
   BopsConfigurationEntry,
   BopsConstant,
   BopsCustomObject,
+  BopsVariable,
   BusinessOperations,
 } from "./business-operations-type";
 
@@ -18,6 +19,7 @@ export class BusinessOperation implements BusinessOperations {
   public input : ObjectDefinition;
   public output : ObjectDefinition;
   public constants : BopsConstant[];
+  public variables : BopsVariable[];
   public configuration : BopsConfigurationEntry[];
   public customObjects : BopsCustomObject[];
 
