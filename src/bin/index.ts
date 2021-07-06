@@ -1,7 +1,5 @@
 #!/usr/bin/env node
-import "module-alias/register";
-import { SystemSetup } from "@api/bootstrap/system-setup";
-
+import { SystemSetup } from "src/bootstrap/system-setup";
 
 const main = async () : Promise<void> => {
   const setupProcess = new SystemSetup();

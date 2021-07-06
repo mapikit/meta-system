@@ -6,7 +6,7 @@
     "declaration": true,
     "target": "es5",
     "lib": ["es6"],
-    "types": ["node", "mocha", "reflect-metadata"],
+    "types": ["node", "mocha"],
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -18,12 +18,8 @@
       "*": [
         "node_modules/*"
       ],
-      "@api/*" : [
-        "src/types/*",
+      "src/*": [
         "src/*"
-      ],
-      "@test/*" : [
-        "test/*"
       ]
     }
   },

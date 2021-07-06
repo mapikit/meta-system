@@ -1,4 +1,3 @@
-import "module-alias/register";
 import { ExternalFunctionManagerClass, externalFunctionManagerSingleton }
   from "@api/bops-functions/function-managers/external-function-manager";
 import internalFunctionManager, { InternalFunctionManagerClass }

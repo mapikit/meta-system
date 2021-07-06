@@ -81,13 +81,10 @@
     "live-plugin-manager": "^0.15.1",
     "mersenne-twister": "^1.1.0",
     "meta-function-helper": "^0.1.0",
-    "module-alias": "^2.2.2",
-    "mongodb": "^3.5.6",
-    "reflect-metadata": "^0.1.13"
+    "mongodb": "^3.5.6"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {
-    "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.11",
     "@types/express": "^4.17.9",
     "@types/faker": "^4.1.11",

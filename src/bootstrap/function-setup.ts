@@ -1,17 +1,17 @@
-import { BopsEngine } from "@api/bops-functions/bops-engine/bops-engine";
-import { ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
-import { StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-manager";
-import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
-import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
-import { InternalFunctionManagerClass } from "@api/bops-functions/function-managers/internal-function-manager";
-import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
-import { BopsDependencies, CheckBopsFunctionsDependencies }
-  from "@api/configuration/business-operations/check-bops-functions-dependencies";
-import { ConfigurationType } from "@api/configuration/configuration-type";
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { SchemasManager } from "@api/schemas/application/schemas-manager";
 import { MongoClient } from "mongodb";
+import { BopsEngine } from "src/bops-functions/bops-engine/bops-engine";
+import { ModuleManager } from "src/bops-functions/bops-engine/modules-manager";
+import { StaticSystemInfo } from "src/bops-functions/bops-engine/static-info-validation";
+import { BopsManagerClass } from "src/bops-functions/function-managers/bops-manager";
+import { ExternalFunctionManagerClass } from "src/bops-functions/function-managers/external-function-manager";
+import { FunctionManager } from "src/bops-functions/function-managers/function-manager";
+import { InternalFunctionManagerClass } from "src/bops-functions/function-managers/internal-function-manager";
+import { BusinessOperation } from "src/configuration/business-operations/business-operation";
+import { BopsDependencies, CheckBopsFunctionsDependencies }
+  from "src/configuration/business-operations/check-bops-functions-dependencies";
+import { ConfigurationType } from "src/configuration/configuration-type";
+import { SchemasType } from "src/configuration/schemas/schemas-type";
+import { SchemasManager } from "src/schemas/application/schemas-manager";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();

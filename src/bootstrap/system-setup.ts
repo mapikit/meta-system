@@ -1,13 +1,14 @@
 import Path from "path";
 import FS from "fs";
-import { DeserializeConfigurationCommand } from "@api/configuration/de-serialize-configuration";
-import { Configuration } from "@api/configuration/configuration";
-import { FunctionSetup } from "@api/bootstrap/function-setup";
-import { externalFunctionManagerSingleton } from "@api/bops-functions/function-managers/external-function-manager";
-import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
-import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
-import { protocolClassesMap } from "@api/bootstrap/protocol-classes";
-import { MetaProtocol } from "@api/configuration/protocols/meta-protocol";
+import { externalFunctionManagerSingleton } from "src/bops-functions/function-managers/external-function-manager";
+import { FunctionManager } from "src/bops-functions/function-managers/function-manager";
+import internalFunctionManager from "src/bops-functions/function-managers/internal-function-manager";
+import { Configuration } from "src/configuration/configuration";
+import { DeserializeConfigurationCommand } from "src/configuration/de-serialize-configuration";
+import { MetaProtocol } from "src/configuration/protocols/meta-protocol";
+import { FunctionSetup } from "src/bootstrap/function-setup";
+import { protocolClassesMap } from "src/bootstrap/protocol-classes";
+
 
 const fsPromise = FS.promises;
 
