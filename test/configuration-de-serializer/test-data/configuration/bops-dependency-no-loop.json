@@ -54,6 +54,7 @@
       "input": {},
       "output": {},
       "constants": [],
+      "variables": [],
       "customObjects": [],
       "configuration": []
     },
@@ -62,6 +63,7 @@
       "input": {},
       "output": {},
       "constants": [],
+      "variables": [],
       "customObjects": [],
       "configuration": []
     },
@@ -76,6 +78,7 @@
         "statusCode": { "type": "number", "requried": true }
       },
       "constants": [],
+      "variables": [],
       "configuration": [
         {
           "key": 1,

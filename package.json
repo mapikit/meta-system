@@ -14,7 +14,8 @@
   },
   "mocha": {
     "require": [
-      "ts-node/register"
+      "ts-node/register",
+      "tsconfig-paths/register"
     ],
     "timeout": 0,
     "spec": "./test/**/*.ts",

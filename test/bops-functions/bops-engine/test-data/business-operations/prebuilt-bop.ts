@@ -11,6 +11,7 @@ export const mapikitProvidedBop : BusinessOperations = {
     { name: "numericEight", type: "number", value: 8 },
     { name: "targetValue", type: "number", value: 5093 },
   ],
+  variables: [],
   configuration: [
     {
       moduleRepo: "#exponential",

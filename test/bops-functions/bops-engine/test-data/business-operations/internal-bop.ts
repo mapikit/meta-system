@@ -9,6 +9,7 @@ export const internalBop : BusinessOperations = {
     { name: "eight", type: "number", value: 8 },
     { name: "four", type: "number", value: 4 },
   ],
+  variables: [],
   configuration: [
     {
       moduleRepo: "+prebuilt-functions",
