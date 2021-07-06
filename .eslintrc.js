@@ -1,6 +1,5 @@
 module.exports = {
   parser: "@typescript-eslint/parser",
-
   plugins: [
     "@typescript-eslint",
     "eslint-plugin-import"
@@ -22,6 +21,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript"
   ],
+  igonorePatterns: [ "dist/*" ],
   rules: { //individual rule config for typescript
     "@typescript-eslint/type-annotation-spacing": ["error", {"before": true} ],
     "@typescript-eslint/indent": [ "error", 2],
@@ -34,7 +34,7 @@ module.exports = {
     "@typescript-eslint/ban-types" : ["error", { "types": { "Function": false, "object": false } }],
     "@typescript-eslint/no-extra-semi" : ["off"],
     "@typescript-eslint/no-shadow": ["error"],
-    "import/no-relative-parent-imports": ["error"],
+    "@typescript-eslint/explicit-module-boundary-types": ["warn", { allowArgumentsExplicitlyTypedAsAny: true }],
     "no-trailing-spaces": ["warn"],
     "max-len": ["warn" , { "code" : 120}],
     "no-warning-comments": ["warn", { terms: ["TODO", "FIX"], location: "start"}],

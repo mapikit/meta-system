@@ -1,0 +1,13 @@
+// The TSConfig for building the application.
+// Must always exclude "test" and "dist" directories
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "test/*",
+    "dist/*"
+  ],
+  "include": [
+    "src/*",
+    "src/bin/index.ts"
+  ]
+}

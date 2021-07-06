@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "npm ci && npx tsc",
+    "build": "npm ci && npx tsc -p tsconfig.build.json",
     "test": "mocha --exit --sort",
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'"
   },
