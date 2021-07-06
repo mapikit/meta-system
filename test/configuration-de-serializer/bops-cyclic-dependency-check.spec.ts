@@ -1,7 +1,7 @@
-import { BopsCyclicDependencyCheck } from "@api/configuration/business-operations/cyclic-dependency-check";
-import BopsDependencyLoop from "@test/configuration-de-serializer/test-data/configuration/bops-dependency-loop.json";
+import { BopsCyclicDependencyCheck } from "../../src/configuration/business-operations/cyclic-dependency-check";
+import BopsDependencyLoop from "./test-data/configuration/bops-dependency-loop.json";
 import BopsDependencyNoLoop
-  from "@test/configuration-de-serializer/test-data/configuration/bops-dependency-no-loop.json";
+  from "./test-data/configuration/bops-dependency-no-loop.json";
 import { expect } from "chai";
 describe("BOps Cyclic Dependency Check", () => {
   it("Fails to execute when there is cyclic dependency", () => {

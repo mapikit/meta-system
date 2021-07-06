@@ -1,18 +1,18 @@
-import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
-import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
-import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { FunctionsInstaller } from "@api/bops-functions/installation/functions-installer";
+import { ExternalFunctionManagerClass } from "../../src/bops-functions/function-managers/external-function-manager";
+import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
+import { FunctionFileSystem } from "../../src/bops-functions/installation/function-file-system";
+import { FunctionsInstaller } from "../../src/bops-functions/installation/functions-installer";
 import {
   CheckBopsFunctionsDependencies,
-} from "@api/configuration/business-operations/check-bops-functions-dependencies";
+} from "../../src/configuration/business-operations/check-bops-functions-dependencies";
 import { expect } from "chai";
 import Path from "path";
 
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("@test/configuration-de-serializer/test-data/configuration-example.json");
+const configurationExample = require("./test-data/configuration-example.json");
 const unreferencedInput =
-  require("@test/configuration-de-serializer/test-data/bops/unreferenced-input-dependency.json");
+  require("./test-data/bops/unreferenced-input-dependency.json");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Check BOPS functions dependencies", () => {

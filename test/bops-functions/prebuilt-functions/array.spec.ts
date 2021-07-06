@@ -1,10 +1,10 @@
-import { arrayAtBopsFunction } from "@api/bops-functions/prebuilt-functions/array/array-at";
-import { arrayFindIndexBopsFunction } from "@api/bops-functions/prebuilt-functions/array/find-index";
-import { arrayIncludesBopsFunction } from "@api/bops-functions/prebuilt-functions/array/inlcudes";
-import { arrayJoinBopsFunction } from "@api/bops-functions/prebuilt-functions/array/join";
-import { arrayLengthBopsFunction } from "@api/bops-functions/prebuilt-functions/array/length";
-import { arrayPushBopsFunction } from "@api/bops-functions/prebuilt-functions/array/push";
-import { arrayRemoveBopsFunction } from "@api/bops-functions/prebuilt-functions/array/remove";
+import { arrayAtBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/array-at";
+import { arrayFindIndexBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/find-index";
+import { arrayIncludesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/inlcudes";
+import { arrayJoinBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/join";
+import { arrayLengthBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/length";
+import { arrayPushBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/push";
+import { arrayRemoveBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/remove";
 import { expect } from "chai";
 
 describe("Array BOPs functions", () => {

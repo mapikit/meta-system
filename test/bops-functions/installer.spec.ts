@@ -1,5 +1,5 @@
-require("module-alias/register");
-import { FunctionsInstaller, ModuleKind } from "@api/bops-functions/installation/functions-installer";
+
+import { FunctionsInstaller, ModuleKind } from "../../src/bops-functions/installation/functions-installer";
 import { expect } from "chai";
 import { random } from "faker";
 import Path from "path";

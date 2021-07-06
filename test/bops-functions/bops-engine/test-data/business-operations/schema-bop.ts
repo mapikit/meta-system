@@ -1,4 +1,4 @@
-import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
+import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type";
 
 export const schemaBop : BusinessOperations = {
   name: "schema-bop",

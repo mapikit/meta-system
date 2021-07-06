@@ -1,7 +1,8 @@
-require("module-alias/register");
-import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { MetaFunctionDescriptionValidation } from "@api/bops-functions/installation/functions-configuration-validation";
-import { FunctionsInstaller, ModuleKind } from "@api/bops-functions/installation/functions-installer";
+
+import { FunctionFileSystem } from "../../src/bops-functions/installation/function-file-system";
+import { MetaFunctionDescriptionValidation }
+  from "../../src/bops-functions/installation/functions-configuration-validation";
+import { FunctionsInstaller, ModuleKind } from "../../src/bops-functions/installation/functions-installer";
 import { expect } from "chai";
 import Path from "path";
 

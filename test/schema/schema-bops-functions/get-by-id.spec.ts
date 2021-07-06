@@ -1,13 +1,13 @@
-import { entityFactory } from "@test/factories/entity-factory";
-import { schemaFactory } from "@test/factories/schema-factory";
+import { entityFactory } from "../../factories/entity-factory";
+import { schemaFactory } from "../../factories/schema-factory";
 import { expect } from "chai";
 import { random } from "faker";
-import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/common/meta-repository";
-import { createFakeMongo } from "@test/doubles/mongo-server";
-import isNill from "@api/common/assertions/is-nill";
-import { SchemaManager } from "@api/schemas/application/schema-manager";
+import { SchemaFunctionErrors } from "../../../src/schemas/domain/schema-functions-errors";
+import { CloudedObject } from "../../../src/common/types/clouded-object";
+import { MetaRepository } from "../../../src/common/meta-repository";
+import { createFakeMongo } from "../../doubles/mongo-server";
+import isNill from "../../../src/common/assertions/is-nill";
+import { SchemaManager } from "../../../src/schemas/application/schema-manager";
 import { MongoClient } from "mongodb";
 
 describe("Schemas BOPS functions - Get By ID", () => {

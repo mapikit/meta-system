@@ -1,12 +1,12 @@
-import { absoluteBopsFunction } from "@api/bops-functions/prebuilt-functions/math/absolute";
-import { addBopsFunction } from "@api/bops-functions/prebuilt-functions/math/add";
-import { divideBopsFunction } from "@api/bops-functions/prebuilt-functions/math/divide";
-import { exponentialBopsFunction } from "@api/bops-functions/prebuilt-functions/math/exponential";
-import { modulusBopsFunction } from "@api/bops-functions/prebuilt-functions/math/modulus";
-import { multiplyBopsFunction } from "@api/bops-functions/prebuilt-functions/math/multipy";
-import { roundBopsFunction } from "@api/bops-functions/prebuilt-functions/math/round";
-import { squareRootBopsFunction } from "@api/bops-functions/prebuilt-functions/math/square-root";
-import { subtractBopsFunction } from "@api/bops-functions/prebuilt-functions/math/subtract";
+import { absoluteBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/absolute";
+import { addBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/add";
+import { divideBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/divide";
+import { exponentialBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/exponential";
+import { modulusBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/modulus";
+import { multiplyBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/multipy";
+import { roundBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/round";
+import { squareRootBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/square-root";
+import { subtractBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/subtract";
 import { expect } from "chai";
 import { random } from "faker";
 

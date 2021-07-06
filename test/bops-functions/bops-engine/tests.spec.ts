@@ -1,28 +1,28 @@
-import { BopsEngine } from "@api/bops-functions/bops-engine/bops-engine";
-import { ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
-import { FunctionsInstaller } from "@api/bops-functions/installation/functions-installer";
-import { SchemasManager } from "@api/schemas/application/schemas-manager";
-import { createFakeMongo } from "@test/doubles/mongo-server";
+import { BopsEngine } from "../../../src/bops-functions/bops-engine/bops-engine";
+import { ModuleManager } from "../../../src/bops-functions/bops-engine/modules-manager";
+import { FunctionsInstaller } from "../../../src/bops-functions/installation/functions-installer";
+import { SchemasManager } from "../../../src/schemas/application/schemas-manager";
+import { createFakeMongo } from "../../doubles/mongo-server";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
-import { testSystem } from "@test/bops-functions/bops-engine/test-data/test-system";
-import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { ResolvedConstants, StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { testSystem } from "./test-data/test-system";
+import { FunctionFileSystem } from "../../../src/bops-functions/installation/function-file-system";
+import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
+import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type";
+import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
 import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
 // import { internalBop } from "./test-data/business-operations/internal-bop";
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
 import faker from "faker";
 import Path from "path";
-import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
+import { ExternalFunctionManagerClass } from "../../../src/bops-functions/function-managers/external-function-manager";
 import { CheckBopsFunctionsDependencies }
-  from "@api/configuration/business-operations/check-bops-functions-dependencies";
-import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
-import internalFunctionManager from "@api/bops-functions/function-managers/internal-function-manager";
-import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-manager";
-import { ConfigurationType } from "@api/configuration/configuration-type";
+  from "../../../src/configuration/business-operations/check-bops-functions-dependencies";
+import { BusinessOperation } from "../../../src/configuration/business-operations/business-operation";
+import internalFunctionManager from "../../../src/bops-functions/function-managers/internal-function-manager";
+import { BopsManagerClass } from "../../../src/bops-functions/function-managers/bops-manager";
+import { ConfigurationType } from "../../../src/configuration/configuration-type";
 
 interface EngineInput {
   ModuleManager : ModuleManager;

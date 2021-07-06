@@ -1,4 +1,4 @@
-import { SchemasType, SchemaTypeDefinition } from "@api/configuration/schemas/schemas-type";
+import { SchemasType, SchemaTypeDefinition } from "../../src/configuration/schemas/schemas-type";
 import faker from "faker";
 
 export const entityFactory = (schemaFormat : SchemasType["format"]) : object => {

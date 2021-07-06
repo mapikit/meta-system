@@ -1,14 +1,14 @@
-require("module-alias/register");
-import { DeserializeSchemasCommand } from "@api/configuration/schemas/de-serialize-schemas";
+
+import { DeserializeSchemasCommand } from "../../src/configuration/schemas/de-serialize-schemas";
 import { expect } from "chai";
 import { ObjectDefinition } from "meta-function-helper";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("@test/configuration-de-serializer/test-data/configuration-example.json");
-const deepObjectSchema = require("@test/configuration-de-serializer/test-data/schema/deep-object-schema.json");
-const arraysSchema = require("@test/configuration-de-serializer/test-data/schema/array-types-schema.json");
+const configurationExample = require("./test-data/configuration-example.json");
+const deepObjectSchema = require("./test-data/schema/deep-object-schema.json");
+const arraysSchema = require("./test-data/schema/array-types-schema.json");
 const missingRefNameSchema =
-  require("@test/configuration-de-serializer/test-data/schema/missing-reference-schema.json");
+  require("./test-data/schema/missing-reference-schema.json");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Schemas De-Serializer", () => {

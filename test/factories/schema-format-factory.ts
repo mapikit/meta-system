@@ -1,7 +1,7 @@
 import faker from "faker";
-import { ExtendedJsonTypes, JsonTypes } from "@api/common/types/json-types";
+import { ExtendedJsonTypes, JsonTypes } from "../../src/common/types/json-types";
 import { SchemaObject, SchemaTypeDefinitionArray, SchemaTypeDefinitionObject }
-  from "@api/configuration/schemas/schemas-type";
+  from "../../src/configuration/schemas/schemas-type";
 
 const basicStrings : JsonTypes[] = ["boolean", "string", "number", "date"];
 const advancedStrings : Exclude<ExtendedJsonTypes, JsonTypes>[] = ["array", "object"];
@@ -20,6 +20,7 @@ export const schemaFormatFactory = (maxDepth = 3) : SchemaObject => {
   return newFormat;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
   object: (maxDepth : number) : SchemaTypeDefinitionObject => {
     return {
