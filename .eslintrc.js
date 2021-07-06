@@ -2,28 +2,27 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   plugins: [
     "@typescript-eslint",
-    "eslint-plugin-import"
+    "eslint-plugin-import",
   ],
   env: {
     es6: true,
-    node: true
+    node: true,
   },
   globals: {
     Atomics: "readonly",
-    SharedArrayBuffer: "readonly"
+    SharedArrayBuffer: "readonly",
   },
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module",
-    project: "./tsconfig.json"
+    project: "./tsconfig.json",
   },
   extends: [
     "plugin:@typescript-eslint/recommended",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
   ],
-  igonorePatterns: [ "dist/*" ],
   rules: { //individual rule config for typescript
-    "@typescript-eslint/type-annotation-spacing": ["error", {"before": true} ],
+    "@typescript-eslint/type-annotation-spacing": ["error", { "before": true } ],
     "@typescript-eslint/indent": [ "error", 2],
     "@typescript-eslint/no-parameter-properties": ["off"],
     "@typescript-eslint/no-use-before-define": ["off"],
@@ -36,9 +35,9 @@ module.exports = {
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/explicit-module-boundary-types": ["warn", { allowArgumentsExplicitlyTypedAsAny: true }],
     "no-trailing-spaces": ["warn"],
-    "max-len": ["warn" , { "code" : 120}],
-    "no-warning-comments": ["warn", { terms: ["TODO", "FIX"], location: "start"}],
-    "max-depth": ["error", {"max" : 4 }],
+    "max-len": ["warn" , { "code" : 120 }],
+    "no-warning-comments": ["warn", { terms: ["TODO", "FIX"], location: "start" }],
+    "max-depth": ["error", { "max" : 4 }],
     "semi": ["error", "always"],
     "space-before-blocks": ["warn", "always"],
     "space-before-function-paren": ["warn", "always"],
@@ -56,15 +55,15 @@ module.exports = {
     "object-curly-spacing": ["warn", "always"],
     "space-before-function-paren": ["warn", "always"],
     "quotes": ["warn", "double"],
-    "lines-between-class-members": ["warn", "always", {"exceptAfterSingleLine": true}],
-    "curly": ["error", "multi-line"]
+    "lines-between-class-members": ["warn", "always", { "exceptAfterSingleLine": true }],
+    "curly": ["error", "multi-line"],
   },
   "overrides": [
     {
-        "files": ["*.spec.ts"],
-        "rules": {
-          "max-lines-per-function": "off",
-        }
-    }
-  ]
-}
+      "files": ["*.spec.ts"],
+      "rules": {
+        "max-lines-per-function": "off",
+      },
+    },
+  ],
+};

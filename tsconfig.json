@@ -4,5 +4,10 @@
   "extends": "./tsconfig.base.json",
   "exclude": [
     "dist/*",
+  ],
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    ".eslintrc.js"
   ]
 }
