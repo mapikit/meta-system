@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 
 export const lowerThanBopsFunction = (input : { A : number; B : number }) : unknown => {
   const isLower = input.A < input.B;

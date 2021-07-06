@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 import { getGreatestDecimalPlaces }
   from "@api/bops-functions/prebuilt-functions/non-bops-utils/get-largest-decimal-places";
 import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";

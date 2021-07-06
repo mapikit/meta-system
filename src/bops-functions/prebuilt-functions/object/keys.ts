@@ -1,5 +1,6 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
-import { CloudedObject } from "@api/common/types/clouded-object";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
+import { CloudedObject } from "src/common/types/clouded-object";
+
 
 export const getObjectKeysBopsFunction = (input : { object : CloudedObject }) : unknown => {
   const result = [];

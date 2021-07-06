@@ -1,4 +1,4 @@
-import { TTLExceededError } from "./engine-errors/execution-time-exceeded";
+import { TTLExceededError } from "src/bops-functions/bops-engine/engine-errors/execution-time-exceeded";
 
 // eslint-disable-next-line max-lines-per-function
 export function addTimeout (timeoutMs : number, promise : Function) : Function {

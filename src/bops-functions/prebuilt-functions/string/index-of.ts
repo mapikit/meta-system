@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 
 export const indexOfStringFunction = (input : { string : string; search : string }) : unknown => {
   return ({ index: input.string.indexOf(input.search) });

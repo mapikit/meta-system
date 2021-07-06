@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 import assert from "assert";
 
 export const arrayIncludesBopsFunction = (input : { array : unknown[]; searchedItem : unknown }) : unknown => {

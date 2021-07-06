@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 import MersenneTwister from "mersenne-twister";
 
 export const randomNumberBopsFunction = () : unknown => {

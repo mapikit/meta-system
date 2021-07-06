@@ -1,10 +1,10 @@
-import { ResolvedConstants } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations, Dependency } from "@api/configuration/business-operations/business-operations-type";
-import constants from "@api/common/constants";
-import { MappedFunctions, ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
-import { ObjectResolver } from "./object-manipulator";
+import constants from "src/common/constants";
+import { BusinessOperations, Dependency } from "src/configuration/business-operations/business-operations-type";
+import { ConfigurationType } from "src/configuration/configuration-type";
 import { addTimeout } from "./add-timeout";
-import { ConfigurationType } from "@api/configuration/configuration-type";
+import { ModuleManager, MappedFunctions } from "./modules-manager";
+import { ObjectResolver } from "./object-manipulator";
+import { ResolvedConstants } from "./static-info-validation";
 
 type RelevantBopInfo = {
   constants : ResolvedConstants;

@@ -12,9 +12,6 @@
   "bin": {
     "meta-system": "./dist/bin/index.js"
   },
-  "_moduleAliases": {
-    "@api": "./dist"
-  },
   "mocha": {
     "require": [
       "ts-node/register"

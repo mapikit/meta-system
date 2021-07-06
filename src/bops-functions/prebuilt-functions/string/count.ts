@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 
 export const countStringFunction = (input : { string : string; search : string }) : unknown => {
   let count = 0;

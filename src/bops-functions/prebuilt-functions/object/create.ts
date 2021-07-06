@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 
 export const createObjectBopsFunction = (input : { key ?: string; value ?: unknown }) : unknown => {
   const resultObject = {};

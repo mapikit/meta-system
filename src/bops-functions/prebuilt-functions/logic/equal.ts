@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
 import { isDeepStrictEqual } from "util";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
