@@ -2,7 +2,7 @@ import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function
 
 export function decreaseVariableFunction (input : { variableName : string; value ?: number }) : unknown {
   if(typeof this.variables[input.variableName] !== "number") {
-    return { errorMessage: `Input value ${input.value} is not a number` }
+    return { errorMessage: `Input value ${input.value} is not a number` };
   }
 
   this.variables[input.variableName] -= input.value;

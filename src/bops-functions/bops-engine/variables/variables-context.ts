@@ -1,6 +1,7 @@
 import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
 import { JsonTypes } from "@api/common/types/json-types";
 import { BopsVariable } from "@api/configuration/business-operations/business-operations-type";
+import { ConfigurationType } from "@api/configuration/configuration-type";
 import { decreaseVariableFunction } from "./functions/decrease-variable";
 import { increaseVariableFunction } from "./functions/increase-variable";
 import { setVariableFunction } from "./functions/set-variable";
@@ -11,11 +12,19 @@ export type ResolvedVariables = Record<string, ResolvedVariable>;
 export class VariableContext {
   public variables : ResolvedVariables;
 
-  constructor (variables : BopsVariable[]) {
-    this.variables = this.resolveVariables(variables);
+  constructor (variables : ResolvedVariables) {
+    this.variables = variables;
   }
 
-  private resolveVariables (variables : BopsVariable[]) : ResolvedVariables {
+  public static resolveSystemVariables (systemConfig : ConfigurationType) : Record<string, ResolvedVariables> {
+    const systemVariables : Record<string, ResolvedVariables> = {};
+    for(const bop of systemConfig.businessOperations) {
+      systemVariables[bop.name] = VariableContext.resolveBopVariables(bop.variables);
+    }
+    return systemVariables;
+  }
+
+  public static resolveBopVariables (variables : BopsVariable[]) : ResolvedVariables {
     const vars : ResolvedVariables = {};
     variables.forEach(variable => {
       if(variable.initialValue !== undefined) {

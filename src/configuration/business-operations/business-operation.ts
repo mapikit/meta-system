@@ -30,6 +30,7 @@ export class BusinessOperation implements BusinessOperations {
     this.constants = parameters.constants;
     this.configuration = parameters.configuration;
     this.customObjects = parameters.customObjects;
+    this.variables = parameters.variables;
   }
 
   // eslint-disable-next-line max-lines-per-function

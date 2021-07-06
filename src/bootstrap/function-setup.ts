@@ -1,6 +1,5 @@
 import { BopsEngine } from "@api/bops-functions/bops-engine/bops-engine";
 import { ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
-import { StaticSystemInfo } from "@api/bops-functions/bops-engine/static-info-validation";
 import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-manager";
 import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
 import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
@@ -44,10 +43,7 @@ export class FunctionSetup {
       SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
     });
 
-    const mappedConstants = StaticSystemInfo.validateSystemStaticInfo(this.systemConfiguration);
-
     this.bopsEngine = new BopsEngine({
-      MappedConstants: mappedConstants,
       ModuleManager: moduleManager,
       SystemConfig: this.systemConfiguration,
     });

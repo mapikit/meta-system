@@ -4,7 +4,7 @@ export function setVariableFunction (input : { variableName : string; value : un
   const foundVariable = this.variables[input.variableName];
   const isValidType = typeof input.value === foundVariable.type;
   if(!isValidType) {
-    return { errorMessage: `Type "${typeof input.value}" is not compatible with "${foundVariable.type}"` }
+    return { errorMessage: `Type "${typeof input.value}" is not compatible with "${foundVariable.type}"` };
   }
 
   foundVariable.value = input.value;
