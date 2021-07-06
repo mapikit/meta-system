@@ -1,7 +1,4 @@
-import {
-  HTTPRouteConfiguration,
-  HTTP_JSONBODY_CONFIGURATION,
-} from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
+import { HTTP_JSONBODY_CONFIGURATION, HTTPRouteConfiguration } from "./configuration";
 
 export function ishttpJsonBodyConfiguration (object : unknown) : asserts object is HTTP_JSONBODY_CONFIGURATION {
   const configurationLikeObject = object as HTTP_JSONBODY_CONFIGURATION;

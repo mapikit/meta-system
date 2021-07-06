@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const dateNowBopsFunction = () : { now : Date } => {
   return { now: new Date(Date.now()) };

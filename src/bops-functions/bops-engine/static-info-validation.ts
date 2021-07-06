@@ -1,7 +1,8 @@
-import { ConstantTypeError } from "@api/bops-functions/bops-engine/engine-errors/constant-type-error";
-import { JsonTypes } from "@api/common/types/json-types";
-import { BopsConstant, JsonTypeDict } from "@api/configuration/business-operations/business-operations-type";
-import { ConfigurationType } from "@api/configuration/configuration-type";
+
+import { JsonTypes } from "../../common/types/json-types";
+import { BopsConstant, JsonTypeDict } from "../../configuration/business-operations/business-operations-type";
+import { ConfigurationType } from "../../configuration/configuration-type";
+import { ConstantTypeError } from "./engine-errors/constant-type-error";
 
 export type ResolvedConstants = Record<string, unknown>;
 /**

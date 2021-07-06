@@ -1,8 +1,8 @@
-import { charAtBopsFunction } from "@api/bops-functions/prebuilt-functions/string/char-at";
-import { countStringFunction } from "@api/bops-functions/prebuilt-functions/string/count";
-import { indexOfStringFunction } from "@api/bops-functions/prebuilt-functions/string/index-of";
-import { stringReplaceFunction } from "@api/bops-functions/prebuilt-functions/string/replace";
-import { stringToNumberBopsFunction } from "@api/bops-functions/prebuilt-functions/string/to-number";
+import { charAtBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/char-at";
+import { countStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/count";
+import { indexOfStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/index-of";
+import { stringReplaceFunction } from "../../../src/bops-functions/prebuilt-functions/string/replace";
+import { stringToNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/to-number";
 import { expect } from "chai";
 
 describe("String BOPs functions", () => {

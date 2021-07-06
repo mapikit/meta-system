@@ -1,4 +1,7 @@
 # Changelog
+## 0.1.3
+Fixes issue [#46](https://github.com/mapikit/meta-system/issues/46).
+Meta-system now has types available built-in the NPM package.
 
 ## 0.1.2
 Fixes bug [#44](https://github.com/mapikit/meta-system/issues/44).

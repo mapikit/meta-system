@@ -1,11 +1,9 @@
-/* eslint-disable max-len */
-import "module-alias/register";
-import { mapikitProvidedBop } from "@test/bops-functions/bops-engine/test-data/business-operations/prebuilt-bop";
-import { ConfigurationType } from "@api/configuration/configuration-type";
+import { mapikitProvidedBop } from "../test-data/business-operations/prebuilt-bop";
+import { ConfigurationType } from "../../../../src/configuration/configuration-type";
 import { internalBop } from "./business-operations/internal-bop";
 import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";
-import { availableProtocolsNames } from "@api/configuration/protocols/available-protocols-enum";
+import { availableProtocolsNames } from "../../../../src/configuration/protocols/available-protocols-enum";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",

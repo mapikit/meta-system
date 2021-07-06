@@ -1,8 +1,4 @@
-import {
-  availableProtocolsNames,
-  ProtocolConfigurations,
-} from "@api/configuration/protocols/available-protocols-enum";
-
+import { availableProtocolsNames, ProtocolConfigurations } from "./available-protocols-enum";
 
 export interface ProtocolConfigType {
   protocolType : availableProtocolsNames;

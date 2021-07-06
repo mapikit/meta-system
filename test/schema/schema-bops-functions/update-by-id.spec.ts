@@ -1,14 +1,14 @@
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { entityFactory } from "@test/factories/entity-factory";
-import { schemaFactory } from "@test/factories/schema-factory";
+import { CloudedObject } from "../../../src/common/types/clouded-object";
+import { entityFactory } from "../../factories/entity-factory";
+import { schemaFactory } from "../../factories/schema-factory";
 import { random } from "faker";
 import { expect } from "chai";
-import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
-import { MetaRepository } from "@api/common/meta-repository";
-import { createFakeMongo } from "@test/doubles/mongo-server";
+import { SchemaFunctionErrors } from "../../../src/schemas/domain/schema-functions-errors";
+import { MetaRepository } from "../../../src/common/meta-repository";
+import { createFakeMongo } from "../../doubles/mongo-server";
 import { MongoClient } from "mongodb";
-import { SchemaManager } from "@api/schemas/application/schema-manager";
-import { randomPartialObject } from "@test/schema/random-partial-object";
+import { SchemaManager } from "../../../src/schemas/application/schema-manager";
+import { randomPartialObject } from "../../schema/random-partial-object";
 
 describe("Update By Id - Schema BOPs function", () => {
   const schema = schemaFactory({});

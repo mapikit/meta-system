@@ -1,4 +1,4 @@
-import { isNillBopsFunction } from "@api/bops-functions/prebuilt-functions/assertion/is-nill";
+import { isNillBopsFunction } from "../../../src/bops-functions/prebuilt-functions/assertion/is-nill";
 import { expect } from "chai";
 
 describe("Assertion BOps Functions", () => {

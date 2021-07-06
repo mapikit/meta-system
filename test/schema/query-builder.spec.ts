@@ -1,8 +1,8 @@
-import { MongoSchemaQueryBuilder } from "@api/schemas/application/query-builder/query-builder";
+import { MongoSchemaQueryBuilder } from "../../src/schemas/application/query-builder/query-builder";
 import { expect } from "chai";
-import { complexExampleSchema } from "@test/schema/common-schemas/complex-example-schema";
-import { flatExampleSchema } from "@test/schema/common-schemas/flat-example-schema";
-import { deepExampleSchema } from "@test/schema/common-schemas/deep-example-schema";
+import { complexExampleSchema } from "../schema/common-schemas/complex-example-schema";
+import { flatExampleSchema } from "../schema/common-schemas/flat-example-schema";
+import { deepExampleSchema } from "../schema/common-schemas/deep-example-schema";
 
 describe("Schema Query Builder", () => {
   it("Builds flat query successfully", () => {

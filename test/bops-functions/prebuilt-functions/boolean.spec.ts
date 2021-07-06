@@ -1,5 +1,5 @@
-import { boolToNumberBopsFunction } from "@api/bops-functions/prebuilt-functions/boolean/bool-to-number";
-import { boolToStringBopsFunction } from "@api/bops-functions/prebuilt-functions/boolean/bool-to-string";
+import { boolToNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/boolean/bool-to-number";
+import { boolToStringBopsFunction } from "../../../src/bops-functions/prebuilt-functions/boolean/bool-to-string";
 import { expect } from "chai";
 
 describe("Boolean BOps functions", () => {

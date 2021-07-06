@@ -1,8 +1,6 @@
-import { BopsConfigurationEntry } from "@api/configuration/business-operations/business-operations-type";
-import {
-  ModuleResolver,
-  ModuleResolverInputs } from "@api/bops-functions/bops-engine/module-resolver";
-import { ConfigurationType } from "@api/configuration/configuration-type";
+import { BopsConfigurationEntry } from "../../configuration/business-operations/business-operations-type";
+import { ConfigurationType } from "../../configuration/configuration-type";
+import { ModuleResolver, ModuleResolverInputs } from "./module-resolver";
 
 export type MappedFunctions = Map<string, Function>;
 

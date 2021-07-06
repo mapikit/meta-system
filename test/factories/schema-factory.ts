@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { SchemasType } from "../../src/configuration/schemas/schemas-type";
 import faker from "faker";
 import { schemaFormatFactory } from "./schema-format-factory";
 

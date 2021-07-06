@@ -1,7 +1,6 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
-import { getGreatestDecimalPlaces }
-  from "@api/bops-functions/prebuilt-functions/non-bops-utils/get-largest-decimal-places";
-import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
+import { InternalMetaFunction } from "../../internal-meta-function";
+import { anyIsNan } from "../non-bops-utils/any-is-nan";
+import { getGreatestDecimalPlaces } from "../non-bops-utils/get-largest-decimal-places";
 
 export const roundBopsFunction = (input : { input : number; precision : number }) : unknown => {
   if (anyIsNan(input.input, input.precision)) {

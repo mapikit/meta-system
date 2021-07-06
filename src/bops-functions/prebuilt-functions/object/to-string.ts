@@ -1,5 +1,5 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
-import { CloudedObject } from "@api/common/types/clouded-object";
+import { InternalMetaFunction } from "../../internal-meta-function";
+import { CloudedObject } from "../../../common/types/clouded-object";
 
 export const objectToStringBopsFunction = (input : { object : CloudedObject }) : unknown => {
   return ({ result: JSON.stringify(input.object) });

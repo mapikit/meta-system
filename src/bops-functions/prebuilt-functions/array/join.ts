@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const arrayJoinBopsFunction = (input : { array : unknown[]; separator ?: string }) : unknown => {
   return ({ result: input.array.join(input.separator ?? ",") });

@@ -1,12 +1,12 @@
-require("module-alias/register");
-import { DeserializeBopsCommand } from "@api/configuration/business-operations/de-serialize-bops";
+
+import { DeserializeBopsCommand } from "../../src/configuration/business-operations/de-serialize-bops";
 import { expect } from "chai";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("@test/configuration-de-serializer/test-data/configuration-example.json");
-const faultyBops = require("@test/configuration-de-serializer/test-data/bops/faulty-bops.json");
-const customObjectLoop = require("@test/configuration-de-serializer/test-data/bops/custom-objects-loop.json");
-const configurationLoop = require("@test/configuration-de-serializer/test-data/bops/configuration-loop.json");
+const configurationExample = require("./test-data/configuration-example.json");
+const faultyBops = require("./test-data/bops/faulty-bops.json");
+const customObjectLoop = require("./test-data/bops/custom-objects-loop.json");
+const configurationLoop = require("./test-data/bops/configuration-loop.json");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("BOPS Desserializer", () => {

@@ -1,7 +1,7 @@
-import { setValueAtObjectPath } from "@api/common/helpers/set-value-at-path";
-import { HTTPRouteConfiguration, InputMap } from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
-import { getObjectProperty } from "@api/schemas/application/query-builder/get-object-property";
 import { Request } from "express";
+import { setValueAtObjectPath } from "../../../common/helpers/set-value-at-path";
+import { getObjectProperty } from "../../../schemas/application/query-builder/get-object-property";
+import { HTTPRouteConfiguration, InputMap } from "./configuration";
 
 export class HTTPJsonBodyInputMap {
   /**

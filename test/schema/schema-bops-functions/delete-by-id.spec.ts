@@ -1,15 +1,15 @@
 /* eslint-disable max-lines-per-function */
-require("module-alias/register");
+
 import chai from "chai";
-import { schemaFactory } from "@test/factories/schema-factory";
-import { entityFactory } from "@test/factories/entity-factory";
-import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
+import { schemaFactory } from "../../factories/schema-factory";
+import { entityFactory } from "../../factories/entity-factory";
+import { SchemaFunctionErrors } from "../../../src/schemas/domain/schema-functions-errors";
 import faker from "faker";
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/common/meta-repository";
-import { createFakeMongo } from "@test/doubles/mongo-server";
+import { CloudedObject } from "../../../src/common/types/clouded-object";
+import { MetaRepository } from "../../../src/common/meta-repository";
+import { createFakeMongo } from "../../doubles/mongo-server";
 import { MongoClient, ObjectId } from "mongodb";
-import { SchemaManager } from "@api/schemas/application/schema-manager";
+import { SchemaManager } from "../../../src/schemas/application/schema-manager";
 
 const expect = chai.expect;
 describe("Bops Function - Delete by Id", () => {

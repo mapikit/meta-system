@@ -1,8 +1,8 @@
-import { HTTPRouteConfiguration } from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
 import { Request, Response, Router } from "express";
-import { HTTPJsonBodyInputMap } from "@api/configuration/protocols/HTTP_JSONBODY/input-map";
-import { HTTPJsonBodyOutputMap } from "@api/configuration/protocols/HTTP_JSONBODY/output-map";
-import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
+import { FunctionManager } from "../../../bops-functions/function-managers/function-manager";
+import { HTTPRouteConfiguration } from "./configuration";
+import { HTTPJsonBodyInputMap } from "./input-map";
+import { HTTPJsonBodyOutputMap } from "./output-map";
 
 export class HTTPJsonBodyRoute {
   public constructor (

@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 import Decimal from "decimal.js";
 
 export const toExponentialBopsFunction = (input : { number : number; decimalPlaces ?: number }) : unknown => {

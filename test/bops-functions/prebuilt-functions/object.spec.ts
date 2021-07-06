@@ -1,9 +1,9 @@
-import { combineObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/combine";
-import { createObjectBopsFunction } from "@api/bops-functions/prebuilt-functions/object/create";
-import { getObjectPropertyValueBopsFunction } from "@api/bops-functions/prebuilt-functions/object/get-value";
-import { getObjectKeysBopsFunction } from "@api/bops-functions/prebuilt-functions/object/keys";
-import { objectToStringBopsFunction } from "@api/bops-functions/prebuilt-functions/object/to-string";
-import { getObjectValuesBopsFunction } from "@api/bops-functions/prebuilt-functions/object/values";
+import { combineObjectBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/combine";
+import { createObjectBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/create";
+import { getObjectPropertyValueBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/get-value";
+import { getObjectKeysBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/keys";
+import { objectToStringBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/to-string";
+import { getObjectValuesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/values";
 import { expect } from "chai";
 
 describe("Object Bops Functions", () => {

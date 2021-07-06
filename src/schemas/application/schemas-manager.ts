@@ -1,7 +1,7 @@
-import { MetaRepository } from "@api/common/meta-repository";
 import { MongoClient } from "mongodb";
-import { SchemaManager } from "@api/schemas/application/schema-manager";
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { MetaRepository } from "../../common/meta-repository";
+import { SchemasType } from "../../configuration/schemas/schemas-type";
+import { SchemaManager } from "./schema-manager";
 
 export class SchemasManager {
   private readonly dbConnection : MongoClient;

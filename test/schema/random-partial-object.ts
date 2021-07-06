@@ -1,6 +1,6 @@
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { entityFactory } from "@test/factories/entity-factory";
+import { CloudedObject } from "../../src/common/types/clouded-object";
+import { SchemasType } from "../../src/configuration/schemas/schemas-type";
+import { entityFactory } from "../factories/entity-factory";
 import { random } from "faker";
 
 export const randomPartialObject = (fromSchema : SchemasType) : CloudedObject => {

@@ -1,5 +1,5 @@
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
 import * as Mongo from "mongodb";
+import { SchemasType } from "../configuration/schemas/schemas-type";
 
 export class MetaRepository {
   private connection : Mongo.MongoClient;

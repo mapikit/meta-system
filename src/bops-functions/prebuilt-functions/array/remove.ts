@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const arrayRemoveBopsFunction = (input : { array : unknown[]; index : number }) : unknown => {
   const found = input.array[input.index];

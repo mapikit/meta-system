@@ -1,15 +1,15 @@
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/common/meta-repository";
-import { SchemaManager } from "@api/schemas/application/schema-manager";
-import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
-import { createFakeMongo } from "@test/doubles/mongo-server";
-import { entityFactory } from "@test/factories/entity-factory";
+import { CloudedObject } from "../../../src/common/types/clouded-object";
+import { MetaRepository } from "../../../src/common/meta-repository";
+import { SchemaManager } from "../../../src/schemas/application/schema-manager";
+import { SchemaFunctionErrors } from "../../../src/schemas/domain/schema-functions-errors";
+import { createFakeMongo } from "../../doubles/mongo-server";
+import { entityFactory } from "../../factories/entity-factory";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
-import { complexExampleSchema } from "@test/schema/common-schemas/complex-example-schema";
-import { flatExampleSchema } from "@test/schema/common-schemas/flat-example-schema";
-import { deepExampleSchema } from "@test/schema/common-schemas/deep-example-schema";
-import { SchemaObject } from "@api/configuration/schemas/schemas-type";
+import { complexExampleSchema } from "../../schema/common-schemas/complex-example-schema";
+import { flatExampleSchema } from "../../schema/common-schemas/flat-example-schema";
+import { deepExampleSchema } from "../../schema/common-schemas/deep-example-schema";
+import { SchemaObject } from "../../../src/configuration/schemas/schemas-type";
 
 describe("Get Schema - Schemas Bops Function", () => {
   let fakeClient : MongoClient;

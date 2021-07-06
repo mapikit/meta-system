@@ -1,12 +1,12 @@
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { MetaRepository } from "@api/common/meta-repository";
-import { SchemaManager } from "@api/schemas/application/schema-manager";
-import { createFakeMongo } from "@test/doubles/mongo-server";
-import { entityFactory } from "@test/factories/entity-factory";
+import { CloudedObject } from "../../../src/common/types/clouded-object";
+import { MetaRepository } from "../../../src/common/meta-repository";
+import { SchemaManager } from "../../../src/schemas/application/schema-manager";
+import { createFakeMongo } from "../../doubles/mongo-server";
+import { entityFactory } from "../../factories/entity-factory";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
-import { multipleTypesSchema } from "@test/schema/common-schemas/multiple-types-schema";
-import { SchemaFunctionErrors } from "@api/schemas/domain/schema-functions-errors";
+import { multipleTypesSchema } from "../../schema/common-schemas/multiple-types-schema";
+import { SchemaFunctionErrors } from "../../../src/schemas/domain/schema-functions-errors";
 
 describe("Delete Schema - Schemas Bops Function", () => {
   let fakeClient : MongoClient;

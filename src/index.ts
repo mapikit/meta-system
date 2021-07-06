@@ -1,10 +1,9 @@
-import "module-alias/register";
-import { ExternalFunctionManagerClass, externalFunctionManagerSingleton }
-  from "@api/bops-functions/function-managers/external-function-manager";
-import internalFunctionManager, { InternalFunctionManagerClass }
-  from "@api/bops-functions/function-managers/internal-function-manager";
-import { BopsManagerClass } from "@api/bops-functions/function-managers/bops-manager";
-import { FunctionSetup } from "@api/bootstrap/function-setup";
+import { FunctionSetup } from "./bootstrap/function-setup";
+import { BopsManagerClass } from "./bops-functions/function-managers/bops-manager";
+import { ExternalFunctionManagerClass,
+  externalFunctionManagerSingleton } from "./bops-functions/function-managers/external-function-manager";
+import internalFunctionManager,
+{ InternalFunctionManagerClass } from "./bops-functions/function-managers/internal-function-manager";
 import { ConfigurationType as config } from "./configuration/configuration-type";
 
 export type ConfigurationType = config;

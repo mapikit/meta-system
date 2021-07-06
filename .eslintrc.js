@@ -16,7 +16,10 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module",
-    project: "./tsconfig.json"
+    project: [
+      "./tsconfig.json",
+      "./test/tsconfig.json"
+    ]
   },
   extends: [
     "plugin:@typescript-eslint/recommended",
@@ -31,7 +34,6 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": ["error"],
     "@typescript-eslint/no-floating-promises" : "error",
     "@typescript-eslint/no-misused-promises" : [ "error", { checkConditionals: true, checkVoidReturn: true } ],
-    "import/no-relative-parent-imports": ["error"],
     "no-trailing-spaces": ["warn"],
     "max-len": ["warn" , { "code" : 120}],
     "no-warning-comments": ["warn", { terms: ["TODO", "FIX"], location: "start"}],

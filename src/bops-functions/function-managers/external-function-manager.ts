@@ -1,9 +1,10 @@
-import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
-import { FunctionsInstaller, ModuleKind } from "@api/bops-functions/installation/functions-installer";
-import { runtimeDefaults } from "@api/configuration/runtime-config/defaults";
-import { FunctionFileSystem } from "@api/bops-functions/installation/function-file-system";
-import { MetaFunctionDescriptionValidation } from "@api/bops-functions/installation/functions-configuration-validation";
+
 import { MetaFunction } from "meta-function-helper";
+import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
+import { FunctionFileSystem } from "../installation/function-file-system";
+import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
+import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer";
+import { FunctionManager } from "./function-manager";
 
 
 export class ExternalFunctionManagerClass implements FunctionManager {

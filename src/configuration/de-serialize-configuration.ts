@@ -1,9 +1,7 @@
-import "module-alias/register";
-import { Configuration } from "@api/configuration/configuration";
-import { isConfigurationType }
-  from "@api/configuration/assertions/configuration/is-configuration-type";
-import { DeserializeSchemasCommand } from "@api/configuration/schemas/de-serialize-schemas";
-import { DeserializeBopsCommand } from "@api/configuration/business-operations/de-serialize-bops";
+import { isConfigurationType } from "./assertions/configuration/is-configuration-type";
+import { DeserializeBopsCommand } from "./business-operations/de-serialize-bops";
+import { Configuration } from "./configuration";
+import { DeserializeSchemasCommand } from "./schemas/de-serialize-schemas";
 
 export class DeserializeConfigurationCommand {
   private _result : Configuration;

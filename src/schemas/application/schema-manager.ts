@@ -1,6 +1,6 @@
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { MetaRepository } from "@api/common/meta-repository";
-import { SchemasBopsFunctions } from "@api/schemas/application/schema-bops-functions";
+import { MetaRepository } from "../../common/meta-repository";
+import { SchemasType } from "../../configuration/schemas/schemas-type";
+import { SchemasBopsFunctions } from "./schema-bops-functions";
 
 export class SchemaManager {
   public bopsFunctions : SchemasBopsFunctions;

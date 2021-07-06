@@ -1,7 +1,7 @@
-import { getObjectProperty } from "@api/schemas/application/query-builder/get-object-property";
 import clone from "just-clone";
-import { HTTPRouteConfiguration } from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
 import { Response } from "express";
+import { getObjectProperty } from "../../../schemas/application/query-builder/get-object-property";
+import { HTTPRouteConfiguration } from "./configuration";
 
 export class HTTPJsonBodyOutputMap {
   /**

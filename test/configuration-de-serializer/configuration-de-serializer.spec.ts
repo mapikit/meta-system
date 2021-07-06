@@ -1,10 +1,10 @@
-import { DeserializeConfigurationCommand } from "@api/configuration/de-serialize-configuration";
+import { DeserializeConfigurationCommand } from "../../src/configuration/de-serialize-configuration";
 import { expect } from "chai";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("@test/configuration-de-serializer/test-data/configuration-example.json");
+const configurationExample = require("./test-data/configuration-example.json");
 const badConfigurationExample =
-  require("@test/configuration-de-serializer/test-data/configuration/bad-configuration-example.json");
+  require("./test-data/configuration/bad-configuration-example.json");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Configuration Deserializer", () => {

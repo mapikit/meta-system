@@ -1,7 +1,6 @@
-import { BopsCustomObject } from
-  "@api/configuration/business-operations/business-operations-type";
-import { isType } from "@api/configuration/assertions/is-type";
 import { isObjectDefinition } from "meta-function-helper/dist/src/object-definition/is-object-definition";
+import { BopsCustomObject } from "../../business-operations/business-operations-type";
+import { isType } from "../is-type";
 
 export function isBopsCustomObjects (input : unknown) : asserts input is BopsCustomObject[] {
   if (!Array.isArray(input)) {
