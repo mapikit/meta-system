@@ -1,11 +1,10 @@
-import { MetaProtocol } from "@api/configuration/protocols/meta-protocol";
-import { HTTP_JSONBODY_CONFIGURATION } from "@api/configuration/protocols/HTTP_JSONBODY/configuration";
-import { HTTPJsonBodyRoute } from "@api/configuration/protocols/HTTP_JSONBODY/http-jsonbody-route";
 import express = require("express");
-import { ishttpJsonBodyConfiguration }
-  from "@api/configuration/protocols/HTTP_JSONBODY/http-jsonbody-configuration-validation";
-import { FunctionManager } from "@api/bops-functions/function-managers/function-manager";
 import { json } from "body-parser";
+import { FunctionManager } from "../../../bops-functions/function-managers/function-manager";
+import { MetaProtocol } from "../meta-protocol";
+import { HTTP_JSONBODY_CONFIGURATION } from "./configuration";
+import { ishttpJsonBodyConfiguration } from "./http-jsonbody-configuration-validation";
+import { HTTPJsonBodyRoute } from "./http-jsonbody-route";
 
 export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATION> {
   public constructor (

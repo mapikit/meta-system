@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { SystemSetup } from "src/bootstrap/system-setup";
+import { SystemSetup } from "../bootstrap/system-setup";
 
 const main = async () : Promise<void> => {
   const setupProcess = new SystemSetup();

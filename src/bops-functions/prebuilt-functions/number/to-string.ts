@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const numberToStringFunction = (input : { number : number }) : unknown => {
   if (Number.isNaN(input.number)) {

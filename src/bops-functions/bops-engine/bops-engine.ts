@@ -1,6 +1,6 @@
-import constants from "src/common/constants";
-import { BusinessOperations, Dependency } from "src/configuration/business-operations/business-operations-type";
-import { ConfigurationType } from "src/configuration/configuration-type";
+import constants from "../../common/constants";
+import { BusinessOperations, Dependency } from "../../configuration/business-operations/business-operations-type";
+import { ConfigurationType } from "../../configuration/configuration-type";
 import { addTimeout } from "./add-timeout";
 import { ModuleManager, MappedFunctions } from "./modules-manager";
 import { ObjectResolver } from "./object-manipulator";

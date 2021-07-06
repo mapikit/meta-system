@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const andGateBopsFunction = (input : { A : boolean; B : boolean }) : unknown => {
   const bothTrue = input.A && input.B;

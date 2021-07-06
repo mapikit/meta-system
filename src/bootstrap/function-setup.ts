@@ -1,17 +1,17 @@
 import { MongoClient } from "mongodb";
-import { BopsEngine } from "src/bops-functions/bops-engine/bops-engine";
-import { ModuleManager } from "src/bops-functions/bops-engine/modules-manager";
-import { StaticSystemInfo } from "src/bops-functions/bops-engine/static-info-validation";
-import { BopsManagerClass } from "src/bops-functions/function-managers/bops-manager";
-import { ExternalFunctionManagerClass } from "src/bops-functions/function-managers/external-function-manager";
-import { FunctionManager } from "src/bops-functions/function-managers/function-manager";
-import { InternalFunctionManagerClass } from "src/bops-functions/function-managers/internal-function-manager";
-import { BusinessOperation } from "src/configuration/business-operations/business-operation";
+import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
+import { ModuleManager } from "../bops-functions/bops-engine/modules-manager";
+import { StaticSystemInfo } from "../bops-functions/bops-engine/static-info-validation";
+import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
+import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager";
+import { FunctionManager } from "../bops-functions/function-managers/function-manager";
+import { InternalFunctionManagerClass } from "../bops-functions/function-managers/internal-function-manager";
+import { BusinessOperation } from "../configuration/business-operations/business-operation";
 import { BopsDependencies, CheckBopsFunctionsDependencies }
-  from "src/configuration/business-operations/check-bops-functions-dependencies";
-import { ConfigurationType } from "src/configuration/configuration-type";
-import { SchemasType } from "src/configuration/schemas/schemas-type";
-import { SchemasManager } from "src/schemas/application/schemas-manager";
+  from "../configuration/business-operations/check-bops-functions-dependencies";
+import { ConfigurationType } from "../configuration/configuration-type";
+import { SchemasType } from "../configuration/schemas/schemas-type";
+import { SchemasManager } from "../schemas/application/schemas-manager";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();

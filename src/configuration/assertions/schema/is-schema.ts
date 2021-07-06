@@ -1,4 +1,4 @@
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
+import { SchemasType } from "../../schemas/schemas-type";
 import { isSchemaFormat } from "./is-schema-format";
 
 /**

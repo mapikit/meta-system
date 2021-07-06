@@ -1,15 +1,14 @@
 import { QuerySelector } from "mongodb";
-import { valueToReplaceBoolean,
-  valueToReplaceBooleanArray,
-  valueToReplaceDate,
-  valueToReplaceDateArray,
-  valueToReplaceNumber,
-  valueToReplaceNumberArray,
-  valueToReplaceObject,
-  valueToReplaceObjectArray,
+import { valueToReplaceObjectArray,
   valueToReplaceString,
   valueToReplaceStringArray,
-} from "@api/schemas/application/query-builder/query-translation-type";
+  valueToReplaceBoolean,
+  valueToReplaceNumber,
+  valueToReplaceNumberArray,
+  valueToReplaceDate,
+  valueToReplaceDateArray,
+  valueToReplaceBooleanArray,
+  valueToReplaceObject } from "./query-translation-type";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, max-lines-per-function
 export const queryValueReplace = <T>(query : QuerySelector<T>, replacer : any) :

@@ -1,18 +1,16 @@
 /* eslint-disable max-len */
-import {
-  QueryType,
-  QueryTypes,
-  TypeBooleanArrayQuery,
-  TypeBooleanQuery,
-  TypeDateArrayQuery,
-  TypeDateQuery,
-  TypeNumberArrayQuery,
-  TypeNumberQuery,
-  TypeObjectArrayQuery,
-  TypeStringArrayQuery,
-  TypeStringQuery,
-} from "@api/schemas/application/schema-bops-funtions/query-type";
 import { QuerySelector } from "mongodb";
+import { TypeStringQuery,
+  TypeNumberQuery,
+  TypeBooleanQuery,
+  TypeDateQuery,
+  TypeStringArrayQuery,
+  TypeNumberArrayQuery,
+  TypeBooleanArrayQuery,
+  TypeDateArrayQuery,
+  TypeObjectArrayQuery,
+  QueryTypes,
+  QueryType } from "../schema-bops-funtions/query-type";
 
 export const valueToReplaceString = "__value__";
 export const valueToReplaceStringArray = [valueToReplaceString];

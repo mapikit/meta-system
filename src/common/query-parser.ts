@@ -1,5 +1,5 @@
-import { SchemaObject } from "@api/configuration/schemas/schemas-type";
 import { FilterQuery } from "mongodb";
+import { SchemaObject } from "../configuration/schemas/schemas-type";
 
 export function  parseQuery<T> (query : FilterQuery<T>, schema : SchemaObject) : FilterQuery<T> {
   const resolved : FilterQuery<object> = {};

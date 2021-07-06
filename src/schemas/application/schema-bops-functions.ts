@@ -1,10 +1,10 @@
-import isNill from "@api/common/assertions/is-nill";
-import { CloudedObject } from "@api/common/types/clouded-object";
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { MetaRepository } from "@api/common/meta-repository";
-import { SchemaFunctionErrors, SchemaFunctionErrorType } from "@api/schemas/domain/schema-functions-errors";
-import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
 import { FilterQuery } from "mongodb";
+import isNill from "../../common/assertions/is-nill";
+import { MetaRepository } from "../../common/meta-repository";
+import { CloudedObject } from "../../common/types/clouded-object";
+import { SchemasType } from "../../configuration/schemas/schemas-type";
+import { SchemaFunctionErrorType, SchemaFunctionErrors } from "../domain/schema-functions-errors";
+import { SchemasFunctions } from "../domain/schemas-functions";
 import { MongoSchemaQueryBuilder } from "./query-builder/query-builder";
 
 type SchemasFunctionsTypes = {

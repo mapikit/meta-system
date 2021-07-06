@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const stringReplaceFunction = (input : { baseString : string; search : string; replacer : string })
 : unknown => {

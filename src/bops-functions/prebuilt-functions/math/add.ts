@@ -1,6 +1,6 @@
-import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 import Decimal from "decimal.js";
-import { anyIsNan } from "@api/bops-functions/prebuilt-functions/non-bops-utils/any-is-nan";
+import { anyIsNan } from "../non-bops-utils/any-is-nan";
 
 export const addBopsFunction = (input : { numbersToAdd : number[] }) : unknown => {
   if (anyIsNan(...input.numbersToAdd)) {

@@ -1,4 +1,4 @@
-import { SchemaObject, SchemaTypeDefinition } from "@api/configuration/schemas/schemas-type";
+import { SchemaTypeDefinition, SchemaObject } from "../../schemas/schemas-type";
 import { isSchemaTypeArray } from "./is-schema-type-array";
 import { isSchemaTypeDefault } from "./is-schema-type-default";
 import { isSchemaTypeObject } from "./is-schema-type-object";

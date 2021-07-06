@@ -1,8 +1,9 @@
-import { ExternalFunctionManagerClass } from "@api/bops-functions/function-managers/external-function-manager";
-import { InternalFunctionManagerClass } from "@api/bops-functions/function-managers/internal-function-manager";
-import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
-import { Schema } from "@api/configuration/schemas/schema";
-import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
+import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager";
+import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager";
+import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
+import { Schema } from "../schemas/schema";
+import { BusinessOperation } from "./business-operation";
+
 
 export interface BopsDependencies {
   fromSchemas : string[];

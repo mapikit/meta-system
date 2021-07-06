@@ -1,13 +1,9 @@
 import { FilterQuery, QuerySelector } from "mongodb";
-import {
-  PropertyQuery,
-  QueryType,
-  QueryTypes,
-} from "@api/schemas/application/schema-bops-funtions/query-type";
-import { queryTranslationMap } from "@api/schemas/application/query-builder/query-translation-type";
-import { queryValueReplace } from "@api/schemas/application/query-builder/query-value-replace";
+import { SchemaObject, SchemasType, SchemaTypeDefinition } from "../../../configuration/schemas/schemas-type";
+import { QueryTypes, QueryType, PropertyQuery } from "../schema-bops-funtions/query-type";
 import { getObjectProperty } from "./get-object-property";
-import { SchemaObject, SchemasType, SchemaTypeDefinition } from "@api/configuration/schemas/schemas-type";
+import { queryTranslationMap } from "./query-translation-type";
+import { queryValueReplace } from "./query-value-replace";
 
 export class MongoSchemaQueryBuilder {
   private readonly schemaFormat : SchemaObject;

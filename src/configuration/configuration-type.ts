@@ -1,6 +1,6 @@
-import { SchemasType } from "@api/configuration/schemas/schemas-type";
-import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
-import { ProtocolConfigType } from "@api/configuration/protocols/protocol-config-type";
+import { BusinessOperations } from "./business-operations/business-operations-type";
+import { ProtocolConfigType } from "./protocols/protocol-config-type";
+import { SchemasType } from "./schemas/schemas-type";
 
 export interface ConfigurationType {
   name : string;

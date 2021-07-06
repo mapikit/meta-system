@@ -1,7 +1,6 @@
 import { BusinessOperation } from "./business-operation";
 import { BopsCustomObject } from "./business-operations-type";
 
-
 export class ValidateBopsCustomObjectsCommand {
   private businessOperation : BusinessOperation;
   private objectMap = new Map<string, BopsCustomObject>();

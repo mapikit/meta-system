@@ -1,4 +1,4 @@
-import { SchemasFunctions } from "@api/schemas/domain/schemas-functions";
+import { SchemasFunctions } from "./schemas-functions";
 
 export type SchemaFunctionErrorType = {
   [key in SchemasFunctions] : {

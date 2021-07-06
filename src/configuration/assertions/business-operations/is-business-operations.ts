@@ -1,9 +1,9 @@
-import { BusinessOperations } from "@api/configuration/business-operations/business-operations-type";
-import { isType } from "@api/configuration/assertions/is-type";
 import { isBopsConstants } from "./is-bops-constants";
 import { isBopsCustomObjects } from "./is-bops-custom-objects";
 import { isBopsConfigurationEntry } from "./is-bops-configuration";
 import { isObjectDefinition } from "meta-function-helper/dist/src/object-definition/is-object-definition";
+import { BusinessOperations } from "../../business-operations/business-operations-type";
+import { isType } from "../is-type";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [
   "configuration",

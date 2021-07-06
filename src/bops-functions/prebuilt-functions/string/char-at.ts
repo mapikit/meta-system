@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "src/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const charAtBopsFunction = (input : { string : string; index : number }) : unknown => {
   const found = input.string[input.index];

@@ -1,4 +1,4 @@
-import { SchemaTypeDefinitionParameter } from "@api/configuration/schemas/schemas-type";
+import { SchemaTypeDefinitionParameter } from "../../schemas/schemas-type";
 
 export function isSchemaTypeDefault (input : object) : asserts input is SchemaTypeDefinitionParameter {
   const schemaProperty = input as SchemaTypeDefinitionParameter;

@@ -1,7 +1,8 @@
-import { ConfigurationType, EnvironmentVariable } from "@api/configuration/configuration-type";
-import { BusinessOperation } from "@api/configuration/business-operations/business-operation";
-import { Schema } from "@api/configuration/schemas/schema";
+import { ConfigurationType } from "..";
+import { BusinessOperation } from "./business-operations/business-operation";
+import { EnvironmentVariable } from "./configuration-type";
 import { ProtocolConfigType } from "./protocols/protocol-config-type";
+import { Schema } from "./schemas/schema";
 
 
 export class Configuration implements ConfigurationType {

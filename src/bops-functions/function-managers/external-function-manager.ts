@@ -1,6 +1,6 @@
 
 import { MetaFunction } from "meta-function-helper";
-import { runtimeDefaults } from "src/configuration/runtime-config/defaults";
+import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
 import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
 import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer";

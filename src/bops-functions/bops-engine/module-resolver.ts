@@ -1,6 +1,6 @@
-import { BopsConfigurationEntry } from "src/configuration/business-operations/business-operations-type";
-import { SchemasManager } from "src/schemas/application/schemas-manager";
-import { SchemasFunctions } from "src/schemas/domain/schemas-functions";
+import { BopsConfigurationEntry } from "../../configuration/business-operations/business-operations-type";
+import { SchemasManager } from "../../schemas/application/schemas-manager";
+import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
 import { FunctionManager } from "../function-managers/function-manager";
 import { ProvidedFunctionNotFound } from "./engine-errors/function-not-found";
 import { OperationNotFoundError } from "./engine-errors/operation-not-found-error";
