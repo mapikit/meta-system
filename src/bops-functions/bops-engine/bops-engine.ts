@@ -4,7 +4,7 @@ import { ConfigurationType } from "../../configuration/configuration-type";
 import { addTimeout } from "./add-timeout";
 import { ModuleManager, MappedFunctions } from "./modules-manager";
 import { ObjectResolver } from "./object-manipulator";
-import { ResolvedConstants } from "./static-info-validation";
+import { ResolvedConstants, StaticSystemInfo } from "./static-info-validation";
 import { ResolvedVariables, VariableContext } from "./variables/variables-context";
 
 type RelevantBopInfo = {
@@ -16,16 +16,17 @@ type RelevantBopInfo = {
 
 export class BopsEngine {
   private readonly constants : Record<string, ResolvedConstants>;
+  private readonly variables : Record<string, ResolvedVariables>;
   private readonly moduleManager : ModuleManager;
   private mappedFunctions ?: MappedFunctions;
   private systemConfig : ConfigurationType;
 
   constructor (options : {
     ModuleManager : ModuleManager;
-    MappedConstants : Record<string, ResolvedConstants>;
     SystemConfig : ConfigurationType;
   }) {
-    this.constants = options.MappedConstants;
+    this.constants = StaticSystemInfo.validateSystemStaticInfo(options.SystemConfig);
+    this.variables = VariableContext.resolveSystemVariables(options.SystemConfig);
     this.moduleManager = options.ModuleManager;
     this.systemConfig = options.SystemConfig;
   }
@@ -37,7 +38,7 @@ export class BopsEngine {
     const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
 
     const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
-      const variablesInfo = new VariableContext(operation.variables);
+      const variablesInfo = new VariableContext(this.variables[operation.name]);
       this.mappedFunctions = variablesInfo.appendVariableFunctions(this.mappedFunctions);
 
       const workingBopContext : RelevantBopInfo = {

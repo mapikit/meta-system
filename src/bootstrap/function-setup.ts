@@ -1,7 +1,6 @@
 import { MongoClient } from "mongodb";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
 import { ModuleManager } from "../bops-functions/bops-engine/modules-manager";
-import { StaticSystemInfo } from "../bops-functions/bops-engine/static-info-validation";
 import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
 import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager";
 import { FunctionManager } from "../bops-functions/function-managers/function-manager";
@@ -44,10 +43,7 @@ export class FunctionSetup {
       SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
     });
 
-    const mappedConstants = StaticSystemInfo.validateSystemStaticInfo(this.systemConfiguration);
-
     this.bopsEngine = new BopsEngine({
-      MappedConstants: mappedConstants,
       ModuleManager: moduleManager,
       SystemConfig: this.systemConfiguration,
     });
