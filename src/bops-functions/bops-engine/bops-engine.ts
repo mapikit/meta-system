@@ -1,5 +1,6 @@
 import constants from "../../common/constants";
-import { BusinessOperations, Dependency } from "../../configuration/business-operations/business-operations-type";
+import { BopsVariable, BusinessOperations, Dependency }
+  from "../../configuration/business-operations/business-operations-type";
 import { ConfigurationType } from "../../configuration/configuration-type";
 import { addTimeout } from "./add-timeout";
 import { ModuleManager, MappedFunctions } from "./modules-manager";
@@ -16,7 +17,7 @@ type RelevantBopInfo = {
 
 export class BopsEngine {
   private readonly constants : Record<string, ResolvedConstants>;
-  private readonly variables : Record<string, ResolvedVariables>;
+  private readonly variables : Record<string, BopsVariable[]>;
   private readonly moduleManager : ModuleManager;
   private mappedFunctions ?: MappedFunctions;
   private systemConfig : ConfigurationType;
@@ -26,7 +27,7 @@ export class BopsEngine {
     SystemConfig : ConfigurationType;
   }) {
     this.constants = StaticSystemInfo.validateSystemStaticInfo(options.SystemConfig);
-    this.variables = VariableContext.resolveSystemVariables(options.SystemConfig);
+    this.variables = VariableContext.validateSystemVariables(options.SystemConfig);
     this.moduleManager = options.ModuleManager;
     this.systemConfig = options.SystemConfig;
   }
@@ -73,7 +74,8 @@ export class BopsEngine {
     const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
 
     if(input.originPath === undefined) {
-      await moduleFunction(resolvedInputs);
+      const result = await moduleFunction(resolvedInputs);
+      currentBop.results.set(dependency.key, result);
       return;
     }
 
