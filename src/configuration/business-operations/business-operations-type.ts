@@ -7,6 +7,7 @@ export interface BusinessOperations {
   input : ObjectDefinition;
   output : ObjectDefinition;
   constants : BopsConstant[];
+  variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];
   customObjects : BopsCustomObject[];
   protocols ?: ProtocolConfigType[];
@@ -23,6 +24,13 @@ export class BopsConstant {
   type : JsonTypes;
   value : JsonTypeDict<JsonTypes>;
 }
+
+export interface BopsVariable {
+  name : string;
+  type : JsonTypes;
+  initialValue ?: JsonTypeDict<JsonTypes>;
+}
+
 
 export interface BopsConfigurationEntry {
   version ?: string;

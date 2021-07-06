@@ -80,6 +80,7 @@ export class CheckBopsFunctionsDependencies {
         schema: "@",
         bops: "+",
         outputs: "%",
+        external: ":",
       };
 
       bopsFunctionConfig.dependencies.forEach((dependency) => {
@@ -106,10 +107,12 @@ export class CheckBopsFunctionsDependencies {
         return bopsDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      externalDependencies.push({
-        name: bopsFunctionConfig.moduleRepo,
-        version: bopsFunctionConfig.version,
-      });
+      if(typeChar === typeCharsEnum.external) {
+        externalDependencies.push({
+          name: bopsFunctionConfig.moduleRepo,
+          version: bopsFunctionConfig.version,
+        });
+      }
     });
 
     this.dependencies = {

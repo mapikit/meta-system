@@ -1,13 +1,16 @@
 import { ResolvedConstants } from "@api/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations, Dependency } from "@api/configuration/business-operations/business-operations-type";
+import { BusinessOperations, Dependency }
+  from "@api/configuration/business-operations/business-operations-type";
 import constants from "@api/common/constants";
 import { MappedFunctions, ModuleManager } from "@api/bops-functions/bops-engine/modules-manager";
 import { ObjectResolver } from "./object-manipulator";
 import { addTimeout } from "./add-timeout";
 import { ConfigurationType } from "@api/configuration/configuration-type";
+import { ResolvedVariables, VariableContext } from "@api/bops-functions/bops-engine/variables/variables-context";
 
 type RelevantBopInfo = {
   constants : ResolvedConstants;
+  variables : ResolvedVariables;
   config : BusinessOperations["configuration"];
   results : Map<number, unknown>;
 }
@@ -28,19 +31,24 @@ export class BopsEngine {
     this.systemConfig = options.SystemConfig;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
     this.mappedFunctions = this.moduleManager.resolveSystemModules(this.systemConfig);
 
     const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
 
     const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
+      const variablesInfo = new VariableContext(operation.variables);
+      this.mappedFunctions = variablesInfo.appendVariableFunctions(this.mappedFunctions);
+
       const workingBopContext : RelevantBopInfo = {
         config: operation.configuration,
         constants: this.constants[operation.name],
+        variables: variablesInfo.variables,
         results : new Map<number, unknown>(),
       };
 
-      return Object.assign(await this.getInputs(output.dependencies, workingBopContext, _inputs));
+      return this.getInputs(output.dependencies, workingBopContext, _inputs);
     };
     return addTimeout(msTimeout, stiched);
   }
@@ -65,7 +73,6 @@ export class BopsEngine {
 
     if(input.originPath === undefined) {
       const inputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
-
       await moduleFunction(inputs);
       return;
     }
@@ -95,6 +102,8 @@ export class BopsEngine {
         return { [input.targetPath]: foundConstant };
       case "inputs":
         return { [input.targetPath]: _inputs[input.originPath] };
+      case "variables":
+        return { [input.targetPath]: currentBop.variables[input.originPath].value };
     }
   }
 
