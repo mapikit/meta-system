@@ -1,7 +1,8 @@
-import { MappedFunctions } from "@api/bops-functions/bops-engine/modules-manager";
-import { JsonTypes } from "@api/common/types/json-types";
-import { BopsVariable } from "@api/configuration/business-operations/business-operations-type";
-import { ConfigurationType } from "@api/configuration/configuration-type";
+
+import { ConfigurationType } from "../../..";
+import { JsonTypes } from "../../../common/types/json-types";
+import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
+import { MappedFunctions } from "../modules-manager";
 import { decreaseVariableFunction } from "./functions/decrease-variable";
 import { increaseVariableFunction } from "./functions/increase-variable";
 import { setVariableFunction } from "./functions/set-variable";
