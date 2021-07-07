@@ -50,8 +50,12 @@ export class VariableContext {
   }
 
   private variableFunctions : Array<[string, Function]> = [
-    ["=setVariable", setVariableFunction.bind(this)],
-    ["=increaseVariable", increaseVariableFunction.bind(this)],
-    ["=decreaseVariable", decreaseVariableFunction.bind(this)],
+    ["=setVariable", this.wrapVariables(setVariableFunction)],
+    ["=increaseVariable", this.wrapVariables(increaseVariableFunction)],
+    ["=decreaseVariable", this.wrapVariables(decreaseVariableFunction)],
   ];
+
+  private wrapVariables (varFunction : Function) : Function {
+    return (inputs : unknown) : unknown => varFunction(inputs, this.variables);
+  }
 }

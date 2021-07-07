@@ -1,12 +1,22 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../../internal-meta-function";
+import { ResolvedVariables } from "../variables-context";
 
-export function decreaseVariableFunction (input : { variableName : string; value ?: number }) : unknown {
-  if(typeof this.variables[input.variableName] !== "number") {
+type DescreaseVariableInput = { variableName : string; value ?: number}
+
+export function decreaseVariableFunction (input : DescreaseVariableInput, variables : ResolvedVariables) : unknown {
+  input.value = input.value ?? 1;
+  const foundVariable = variables[input.variableName];
+
+  if(foundVariable === undefined) {
+    return { errorMessage: `No variable named "${input.variableName}" was found` };
+  }
+
+  if(typeof  input.value !== "number" || foundVariable.type !== "number") {
     return { errorMessage: `Input value ${input.value} is not a number` };
   }
 
-  this.variables[input.variableName] -= input.value;
-  return { newValue: this.variables[input.variableName] };
+  (foundVariable.value as number) -= input.value;
+  return { newValue: variables[input.variableName] };
 }
 
 export const decreaseVariableFunctionInformation : InternalMetaFunction = {

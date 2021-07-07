@@ -1,14 +1,22 @@
-import { InternalMetaFunction } from "@api/bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../../../internal-meta-function";
+import { ResolvedVariables } from "../variables-context";
 
-export function setVariableFunction (input : { variableName : string; value : unknown }) : unknown {
-  const foundVariable = this.variables[input.variableName];
+type SetVariableInput = { variableName : string; value : unknown };
+
+export function setVariableFunction (input : SetVariableInput, variables : ResolvedVariables) : unknown {
+  const foundVariable = variables[input.variableName];
+
+  if(foundVariable === undefined) {
+    return { errorMessage: `No variable named "${input.variableName}" was found` };
+  }
+
   const isValidType = typeof input.value === foundVariable.type;
   if(!isValidType) {
     return { errorMessage: `Type "${typeof input.value}" is not compatible with "${foundVariable.type}"` };
   }
 
   foundVariable.value = input.value;
-  return { newValue: this.variables[input.variableName].value };
+  return { newValue: variables[input.variableName].value };
 }
 
 export const setVariableFunctionInformation : InternalMetaFunction = {
