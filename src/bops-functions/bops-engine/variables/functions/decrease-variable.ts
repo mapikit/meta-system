@@ -1,9 +1,9 @@
 import { InternalMetaFunction } from "../../../internal-meta-function";
 import { ResolvedVariables } from "../variables-context";
 
-type DescreaseVariableInput = { variableName : string; value ?: number}
+type DecreaseVariableInput = { variableName : string; value ?: number}
 
-export function decreaseVariableFunction (input : DescreaseVariableInput, variables : ResolvedVariables) : unknown {
+export function decreaseVariableFunction (input : DecreaseVariableInput, variables : ResolvedVariables) : unknown {
   input.value = input.value ?? 1;
   const foundVariable = variables[input.variableName];
 
