@@ -7,6 +7,7 @@ export const externalBop : BusinessOperations = {
   },
   output: {},
   constants: [],
+  variables: [],
   configuration: [
     {
       version: "1.1.1",

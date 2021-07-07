@@ -27,7 +27,7 @@ export class ExternalFunctionManagerClass implements FunctionManager {
     return this.fucntionConfigurationMap.get(functionName);
   }
 
-  public async add (functionName : string, functionVersion = "1.0.0") : Promise<void> {
+  public async add (functionName : string, functionVersion = "latest") : Promise<void> {
     await this.functionsInstaller.install(functionName, functionVersion, ModuleKind.NPM);
     const functionConfigString = await this.functionFileSystem.getFunctionDescriptionFile(functionName);
     const functionConfig = new MetaFunctionDescriptionValidation(functionConfigString)
@@ -38,10 +38,10 @@ export class ExternalFunctionManagerClass implements FunctionManager {
       .importMain(functionName, functionConfig.entrypoint, functionConfig.mainFunction);
 
     this.functionMap.set(functionName, functionDeclaration);
-    this.fucntionConfigurationMap.set(`${functionName}@${functionConfig.version}`, functionConfig);
+    this.fucntionConfigurationMap.set(`${functionName}@${functionVersion}`, functionConfig);
   }
 
-  public functionIsInstalled (functionName : string, functionVersion : string) : boolean {
+  public functionIsInstalled (functionName : string, functionVersion = "latest") : boolean {
     return this.fucntionConfigurationMap.get(`${functionName}@${functionVersion}`) !== undefined;
   }
 }

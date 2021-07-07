@@ -23,6 +23,7 @@ import { BusinessOperation } from "../../../src/configuration/business-operation
 import internalFunctionManager from "../../../src/bops-functions/function-managers/internal-function-manager";
 import { BopsManagerClass } from "../../../src/bops-functions/function-managers/bops-manager";
 import { ConfigurationType } from "../../../src/configuration/configuration-type";
+import { variableBop } from "./test-data/business-operations/variables-bop";
 
 interface EngineInput {
   ModuleManager : ModuleManager;
@@ -127,6 +128,20 @@ describe("Bops Engine Testing", () => {
 
     expect(res["wasGreeted"]).to.be.true;
     expect(res["greetings"]).to.be.equal("Hello " + randomName);
+  });
+
+  it("Test of variable capability", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(externalBop);
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(variableBop, maxExecutionTime);
+
+    const randomNumber = Math.random()*1000;
+    const result = await stitched({ aNumber: randomNumber });
+
+    expect(result).not.to.be.undefined;
+    expect(result.initialValue).to.be.equal(15);
+    expect(result.functionOutput).to.be.equal(randomNumber);
+    expect(result.newValue).to.be.equal(randomNumber);
   });
 });
 

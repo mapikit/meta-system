@@ -19,8 +19,8 @@ export class ModuleManager {
   private resolveModules (modules : BopsConfigurationEntry[], existingMap : Map<string, Function>)
     : void {
     for(const module of modules) {
-      const isNotOutput = module.moduleRepo[0] !== "%";
-      if(!existingMap.has(module.moduleRepo) && isNotOutput) {
+      const isRegularModule = !["%", "="].includes(module.moduleRepo[0]);
+      if(!existingMap.has(module.moduleRepo) && isRegularModule) {
         existingMap.set(module.moduleRepo, this.resolveModule(module));
       }
     }

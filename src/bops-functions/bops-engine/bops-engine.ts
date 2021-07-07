@@ -1,46 +1,55 @@
 import constants from "../../common/constants";
-import { BusinessOperations, Dependency } from "../../configuration/business-operations/business-operations-type";
+import { BopsVariable, BusinessOperations, Dependency }
+  from "../../configuration/business-operations/business-operations-type";
 import { ConfigurationType } from "../../configuration/configuration-type";
 import { addTimeout } from "./add-timeout";
 import { ModuleManager, MappedFunctions } from "./modules-manager";
 import { ObjectResolver } from "./object-manipulator";
-import { ResolvedConstants } from "./static-info-validation";
+import { ResolvedConstants, StaticSystemInfo } from "./static-info-validation";
+import { ResolvedVariables, VariableContext } from "./variables/variables-context";
 
 type RelevantBopInfo = {
   constants : ResolvedConstants;
+  variables : ResolvedVariables;
   config : BusinessOperations["configuration"];
   results : Map<number, unknown>;
 }
 
 export class BopsEngine {
   private readonly constants : Record<string, ResolvedConstants>;
+  private readonly variables : Record<string, BopsVariable[]>;
   private readonly moduleManager : ModuleManager;
   private mappedFunctions ?: MappedFunctions;
   private systemConfig : ConfigurationType;
 
   constructor (options : {
     ModuleManager : ModuleManager;
-    MappedConstants : Record<string, ResolvedConstants>;
     SystemConfig : ConfigurationType;
   }) {
-    this.constants = options.MappedConstants;
+    this.constants = StaticSystemInfo.validateSystemStaticInfo(options.SystemConfig);
+    this.variables = VariableContext.validateSystemVariables(options.SystemConfig);
     this.moduleManager = options.ModuleManager;
     this.systemConfig = options.SystemConfig;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
     this.mappedFunctions = this.moduleManager.resolveSystemModules(this.systemConfig);
 
     const output = operation.configuration.find(module => module.moduleRepo.startsWith("%"));
 
     const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
+      const variablesInfo = new VariableContext(this.variables[operation.name]);
+      this.mappedFunctions = variablesInfo.appendVariableFunctions(this.mappedFunctions);
+
       const workingBopContext : RelevantBopInfo = {
         config: operation.configuration,
         constants: this.constants[operation.name],
+        variables: variablesInfo.variables,
         results : new Map<number, unknown>(),
       };
 
-      return Object.assign(await this.getInputs(output.dependencies, workingBopContext, _inputs));
+      return this.getInputs(output.dependencies, workingBopContext, _inputs);
     };
     return addTimeout(msTimeout, stiched);
   }
@@ -62,16 +71,15 @@ export class BopsEngine {
     _inputs : object) : Promise<object> {
     const dependency = currentBop.config.find(module => module.key === input.origin);
     const moduleFunction = this.mappedFunctions.get(dependency.moduleRepo);
+    const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
 
     if(input.originPath === undefined) {
-      const inputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
-
-      await moduleFunction(inputs);
+      const result = await moduleFunction(resolvedInputs);
+      currentBop.results.set(dependency.key, result);
       return;
     }
 
     const [origin, ...paths] = input.originPath.split(".");
-    const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
 
     if(origin === "result") {
       const results = currentBop.results.get(dependency.key) ?? await moduleFunction(resolvedInputs);
@@ -95,6 +103,8 @@ export class BopsEngine {
         return { [input.targetPath]: foundConstant };
       case "inputs":
         return { [input.targetPath]: _inputs[input.originPath] };
+      case "variables":
+        return { [input.targetPath]: currentBop.variables[input.originPath].value };
     }
   }
 

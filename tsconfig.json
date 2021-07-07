@@ -1,32 +1,13 @@
+// TSConfig used by `ts language service` (e.g.: IDEs).
+// Also corresponds to the config for linting and testing
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "declaration": true,
-    "target": "es5",
-    "lib": ["es6"],
-    "types": ["node", "mocha"],
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noImplicitAny": false,
-    "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "node_modules/*",
-        "src/*",
-        "test/*"
-      ]
-    }
-  },
+  "extends": "./tsconfig.base.json",
   "exclude": [
-    "test/*",
-    "dist/*"
+    "dist/*",
   ],
-  "inlcude": [
-    "src/*"
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    ".eslintrc.js"
   ]
 }

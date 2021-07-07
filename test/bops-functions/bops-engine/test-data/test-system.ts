@@ -4,6 +4,7 @@ import { internalBop } from "./business-operations/internal-bop";
 import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";
 import { availableProtocolsNames } from "../../../../src/configuration/protocols/available-protocols-enum";
+import { variableBop } from "./business-operations/variables-bop";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -24,6 +25,7 @@ export const testSystem : ConfigurationType = {
     internalBop,
     schemaBop,
     externalBop,
+    variableBop,
   ],
   protocols: [
     {

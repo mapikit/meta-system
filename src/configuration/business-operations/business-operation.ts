@@ -3,6 +3,7 @@ import {
   BopsConfigurationEntry,
   BopsConstant,
   BopsCustomObject,
+  BopsVariable,
   BusinessOperations,
 } from "./business-operations-type";
 
@@ -18,6 +19,7 @@ export class BusinessOperation implements BusinessOperations {
   public input : ObjectDefinition;
   public output : ObjectDefinition;
   public constants : BopsConstant[];
+  public variables : BopsVariable[];
   public configuration : BopsConfigurationEntry[];
   public customObjects : BopsCustomObject[];
 
@@ -28,6 +30,7 @@ export class BusinessOperation implements BusinessOperations {
     this.constants = parameters.constants;
     this.configuration = parameters.configuration;
     this.customObjects = parameters.customObjects;
+    this.variables = parameters.variables;
   }
 
   // eslint-disable-next-line max-lines-per-function
