@@ -4,10 +4,12 @@ import { isBopsConfigurationEntry } from "./is-bops-configuration";
 import { isObjectDefinition } from "meta-function-helper/dist/src/object-definition/is-object-definition";
 import { BusinessOperations } from "../../business-operations/business-operations-type";
 import { isType } from "../is-type";
+import { isBopsVariables } from "./is-bops-variables";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [
   "configuration",
   "constants",
+  "variables",
   "customObjects",
   "input",
   "name",
@@ -35,6 +37,7 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
   isObjectDefinition(businessOperationInput.input);
   isObjectDefinition(businessOperationInput.output);
   isBopsConstants(businessOperationInput.constants);
+  isBopsVariables(businessOperationInput.variables);
   isBopsCustomObjects(businessOperationInput.customObjects);
   isBopsConfigurationEntry(businessOperationInput.configuration);
 };
