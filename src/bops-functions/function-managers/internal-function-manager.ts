@@ -9,6 +9,7 @@ import { isNillBopsFunction } from "../prebuilt-functions/assertion/is-nill";
 import { boolToNumberBopsFunction } from "../prebuilt-functions/boolean/bool-to-number";
 import { boolToStringBopsFunction } from "../prebuilt-functions/boolean/bool-to-string";
 import { dateNowBopsFunction } from "../prebuilt-functions/date/date-now";
+import { forLoopFunction } from "../prebuilt-functions/flux-control/forLoop";
 import { ifBopsFunction } from "../prebuilt-functions/flux-control/if";
 import { tryCatchBopsFunction } from "../prebuilt-functions/flux-control/try-catch";
 import { andGateBopsFunction } from "../prebuilt-functions/logic/and";
@@ -123,6 +124,7 @@ internalFunctionManager.add("or", orGateBopsFunction);
 // Flux-Control Functions
 internalFunctionManager.add("if", ifBopsFunction);
 internalFunctionManager.add("tryCatch", tryCatchBopsFunction);
+internalFunctionManager.add("forLoop", forLoopFunction);
 
 // Date Functions
 internalFunctionManager.add("dateNow", dateNowBopsFunction);
