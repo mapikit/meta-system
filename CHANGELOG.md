@@ -1,4 +1,7 @@
 # Changelog
+## 0.1.5
+Added forLoop internal function
+
 ## 0.1.4
 Added variables and variable related functions. Variable value can be changed during runtime
 
