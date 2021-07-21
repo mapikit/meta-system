@@ -9,5 +9,6 @@ export abstract class MetaProtocol<ProtocolConfig> {
   }
 
   public abstract validateConfiguration () : void;
-  public abstract start () : void;
+  public abstract start () : Promise<void>;
+  public abstract stop () : Promise<void>;
 }
