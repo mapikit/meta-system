@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.0
+Now we do not need to add an extra character at the begginning of the `moduleRepo`. Instead we populate a new field called `moduleType`.
+
 ## 0.1.6-2
 Adds `-v` as a CLI argument for checking the version
 

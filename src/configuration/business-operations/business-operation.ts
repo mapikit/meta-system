@@ -35,29 +35,25 @@ export class BusinessOperation implements BusinessOperations {
 
   // eslint-disable-next-line max-lines-per-function
   public get modulesRepositoryList () : ModuleRepositoriesData {
-    const allRepos = this.configuration.map((configEntry) => {
-      return configEntry.moduleRepo;
-    });
-
     const internal = [];
     const external = [];
     const fromSchemas = [];
     const ending = [];
 
-    allRepos.forEach((repository) => {
-      if (repository.charAt(0) === "#") {
-        return internal.push(repository);
+    this.configuration.forEach((config) => {
+      if (config.moduleType === "internal") {
+        return internal.push(config.moduleRepo);
       }
 
-      if (repository.charAt(0) === "@") {
-        return fromSchemas.push(repository);
+      if (config.moduleType === "schemaFunction") {
+        return fromSchemas.push(config.moduleRepo);
       }
 
-      if (repository.charAt(0) === "%") {
-        return ending.push(repository);
+      if (config.moduleType === "output") {
+        return ending.push(config.moduleRepo);
       }
 
-      external.push(repository);
+      external.push(config.moduleRepo);
     });
 
     return { internal, external, fromSchemas, ending };

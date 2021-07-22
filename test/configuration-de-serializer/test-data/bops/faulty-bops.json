@@ -1,6 +1,7 @@
 {
   "businessOperations": [
     {
+      "variables": [],
       "name": 3,
       "input": {
         "carId": { "type": "string", "required": true },

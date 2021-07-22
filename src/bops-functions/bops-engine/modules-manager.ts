@@ -12,14 +12,13 @@ export class ModuleManager {
   }
 
   private resolveModule (module : BopsConfigurationEntry) : Function {
-    const startingChar = module.moduleRepo[0];
-    return this.moduleResolver.resolve[startingChar](module);
+    return this.moduleResolver.resolve[module.moduleType](module);
   }
 
   private resolveModules (modules : BopsConfigurationEntry[], existingMap : Map<string, Function>)
     : void {
     for(const module of modules) {
-      const isRegularModule = !["%", "="].includes(module.moduleRepo[0]);
+      const isRegularModule = !["output", "variable"].includes(module.moduleType);
       if(!existingMap.has(module.moduleRepo) && isRegularModule) {
         existingMap.set(module.moduleRepo, this.resolveModule(module));
       }

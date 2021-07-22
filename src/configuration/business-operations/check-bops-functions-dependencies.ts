@@ -4,9 +4,8 @@ import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
 import { Schema } from "../schemas/schema";
 import { BusinessOperation } from "./business-operation";
 
-
 export interface BopsDependencies {
-  fromSchemas : string[];
+  fromSchemas : Array<{ functionName: string; schemaName : string; }>;
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
@@ -60,6 +59,8 @@ export class CheckBopsFunctionsDependencies {
       this.checkOutputDependencyMet(),
     ];
 
+    console.log(results);
+
     return !results.includes(false);
   }
 
@@ -74,14 +75,14 @@ export class CheckBopsFunctionsDependencies {
 
     // eslint-disable-next-line max-lines-per-function
     this.businessOperation.configuration.forEach((bopsFunctionConfig) => {
-      const typeChar = bopsFunctionConfig.moduleRepo.charAt(0);
+      const type = bopsFunctionConfig.moduleType;
 
-      const typeCharsEnum = {
-        internal: "#",
-        schema: "@",
-        bops: "+",
-        outputs: "%",
-        external: ":",
+      const typesEnum = {
+        internal: "internal",
+        schema: "schemaFunction",
+        bops: "bop",
+        outputs: "output",
+        external: "external",
       };
 
       bopsFunctionConfig.dependencies.forEach((dependency) => {
@@ -92,23 +93,26 @@ export class CheckBopsFunctionsDependencies {
         }
       });
 
-      if (typeChar === typeCharsEnum.internal) {
+      if (type === typesEnum.internal) {
         return internalDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      if (typeChar === typeCharsEnum.outputs) {
+      if (type === typesEnum.outputs) {
         return outputsDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      if (typeChar === typeCharsEnum.schema) {
-        return schemasDependencies.push(bopsFunctionConfig.moduleRepo);
+      if (type === typesEnum.schema) {
+        return schemasDependencies.push({
+          functionName: bopsFunctionConfig.moduleRepo,
+          schemaName: bopsFunctionConfig.modulePackage
+        });
       }
 
-      if (typeChar === typeCharsEnum.bops) {
+      if (type === typesEnum.bops) {
         return bopsDependencies.push(bopsFunctionConfig.moduleRepo);
       }
 
-      if(typeChar === typeCharsEnum.external) {
+      if(type === typesEnum.external) {
         externalDependencies.push({
           name: bopsFunctionConfig.moduleRepo,
           version: bopsFunctionConfig.version,
@@ -157,7 +161,7 @@ export class CheckBopsFunctionsDependencies {
 
   public checkOutputDependencyMet () : boolean {
     let result = true;
-    const availableOutputFunction = "%output";
+    const availableOutputFunction = "output";
 
     for (const outputDependency of this.dependencies.fromOutputs) {
       result = outputDependency === availableOutputFunction;
@@ -173,8 +177,6 @@ export class CheckBopsFunctionsDependencies {
   /**
    * This method should be used to remove properties access when you just need the
    * plain type of the string.
-   *
-   * This does not remove the initial path indication, such as the "!" or "%"
    */
   private fromPropertyPathToType (fullPath : string) : string {
     const firstAccessIndex = fullPath.indexOf(".");
@@ -190,8 +192,7 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const internalDependencyName of this.dependencies.internal) {
-      const functionName = internalDependencyName.slice(1);
-      result = this.internalFunctionManager.functionIsInstalled(functionName);
+      result = this.internalFunctionManager.functionIsInstalled(internalDependencyName);
 
       if (!result) {
         console.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
@@ -207,13 +208,8 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const schemaDependecy of this.dependencies.fromSchemas) {
-      const requiredSchema = schemaDependecy.substring(1,
-        schemaDependecy.lastIndexOf("@"),
-      );
-
-      const requiredFunction = schemaDependecy
-        .substring(schemaDependecy.lastIndexOf("@") + 1);
-
+      const requiredSchema = schemaDependecy.schemaName
+      const requiredFunction = schemaDependecy.functionName
 
       result = this.schemas.has(requiredSchema);
       if (!result) {
@@ -235,9 +231,7 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const bopsDependency of this.dependencies.fromBops) {
-      const requiredBop = bopsDependency.substring(1);
-
-      result = this.bops.has(requiredBop);
+      result = this.bops.has(bopsDependency);
 
       if (!result) {
         console.error(`[Dependency Check] Unmet BOp dependency: "${bopsDependency}"`);
@@ -253,7 +247,7 @@ export class CheckBopsFunctionsDependencies {
 
     for (const externalDependency of this.dependencies.external) {
       result = this.externalFunctionManager
-        .functionIsInstalled(externalDependency.name.slice(1), externalDependency.version);
+        .functionIsInstalled(externalDependency.name, externalDependency.version);
 
       if (!result) {
         console.error(

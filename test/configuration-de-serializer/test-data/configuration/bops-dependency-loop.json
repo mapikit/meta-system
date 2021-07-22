@@ -58,7 +58,8 @@
       "customObjects": [],
       "configuration": [
         {
-          "moduleRepo": "+function-3",
+          "moduleRepo": "function-3",
+          "moduleType": "bop",
           "key": 1,
           "dependencies":  []
         }
@@ -73,7 +74,8 @@
       "customObjects": [],
       "configuration": [
         {
-          "moduleRepo": "+car-sell",
+          "moduleRepo": "car-sell",
+          "moduleType": "bop",
           "key": 1,
           "dependencies":  []
         }
@@ -94,7 +96,8 @@
       "configuration": [
         {
           "key": 1,
-          "moduleRepo": "%output",
+          "moduleRepo": "output",
+          "moduleType": "output",
           "dependencies": [
             { "origin": 2, "originPath": "result.value", "targetPath": "message" },
             { "origin": 3, "originPath": "result.value", "targetPath": "statusCode" }
@@ -102,7 +105,8 @@
         },
         {
           "key": 2,
-          "moduleRepo": "#if",
+          "moduleRepo": "if",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": "constant", "originPath": "failureMessage", "targetPath": "ifTrue" },
             { "origin": "constant", "originPath": "successMessage", "targetPath": "ifFalse" },
@@ -111,7 +115,8 @@
         },
         {
           "key": 3,
-          "moduleRepo": "#if",
+          "moduleRepo": "if",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": "constant", "originPath": "failureCode", "targetPath": "ifTrue" },
             { "origin": "constant", "originPath": "successCode", "targetPath": "ifFalse" },
@@ -120,7 +125,8 @@
         },
         {
           "key": 4,
-          "moduleRepo": "#if",
+          "moduleRepo": "if",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": "constant", "originPath": "trueValue", "targetPath": "ifTrue" },
             { "origin": 13, "originPath": "module", "targetPath": "ifFalse" },
@@ -129,7 +135,8 @@
         },
         {
           "key": 5,
-          "moduleRepo": "#or",
+          "moduleRepo": "or",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 6, "originPath": "result.value", "targetPath": "comparison[$origin]" },
             { "origin": 10, "originPath": "result.entity.sold", "targetPath": "comparison[$origin]" }
@@ -137,7 +144,8 @@
         },
         {
           "key": 6,
-          "moduleRepo": "#or",
+          "moduleRepo": "or",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 7, "originPath": "result.value", "targetPath": "comparison[$origin]" },
             { "origin": 8, "originPath": "result.value", "targetPath": "comparison[$origin]" },
@@ -146,63 +154,75 @@
         },
         {
           "key": 7,
-          "moduleRepo": "#not",
+          "moduleRepo": "not",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 10, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
           "key": 8,
-          "moduleRepo": "#not",
+          "moduleRepo": "not",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 11, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
           "key": 9,
-          "moduleRepo": "#not",
+          "moduleRepo": "not",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 12, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
           "key": 10,
-          "moduleRepo": "@car@getById",
+          "moduleRepo": "getById",
+          "modulePackage": "car",
+          "moduleType": "schemaFunction",
           "dependencies": [
             { "origin": "input", "originPath": "carId", "targetPath": "id" }
           ]
         },
         {
           "key": 11,
-          "moduleRepo": "@client@getById",
+          "moduleRepo": "getById",
+          "modulePackage": "client",
+          "moduleType": "schemaFunction",
           "dependencies": [
             { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "id" }
           ]
         },
         {
           "key": 12,
-          "moduleRepo": "@employee@getById",
+          "moduleRepo": "getById",
+          "modulePackage": "employee",
+          "moduleType": "schemaFunction",
           "dependencies": [
             { "origin": "input", "originPath": "jsonBody.employee", "targetPath": "id" }
           ]
         },
         {
           "key": 13,
-          "moduleRepo": "#not",
+          "moduleRepo": "not",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 14, "originPath": "result.value", "targetPath": "input" }
           ]
         },
         {
           "key": 14,
-          "moduleRepo": "#isNill",
+          "moduleRepo": "isNill",
+          "moduleType": "internal",
           "dependencies": [
             { "origin": 15, "originPath": "result.updateError", "targetPath": "input" }
           ]
         },
         {
           "key": 15,
-          "moduleRepo": "+function-2",
+          "moduleRepo": "function-2",
+          "moduleType": "bop",
           "dependencies": [
             { "origin": "input", "originPath": "carId", "targetPath": "id" },
             { "origin": "constants", "originPath": "trueValue", "targetPath": "sold" },
@@ -211,7 +231,9 @@
         },
         {
           "key": 16,
-          "moduleRepo": "@purchase@create",
+          "moduleRepo": "create",
+          "modulePackage": "purchase",
+          "moduleType": "schemaFunction",
           "dependencies": [
             { "origin": "input", "originPath": "carId", "targetPath": "productId" },
             { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "clientId" },
