@@ -79,8 +79,8 @@
     "just-clone": "^3.2.1",
     "live-plugin-manager": "^0.15.1",
     "mersenne-twister": "^1.1.0",
-    "meta-function-helper": "^0.1.0",
-    "mongodb": "^3.6.10"
+    "meta-function-helper": "^0.2.0",
+    "mongodb": "^3.5.6"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {
