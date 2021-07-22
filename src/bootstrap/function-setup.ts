@@ -133,7 +133,7 @@ export class FunctionSetup {
       const exists = this.externalFunctionManager.functionIsInstalled(dependency.name, dependency.version);
 
       if (!exists) {
-        await this.externalFunctionManager.add(dependency.name.slice(1), dependency.version);
+        await this.externalFunctionManager.add(dependency.name, dependency.version);
       }
     }
   }
@@ -176,7 +176,7 @@ export class FunctionSetup {
     const bopsWithMetDependencies = unbuiltBopsNames.filter((bopName) => {
       const bopsDependencies = this.bopsDependencyCheck.get(bopName).bopsDependencies;
       for (const bopDependencyFromBops of bopsDependencies.fromBops) {
-        if (!this.bopsManager.functionIsDeclared(bopDependencyFromBops.slice(1))) {
+        if (!this.bopsManager.functionIsDeclared(bopDependencyFromBops)) {
           return false;
         }
       }

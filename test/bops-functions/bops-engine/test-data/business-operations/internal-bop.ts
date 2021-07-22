@@ -12,14 +12,16 @@ export const internalBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      moduleRepo: "+prebuilt-functions",
+      moduleRepo: "prebuilt-functions",
+      moduleType: "bop",
       key: 5,
       dependencies: [
         { origin: "constants", originPath: "four", targetPath: "aNumber" },
       ],
     },
     {
-      moduleRepo: "#subtract",
+      moduleRepo: "subtract",
+      moduleType: "internal",
       key: 6,
       dependencies: [
         { origin: 5, originPath: "result.output", targetPath: "A" },
@@ -27,7 +29,8 @@ export const internalBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "%output",
+      moduleRepo: "output",
+      moduleType: "output",
       key: 3,
       dependencies: [
         { origin: 6, originPath: "result.result", targetPath: "output" },

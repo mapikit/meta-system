@@ -31,7 +31,23 @@ export function isBopsConfigurationEntry (input : unknown) : asserts input is Bo
 
   configurations.forEach((config) => {
     isType("string", "\"moduleRepo\" must be a string", config.moduleRepo);
+    
+    const moduleTypes = ["schemaFunction", "external", "internal", "bop", "output", "variable"];
+    if (!moduleTypes.includes(config.moduleType)) {
+      throw Error("\"moduleType\" must be one of the following: " + moduleTypes.join(", "), )
+    }
+
+    validateModulePackage(config);
+
     isType("number", "\"key\" must be a string", config.key);
     isDependencies(config.dependencies);
   });
+}
+
+const validateModulePackage = (config : BopsConfigurationEntry) : void => {
+  const packagedModuleTypes = ["schemaFunction"];
+  
+  if (packagedModuleTypes.includes(config.moduleType)) {
+    isType("string", "\"moduleType\" must be a string", config.moduleType);
+  }
 }

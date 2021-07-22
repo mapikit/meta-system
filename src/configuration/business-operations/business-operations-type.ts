@@ -31,10 +31,18 @@ export interface BopsVariable {
   initialValue ?: JsonTypeDict<JsonTypes>;
 }
 
+export type ModuleType = "schemaFunction"
+  | "external"
+  | "internal"
+  | "bop"
+  | "output"
+  | "variable";
 
 export interface BopsConfigurationEntry {
   version ?: string;
+  moduleType : ModuleType;
   moduleRepo : string;
+  modulePackage ?: string;
   key : number;
   dependencies : Dependency[];
 }

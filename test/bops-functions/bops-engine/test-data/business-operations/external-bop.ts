@@ -11,14 +11,16 @@ export const externalBop : BusinessOperations = {
   configuration: [
     {
       version: "1.1.1",
-      moduleRepo: ":bops-function-hello-world",
+      moduleRepo: "bops-function-hello-world",
+      moduleType: "external",
       key: 6,
       dependencies: [
         { origin: "inputs", originPath: "myName", targetPath: "nameToGreet" },
       ],
     },
     {
-      moduleRepo: "%output",
+      moduleRepo: "output",
+      moduleType: "output",
       key: 3,
       dependencies: [
         { origin: 6, originPath: "result.customGreetings", targetPath: "wasGreeted" },

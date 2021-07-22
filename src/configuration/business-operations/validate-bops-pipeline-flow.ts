@@ -79,7 +79,7 @@ export class ValidateBopsPipelineFlowCommand {
 
     do  {
       current = iterator.next();
-    } while(!current.done && !current.value.moduleRepo.startsWith("%"));
+    } while(!current.done && current.value.moduleType !== "output");
 
     if(current.value === undefined) {
       throw Error(`BOp "${this.businessOperation.name}" has no output function`);

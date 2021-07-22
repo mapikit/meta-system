@@ -14,7 +14,8 @@ export const variableBop : BusinessOperations = {
   ],
   configuration: [
     {
-      moduleRepo: "=setVariable",
+      moduleRepo: "setVariable",
+      moduleType: "variable",
       key: 2,
       dependencies: [
         { origin: "constants", originPath: "varName", targetPath: "variableName" },
@@ -22,7 +23,8 @@ export const variableBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "%output",
+      moduleRepo: "output",
+      moduleType: "output",
       key: 1,
       dependencies: [
         { origin: "variables", originPath: "numberVar", targetPath: "initialValue" },

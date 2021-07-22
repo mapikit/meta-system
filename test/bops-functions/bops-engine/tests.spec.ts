@@ -64,7 +64,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   ).bopsDependencies;
 
   for (const externalDependency of bopsDependencies.external) {
-    await externalFunctionHandler.add(externalDependency.name.slice(1), externalDependency.version);
+    await externalFunctionHandler.add(externalDependency.name, externalDependency.version);
   }
 
   const bopsEngineInputOptions : EngineInput = {
@@ -131,7 +131,7 @@ describe("Bops Engine Testing", () => {
   });
 
   it("Test of variable capability", async () => {
-    bopsEnginePrerequisites = await setupBopsEngineRequisites(externalBop);
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(variableBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(variableBop, maxExecutionTime);
 

@@ -34,8 +34,8 @@ export class BopsCyclicDependencyCheck {
     }
 
     bops.configuration.forEach((config) => {
-      if (config.moduleRepo.charAt(0) === "+") {
-        result.push(config.moduleRepo.slice(1));
+      if (config.moduleType === "bop") {
+        result.push(config.moduleRepo);
       }
     });
 

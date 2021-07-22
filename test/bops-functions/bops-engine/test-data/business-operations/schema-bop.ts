@@ -14,28 +14,35 @@ export const schemaBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      moduleRepo: "@car@create",
+      moduleRepo: "create",
+      modulePackage: "car",
+      moduleType: "schemaFunction",
       key: 5,
       dependencies: [
         { origin: "inputs", originPath: "aCar", targetPath: "entity" },
       ],
     },
     {
-      moduleRepo: "@car@getById",
+      moduleRepo: "getById",
+      modulePackage: "car",
+      moduleType: "schemaFunction",
       key: 4,
       dependencies: [
         { origin: 5, originPath: "result.createdEntity._id", targetPath: "id" },
       ],
     },
     {
-      moduleRepo: "@car@delete",
+      moduleRepo: "delete",
+      moduleType: "schemaFunction",
+      modulePackage: "car",
       key: 3,
       dependencies: [
         { origin: 4, originPath: "result.entity.year", targetPath: "query.year.equal_to" },
       ],
     },
     {
-      moduleRepo: "%output",
+      moduleRepo: "output",
+      moduleType: "output",
       key: 6,
       dependencies: [
         { origin: 3, originPath: "result", targetPath: "output" },

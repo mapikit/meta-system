@@ -13,16 +13,16 @@ export interface ModuleResolverInputs {
   BopsManager : FunctionManager;
 }
 
-enum RepoStartingCharacter {
-  schemaFunctions = "@",
-  internalFunctions = "#",
-  externalFunctions = ":",
-  bops = "+"
+enum ModuleTypes {
+  schemaFunctions = "schemaFunction",
+  internalFunctions = "internal",
+  externalFunctions = "external",
+  bops = "bop"
 }
-// Internal Bops (stating with '+') and Bop Output (starting with '%') are resolved separately
+// Internal Bops (embedded) and Bop Outputs are resolved separately
 
 export type ModuleResolverType = {
-  [char in RepoStartingCharacter] : (module : BopsConfigurationEntry) => Function;
+  [char in ModuleTypes] : (module : BopsConfigurationEntry) => Function;
 }
 
 export class ModuleResolver {
@@ -39,14 +39,15 @@ export class ModuleResolver {
   }
 
   public resolve : ModuleResolverType = {
-    "+": (module) : Function => {
-      const result = this.bopsManager.get(module.moduleRepo.slice(1));
+    "bop": (module) : Function => {
+      const result = this.bopsManager.get(module.moduleRepo);
 
       return result;
     },
-    "@": (module) : Function => {
-      const moduleName = module.moduleRepo.slice(1);
-      const [schema, operation] = moduleName.split("@");
+    "schemaFunction": (module) : Function => {
+      const moduleName = module.moduleRepo;
+      const schema = module.modulePackage;
+      const operation = module.moduleRepo;
       if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
 
       const schemaToLook = this.schemasManager.schemas.get(schema);
@@ -55,15 +56,15 @@ export class ModuleResolver {
       return schemaToLook.bopsFunctions[operation];
     },
 
-    "#" : (module) : Function => {
-      const functionName = module.moduleRepo.slice(1);
+    "internal" : (module) : Function => {
+      const functionName = module.moduleRepo;
       const foundFunction = this.internalFunctionManager.get(functionName);
       if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleRepo);
       return foundFunction;
     },
 
-    ":" : (module) : Function => {
-      return this.externalFunctionManager.get(module.moduleRepo.slice(1));
+    "external" : (module) : Function => {
+      return this.externalFunctionManager.get(module.moduleRepo);
     },
   }
 }
