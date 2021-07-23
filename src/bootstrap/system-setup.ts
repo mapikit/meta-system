@@ -33,11 +33,20 @@ export class SystemSetup {
   public async stop () : Promise<void> {
     console.log(chalk.yellowBright("[System Shutdown] Shutting down system"));
     console.log("[System Shutdown] Stopping", this.runningProtocols.length, "protocol(s)");
-    for(const protocol of this.runningProtocols) {
-      await protocol.stop();
+    for(let index = this.runningProtocols.length-1; index >= 0; index--) {
+      await this.runningProtocols[index].stop();
+      this.runningProtocols.pop();
     }
-    this.runningProtocols = [];
     console.log(chalk.blueBright("[System Shutdown] System stopped gracefully"));
+  }
+
+  public restart () : void {
+    console.log("Restarting System...");
+    this.stop()
+      .then(() => {
+        this.execute()
+          .catch(error => console.error("Error while starting system", error));
+      }).catch(error => console.error("Error while shutting down system", error));
   }
 
   private desserializeConfiguration (validationContent : string) : Configuration {
@@ -45,7 +54,6 @@ export class SystemSetup {
     deserializer.execute(JSON.parse(validationContent));
 
     return deserializer.result;
-
   }
 
   private async getFileContents () : Promise<string> {
