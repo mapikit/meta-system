@@ -1,4 +1,7 @@
 # Changelog
+## 0.1.6-01
+Fixes package publishing on NPM
+
 ## 0.1.6
 Added reload (`rs` command) and hot-reload (`--dev` flag) capabilities.
 Added some coloring to a few console lines.
