@@ -1,4 +1,8 @@
 # Changelog
+## 0.1.6
+Added reload (`rs` command) and hot-reload (`--dev` flag) capabilities.
+Added some coloring to a few console lines.
+
 ## 0.1.5
 Added forLoop internal function
 

@@ -8,24 +8,45 @@ import { DeserializeConfigurationCommand } from "../configuration/de-serialize-c
 import { MetaProtocol } from "../configuration/protocols/meta-protocol";
 import { FunctionSetup } from "../bootstrap/function-setup";
 import { protocolClassesMap } from "../bootstrap/protocol-classes";
-
+import chalk from "chalk";
 
 const fsPromise = FS.promises;
 
 export class SystemSetup {
+  private runningProtocols : MetaProtocol<unknown>[] = [];
   public async execute () : Promise<void> {
-    console.log("[System Setup] System setup starting");
+    console.log(chalk.greenBright("[System Setup] System setup starting"));
     console.log("[System Setup] Retrieving system configuration");
     const fileContent = await this.getFileContents();
 
-    console.log("[System Setup] File found - Validating content");
+    console.log(chalk.greenBright("[System Setup] File found - Validating content"));
     const systemConfig = this.desserializeConfiguration(fileContent);
-    console.log("[System Setup] Validation successful");
+    console.log(chalk.greenBright("[System Setup] Validation successful"));
     console.log("[System Setup] Starting System functions bootstrap sequence");
     const systemFunctions = await this.bootstrapFunctions(systemConfig);
 
-    console.log("[System Setup] Done - Loading Protocols");
+    console.log(chalk.greenBright("[System Setup] Done - Loading Protocols"));
     await this.setupProtocols(systemFunctions, systemConfig);
+    console.log(chalk.greenBright("[System Setup] Setup Done"));
+  }
+
+  public async stop () : Promise<void> {
+    console.log(chalk.yellowBright("[System Shutdown] Shutting down system"));
+    console.log("[System Shutdown] Stopping", this.runningProtocols.length, "protocol(s)");
+    for(let index = this.runningProtocols.length-1; index >= 0; index--) {
+      await this.runningProtocols[index].stop();
+      this.runningProtocols.pop();
+    }
+    console.log(chalk.blueBright("[System Shutdown] System stopped gracefully"));
+  }
+
+  public restart () : void {
+    console.log("Restarting System...");
+    this.stop()
+      .then(() => {
+        this.execute()
+          .catch(error => console.error("Error while starting system", error));
+      }).catch(error => console.error("Error while shutting down system", error));
   }
 
   private desserializeConfiguration (validationContent : string) : Configuration {
@@ -33,13 +54,12 @@ export class SystemSetup {
     deserializer.execute(JSON.parse(validationContent));
 
     return deserializer.result;
-
   }
 
   private async getFileContents () : Promise<string> {
     const fileLocation = process.argv[2];
 
-    const filePath = Path.join(process.env.PWD, fileLocation);
+    const filePath = Path.join(process.cwd(), fileLocation);
     const absoluteFilePath = Path.join(fileLocation);
 
     console.log(`[System Setup] Searching system configuration in paths: "${filePath}" and "${absoluteFilePath}"`);
@@ -72,12 +92,13 @@ export class SystemSetup {
   private async setupProtocols (
     systemFunctionsManager : FunctionManager, systemConfig : Configuration,
   ) : Promise<void> {
-    systemConfig.protocols.forEach((protocolConfig) => {
+    for (const protocolConfig of systemConfig.protocols) {
       const NewableProtocol = protocolClassesMap[protocolConfig
         .protocolType] as unknown as new <T>(...args : unknown[]) => MetaProtocol<T>;
 
       const protocol = new NewableProtocol(protocolConfig.configuration, systemFunctionsManager);
-      protocol.start();
-    });
+      await protocol.start();
+      this.runningProtocols.push(protocol);
+    };
   };
 }

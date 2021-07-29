@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { BusinessOperation } from "./business-operation";
 import { BopsConfigurationEntry } from "./business-operations-type";
 
@@ -44,13 +45,16 @@ export class ValidateBopsPipelineFlowCommand {
 
     path.push(currentFunction.key);
 
-    currentFunction.dependencies.forEach((input) => {
-      if(typeof input.origin === "string") {
-        this.mappedPaths.push(path);
-        return path;
-      }
+    const dependencies = currentFunction.dependencies;
+    const isLeafNode = dependencies.every(input => typeof input.origin === "string") || !dependencies;
 
-      const dependentOn = this.functions.get(input.origin);
+    if(isLeafNode) {
+      this.mappedPaths.push(path);
+      return path;
+    }
+
+    dependencies.filter(dependency => typeof dependency.origin === "number").forEach((input) => {
+      const dependentOn = this.functions.get(input.origin as number);
 
       if (!dependentOn) {
         throw Error(
@@ -67,8 +71,8 @@ export class ValidateBopsPipelineFlowCommand {
   private checkForUnusedModules () : void {
     for(const functionKey of Array.from(this.functions.keys())) {
       if(!this.mappedPaths.some(path => path.includes(functionKey))) {
-        console.warn(`Function with key ${functionKey} in "${this.businessOperation.name}" ` +
-        "is not part of any execution flow and will therefore not be executed");
+        console.warn(chalk.yellowBright(`Function with key ${functionKey} in "${this.businessOperation.name}" ` +
+        "is not part of any execution flow and will therefore not be executed"));
       }
     }
   }

@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { MongoClient } from "mongodb";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
 import { ModuleManager } from "../bops-functions/bops-engine/modules-manager";
@@ -51,7 +52,7 @@ export class FunctionSetup {
     console.log("[Function Setup] Starting BOps build process");
 
     this.buildBops();
-    console.log("[Function Setup] Success - Setup complete");
+    console.log(chalk.greenBright("[Function Setup] Success - Function Setup complete"));
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -167,7 +168,7 @@ export class FunctionSetup {
     }).filter((bopName) => !this.bopsManager.functionIsDeclared(bopName));
 
     if (unbuiltBopsNames.length === 0) {
-      console.log("[BOps Build] All BOps are built");
+      console.log(chalk.greenBright("[BOps Build] All BOps are built"));
       return;
     }
 

@@ -2,7 +2,11 @@ import { InternalMetaFunction } from "../../internal-meta-function";
 
 export const stringReplaceFunction = (input : { baseString : string; search : string; replacer : string })
 : unknown => {
-  return ({ result: input.baseString.replace(input.search, input.replacer) });
+  let result = input.baseString;
+  while (result.includes(input.search)) {
+    result = result.replace(input.search, input.replacer);
+  }
+  return ({ result });
 };
 
 export const stringReplaceFunctionInformation : InternalMetaFunction = {

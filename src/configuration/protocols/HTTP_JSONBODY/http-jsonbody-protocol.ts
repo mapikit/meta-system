@@ -5,8 +5,10 @@ import { MetaProtocol } from "../meta-protocol";
 import { HTTP_JSONBODY_CONFIGURATION } from "./configuration";
 import { ishttpJsonBodyConfiguration } from "./http-jsonbody-configuration-validation";
 import { HTTPJsonBodyRoute } from "./http-jsonbody-route";
+import { Server } from "node:http";
 
 export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATION> {
+  private server : Server
   public constructor (
     protocolConfiguration : HTTP_JSONBODY_CONFIGURATION,
     functionManager : FunctionManager,
@@ -19,7 +21,7 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
   }
 
   // eslint-disable-next-line max-lines-per-function
-  public start () : void {
+  public async start () : Promise<void> {
     const httpApp = express();
     httpApp.use(json());
 
@@ -31,11 +33,29 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
     });
 
     httpApp.use(routes);
+    return new Promise((resolve, reject) => {
+      this.server = httpApp.listen(this.protocolConfiguration.port, () => {
+        if(!this.server.listening) {
+          reject(`[HTTP_JSONBODY_PROTOCOL] Error while setting up port ${this.protocolConfiguration.port}`);
+        }
+        console.log(`[HTTP_JSONBODY_PROTOCOL] Finished mapping all routes for port ${
+          this.protocolConfiguration.port
+        }`);
+        resolve();
+      });
+    });
+  }
 
-    httpApp.listen(this.protocolConfiguration.port, () => {
-      console.log(`[HTTP_JSONBODY_PROTOCOL] Finished mapping all routes for port ${
-        this.protocolConfiguration.port
-      }`);
+  public async stop () : Promise<void> {
+    console.log("[HTTP_JSONBODY_PROTOCOL] Shutting down server on port", this.protocolConfiguration.port);
+    return new Promise((resolve, reject) => {
+      this.server.close((error) => {
+        if(error) {
+          console.error(error);
+          reject(`[HTTP_JSONBODY_PROTOCOL] Unable to shutdown port ${this.protocolConfiguration.port}`);
+        }
+        resolve();
+      });
     });
   }
 }
