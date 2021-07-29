@@ -1,16 +1,16 @@
 {
   "name": "meta-system",
-  "version": "0.1.6-01",
+  "version": "0.1.6-2",
   "description": "A system to be any system",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "scripts": {
     "build": "npm ci && npx tsc -p tsconfig.build.json",
     "test": "mocha --exit --sort",
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'"
   },
   "bin": {
-    "meta-system": "./dist/bin/index.js"
+    "meta-system": "./dist/src/bin/index.js"
   },
   "mocha": {
     "require": [
@@ -80,7 +80,7 @@
     "live-plugin-manager": "^0.15.1",
     "mersenne-twister": "^1.1.0",
     "meta-function-helper": "^0.1.0",
-    "mongodb": "^3.5.6"
+    "mongodb": "^3.6.10"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {

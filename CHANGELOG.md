@@ -1,5 +1,8 @@
 # Changelog
-## 0.1.6-01
+## 0.1.6-2
+Adds `-v` as a CLI argument for checking the version
+
+## 0.1.6-1
 Fixes package publishing on NPM
 
 ## 0.1.6

@@ -3,8 +3,15 @@ import { SystemSetup } from "../bootstrap/system-setup";
 import Path from "path";
 import fs from "fs";
 
+import packageData from "../../package.json";
+
 // eslint-disable-next-line max-lines-per-function
 const main = async () : Promise<void> => {
+  if (process.argv.includes("-v") || process.argv.includes("--version")) {
+    console.log(`Running meta-system version ${packageData.version}`);
+    return;
+  }
+
   const fileLocation = process.argv[2];
 
   const relativePath = Path.join(process.cwd(), fileLocation);
