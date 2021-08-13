@@ -12,6 +12,8 @@ describe("BOps Function Configuration Validator", () =>{
   const functionInstallLocation = "./test-functions";
   const workingDirectory = process.cwd();
   const configurationFileName = "meta-function.json";
+  const packageFileName = "meta-package.json";
+
   const installationPath = Path.join(workingDirectory, functionInstallLocation);
 
   const installationHandler = new FunctionsInstaller(installationPath);
@@ -23,10 +25,10 @@ describe("BOps Function Configuration Validator", () =>{
   it("Validates successfully a valid meta-function.json", async () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
-    const functionFileSystem = new FunctionFileSystem(installationPath, configurationFileName);
+    const functionFileSystem = new FunctionFileSystem(installationPath, configurationFileName, packageFileName);
 
     const metaFunctionContent = await functionFileSystem
-      .getFunctionDescriptionFile(testFunctionName);
+      .getDescriptionFile(testFunctionName, "function");
 
     const validator = new MetaFunctionDescriptionValidation(metaFunctionContent);
 
@@ -38,10 +40,10 @@ describe("BOps Function Configuration Validator", () =>{
   it("Validates successfully a valid meta-function.json", async () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
-    const functionFileSystem = new FunctionFileSystem(installationPath, configurationFileName);
+    const functionFileSystem = new FunctionFileSystem(installationPath, configurationFileName, packageFileName);
 
     const metaFunctionContent = await functionFileSystem
-      .getFunctionDescriptionFile(testFunctionName);
+      .getDescriptionFile(testFunctionName, "function");
 
     const validator = new MetaFunctionDescriptionValidation(metaFunctionContent);
 

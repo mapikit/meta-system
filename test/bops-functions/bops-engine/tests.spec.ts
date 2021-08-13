@@ -39,7 +39,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
   const installPath = Path.join(process.cwd(), functionsFolder);
-  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json");
+  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json", "meta-package.json");
   const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
   const bopsManager = new BopsManagerClass();
 

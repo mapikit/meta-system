@@ -10,6 +10,7 @@ describe("File System BOps", () => {
   const functionInstallLocation = "./test-functions";
   const workingDirectory = process.cwd();
   const configurationFileName = "meta-function.json";
+  const packageFileName = "meta-package.json";
   const mainFunctionName = "main";
   const entrypoint = "dist/index.js";
   const installationPath = Path.join(workingDirectory, functionInstallLocation);
@@ -26,10 +27,10 @@ describe("File System BOps", () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
     const functionFileSystem = new FunctionFileSystem(
-      installationPath, configurationFileName,
+      installationPath, configurationFileName, packageFileName,
     );
 
-    const result = await functionFileSystem.getFunctionDescriptionFile(testFunctionName);
+    const result = await functionFileSystem.getDescriptionFile(testFunctionName, "function");
 
     expect(result).to.contain(`"functionName": "${testFunctionName}"`);
     expect(result).to.contain(`"version": "${testFunctionVersion}"`);
@@ -39,11 +40,11 @@ describe("File System BOps", () => {
     await installationHandler.install(testFunctionName, testFunctionVersion, ModuleKind.NPM);
 
     const functionFileSystem = new FunctionFileSystem(
-      installationPath, configurationFileName,
+      installationPath, configurationFileName, packageFileName,
     );
 
     const mainFunction = await functionFileSystem
-      .importMain(testFunctionName, entrypoint, mainFunctionName);
+      .import(testFunctionName, entrypoint, mainFunctionName);
 
     expect(typeof mainFunction).to.be.equal("function");
   });

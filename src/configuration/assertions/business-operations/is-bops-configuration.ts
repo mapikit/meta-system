@@ -22,6 +22,7 @@ function isDependencies (input : unknown) : asserts input is Dependency[] {
   });
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function isBopsConfigurationEntry (input : unknown) : asserts input is BopsConfigurationEntry[] {
   if (!Array.isArray(input)) {
     throw Error("Business Operation Configuration with wrong type found: configuration should be an Array");
@@ -31,10 +32,10 @@ export function isBopsConfigurationEntry (input : unknown) : asserts input is Bo
 
   configurations.forEach((config) => {
     isType("string", "\"moduleRepo\" must be a string", config.moduleRepo);
-    
+
     const moduleTypes = ["schemaFunction", "external", "internal", "bop", "output", "variable"];
     if (!moduleTypes.includes(config.moduleType)) {
-      throw Error("\"moduleType\" must be one of the following: " + moduleTypes.join(", "), )
+      throw Error("\"moduleType\" must be one of the following: " + moduleTypes.join(", "));
     }
 
     validateModulePackage(config);
@@ -45,9 +46,11 @@ export function isBopsConfigurationEntry (input : unknown) : asserts input is Bo
 }
 
 const validateModulePackage = (config : BopsConfigurationEntry) : void => {
-  const packagedModuleTypes = ["schemaFunction"];
-  
-  if (packagedModuleTypes.includes(config.moduleType)) {
+  if ("schemaFunction" === config.moduleType) {
     isType("string", "\"moduleType\" must be a string", config.moduleType);
   }
-}
+
+  if ("external" === config.moduleType && typeof config.modulePackage !== "undefined") {
+    isType("string", "\"moduleType\" must be a string", config.moduleType);
+  }
+};

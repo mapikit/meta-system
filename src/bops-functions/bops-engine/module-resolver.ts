@@ -45,7 +45,6 @@ export class ModuleResolver {
       return result;
     },
     "schemaFunction": (module) : Function => {
-      const moduleName = module.moduleRepo;
       const schema = module.modulePackage;
       const operation = module.moduleRepo;
       if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);

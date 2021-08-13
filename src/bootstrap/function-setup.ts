@@ -18,6 +18,7 @@ export class FunctionSetup {
   private bopsEngine : BopsEngine;
   private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
 
+  // eslint-disable-next-line max-params
   public constructor (
     private internalFunctionManager : InternalFunctionManagerClass,
     private externalFunctionManager : ExternalFunctionManagerClass,
@@ -131,11 +132,21 @@ export class FunctionSetup {
     }, []);
 
     for (const dependency of externalDependencies) {
-      const exists = this.externalFunctionManager.functionIsInstalled(dependency.name, dependency.version);
+      if (dependency.package !== undefined) {
+        await this.installFunction(dependency.package, dependency.version);
 
-      if (!exists) {
-        await this.externalFunctionManager.add(dependency.name, dependency.version);
+        continue;
       }
+
+      await this.installFunction(dependency.name, dependency.version);
+    }
+  }
+
+  private async installFunction (functionName : string, version : string, packageName ?: string) : Promise<void> {
+    const exists = this.externalFunctionManager.functionIsInstalled(functionName, packageName);
+
+    if (!exists) {
+      await this.externalFunctionManager.add(functionName, version, packageName);
     }
   }
 

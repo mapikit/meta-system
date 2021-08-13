@@ -15,7 +15,7 @@ export class FunctionsInstaller {
   });
 
   public async install (moduleName : string, version : string, kind : ModuleKind) : Promise<void> {
-    if (kind !== ModuleKind.NPM) {
+    if (kind === ModuleKind.GITHUB) {
       throw Error("Not Implemented");
     }
 
@@ -31,7 +31,7 @@ export class FunctionsInstaller {
   }
 
   public async uninstall (moduleName : string, kind : ModuleKind) : Promise<void> {
-    if (kind !== ModuleKind.NPM) {
+    if (kind === ModuleKind.GITHUB) {
       throw Error("Not Implemented");
     }
 

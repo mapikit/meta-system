@@ -32,11 +32,11 @@ export interface BopsVariable {
 }
 
 export type ModuleType = "schemaFunction"
-  | "external"
-  | "internal"
-  | "bop"
-  | "output"
-  | "variable";
+| "external"
+| "internal"
+| "bop"
+| "output"
+| "variable";
 
 export interface BopsConfigurationEntry {
   version ?: string;
