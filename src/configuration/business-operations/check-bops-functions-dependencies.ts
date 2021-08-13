@@ -5,11 +5,11 @@ import { Schema } from "../schemas/schema";
 import { BusinessOperation } from "./business-operation";
 
 export interface BopsDependencies {
-  fromSchemas : Array<{ functionName: string; schemaName : string; }>;
+  fromSchemas : Array<{ functionName : string; schemaName : string; }>;
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
-  external : Array<{ name : string; version : string }>;
+  external : Array<{ name : string; version : string; package ?: string }>;
   fromBops : string[];
   bopName : string;
 }
@@ -104,7 +104,7 @@ export class CheckBopsFunctionsDependencies {
       if (type === typesEnum.schema) {
         return schemasDependencies.push({
           functionName: bopsFunctionConfig.moduleRepo,
-          schemaName: bopsFunctionConfig.modulePackage
+          schemaName: bopsFunctionConfig.modulePackage,
         });
       }
 
@@ -116,6 +116,7 @@ export class CheckBopsFunctionsDependencies {
         externalDependencies.push({
           name: bopsFunctionConfig.moduleRepo,
           version: bopsFunctionConfig.version,
+          package: bopsFunctionConfig.modulePackage,
         });
       }
     });
@@ -208,8 +209,8 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const schemaDependecy of this.dependencies.fromSchemas) {
-      const requiredSchema = schemaDependecy.schemaName
-      const requiredFunction = schemaDependecy.functionName
+      const requiredSchema = schemaDependecy.schemaName;
+      const requiredFunction = schemaDependecy.functionName;
 
       result = this.schemas.has(requiredSchema);
       if (!result) {
