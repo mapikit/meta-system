@@ -63,6 +63,10 @@ export class ModuleResolver {
     },
 
     "external" : (module) : Function => {
+      if (module.modulePackage !== undefined) {
+        return this.externalFunctionManager.get(`${module.modulePackage}.${module.moduleRepo}`);
+      }
+
       return this.externalFunctionManager.get(module.moduleRepo);
     },
   }

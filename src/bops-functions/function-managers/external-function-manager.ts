@@ -24,10 +24,10 @@ export class ExternalFunctionManagerClass implements FunctionManager {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  public async add (name : string, functionVersion = "latest", packageName ?: string) : Promise<void> {
-    await this.functionsInstaller.install(name, functionVersion, ModuleKind.NPM);
+  public async add (functionName : string, functionVersion = "latest", packageName ?: string) : Promise<void> {
+    await this.functionsInstaller.install(packageName ?? functionName, functionVersion, ModuleKind.NPM);
     const moduleType = packageName === undefined ? "function" : "package";
-    const moduleConfigString = await this.functionFileSystem.getDescriptionFile(name, moduleType);
+    const moduleConfigString = await this.functionFileSystem.getDescriptionFile(functionName, moduleType);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const moduleConfig = packageName === undefined ?
@@ -39,9 +39,9 @@ export class ExternalFunctionManagerClass implements FunctionManager {
     const functionLocation : string | undefined = moduleConfig["mainFunction"];
 
     const functionDeclaration = await this.functionFileSystem
-      .import(name, moduleConfig.entrypoint, functionLocation);
+      .import(functionName, moduleConfig.entrypoint, functionLocation);
 
-    this.addFunctionsToMap(name, functionDeclaration, packageName);
+    this.addFunctionsToMap(functionName, functionDeclaration, packageName);
   }
 
   // eslint-disable-next-line max-lines-per-function

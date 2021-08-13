@@ -132,13 +132,7 @@ export class FunctionSetup {
     }, []);
 
     for (const dependency of externalDependencies) {
-      if (dependency.package !== undefined) {
-        await this.installFunction(dependency.package, dependency.version);
-
-        continue;
-      }
-
-      await this.installFunction(dependency.name, dependency.version);
+      await this.installFunction(dependency.name, dependency.version, dependency.package);
     }
   }
 

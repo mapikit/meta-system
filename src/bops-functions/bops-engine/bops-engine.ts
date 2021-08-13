@@ -36,7 +36,7 @@ export class BopsEngine {
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
     this.mappedFunctions = this.moduleManager.resolveSystemModules(this.systemConfig);
 
-    const output = operation.configuration.find(module => module.moduleType === "output")
+    const output = operation.configuration.find(module => module.moduleType === "output");
 
     const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
       const variablesInfo = new VariableContext(this.variables[operation.name]);
