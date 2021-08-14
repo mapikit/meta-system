@@ -2,6 +2,8 @@
 A system to be any system.
 
 -----
+Check the [roadmap](https://github.com/mapikit/meta-system/blob/master/ROADMAP.md)!
+
 ## What is Meta-System?
 It is a software capable of executing flows and operations declared in a configuration file; Instead of coming up with the code yourself, you only tell Meta-System the business rules to follow.
 
