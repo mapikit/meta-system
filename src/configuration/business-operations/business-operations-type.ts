@@ -36,7 +36,8 @@ export type ModuleType = "schemaFunction"
 | "internal"
 | "bop"
 | "output"
-| "variable";
+| "variable"
+| "protocol";
 
 export interface BopsConfigurationEntry {
   version ?: string;

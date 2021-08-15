@@ -1,3 +1,4 @@
+import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager";
 import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager";
 import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager";
 import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
@@ -10,6 +11,7 @@ export interface BopsDependencies {
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
   external : Array<{ name : string; version : string; package ?: string }>;
+  protocol : Array<{ name : string; version : string; package ?: string }>
   fromBops : string[];
   bopName : string;
 }
@@ -37,6 +39,7 @@ export class CheckBopsFunctionsDependencies {
     currentBusinessOperation : BusinessOperation,
     private externalFunctionManager : ExternalFunctionManagerClass,
     private internalFunctionManager : InternalFunctionManagerClass,
+    private protocolFunctionManager : ProtocolFunctionManagerClass,
   ) {
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
@@ -57,6 +60,7 @@ export class CheckBopsFunctionsDependencies {
       this.checkSchemaFunctionsDependenciesMet(),
       this.checkExternalRequiredFunctionsMet(),
       this.checkOutputDependencyMet(),
+      this.checkProtocolDependenciesMet(),
     ];
 
     console.log(results);
@@ -71,6 +75,7 @@ export class CheckBopsFunctionsDependencies {
     const outputsDependencies = [];
     const schemasDependencies = [];
     const configurationalDependencies = [];
+    const protocolsDependencies = [];
     const bopsDependencies = [];
 
     // eslint-disable-next-line max-lines-per-function
@@ -80,6 +85,7 @@ export class CheckBopsFunctionsDependencies {
       const typesEnum = {
         internal: "internal",
         schema: "schemaFunction",
+        protocol: "protocol",
         bops: "bop",
         outputs: "output",
         external: "external",
@@ -113,7 +119,15 @@ export class CheckBopsFunctionsDependencies {
       }
 
       if(type === typesEnum.external) {
-        externalDependencies.push({
+        return externalDependencies.push({
+          name: bopsFunctionConfig.moduleRepo,
+          version: bopsFunctionConfig.version,
+          package: bopsFunctionConfig.modulePackage,
+        });
+      }
+
+      if (type === typesEnum.protocol) {
+        protocolsDependencies.push({
           name: bopsFunctionConfig.moduleRepo,
           version: bopsFunctionConfig.version,
           package: bopsFunctionConfig.modulePackage,
@@ -128,6 +142,7 @@ export class CheckBopsFunctionsDependencies {
       fromSchemas: schemasDependencies,
       fromConfigurations: configurationalDependencies,
       fromBops: bopsDependencies,
+      protocol: protocolsDependencies,
       bopName: this.businessOperation.name,
     };
   }
@@ -259,5 +274,24 @@ export class CheckBopsFunctionsDependencies {
     }
 
     return true;
+  }
+
+  public checkProtocolDependenciesMet () : boolean {
+    let result = true;
+
+    for (const protocolDependency of this.dependencies.protocol) {
+      result = this.protocolFunctionManager
+        .get(`${protocolDependency.package}.${protocolDependency.name}`) !== undefined;
+
+      if (!result) {
+        console.error(
+          // eslint-disable-next-line max-len
+          `[Dependency Check] Unmet protocol dependency: "${protocolDependency.name}@${protocolDependency.version}.${protocolDependency.name}"`,
+        );
+        return false;
+      }
+    }
+
+    return result;
   }
 }
