@@ -10,7 +10,7 @@ export class ProtocolsSetup {
   ) {}
 
   public async execute () : Promise<void> {
-    console.log(["[System Protocols] Starting setup of system Protocols"]);
+    console.log("[System Protocols] Starting setup of system Protocols");
     const requiredProtocols = this.systemConfig.protocols !== undefined
       ? this.systemConfig.protocols : [];
 

@@ -192,7 +192,7 @@ export class FunctionSetup {
     );
 
     const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");
-    console.log(`[Schemas Setup] Adding shemas to the system: "${schemasNames}"`);
+    console.log(`[Schemas Setup] Adding schemas to the system: "${schemasNames}"`);
 
     await manager.addSystemSchemas(systemSchemas);
 
