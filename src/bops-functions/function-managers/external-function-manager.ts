@@ -1,5 +1,5 @@
 
-import { MetaPackageDescriptionValidation } from "bops-functions/installation/packages-configuration-validation";
+import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
 import { FunctionManager } from "meta-function-helper";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";

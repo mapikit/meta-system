@@ -7,7 +7,7 @@ import { Configuration } from "../configuration/configuration";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
 import { FunctionSetup } from "../bootstrap/function-setup";
 import chalk from "chalk";
-import { protocolFunctionManagerSingleton } from "bops-functions/function-managers/protocol-function-manager";
+import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager";
 import { ProtocolsSetup } from "./protocols-setup";
 
 const fsPromise = FS.promises;

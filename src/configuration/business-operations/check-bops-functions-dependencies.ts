@@ -63,8 +63,6 @@ export class CheckBopsFunctionsDependencies {
       this.checkProtocolDependenciesMet(),
     ];
 
-    console.log(results);
-
     return !results.includes(false);
   }
 

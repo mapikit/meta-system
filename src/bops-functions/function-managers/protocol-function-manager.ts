@@ -1,7 +1,7 @@
-import { FunctionsInstaller, ModuleKind } from "bops-functions/installation/functions-installer";
-import { ProtocolDescriptionValidation } from "bops-functions/installation/protocol-configuration-validation";
-import { ProtocolFileSystem } from "bops-functions/installation/protocol-file-system";
-import { runtimeDefaults } from "configuration/runtime-config/defaults";
+import { FunctionsInstaller, ModuleKind } from "../../bops-functions/installation/functions-installer";
+import { ProtocolDescriptionValidation } from "../../bops-functions/installation/protocol-configuration-validation";
+import { ProtocolFileSystem } from "../../bops-functions/installation/protocol-file-system";
+import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionManager } from "meta-function-helper";
 import Protocols, { BuiltMetaProtocolDefinition } from "meta-protocol-helper";
 import { MetaProtocol } from "meta-protocol-helper/dist/src/meta-protocol";
