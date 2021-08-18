@@ -18,10 +18,11 @@ export class ProtocolsSetup {
       await this.protocolsManager.installProtocol(protocolConfig.protocolType, protocolConfig.protocolVersion);
       const NewableProtocol = await this.protocolsManager.getProtocolNewable(protocolConfig.protocolType);
 
-      this.protocolsManager.addProtocolInstance(
-        new NewableProtocol(protocolConfig.configuration, this.bopsManager),
-        protocolConfig.protocolType,
-      );
+      const createdProtocol = new NewableProtocol(protocolConfig.configuration, this.bopsManager);
+      console.log("[System Protocols] - Validating protocol configuration for ", protocolConfig.protocolType);
+      createdProtocol.validateConfiguration();
+
+      this.protocolsManager.addProtocolInstance(createdProtocol, protocolConfig.protocolType);
     }
   }
 
