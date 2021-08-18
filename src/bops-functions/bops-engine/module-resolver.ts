@@ -9,6 +9,7 @@ import { SchemaNotFoundError } from "./engine-errors/schema-not-found-error";
 export interface ModuleResolverInputs {
   ExternalFunctionManager : FunctionManager;
   InternalFunctionManager : FunctionManager;
+  protocolFunctionManager : FunctionManager;
   SchemasManager : SchemasManager;
   BopsManager : FunctionManager;
 }
@@ -16,6 +17,7 @@ export interface ModuleResolverInputs {
 enum ModuleTypes {
   schemaFunctions = "schemaFunction",
   internalFunctions = "internal",
+  protocolFunctions = "protocol",
   externalFunctions = "external",
   bops = "bop"
 }
@@ -28,17 +30,22 @@ export type ModuleResolverType = {
 export class ModuleResolver {
   private externalFunctionManager : FunctionManager;
   private internalFunctionManager : FunctionManager;
+  private protocolFunctionManager : FunctionManager;
   private schemasManager : SchemasManager;
   private bopsManager : FunctionManager;
 
   constructor (options : ModuleResolverInputs)  {
     this.externalFunctionManager = options.ExternalFunctionManager;
     this.internalFunctionManager = options.InternalFunctionManager;
+    this.protocolFunctionManager = options.protocolFunctionManager;
     this.schemasManager = options.SchemasManager;
     this.bopsManager = options.BopsManager;
   }
 
   public resolve : ModuleResolverType = {
+    "protocol": (module) : Function => {
+      return this.protocolFunctionManager.get(`${module.modulePackage}.${module.moduleRepo}`);
+    },
     "bop": (module) : Function => {
       const result = this.bopsManager.get(module.moduleRepo);
 

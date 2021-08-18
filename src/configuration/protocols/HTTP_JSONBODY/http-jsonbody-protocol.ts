@@ -1,13 +1,17 @@
 import express = require("express");
 import { json } from "body-parser";
 import { FunctionManager } from "../../../bops-functions/function-managers/function-manager";
-import { MetaProtocol } from "../meta-protocol";
 import { HTTP_JSONBODY_CONFIGURATION } from "./configuration";
 import { ishttpJsonBodyConfiguration } from "./http-jsonbody-configuration-validation";
 import { HTTPJsonBodyRoute } from "./http-jsonbody-route";
 import { Server } from "node:http";
+import { MetaProtocol } from "meta-protocol-helper/dist/src/meta-protocol";
 
 export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATION> {
+  public getProtocolPublicMethods () : Record<string, Function> {
+    return {};
+  }
+
   private server : Server
   public constructor (
     protocolConfiguration : HTTP_JSONBODY_CONFIGURATION,
@@ -29,7 +33,7 @@ export class HTTPJsonBodyProtocol extends MetaProtocol<HTTP_JSONBODY_CONFIGURATI
       console.log(`[HTTP_JSONBODY_PROTOCOL] Mapping route "${routeConfig.route}" at port ${
         this.protocolConfiguration.port
       }`);
-      return new HTTPJsonBodyRoute(routeConfig, this.functionManager).setupRouter();
+      return new HTTPJsonBodyRoute(routeConfig, this.bopsManager).setupRouter();
     });
 
     httpApp.use(routes);

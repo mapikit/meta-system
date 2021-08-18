@@ -1,3 +1,4 @@
+import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
 import chalk from "chalk";
 import { MongoClient } from "mongodb";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
@@ -22,6 +23,7 @@ export class FunctionSetup {
   public constructor (
     private internalFunctionManager : InternalFunctionManagerClass,
     private externalFunctionManager : ExternalFunctionManagerClass,
+    private protocolFunctionManager : ProtocolFunctionManagerClass,
     private systemConfiguration : ConfigurationType,
   ) { }
 
@@ -36,11 +38,13 @@ export class FunctionSetup {
     this.checkSchemaDependencies();
 
     await this.bootstrapExternalDependencies(allBopsDependencies);
+    this.bootstrapProtocols(allBopsDependencies);
     this.checkExternalDependencies();
 
     const moduleManager = new ModuleManager({
       ExternalFunctionManager: this.externalFunctionManager,
       InternalFunctionManager: this.internalFunctionManager,
+      protocolFunctionManager: this.protocolFunctionManager,
       BopsManager: this.bopsManager,
       SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
     });
@@ -70,6 +74,7 @@ export class FunctionSetup {
         new BusinessOperation(bopsConfig),
         this.externalFunctionManager,
         this.internalFunctionManager,
+        this.protocolFunctionManager,
       );
 
       this.bopsDependencyCheck.set(bopsConfig.name, dependencyCheck);
@@ -136,6 +141,34 @@ export class FunctionSetup {
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
+  private bootstrapProtocols (allBopsDependencies : BopsDependencies[]) : void {
+    console.log("[Function Setup] Starting Bootstrap sequence for all system protocols dependencies");
+    const protocolsDependenciesArray = allBopsDependencies
+      .map((bopDependencies) => bopDependencies.protocol);
+
+    const protocolDependencies = protocolsDependenciesArray.reduce((previousValue, currentValue) => {
+      const currentDependency = previousValue;
+      currentValue.forEach((value) => currentDependency.push(value));
+
+      return currentDependency;
+    }, []);
+
+    for (const dependency of protocolDependencies) {
+      this.addProtocolFunction(dependency.name, dependency.version, dependency.package);
+    }
+  }
+
+  private addProtocolFunction (functionName : string, version : string, packageName : string) : void {
+    // Protocols are installed before this whole class is created, so here we just add the functions of already
+    // existing instances of protocols.
+    const exists = this.protocolFunctionManager.get(`${packageName}.${functionName}`);
+
+    if (!exists) {
+      this.protocolFunctionManager.addFunction(functionName, packageName);
+    }
+  }
+
   private async installFunction (functionName : string, version : string, packageName ?: string) : Promise<void> {
     const exists = this.externalFunctionManager.functionIsInstalled(functionName, packageName);
 
@@ -159,7 +192,7 @@ export class FunctionSetup {
     );
 
     const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");
-    console.log(`[Schemas Setup] Adding shemas to the system: "${schemasNames}"`);
+    console.log(`[Schemas Setup] Adding schemas to the system: "${schemasNames}"`);
 
     await manager.addSystemSchemas(systemSchemas);
 

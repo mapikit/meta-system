@@ -1,6 +1,7 @@
-import { availableProtocolsNames, ProtocolConfigurations } from "./available-protocols-enum";
+import { CloudedObject } from "common/types/clouded-object";
 
 export interface ProtocolConfigType {
-  protocolType : availableProtocolsNames;
-  configuration : ProtocolConfigurations;
+  protocolType : string;
+  protocolVersion : string; // SemVer;
+  configuration : CloudedObject;
 }

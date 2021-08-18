@@ -1,5 +1,5 @@
 
-import { MetaPackageDescriptionValidation } from "bops-functions/installation/packages-configuration-validation";
+import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
 import { FunctionManager } from "meta-function-helper";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
@@ -27,7 +27,8 @@ export class ExternalFunctionManagerClass implements FunctionManager {
   public async add (functionName : string, functionVersion = "latest", packageName ?: string) : Promise<void> {
     await this.functionsInstaller.install(packageName ?? functionName, functionVersion, ModuleKind.NPM);
     const moduleType = packageName === undefined ? "function" : "package";
-    const moduleConfigString = await this.functionFileSystem.getDescriptionFile(functionName, moduleType);
+    const fileDescriptionMode = packageName === undefined ? functionName : packageName;
+    const moduleConfigString = await this.functionFileSystem.getDescriptionFile(fileDescriptionMode, moduleType);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const moduleConfig = packageName === undefined ?
@@ -39,7 +40,7 @@ export class ExternalFunctionManagerClass implements FunctionManager {
     const functionLocation : string | undefined = moduleConfig["mainFunction"];
 
     const functionDeclaration = await this.functionFileSystem
-      .import(functionName, moduleConfig.entrypoint, functionLocation);
+      .import(fileDescriptionMode, moduleConfig.entrypoint, functionLocation);
 
     this.addFunctionsToMap(functionName, functionDeclaration, packageName);
   }
@@ -56,7 +57,7 @@ export class ExternalFunctionManagerClass implements FunctionManager {
       return;
     }
 
-    const functionDeclaration = input[name];
+    const functionDeclaration = input[name] ?? input.default[name];
 
     if (functionDeclaration === undefined) {
       throw Error(`[BOPs Function] ERROR - Misconfigured package "${packageName}". `

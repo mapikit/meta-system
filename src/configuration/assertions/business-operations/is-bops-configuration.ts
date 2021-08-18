@@ -33,7 +33,7 @@ export function isBopsConfigurationEntry (input : unknown) : asserts input is Bo
   configurations.forEach((config) => {
     isType("string", "\"moduleRepo\" must be a string", config.moduleRepo);
 
-    const moduleTypes = ["schemaFunction", "external", "internal", "bop", "output", "variable"];
+    const moduleTypes = ["schemaFunction", "external", "internal", "bop", "output", "variable", "protocol"];
     if (!moduleTypes.includes(config.moduleType)) {
       throw Error("\"moduleType\" must be one of the following: " + moduleTypes.join(", "));
     }
