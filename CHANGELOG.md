@@ -1,7 +1,21 @@
 # Changelog
-## 0.2.0
-Now we do not need to add an extra character at the begginning of the `moduleRepo`. Instead we populate a new field called `moduleType`.
+## 0.2.0 - Gemini
+Gemini is here! Meta-System got a power up on the protocols and the external functions. There was also a gib difference in the configuration of BOps. Check the differences below!
+### Protocols
+- Now we have external protocols! They are automatically downloaded by mentioning them in your config, just like external functions.
+- We no longer have internal protocols though. We believe it is a good approach to let the core of the Meta-System cleaner.
+- Protocols now can provide functions to be used in the BOps, for clever and interesting applications! You may, for instance, activate through HTTP an BOp that enables listening to a Message Queue.
+- New library to support the development of protocols is out! Check [meta-protocol-helper](https://www.npmjs.com/package/meta-protocol-helper)
 
+### External Functions
+- Now you can bundle your functions in a package! The npm package `meta-function-helper` was updated to support this.
+
+### BOps configuration
+We used to have an extra character before the configuration to specify what kind of module it was. We found that it was a rather silly approach.
+- Replaced the extra character at the start of `moduleRepo`. Instead we populate a new field called `moduleType`.
+- New parameter `modulePackage`. It is populated to specify the package of external function, the name of the schema, and the name of the protocol.
+
+---
 ## 0.1.6-2
 Adds `-v` as a CLI argument for checking the version
 

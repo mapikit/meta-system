@@ -1,9 +1,9 @@
 # Meta-System Roadmap
 
-## 0.2 - Gemini [NEXT]
-- Support to Function Packages;
-- Introduces external protocols;
-- Protocols can provide their BOps functions as well;
+## 0.2 - Gemini :heavy_check_mark: 
+- :heavy_check_mark: Support to Function Packages;
+- :heavy_check_mark: Introduces external protocols;
+- :heavy_check_mark: Protocols can provide their BOps functions as well;
 
 ### 0.3 - Future Release
 - Introduces DBProtocols - Databases becomes part of the protocol definition;
