@@ -1,7 +1,9 @@
-# Meta-System
-A system to be any system.
+<p align="center">
+  <img width="200" height="200" src="https://user-images.githubusercontent.com/13098424/130166233-f3fa5dd0-fe75-4bc2-9f0f-a611fdf022ee.png">
+</p>
 
------
+# Meta-System - A system to be any system
+
 Check the [roadmap](https://github.com/mapikit/meta-system/blob/master/ROADMAP.md)!
 
 ## What is Meta-System?
