@@ -11,7 +11,6 @@ export const packageBop : BusinessOperations = {
     { name: "isOlder", type: "string", value: "Is older than 18." },
     { name: "isNotOlder", type: "string", value: "Is not older than 18." },
     { name: "trueConst", type: "boolean", value: true },
-    { name: "varName", type: "string", value: "isAdult" },
   ],
   variables: [
     { name: "isAdult", type: "boolean", initialValue: false },
@@ -38,11 +37,10 @@ export const packageBop : BusinessOperations = {
     },
     {
       moduleType: "variable",
-      moduleRepo: "setVariable",
+      moduleRepo: "setVariables",
       key: 4,
       dependencies: [
-        { origin: "constants", originPath: "varName", targetPath: "variableName" },
-        { origin: "constants", originPath: "trueConst", targetPath: "value" },
+        { origin: "constants", originPath: "trueConst", targetPath: "isAdult" },
       ],
     },
     {

@@ -3,9 +3,9 @@ import { ConfigurationType } from "../../..";
 import { JsonTypes } from "../../../common/types/json-types";
 import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
 import { MappedFunctions } from "../modules-manager";
-import { decreaseVariableFunction } from "./functions/decrease-variable";
-import { increaseVariableFunction } from "./functions/increase-variable";
-import { setVariableFunction } from "./functions/set-variable";
+import { decreaseVariablesFunction } from "./functions/decrease-variable";
+import { increaseVariablesFunction } from "./functions/increase-variable";
+import { setVariablesFunction } from "./functions/set-variable";
 
 type ResolvedVariable = { type : JsonTypes, value : unknown };
 export type ResolvedVariables = Record<string, ResolvedVariable>;
@@ -50,9 +50,9 @@ export class VariableContext {
   }
 
   private variableFunctions : Array<[string, Function]> = [
-    ["setVariable", this.wrapVariables(setVariableFunction)],
-    ["increaseVariable", this.wrapVariables(increaseVariableFunction)],
-    ["decreaseVariable", this.wrapVariables(decreaseVariableFunction)],
+    ["setVariables", this.wrapVariables(setVariablesFunction)],
+    ["increaseVariables", this.wrapVariables(increaseVariablesFunction)],
+    ["decreaseVariables", this.wrapVariables(decreaseVariablesFunction)],
   ];
 
   private wrapVariables (varFunction : Function) : Function {

@@ -133,7 +133,7 @@ describe("Bops Engine Testing", () => {
 
     expect(result).not.to.be.undefined;
     expect(result.initialValue).to.be.equal(15);
-    expect(result.functionOutput).to.be.equal(randomNumber);
+    expect(result.functionOutput).to.be.equal(1);
     expect(result.newValue).to.be.equal(randomNumber);
   });
 

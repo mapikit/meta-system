@@ -6,20 +6,17 @@ export const variableBop : BusinessOperations = {
     aNumber: { type: "number", required: true },
   },
   output: {},
-  constants: [
-    { name: "varName", type: "string", value: "numberVar" },
-  ],
+  constants: [],
   variables: [
     { name: "numberVar", type: "number", initialValue: 15 },
   ],
   configuration: [
     {
-      moduleRepo: "setVariable",
+      moduleRepo: "setVariables",
       moduleType: "variable",
       key: 2,
       dependencies: [
-        { origin: "constants", originPath: "varName", targetPath: "variableName" },
-        { origin: "inputs", originPath: "aNumber", targetPath: "value" },
+        { origin: "inputs", originPath: "aNumber", targetPath: "numberVar" },
       ],
     },
     {
@@ -28,7 +25,7 @@ export const variableBop : BusinessOperations = {
       key: 1,
       dependencies: [
         { origin: "variables", originPath: "numberVar", targetPath: "initialValue" },
-        { origin: 2, originPath: "result.newValue", targetPath: "functionOutput" },
+        { origin: 2, originPath: "result.setCount", targetPath: "functionOutput" },
         { origin: "variables", originPath: "numberVar", targetPath: "newValue" },
       ],
     },
