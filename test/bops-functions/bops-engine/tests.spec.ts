@@ -25,6 +25,7 @@ import { ConfigurationType } from "../../../src/configuration/configuration-type
 import { variableBop } from "./test-data/business-operations/variables-bop";
 import { ProtocolFunctionManagerClass } from "../../../src/bops-functions/function-managers/protocol-function-manager";
 import { ProtocolFileSystem } from "../../../src/bops-functions/installation/protocol-file-system";
+import { packageBop } from "./test-data/business-operations/package-bop";
 
 interface EngineInput {
   ModuleManager : ModuleManager;
@@ -69,7 +70,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   ).bopsDependencies;
 
   for (const externalDependency of bopsDependencies.external) {
-    await externalFunctionHandler.add(externalDependency.name, externalDependency.version);
+    await externalFunctionHandler.add(externalDependency.name, externalDependency.version, externalDependency.package);
   }
 
   const bopsEngineInputOptions : EngineInput = {
@@ -99,19 +100,6 @@ describe("Bops Engine Testing", () => {
 
     expect(res["output"]).to.be.equal(Math.pow(3, randomNumber));
   });
-
-  // it("Test of BOp as internal function", async () => {
-  //   bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
-  //   const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-  //   // <<<<< This was done to avoid coding the entire bootstrap process inside of these tests
-  //   const provided = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
-  //   const mappedFunctions = bopsEnginePrerequisites.ModuleManager.set("+prebuilt-functions", provided);
-  //   // >>>>> End
-  //   const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
-  //   const res = await stitched();
-
-  //   expect(res["output"]).to.be.equal(73);
-  // });
 
   it("Test of schema BOps functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(schemaBop);
@@ -147,6 +135,19 @@ describe("Bops Engine Testing", () => {
     expect(result.initialValue).to.be.equal(15);
     expect(result.functionOutput).to.be.equal(randomNumber);
     expect(result.newValue).to.be.equal(randomNumber);
+  });
+
+  it("Test package functions", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(packageBop);
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(packageBop, maxExecutionTime);
+
+    const result1 = await stitched({ age: 50 });
+    console.log(result1);
+    expect(result1["over18"]).to.be.true;
+
+    const result2 = await stitched({ age: 12 });
+    expect(result2["over18"]).to.be.false;
   });
 });
 
