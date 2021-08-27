@@ -98,27 +98,27 @@ export class CheckBopsFunctionsDependencies {
       });
 
       if (type === typesEnum.internal) {
-        return internalDependencies.push(bopsFunctionConfig.moduleRepo);
+        return internalDependencies.push(bopsFunctionConfig.moduleName);
       }
 
       if (type === typesEnum.outputs) {
-        return outputsDependencies.push(bopsFunctionConfig.moduleRepo);
+        return outputsDependencies.push(bopsFunctionConfig.moduleName);
       }
 
       if (type === typesEnum.schema) {
         return schemasDependencies.push({
-          functionName: bopsFunctionConfig.moduleRepo,
+          functionName: bopsFunctionConfig.moduleName,
           schemaName: bopsFunctionConfig.modulePackage,
         });
       }
 
       if (type === typesEnum.bops) {
-        return bopsDependencies.push(bopsFunctionConfig.moduleRepo);
+        return bopsDependencies.push(bopsFunctionConfig.moduleName);
       }
 
       if(type === typesEnum.external) {
         return externalDependencies.push({
-          name: bopsFunctionConfig.moduleRepo,
+          name: bopsFunctionConfig.moduleName,
           version: bopsFunctionConfig.version,
           package: bopsFunctionConfig.modulePackage,
         });
@@ -126,7 +126,7 @@ export class CheckBopsFunctionsDependencies {
 
       if (type === typesEnum.protocol) {
         protocolsDependencies.push({
-          name: bopsFunctionConfig.moduleRepo,
+          name: bopsFunctionConfig.moduleName,
           version: bopsFunctionConfig.version,
           package: bopsFunctionConfig.modulePackage,
         });

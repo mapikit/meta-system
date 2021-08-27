@@ -15,14 +15,14 @@ export const cronjobBop : BusinessOperations = {
     {
       moduleType: "external",
       modulePackage: "logger-meta-functions",
-      moduleRepo: "infoLog",
+      moduleName: "infoLog",
       key: 2,
       dependencies: [
         { origin: "constants", originPath: "varName", targetPath: "message" },
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 1,
       dependencies: [

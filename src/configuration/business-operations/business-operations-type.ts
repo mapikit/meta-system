@@ -45,7 +45,7 @@ export type ModuleType = "schemaFunction"
 export interface BopsConfigurationEntry {
   version ?: string;
   moduleType : ModuleType;
-  moduleRepo : string;
+  moduleName : string;
   modulePackage ?: string;
   key : number;
   dependencies : Dependency[];

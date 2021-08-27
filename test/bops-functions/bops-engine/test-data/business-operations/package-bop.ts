@@ -18,7 +18,7 @@ export const packageBop : BusinessOperations = {
   configuration: [
     {
       moduleType: "internal",
-      moduleRepo: "lowerThan",
+      moduleName: "lowerThan",
       key: 1,
       dependencies: [
         { origin: "inputs", originPath: "age", targetPath: "A" },
@@ -27,7 +27,7 @@ export const packageBop : BusinessOperations = {
     },
     {
       moduleType: "internal",
-      moduleRepo: "if",
+      moduleName: "if",
       key: 2,
       dependencies: [
         { origin: 1, originPath: "result.isLower", targetPath: "boolean" },
@@ -37,7 +37,7 @@ export const packageBop : BusinessOperations = {
     },
     {
       moduleType: "variable",
-      moduleRepo: "setVariables",
+      moduleName: "setVariables",
       key: 4,
       dependencies: [
         { origin: "constants", originPath: "trueConst", targetPath: "isAdult" },
@@ -46,14 +46,14 @@ export const packageBop : BusinessOperations = {
     {
       moduleType: "external",
       modulePackage: "logger-meta-functions",
-      moduleRepo: "warnLog",
+      moduleName: "warnLog",
       key: 6,
       dependencies: [
         { origin: "constants", originPath: "isNotOlder", targetPath: "message" },
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 3,
       dependencies: [

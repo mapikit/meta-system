@@ -14,7 +14,7 @@ export const variableBop : BusinessOperations = {
   ],
   configuration: [
     {
-      moduleRepo: "setVariables",
+      moduleName: "setVariables",
       moduleType: "variable",
       key: 2,
       dependencies: [
@@ -23,7 +23,7 @@ export const variableBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 1,
       dependencies: [

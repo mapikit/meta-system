@@ -12,7 +12,7 @@ export const internalBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      moduleRepo: "prebuilt-functions",
+      moduleName: "prebuilt-functions",
       moduleType: "bop",
       key: 5,
       dependencies: [
@@ -20,7 +20,7 @@ export const internalBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "subtract",
+      moduleName: "subtract",
       moduleType: "internal",
       key: 6,
       dependencies: [
@@ -29,7 +29,7 @@ export const internalBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 3,
       dependencies: [

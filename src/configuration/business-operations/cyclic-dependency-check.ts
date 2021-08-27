@@ -35,7 +35,7 @@ export class BopsCyclicDependencyCheck {
 
     bops.configuration.forEach((config) => {
       if (config.moduleType === "bop") {
-        result.push(config.moduleRepo);
+        result.push(config.moduleName);
       }
     });
 

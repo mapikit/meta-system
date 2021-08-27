@@ -27,7 +27,7 @@ export class ValidateBopsPipelineFlowCommand {
   private validateKeys () : void {
     this.functions.forEach((module) => {
       if (module.key <= 0) {
-        throw Error(`Invalid Key Index @ BOPS ${this.businessOperation.name} - Repository ${module.moduleRepo}`);
+        throw Error(`Invalid Key Index @ BOPS ${this.businessOperation.name} - Repository ${module.moduleName}`);
       }
     });
   }

@@ -14,7 +14,7 @@ export const mapikitProvidedBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      moduleRepo: "exponential",
+      moduleName: "exponential",
       moduleType: "internal",
       key: 5,
       dependencies: [
@@ -23,7 +23,7 @@ export const mapikitProvidedBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 6,
       dependencies: [

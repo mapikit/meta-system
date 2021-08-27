@@ -42,18 +42,18 @@ export class BusinessOperation implements BusinessOperations {
 
     this.configuration.forEach((config) => {
       if (config.moduleType === "internal") {
-        return internal.push(config.moduleRepo);
+        return internal.push(config.moduleName);
       }
 
       if (config.moduleType === "schemaFunction") {
-        return fromSchemas.push(config.moduleRepo);
+        return fromSchemas.push(config.moduleName);
       }
 
       if (config.moduleType === "output") {
-        return ending.push(config.moduleRepo);
+        return ending.push(config.moduleName);
       }
 
-      external.push(config.moduleRepo);
+      external.push(config.moduleName);
     });
 
     return { internal, external, fromSchemas, ending };
