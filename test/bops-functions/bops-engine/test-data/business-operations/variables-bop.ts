@@ -4,11 +4,13 @@ export const variableBop : BusinessOperations = {
   name: "variables",
   input: {
     aNumber: { type: "number", required: true },
+    randomValue: { type: "any", required: true },
   },
   output: {},
   constants: [],
   variables: [
     { name: "numberVar", type: "number", initialValue: 15 },
+    { name: "anyVar", type: "any" },
   ],
   configuration: [
     {
@@ -17,6 +19,7 @@ export const variableBop : BusinessOperations = {
       key: 2,
       dependencies: [
         { origin: "inputs", originPath: "aNumber", targetPath: "numberVar" },
+        { origin: "inputs", originPath: "randomValue", targetPath: "anyVar" },
       ],
     },
     {
@@ -27,6 +30,7 @@ export const variableBop : BusinessOperations = {
         { origin: "variables", originPath: "numberVar", targetPath: "initialValue" },
         { origin: 2, originPath: "result.setCount", targetPath: "functionOutput" },
         { origin: "variables", originPath: "numberVar", targetPath: "newValue" },
+        { origin: "variables", originPath: "anyVar", targetPath: "randomItem" },
       ],
     },
   ],

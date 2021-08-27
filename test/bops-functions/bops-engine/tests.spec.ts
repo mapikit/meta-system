@@ -129,12 +129,13 @@ describe("Bops Engine Testing", () => {
     const stitched = bopsEngine.stitch(variableBop, maxExecutionTime);
 
     const randomNumber = Math.random()*1000;
-    const result = await stitched({ aNumber: randomNumber });
+    const result = await stitched({ aNumber: randomNumber, randomValue: { thisVar: "isAnObject" } });
 
     expect(result).not.to.be.undefined;
     expect(result.initialValue).to.be.equal(15);
-    expect(result.functionOutput).to.be.equal(1);
+    expect(result.functionOutput).to.be.equal(2);
     expect(result.newValue).to.be.equal(randomNumber);
+    expect(result.randomItem).to.be.deep.equal({ thisVar: "isAnObject" });
   });
 
   it("Test package functions", async () => {
@@ -143,7 +144,6 @@ describe("Bops Engine Testing", () => {
     const stitched = bopsEngine.stitch(packageBop, maxExecutionTime);
 
     const result1 = await stitched({ age: 50 });
-    console.log(result1);
     expect(result1["over18"]).to.be.true;
 
     const result2 = await stitched({ age: 12 });

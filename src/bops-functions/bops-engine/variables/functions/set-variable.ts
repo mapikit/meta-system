@@ -1,3 +1,4 @@
+import { isValidType } from "../../../../common/assertions/is-valid-type";
 import { CloudedObject } from "common/types/clouded-object";
 import { InternalMetaFunction } from "../../../internal-meta-function";
 import { ResolvedVariables } from "../variables-context";
@@ -11,7 +12,7 @@ export function setVariablesFunction (input : CloudedObject, variables : Resolve
       return { errorMessage: `No variable named "${variableName}" was found` };
     }
 
-    if(typeof input[variableName] !== foundVariable.type) {
+    if(!isValidType(input[variableName], foundVariable.type)) {
       return { errorMessage: `Type "${typeof input[variableName]}" is not compatible with "${foundVariable.type}"` };
     }
 

@@ -1,13 +1,14 @@
 
+import { isValidType } from "../../../common/assertions/is-valid-type";
 import { ConfigurationType } from "../../..";
-import { JsonTypes } from "../../../common/types/json-types";
+import { ExtendedJsonTypes } from "../../../common/types/json-types";
 import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
 import { MappedFunctions } from "../modules-manager";
 import { decreaseVariablesFunction } from "./functions/decrease-variable";
 import { increaseVariablesFunction } from "./functions/increase-variable";
 import { setVariablesFunction } from "./functions/set-variable";
 
-type ResolvedVariable = { type : JsonTypes, value : unknown };
+type ResolvedVariable = { type : ExtendedJsonTypes | "any", value : unknown };
 export type ResolvedVariables = Record<string, ResolvedVariable>;
 
 export class VariableContext {
@@ -20,15 +21,18 @@ export class VariableContext {
   public static validateSystemVariables (systemConfig : ConfigurationType) : Record<string, BopsVariable[]> {
     const systemVariables : Record<string, BopsVariable[]> = {};
     for(const bop of systemConfig.businessOperations) {
-      systemVariables[bop.name] = this.validadeBopVariables(bop.variables);
+      systemVariables[bop.name] = this.validateBopVariables(bop.variables);
     }
     return systemVariables;
   }
 
-  private static validadeBopVariables (variables : BopsVariable[]) : BopsVariable[] {
+  private static validateBopVariables (variables : BopsVariable[]) : BopsVariable[] {
     variables.forEach(variable => {
       if(variable.initialValue !== undefined) {
-        if(variable.type !== typeof variable.initialValue) throw new Error("Invalid var type");
+        if(!isValidType(variable.initialValue, variable.type)) {
+          throw new Error(`Var ${variable.name} expected to be a(n) ${variable.type} but initial value `
+          + `${variable.initialValue} is of type ${typeof variable.initialValue}`);
+        }
       }
     });
     return variables;
