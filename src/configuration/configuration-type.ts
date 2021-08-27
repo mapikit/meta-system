@@ -1,5 +1,5 @@
+import { CloudedObject } from "common/types/clouded-object";
 import { BusinessOperations } from "./business-operations/business-operations-type";
-import { ProtocolConfigType } from "./protocols/protocol-config-type";
 import { SchemasType } from "./schemas/schemas-type";
 
 export interface ConfigurationType {
@@ -10,6 +10,12 @@ export interface ConfigurationType {
   dbConnectionString : string;
   schemas : SchemasType[];
   businessOperations : BusinessOperations[];
+}
+
+export interface ProtocolConfigType {
+  protocolType : string;
+  protocolVersion : string; // SemVer;
+  configuration : CloudedObject;
 }
 
 export interface EnvironmentVariable {

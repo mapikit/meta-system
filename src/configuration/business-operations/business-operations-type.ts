@@ -1,6 +1,6 @@
+import { ProtocolConfigType } from "configuration/configuration-type";
 import { ObjectDefinition } from "meta-function-helper";
 import { ExtendedJsonTypes } from "../../common/types/json-types";
-import { ProtocolConfigType } from "../protocols/protocol-config-type";
 
 export interface BusinessOperations {
   name : string;
