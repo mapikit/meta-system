@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200" height="200" src="https://user-images.githubusercontent.com/13098424/130166233-f3fa5dd0-fe75-4bc2-9f0f-a611fdf022ee.png">
+  <img height="248" src="https://user-images.githubusercontent.com/13098424/131415808-8d83e425-9f51-4cd0-9b0e-b8ae8d327da8.png">
 </p>
 
 # Meta-System - A system to be any system
