@@ -14,7 +14,7 @@ export const schemaBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      moduleRepo: "create",
+      moduleName: "create",
       modulePackage: "car",
       moduleType: "schemaFunction",
       key: 5,
@@ -23,7 +23,7 @@ export const schemaBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "getById",
+      moduleName: "getById",
       modulePackage: "car",
       moduleType: "schemaFunction",
       key: 4,
@@ -32,7 +32,7 @@ export const schemaBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "delete",
+      moduleName: "delete",
       moduleType: "schemaFunction",
       modulePackage: "car",
       key: 3,
@@ -41,7 +41,7 @@ export const schemaBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 6,
       dependencies: [

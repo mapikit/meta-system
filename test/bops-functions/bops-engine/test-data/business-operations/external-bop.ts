@@ -11,7 +11,7 @@ export const externalBop : BusinessOperations = {
   configuration: [
     {
       version: "1.1.1",
-      moduleRepo: "bops-function-hello-world",
+      moduleName: "bops-function-hello-world",
       moduleType: "external",
       key: 6,
       dependencies: [
@@ -19,7 +19,7 @@ export const externalBop : BusinessOperations = {
       ],
     },
     {
-      moduleRepo: "output",
+      moduleName: "output",
       moduleType: "output",
       key: 3,
       dependencies: [

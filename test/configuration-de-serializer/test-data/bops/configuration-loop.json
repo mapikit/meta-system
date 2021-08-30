@@ -20,7 +20,7 @@
     ],
     "configuration": [
       {
-        "moduleRepo": "@car@get",
+        "moduleName": "@car@get",
         "key": 1,
         "inputsSource": [
           { "source": "!carId", "target": "id" }
@@ -30,7 +30,7 @@
         ]
       },
       {
-        "moduleRepo": "#higherThan",
+        "moduleName": "#higherThan",
         "key": 2,
         "inputsSource": [
           { "source": 1, "sourceOutput": "result.lenght", "target": "input" },
@@ -42,17 +42,17 @@
         ]
       },
       {
-        "moduleRepo": "%success",
+        "moduleName": "%success",
         "key": 5,
         "inputsSource": [ { "source": "!successMessage", "target": "value" } ]
       },
       {
-        "moduleRepo": "%systemFailure",
+        "moduleName": "%systemFailure",
         "key": 6,
         "inputsSource": [ { "source": "!failureMessage", "target": "value" } ]
       },
       {
-        "moduleRepo": "#boolCheck",
+        "moduleName": "#boolCheck",
         "key": 10,
         "inputsSource": [
           { "source": 9, "sourceOutput": "item.sold", "target": "boolean" }
@@ -63,7 +63,7 @@
         ]
       },
       {
-        "moduleRepo": "#arrayIndex",
+        "moduleName": "#arrayIndex",
         "key": 9,
         "inputsSource": [
           { "source": "!firstArrayItemIndex", "target": "index" },
@@ -74,7 +74,7 @@
         ]
       },
       {
-        "moduleRepo": "@purchase@create",
+        "moduleName": "@purchase@create",
         "key": 7,
         "inputsSource": [
           { "source": "#timestamp", "sourceOutput": "date", "target": "date" },
@@ -86,7 +86,7 @@
         ]
       },
       {
-        "moduleRepo": "@customer@get",
+        "moduleName": "@customer@get",
         "key": 11,
         "inputsSource": [
           { "source": "!carSellBody.clientId", "target": "id" }
@@ -96,7 +96,7 @@
         ]
       },
       {
-        "moduleRepo": "#higherThan",
+        "moduleName": "#higherThan",
         "key": 12,
         "inputsSource": [
           { "source": 11, "sourceOutput": "result.lenght", "target": "input" },
@@ -108,7 +108,7 @@
         ]
       },
       {
-        "moduleRepo": "#arrayIndex",
+        "moduleName": "#arrayIndex",
         "key": 13,
         "inputsSource": [
           { "source": "!firstArrayItemIndex", "target": "index" },
@@ -119,7 +119,7 @@
         ]
       },
       {
-        "moduleRepo": "#arrayAppend",
+        "moduleName": "#arrayAppend",
         "key": 14,
         "inputsSource": [
           { "source": 13, "sourceOutput": "item.purchases", "target": "array" },
@@ -130,7 +130,7 @@
         ]
       },
       {
-        "moduleRepo": "@employee@get",
+        "moduleName": "@employee@get",
         "key": 15,
         "inputsSource": [
           { "source": "!carSellBody.employeeId", "target": "id" }
@@ -140,7 +140,7 @@
         ]
       },
       {
-        "moduleRepo": "#higherThan",
+        "moduleName": "#higherThan",
         "key": 16,
         "inputsSource": [
           { "source": 15, "sourceOutput": "result.lenght", "target": "input" },
@@ -152,7 +152,7 @@
         ]
       },
       {
-        "moduleRepo": "#arrayIndex",
+        "moduleName": "#arrayIndex",
         "key": 17,
         "inputsSource": [
           { "source": "!firstArrayItemIndex", "target": "index" },
@@ -163,7 +163,7 @@
         ]
       },
       {
-        "moduleRepo": "#arrayAppend",
+        "moduleName": "#arrayAppend",
         "key": 18,
         "inputsSource": [
           { "source": 17, "sourceOutput": "item.confirmedSales", "target": "array" },
@@ -174,7 +174,7 @@
         ]
       },
       {
-        "moduleRepo": "@car@update",
+        "moduleName": "@car@update",
         "key": 19,
         "inputsSource": [
           { "source": 9, "sourceOutput": "item.id", "target": "id" },
@@ -185,7 +185,7 @@
         ]
       },
       {
-        "moduleRepo": "@employee@update",
+        "moduleName": "@employee@update",
         "key": 20,
         "inputsSource": [
           { "source": 17, "sourceOutput": "item.id", "target": "id" },
@@ -196,7 +196,7 @@
         ]
       },
       {
-        "moduleRepo": "@customer@update",
+        "moduleName": "@customer@update",
         "key": 21,
         "inputsSource": [
           { "source": 13, "sourceOutput": "item.id", "target": "id" },

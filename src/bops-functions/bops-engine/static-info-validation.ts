@@ -1,6 +1,6 @@
 
-import { JsonTypes } from "../../common/types/json-types";
-import { BopsConstant, JsonTypeDict } from "../../configuration/business-operations/business-operations-type";
+import { isValidType } from "../../common/assertions/is-valid-type";
+import { BopsConstant, ExtendedJsonTypeDict } from "../../configuration/business-operations/business-operations-type";
 import { ConfigurationType } from "../../configuration/configuration-type";
 import { ConstantTypeError } from "./engine-errors/constant-type-error";
 
@@ -10,8 +10,8 @@ export type ResolvedConstants = Record<string, unknown>;
  * as constants and internalBops
  */
 export class StaticSystemInfo {
-  private static validateConstant (constant : BopsConstant) : JsonTypeDict<JsonTypes> {
-    if(typeof constant.value !== constant.type) throw new ConstantTypeError(constant);
+  private static validateConstant (constant : BopsConstant) : ExtendedJsonTypeDict {
+    if(!isValidType(constant.value, constant.type)) throw new ConstantTypeError(constant);
     return constant.value;
   }
 
@@ -22,7 +22,6 @@ export class StaticSystemInfo {
     });
     return resolvedConstants;
   }
-
 
   public static validateSystemStaticInfo (systemConfig : ConfigurationType)
     : Record<string, ResolvedConstants> {

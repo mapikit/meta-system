@@ -19,8 +19,8 @@ export class ModuleManager {
     : void {
     for(const module of modules) {
       const isRegularModule = !["output", "variable"].includes(module.moduleType);
-      if(!existingMap.has(module.moduleRepo) && isRegularModule) {
-        existingMap.set(module.moduleRepo, this.resolveModule(module));
+      if(!existingMap.has(module.moduleName) && isRegularModule) {
+        existingMap.set(module.moduleName, this.resolveModule(module));
       }
     }
   }

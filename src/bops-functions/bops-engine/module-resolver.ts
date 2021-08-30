@@ -44,16 +44,16 @@ export class ModuleResolver {
 
   public resolve : ModuleResolverType = {
     "protocol": (module) : Function => {
-      return this.protocolFunctionManager.get(`${module.modulePackage}.${module.moduleRepo}`);
+      return this.protocolFunctionManager.get(`${module.modulePackage}.${module.moduleName}`);
     },
     "bop": (module) : Function => {
-      const result = this.bopsManager.get(module.moduleRepo);
+      const result = this.bopsManager.get(module.moduleName);
 
       return result;
     },
     "schemaFunction": (module) : Function => {
       const schema = module.modulePackage;
-      const operation = module.moduleRepo;
+      const operation = module.moduleName;
       if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
 
       const schemaToLook = this.schemasManager.schemas.get(schema);
@@ -63,18 +63,18 @@ export class ModuleResolver {
     },
 
     "internal" : (module) : Function => {
-      const functionName = module.moduleRepo;
+      const functionName = module.moduleName;
       const foundFunction = this.internalFunctionManager.get(functionName);
-      if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleRepo);
+      if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleName);
       return foundFunction;
     },
 
     "external" : (module) : Function => {
       if (module.modulePackage !== undefined) {
-        return this.externalFunctionManager.get(`${module.modulePackage}.${module.moduleRepo}`);
+        return this.externalFunctionManager.get(`${module.modulePackage}.${module.moduleName}`);
       }
 
-      return this.externalFunctionManager.get(module.moduleRepo);
+      return this.externalFunctionManager.get(module.moduleName);
     },
   }
 }

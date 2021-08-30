@@ -12,8 +12,18 @@ Gemini is here! Meta-System got a power up on the protocols and the external fun
 
 ### BOps configuration
 We used to have an extra character before the configuration to specify what kind of module it was. We found that it was a rather silly approach.
-- Replaced the extra character at the start of `moduleRepo`. Instead we populate a new field called `moduleType`.
+- Replaced the extra character at the start of `moduleRepo`. Instead we populate a new field called `moduleType`. `moduleRepo` has also been renamed to `moduleName` to avoid confusion.
 - New parameter `modulePackage`. It is populated to specify the package of external function, the name of the schema, and the name of the protocol.
+- Both `constants` and `variables` can now accept a few extra types:
+  - Type `"object"` means the value must be an object such as `{ name: "John", age: 30 }`;
+  - Type `"array"` enforces the value is a list of items, for example: `[ "John", 30, "Programmer" ]`;
+  - Type `"any"` allows the value to be absolutely any type;
+
+### New Variable Model
+Now you don't need to supply the variable name as an input to update its value, instead the variable name is read from the targetPath of every `setVariables` dependency. For example, if you add the following dependency to the `setVariables` module:
+ - `{ origin: "constants", originPath: "piConstant", targetPath: "halfTau" }`
+The variable named `halfTau` will be equal to the constant `piConstant`.
+Also, as the name suggests, now you can set multiple variables at the same time. Theese changes also apply to the `increaseVariables` and `decreaseVaraibles` functions.
 
 ---
 ## 0.1.6-2

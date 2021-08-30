@@ -1,6 +1,6 @@
+import { ProtocolConfigType } from "configuration/configuration-type";
 import { ObjectDefinition } from "meta-function-helper";
-import { JsonTypes } from "../../common/types/json-types";
-import { ProtocolConfigType } from "../protocols/protocol-config-type";
+import { ExtendedJsonTypes } from "../../common/types/json-types";
 
 export interface BusinessOperations {
   name : string;
@@ -13,22 +13,25 @@ export interface BusinessOperations {
   protocols ?: ProtocolConfigType[];
 }
 
-export type JsonTypeDict<T = JsonTypes> =
+export type ExtendedJsonTypeDict<T = ExtendedJsonTypes | "any"> =
   T extends "string" ? string :
     T extends "number" ? number :
       T extends "boolean" ? boolean :
-        T extends "date" ? Date : never;
+        T extends "date" ? Date :
+          T extends "object" ? object :
+            T extends "array" ? Array<unknown> :
+              T extends "any" ? unknown : never;
 
 export class BopsConstant {
   name : string;
-  type : JsonTypes;
-  value : JsonTypeDict<JsonTypes>;
+  type : ExtendedJsonTypes | "any";
+  value : ExtendedJsonTypeDict;
 }
 
 export interface BopsVariable {
   name : string;
-  type : JsonTypes;
-  initialValue ?: JsonTypeDict<JsonTypes>;
+  type : ExtendedJsonTypes | "any";
+  initialValue ?: ExtendedJsonTypeDict;
 }
 
 export type ModuleType = "schemaFunction"
@@ -42,7 +45,7 @@ export type ModuleType = "schemaFunction"
 export interface BopsConfigurationEntry {
   version ?: string;
   moduleType : ModuleType;
-  moduleRepo : string;
+  moduleName : string;
   modulePackage ?: string;
   key : number;
   dependencies : Dependency[];

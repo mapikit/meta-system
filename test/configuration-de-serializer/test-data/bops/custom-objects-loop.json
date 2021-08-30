@@ -21,7 +21,7 @@
       "configuration": [
         {
           "key": 1,
-          "moduleRepo": "output",
+          "moduleName": "output",
           "moduleType": "output",
           "dependencies": [
             { "origin": 2, "originPath": "result.value", "targetPath": "message" },

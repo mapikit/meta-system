@@ -10,12 +10,12 @@ export function isBopsVariables (input : unknown) : asserts input is BopsVariabl
 
   const variables = input as BopsVariable[];
 
-  const jsonTypesArray = [
-    "string", "date", "number", "boolean",
+  const extendedJsonTypesArray = [
+    "string", "date", "number", "boolean", "object", "array", "any",
   ];
 
   variables.forEach((variable) => {
     isType("string", "Variable name should be string", variable.name);
-    stringIsOneOf(variable.type, jsonTypesArray);
+    stringIsOneOf(variable.type, extendedJsonTypesArray);
   });
 }

@@ -59,8 +59,9 @@ export class SystemSetup {
     this.stop()
       .then(() => {
         this.execute()
-          .catch(error => console.error("Error while starting system", error));
-      }).catch(error => console.error("Error while shutting down system", error));
+          .catch(error => console.log(chalk.red("Error when attempting to start the system:", error)));
+      })
+      .catch(error => console.log(chalk.red("Error when attempting to stop the system:", error)));
   }
 
   private desserializeConfiguration (validationContent : string) : Configuration {

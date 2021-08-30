@@ -69,7 +69,7 @@
       "configuration": [
         {
           "key": 1,
-          "moduleRepo": "%output",
+          "moduleName": "%output",
           "dependencies": [
             { "origin": 2, "originPath": "result.value", "targetPath": "message" },
             { "origin": 3, "originPath": "result.value", "targetPath": "statusCode" }
@@ -77,7 +77,7 @@
         },
         {
           "key": 2,
-          "moduleRepo": "#if",
+          "moduleName": "#if",
           "dependencies": [
             { "origin": "constant", "originPath": "failureMessage", "targetPath": "ifTrue" },
             { "origin": "constant", "originPath": "successMessage", "targetPath": "ifFalse" },
@@ -86,7 +86,7 @@
         },
         {
           "key": 3,
-          "moduleRepo": "#if",
+          "moduleName": "#if",
           "dependencies": [
             { "origin": "constant", "originPath": "failureCode", "targetPath": "ifTrue" },
             { "origin": "constant", "originPath": "successCode", "targetPath": "ifFalse" },
@@ -95,7 +95,7 @@
         },
         {
           "key": 4,
-          "moduleRepo": "#if",
+          "moduleName": "#if",
           "dependencies": [
             { "origin": "constant", "originPath": "trueValue", "targetPath": "ifTrue" },
             { "origin": 13, "originPath": "module", "targetPath": "ifFalse" },
@@ -104,7 +104,7 @@
         },
         {
           "key": 5,
-          "moduleRepo": "#or",
+          "moduleName": "#or",
           "dependencies": [
             { "origin": 6, "originPath": "result.value", "targetPath": "comparison[$origin]" },
             { "origin": 10, "originPath": "result.entity.sold", "targetPath": "comparison[$origin]" }
@@ -112,7 +112,7 @@
         },
         {
           "key": 6,
-          "moduleRepo": "#or",
+          "moduleName": "#or",
           "dependencies": [
             { "origin": 7, "originPath": "result.value", "targetPath": "comparison[$origin]" },
             { "origin": 8, "originPath": "result.value", "targetPath": "comparison[$origin]" },
@@ -121,63 +121,63 @@
         },
         {
           "key": 7,
-          "moduleRepo": "#not",
+          "moduleName": "#not",
           "dependencies": [
             { "origin": 10, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
           "key": 8,
-          "moduleRepo": "#not",
+          "moduleName": "#not",
           "dependencies": [
             { "origin": 11, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
           "key": 9,
-          "moduleRepo": "#not",
+          "moduleName": "#not",
           "dependencies": [
             { "origin": 12, "originPath": "result.found", "targetPath": "input" }
           ]
         },
         {
           "key": 10,
-          "moduleRepo": "@car@getById",
+          "moduleName": "@car@getById",
           "dependencies": [
             { "origin": "input", "originPath": "inexistentInput", "targetPath": "id" }
           ]
         },
         {
           "key": 11,
-          "moduleRepo": "@client@getById",
+          "moduleName": "@client@getById",
           "dependencies": [
             { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "id" }
           ]
         },
         {
           "key": 12,
-          "moduleRepo": "@employee@getById",
+          "moduleName": "@employee@getById",
           "dependencies": [
             { "origin": "input", "originPath": "jsonBody.employee", "targetPath": "id" }
           ]
         },
         {
           "key": 13,
-          "moduleRepo": "#not",
+          "moduleName": "#not",
           "dependencies": [
             { "origin": 14, "originPath": "result.value", "targetPath": "input" }
           ]
         },
         {
           "key": 14,
-          "moduleRepo": "#isNill",
+          "moduleName": "#isNill",
           "dependencies": [
             { "origin": 15, "originPath": "result.updateError", "targetPath": "input" }
           ]
         },
         {
           "key": 15,
-          "moduleRepo": "@car@updateById",
+          "moduleName": "@car@updateById",
           "dependencies": [
             { "origin": "input", "originPath": "carId", "targetPath": "id" },
             { "origin": "constants", "originPath": "trueValue", "targetPath": "sold" },
@@ -186,7 +186,7 @@
         },
         {
           "key": 16,
-          "moduleRepo": "@purchase@create",
+          "moduleName": "@purchase@create",
           "dependencies": [
             { "origin": "input", "originPath": "carId", "targetPath": "productId" },
             { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "clientId" },

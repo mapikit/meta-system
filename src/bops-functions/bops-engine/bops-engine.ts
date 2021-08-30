@@ -70,7 +70,7 @@ export class BopsEngine {
     currentBop : RelevantBopInfo,
     _inputs : object) : Promise<object> {
     const dependency = currentBop.config.find(module => module.key === input.origin);
-    const moduleFunction = this.mappedFunctions.get(dependency.moduleRepo);
+    const moduleFunction = this.mappedFunctions.get(dependency.moduleName);
     const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
 
     if(input.originPath === undefined) {

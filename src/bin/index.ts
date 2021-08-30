@@ -2,8 +2,8 @@
 import { SystemSetup } from "../bootstrap/system-setup";
 import Path from "path";
 import fs from "fs";
-
 import packageData from "../../package.json";
+import chalk from "chalk";
 
 // eslint-disable-next-line max-lines-per-function
 const main = async () : Promise<void> => {
@@ -18,7 +18,7 @@ const main = async () : Promise<void> => {
   const absolutePath = Path.join(fileLocation);
   const setupProcess = new SystemSetup();
 
-  await setupProcess.execute();
+  setupProcess.execute().catch(error => console.log(chalk.red(error)));
 
   process.stdin.on("data", (data) => {
     if(data.toString().includes("rs")) setupProcess.restart();
