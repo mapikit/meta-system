@@ -1,3 +1,4 @@
+import { getObjectProperty } from "../../schemas/application/query-builder/get-object-property";
 import constants from "../../common/constants";
 import { BopsVariable, BusinessOperations, Dependency }
   from "../../configuration/business-operations/business-operations-type";
@@ -38,7 +39,7 @@ export class BopsEngine {
 
     const output = operation.configuration.find(module => module.moduleType === "output");
 
-    const stiched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
+    const stitched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
       const variablesInfo = new VariableContext(this.variables[operation.name]);
       this.mappedFunctions = variablesInfo.appendVariableFunctions(this.mappedFunctions);
 
@@ -51,7 +52,7 @@ export class BopsEngine {
 
       return this.getInputs(output.dependencies, workingBopContext, _inputs);
     };
-    return addTimeout(msTimeout, stiched);
+    return addTimeout(msTimeout, stitched);
   }
 
   private async getInputs (inputs : Dependency[], currentBop : RelevantBopInfo, _inputs : object) : Promise<object> {
@@ -95,6 +96,7 @@ export class BopsEngine {
     throw new Error("Incorrect originPath configuration");
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private solveStaticInput (
     input : Dependency, currentBop : RelevantBopInfo, _inputs : object) : object {
     switch (input.origin) {
@@ -102,8 +104,15 @@ export class BopsEngine {
         const foundConstant = currentBop.constants[input.originPath];
         return { [input.targetPath]: foundConstant };
       case "inputs":
-        return { [input.targetPath]: _inputs[input.originPath] };
+        return { [input.targetPath]: getObjectProperty(_inputs, input.originPath) };
       case "variables":
+        return { [input.targetPath]: currentBop.variables[input.originPath].value };
+      case "constant":
+        const constant = currentBop.constants[input.originPath];
+        return { [input.targetPath]: constant };
+      case "input":
+        return { [input.targetPath]: getObjectProperty(_inputs, input.originPath) };
+      case "variable":
         return { [input.targetPath]: currentBop.variables[input.originPath].value };
     }
   }

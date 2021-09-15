@@ -4,14 +4,14 @@ import { isType } from "../is-type";
 
 function isDependencies (input : unknown) : asserts input is Dependency[] {
   if (!Array.isArray(input)) {
-    throw Error("Business Operation Configuration with wrong type found: \"inputsSource\" should be an Array");
+    throw Error("Business Operation Configuration with wrong type found: \"dependencies\" should be an Array");
   }
 
   const inputAssertion = input as Dependency[];
 
   inputAssertion.forEach((sourceInput) => {
     if (!["number", "string"].includes(typeof sourceInput.origin)) {
-      throw Error("\"origin\" must be a string: Not a string");
+      throw Error("\"origin\" must be a string or a number");
     }
 
     if (sourceInput.targetPath !== undefined || sourceInput.originPath !== undefined) {
