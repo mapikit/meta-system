@@ -3,7 +3,7 @@ import { isValidType } from "../../../common/assertions/is-valid-type";
 import { ConfigurationType } from "../../..";
 import { ExtendedJsonTypes } from "../../../common/types/json-types";
 import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
-import { MappedFunctions } from "../modules-manager";
+import { MappedFunctions, ModuleFullName } from "../modules-manager";
 import { decreaseVariablesFunction } from "./functions/decrease-variable";
 import { increaseVariablesFunction } from "./functions/increase-variable";
 import { setVariablesFunction } from "./functions/set-variable";
@@ -53,10 +53,10 @@ export class VariableContext {
     ]);
   }
 
-  private variableFunctions : Array<[string, Function]> = [
-    ["setVariables", this.wrapVariables(setVariablesFunction)],
-    ["increaseVariables", this.wrapVariables(increaseVariablesFunction)],
-    ["decreaseVariables", this.wrapVariables(decreaseVariablesFunction)],
+  private variableFunctions : Array<[ModuleFullName<"variable">, Function]> = [
+    ["variable.setVariables", this.wrapVariables(setVariablesFunction)],
+    ["variable.increaseVariables", this.wrapVariables(increaseVariablesFunction)],
+    ["variable.decreaseVariables", this.wrapVariables(decreaseVariablesFunction)],
   ];
 
   private wrapVariables (varFunction : Function) : Function {

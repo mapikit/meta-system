@@ -8,6 +8,7 @@
 ### 0.3 - Future Release
 - Introduces DBProtocols - Databases becomes part of the protocol definition;
 - Schemas need to define a protocol Database to connect to;
+- Verification of module dependecy property access;
 
 ### 0.4 - Future Release
 - Meta-System can be run on the Browser;
