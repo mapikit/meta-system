@@ -2,7 +2,7 @@ import { ProtocolFunctionManagerClass } from "../bops-functions/function-manager
 import chalk from "chalk";
 import { MongoClient } from "mongodb";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
-import { ModuleManager } from "../bops-functions/bops-engine/modules-manager";
+import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager";
 import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
 import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager";
 import { FunctionManager } from "../bops-functions/function-managers/function-manager";
@@ -13,6 +13,7 @@ import { BopsDependencies, CheckBopsFunctionsDependencies }
 import { ConfigurationType } from "../configuration/configuration-type";
 import { SchemasType } from "../configuration/schemas/schemas-type";
 import { SchemasManager } from "../schemas/application/schemas-manager";
+import { ModuleType } from "../configuration/business-operations/business-operations-type";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();
@@ -49,6 +50,8 @@ export class FunctionSetup {
       SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
     });
 
+    this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
+
     this.bopsEngine = new BopsEngine({
       ModuleManager: moduleManager,
       SystemConfig: this.systemConfiguration,
@@ -58,6 +61,22 @@ export class FunctionSetup {
 
     this.buildBops();
     console.log(chalk.greenBright("[Function Setup] Success - Function Setup complete"));
+  }
+
+  private replaceGetSystemFunction (manager : ModuleManager, systemConfig : ConfigurationType) : void {
+    const builtManager = manager.resolveSystemModules(systemConfig);
+
+    this.internalFunctionManager.replace("getSystemFunction", (
+      input : { moduleName : string; modulePackage : string; moduleType : ModuleType },
+    ) => {
+      const name = input.modulePackage === undefined ?
+        `${input.moduleType}.${input.moduleName}` :
+        `${input.moduleType}.${input.modulePackage}.${input.moduleName}`;
+
+      const callableFunction = builtManager.get(name as unknown as ModuleFullName);
+      const found = callableFunction !== undefined;
+      return { callableFunction, found };
+    });
   }
 
   // eslint-disable-next-line max-lines-per-function

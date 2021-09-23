@@ -25,6 +25,11 @@ Now you don't need to supply the variable name as an input to update its value, 
 The variable named `halfTau` will be equal to the constant `piConstant`.
 Also, as the name suggests, now you can set multiple variables at the same time. Theese changes also apply to the `increaseVariables` and `decreaseVaraibles` functions.
 
+### New System Functions
+There are new internal functions which the purpose is to provide a way to monipulate meta system more deeply:
+- `getSystemFunction` - To get any function from the installed ones or BOps;
+- `executeWithArgs` - To execute a function upon command;
+
 ---
 ## 0.1.6-2
 Adds `-v` as a CLI argument for checking the version

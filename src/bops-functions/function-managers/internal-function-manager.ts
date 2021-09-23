@@ -1,3 +1,4 @@
+import { getSystemFunction } from "../prebuilt-functions/system/get-system-function";
 import { arrayAtBopsFunction } from "../prebuilt-functions/array/array-at";
 import { arrayFindIndexBopsFunction } from "../prebuilt-functions/array/find-index";
 import { arrayIncludesBopsFunction } from "../prebuilt-functions/array/inlcudes";
@@ -44,6 +45,7 @@ import { indexOfStringFunction } from "../prebuilt-functions/string/index-of";
 import { stringReplaceFunction } from "../prebuilt-functions/string/replace";
 import { stringToNumberBopsFunction } from "../prebuilt-functions/string/to-number";
 import { FunctionManager } from "./function-manager";
+import { executeWithArgs } from "../prebuilt-functions/system/execute-with-args";
 
 
 export class InternalFunctionManagerClass implements FunctionManager {
@@ -59,6 +61,11 @@ export class InternalFunctionManagerClass implements FunctionManager {
 
   public functionIsInstalled (functionName : string) : boolean {
     return this.get(functionName) !== undefined;
+  }
+
+  public replace (functionName : string, declaration : Function) : void {
+    this.functionMap.delete(functionName);
+    this.add(functionName, declaration);
   }
 }
 
@@ -128,5 +135,9 @@ internalFunctionManager.add("forLoop", forLoopFunction);
 
 // Date Functions
 internalFunctionManager.add("dateNow", dateNowBopsFunction);
+
+// System Functions
+internalFunctionManager.add("getSystemFunction", getSystemFunction);
+internalFunctionManager.add("executeWithArgs", executeWithArgs);
 
 export default internalFunctionManager;
