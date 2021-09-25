@@ -5,7 +5,7 @@ import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionManager } from "meta-function-helper";
 import Protocols, { BuiltMetaProtocolDefinition } from "meta-protocol-helper";
 import { MetaProtocol } from "meta-protocol-helper/dist/src/meta-protocol";
-import { join } from "path";
+// import { join } from "path";
 
 export class ProtocolFunctionManagerClass implements FunctionManager {
   private functionMap : Map<string, Function>= new Map();
@@ -28,12 +28,9 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     await this.functionsInstaller.install(protocolName, version, ModuleKind.NPM);
     const protocolDescription = await this.protocolFileSystem.getDescriptionFile(protocolName);
 
-    await Protocols.validateProtocolStringConfiguration(protocolDescription, {
-      filePath: join(runtimeDefaults.externalFunctionInstallFolder, protocolName),
-    });
+    await Protocols.validateProtocolStringConfiguration(protocolDescription);
 
-    const configValidation = await new ProtocolDescriptionValidation(protocolDescription)
-      .validate(protocolName);
+    const configValidation = await new ProtocolDescriptionValidation(protocolDescription).validate();
 
     this.descriptionsMap.set(protocolName, await configValidation.getPackageConfiguration());
   }

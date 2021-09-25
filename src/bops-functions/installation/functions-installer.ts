@@ -38,6 +38,6 @@ export class FunctionsInstaller {
   }
 
   public async purgePackages () : Promise<void> {
-    // await this.installationManager.uninstallAll();
+    await this.installationManager.uninstallAll();
   }
 }

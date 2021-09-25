@@ -44,4 +44,8 @@ export class DependenciesManager {
 
     return removalPromise;
   }
+
+  public async uninstallAll () : Promise<void> {
+    await FS.promises.rmdir(`${process.cwd()}/node_modules`);
+  }
 }
