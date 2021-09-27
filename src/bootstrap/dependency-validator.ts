@@ -19,6 +19,7 @@ type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 export class DependencyPropValidator {
   private workingBop : BusinessOperations;
   private getHeader : (errorType : string) => string;
+  private typeCheckingLevel = 0;
   // eslint-disable-next-line max-params
   constructor (
     private systemConfig : ConfigurationType,
@@ -30,9 +31,13 @@ export class DependencyPropValidator {
   // eslint-disable-next-line max-lines-per-function
   public verifyAll () : void {
     console.log(chalk.greenBright("[Dependency Validation] Starting validation of all registered dependencies"));
-    const typeSafe = process.argv.includes("--type-check");
-    if(typeSafe) {
-      console.log(chalk.red("Type checking is currently experimental, validation may be unnecessarily verbose"));
+    const typeSafe = process.argv.indexOf("--type-check");
+    if(typeSafe > -1) {
+      const selectedLevel = Number(process.argv[typeSafe+1]);
+      if(typeof selectedLevel !== "number" || selectedLevel < 0) {
+        throw Error("Invalid type-check value; Must be a number between 0-4");
+      }
+      this.typeCheckingLevel = selectedLevel > 4 ? 4 : selectedLevel;
     }
     this.systemConfig.businessOperations.forEach(bop => {
       this.workingBop = bop;
@@ -44,7 +49,7 @@ export class DependencyPropValidator {
         module.dependencies.forEach(dependency => {
           if(dependency.originPath === undefined) return;
           this.validateIO(dependency, module, bop);
-          if(typeSafe) this.validateTypes(dependency, module, bop);
+          if(this.typeCheckingLevel > 0) this.validateTypes(dependency, module, bop);
         });
       });
     });
@@ -60,16 +65,58 @@ export class DependencyPropValidator {
     return customTypes;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private validateTypes (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperations) : void {
     const moduleInfo = this.getFunctionInfo(module);
     if(module.moduleType !== "output") {
+      enum of { origin, target }
+      let types : [string, string];
       switch (typeof dependency.origin) {
         case "number":
           const refersTo = bop.configuration.find(mod => mod.key == dependency.origin);
           const referredInfo = this.getFunctionInfo(refersTo);
-          return this.validateModularTypes(referredInfo, moduleInfo, dependency);
+          types = this.validateModularTypes(referredInfo, moduleInfo, dependency);
+          break;
         case "string":
-          return this.validateStaticTypes(dependency, moduleInfo);
+          types = this.validateStaticTypes(dependency, moduleInfo);
+          break;
+      }
+      if(types[of.origin] === types[of.target] || types[of.target] === "any") return;
+      if(types.every(type => type.startsWith("array")) && types[of.target].endsWith("any")) return;
+
+      if(this.typeCheckingLevel === 1) {
+        if(types.includes("unknown")) return;
+        return console.log(this.getHeader("Type Error"),
+          `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
+          `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
+        );
+      }
+
+      if(this.typeCheckingLevel === 2) {
+        return console.log(this.getHeader("Type Error"),
+          `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
+          `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
+        );
+      }
+
+      if(this.typeCheckingLevel === 3) {
+        if(types.includes("unknown")) {
+          return console.log(this.getHeader("Type Error"),
+            `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
+            `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
+          );
+        } else {
+          throw new Error(this.getHeader("Type Error") +
+            `  >> Invalid type from ${dependency.origin} "${dependency.originPath}"\n` +
+            `     :: ${types[of.origin]} type is not be assignable to ${types[of.target]}`);
+        }
+      }
+
+      if(this.typeCheckingLevel === 4) {
+        throw Error(this.getHeader("Type Error") +
+          `  >> Invalid type from ${dependency.origin} "${dependency.originPath}"\n` +
+          `     :: ${types[of.origin]} type is not be assignable to ${types[of.target]}`,
+        );
       }
     }
   }
@@ -107,24 +154,19 @@ export class DependencyPropValidator {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private validateStaticTypes (dependency : Dependency, inputInfo : FunctionInfoType) : void {
+  private validateStaticTypes (dependency : Dependency, inputInfo : FunctionInfoType) : [string, string] {
     const targetPath = dependency.targetPath.split(".");
     const targetInputInfo = this.getFunctionInput(inputInfo);
     const targetType = this.getPathType(targetInputInfo, targetPath, this.getCustomTypes(inputInfo));
-    if(targetType === "any") return;
 
     const originType = this.getStaticDependencyType(dependency);
 
-    if(targetType === originType) return;
-    if(targetType.startsWith("array") && originType.startsWith("array")) {
-      if(targetType.split(".")[1] == "any") return;
-    }
-
-    const originPath = dependency.originPath.split(".");
-    console.log(this.getHeader("Type Error"),
-      `  >> Possibly invalid type from ${dependency.origin} "${originPath.join(".")}"\n`,
-      `     :: ${originType} type may not be assignable to ${targetType}`,
-    );
+    // const originPath = dependency.originPath.split(".");
+    // console.log(this.getHeader("Type Error"),
+    //   `  >> Possibly invalid type from ${dependency.origin} "${originPath.join(".")}"\n`,
+    //   `     :: ${originType} type may not be assignable to ${targetType}`,
+    // );
+    return [originType, targetType];
   }
 
   private getFunctionOutput (functionInfo : FunctionInfoType) : ObjectDefinition {
@@ -173,7 +215,7 @@ export class DependencyPropValidator {
   // eslint-disable-next-line max-lines-per-function
   private getPathType (definition : ObjectDefinition, pathArray : Array<string>, customTypes : CustomType[]) : string {
     const output = definition[pathArray[0]];
-    if(output === undefined) return "unkown";
+    if(output === undefined) return "unknown";
     if(output.type.startsWith("$")) {
       const subtype =
         this.systemConfig.schemas.find(schema => schema.name === output.type.slice(1))?.format ??
@@ -198,25 +240,21 @@ export class DependencyPropValidator {
 
   // eslint-disable-next-line max-lines-per-function
   private validateModularTypes (originInfo : FunctionInfoType, targetInfo : FunctionInfoType, dependency : Dependency)
-    : void {
+    : [string, string] {
     const targetPath = dependency.targetPath.split(".");
     const targetInputInfo = this.getFunctionInput(targetInfo);
     const targetType = this.getPathType(targetInputInfo, targetPath, this.getCustomTypes(targetInfo));
-    if(targetType === "any") return;
 
     const originPath = dependency.originPath.split(".").slice(1);
     const originOutputInfo = this.getFunctionOutput(originInfo);
     const originType = this.getPathType(originOutputInfo, originPath, this.getCustomTypes(originInfo));
-    if(targetType === originType) return;
-    if(targetType.startsWith("array.") && originType.startsWith("array.")) {
-      if(targetType.split(".")[1] === "any") return;
-    }
 
-    const moduleName = targetInfo["functionName"] ?? targetInfo["name"];
-    console.log(this.getHeader("Invalid Type"),
-      `  >> Possibly invalid type in dependency ${dependency.origin} (${moduleName})\n`,
-      `     :: ${originType} may not be assignable to ${targetType}`,
-    );
+    // const moduleName = targetInfo["functionName"] ?? targetInfo["name"];
+    // console.log(this.getHeader("Invalid Type"),
+    //   `  >> Possibly invalid type in dependency ${dependency.origin} (${moduleName})\n`,
+    //   `     :: ${originType} may not be assignable to ${targetType}`,
+    // );
+    return [originType, targetType];
   }
 
   private isInputAvailable (dependency : Dependency, functionInfo : FunctionInfoType) : void {
