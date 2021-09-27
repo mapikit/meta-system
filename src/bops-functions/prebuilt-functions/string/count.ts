@@ -17,7 +17,7 @@ export const countStringFunction = (input : { string : string; search : string }
 };
 
 export const countStringFunctionInformation : InternalMetaFunction = {
-  functionName: "countStringFunction",
+  functionName: "countString",
   version: "1.0.0",
   description: "Gets the amount of times a substring appears in the string",
   inputParameters: {

@@ -16,7 +16,7 @@ export const arrayPushBopsFunction = (input : {
 };
 
 export const arrayPushBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "arrayPushBopsFunction",
+  functionName: "arrayPush",
   version: "1.0.0",
   description: "Pushes items into the array",
   inputParameters: {

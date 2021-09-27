@@ -7,7 +7,7 @@ export const lowerThanBopsFunction = (input : { A : number; B : number }) : unkn
 };
 
 export const lowerThanBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "lowerThanBopsFunction",
+  functionName: "lowerThan",
   version: "1.0.0",
   description: "compares A to B, returning if A is lower than B",
   inputParameters: {

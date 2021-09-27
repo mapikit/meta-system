@@ -10,7 +10,7 @@ export const stringConcatFunction = (input : { strings : Record<string, string> 
 };
 
 export const stringConcatFunctionInformation : InternalMetaFunction = {
-  functionName: "stringConcatFunction",
+  functionName: "stringConcat",
   version: "1.0.0",
   description: "Concatenates all given strings in order",
   inputParameters: {

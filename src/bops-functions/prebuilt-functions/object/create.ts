@@ -11,7 +11,7 @@ export const createObjectBopsFunction = (input : { key ?: string; value ?: unkno
 };
 
 export const createObjectBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "createObjectBopsFunction",
+  functionName: "createObject",
   version: "1.0.0",
   description: "Creates an object with the given key and value",
   inputParameters: {

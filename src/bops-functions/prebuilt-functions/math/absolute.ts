@@ -11,7 +11,7 @@ export const absoluteBopsFunction = (input : { input : number }) : unknown => {
 };
 
 export const absoluteFunctionInformation : InternalMetaFunction = {
-  functionName: "absoluteBopsFunction",
+  functionName: "absolute",
   version: "1.0.0",
   description: "Gets the absolute value of a number",
   inputParameters: {

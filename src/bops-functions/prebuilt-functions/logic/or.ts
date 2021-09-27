@@ -7,7 +7,7 @@ export const orGateBopsFunction = (input : { A : boolean; B : boolean }) : unkno
 };
 
 export const orGateBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "orGateBopsFunction",
+  functionName: "or",
   version: "1.0.0",
   description: "OR gate comparing boolean values for A and B",
   outputData: {

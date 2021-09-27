@@ -19,7 +19,7 @@ export const squareRootBopsFunction = (input : { A : number }) : unknown => {
 };
 
 export const squareRootFunctionInformation : InternalMetaFunction = {
-  functionName: "squareRootBopsFunction",
+  functionName: "sqrt",
   version: "1.0.0",
   description: "Gets the Square Root of A",
   inputParameters: {

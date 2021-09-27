@@ -18,7 +18,7 @@ export const multiplyBopsFunction = (input : { numbersToMultiply : number[] }) :
 };
 
 export const multiplyFunctionInformation : InternalMetaFunction = {
-  functionName: "multiplyBopsFunction",
+  functionName: "multiply",
   version: "1.0.0",
   description: "Multiply the list of numbers provided",
   inputParameters: {
