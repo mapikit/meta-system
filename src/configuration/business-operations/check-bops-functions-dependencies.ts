@@ -1,4 +1,4 @@
-import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager";
+import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager";
 import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager";
 import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager";
 import { SchemasFunctions } from "../../schemas/domain/schemas-functions";

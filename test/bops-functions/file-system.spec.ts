@@ -19,6 +19,10 @@ describe("File System BOps", () => {
     installationPath,
   );
 
+  before(async () => { //Previous tests may leave packages installed
+    await installationHandler.purgePackages();
+  });
+
   afterEach(async () => {
     await installationHandler.purgePackages();
   });

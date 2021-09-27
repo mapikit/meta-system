@@ -1,5 +1,5 @@
 import { isValidType } from "../../../../common/assertions/is-valid-type";
-import { CloudedObject } from "common/types/clouded-object";
+import { CloudedObject } from "../../../../common/types/clouded-object";
 import { InternalMetaFunction } from "../../../internal-meta-function";
 import { ResolvedVariables } from "../variables-context";
 

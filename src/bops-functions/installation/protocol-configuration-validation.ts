@@ -3,8 +3,6 @@ import MetaProtocolHelper, { BuiltMetaProtocolDefinition, MetaProtocolDefinition
 import { buildFullPackageDescription } from "meta-function-helper/dist/src/build-full-package-description";
 import { isMetaFunction } from "meta-function-helper/dist/src/is-meta-function";
 import { MetaFunction } from "meta-function-helper";
-import { join } from "path";
-import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 
 export class ProtocolDescriptionValidation {
   private validated = false;
@@ -13,11 +11,9 @@ export class ProtocolDescriptionValidation {
     private readonly descriptionFileContent : string,
   ) { }
 
-  public async validate (protocolName : string) : Promise<this> {
+  public async validate (customPath : string) : Promise<this> {
     await MetaProtocolHelper
-      .validateProtocolStringConfiguration(this.descriptionFileContent, {
-        filePath: join(runtimeDefaults.externalFunctionInstallFolder, protocolName),
-      });
+      .validateProtocolStringConfiguration(this.descriptionFileContent, { filePath: customPath });
     this.validated = true;
 
     return this;
