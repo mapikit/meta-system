@@ -17,26 +17,19 @@ import chalk from "chalk";
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 
 export class DependencyPropValidator {
-  private workingBop : BusinessOperations
+  private workingBop : BusinessOperations;
   private getHeader : (errorType : string) => string;
-  private systemConfig : ConfigurationType;
-  private internalInfo : Map<string, InternalMetaFunction>;
-  private externalManager : ExternalFunctionManagerClass;
-  private protocolManager : ProtocolFunctionManagerClass;
-  constructor (options : {
-    systemConfig : ConfigurationType,
-    internalManager : InternalFunctionManagerClass,
-    externalManager : ExternalFunctionManagerClass,
-    protocolManager : ProtocolFunctionManagerClass,
-  }) {
-    this.systemConfig = options.systemConfig;
-    this.internalInfo = options.internalManager.infoMap;
-    this.externalManager = options.externalManager;
-    this.protocolManager = options.protocolManager;
-  };
+  // eslint-disable-next-line max-params
+  constructor (
+    private systemConfig : ConfigurationType,
+    private internalManager : InternalFunctionManagerClass,
+    private externalManager : ExternalFunctionManagerClass,
+    private protocolManager : ProtocolFunctionManagerClass,
+  ) {};
 
   // eslint-disable-next-line max-lines-per-function
   public verifyAll () : void {
+    console.log(chalk.greenBright("[Dependency Validation] Starting validation of all registered dependencies"));
     const typeSafe = process.argv.includes("--type-check");
     if(typeSafe) {
       console.log(chalk.red("Type checking is currently experimental, validation may be unnecessarily verbose"));
@@ -45,7 +38,7 @@ export class DependencyPropValidator {
       this.workingBop = bop;
       bop.configuration.forEach(module => {
         this.getHeader = (errorType : string) : string =>
-          chalk.yellowBright(`[${errorType} in bop ${bop.name} @ key ${module.key} (${module.moduleName})]\n`);
+          chalk.yellowBright(`[${errorType} in BOp "${bop.name}" @ key ${module.key} (${module.moduleName})]\n`);
 
         this.requiredInputsFullfilled(module);
         module.dependencies.forEach(dependency => {
@@ -55,6 +48,7 @@ export class DependencyPropValidator {
         });
       });
     });
+    console.log(chalk.greenBright("[Dependency Validation] Finished validating dependencies"));
   }
 
   private getCustomTypes (info : FunctionInfoType) : CustomType[] {
@@ -80,29 +74,53 @@ export class DependencyPropValidator {
     }
   }
 
+  private requiredInputsFullfilled (module : BopsConfigurationEntry) : void {
+    const functionInfo = this.getFunctionInfo(module);
+    if(functionInfo === undefined) return;
+    const inputs = this.getFunctionInput(functionInfo) ?? {};
+    const requiredInputs : Array<string> = [];
+    for(const input in inputs) {
+      if(inputs[input].required) requiredInputs.push(input);
+    }
+    const configuredInputs = module.dependencies.map(dependency => dependency.targetPath?.split(".")[0]);
+
+    const isFullfilled = requiredInputs.every(input => configuredInputs.includes(input));
+    if(!isFullfilled) {
+      console.log(this.getHeader("Missing Required Inputs"),
+        `  >> Required inputs are ${requiredInputs} but only ${configuredInputs} were given`);
+    }
+  }
+
+  private getStaticDependencyType (dependency : Dependency) : string {
+    const origin = dependency.origin as string;
+    const originPath = dependency.originPath.split(".");
+    if(["input", "inputs"].includes(origin as string)) {
+      return this.getPathType(this.workingBop.input, originPath, this.getCustomTypes(this.workingBop));
+    } else {
+      if(["constants", "constant"].includes(origin as string)) {
+        return this.workingBop.constants.find(constant => constant.name === originPath[0]).type;
+      }
+      if(["variable", "variables"].includes(origin as string)) {
+        return this.workingBop.variables.find(variable => variable.name === originPath[0]).type;
+      }
+    }
+  }
+
   // eslint-disable-next-line max-lines-per-function
   private validateStaticTypes (dependency : Dependency, inputInfo : FunctionInfoType) : void {
     const targetPath = dependency.targetPath.split(".");
     const targetInputInfo = this.getFunctionInput(inputInfo);
     const targetType = this.getPathType(targetInputInfo, targetPath, this.getCustomTypes(inputInfo));
     if(targetType === "any") return;
-    const originPath = dependency.originPath.split(".");
 
-    let originType : string;
-    if(["input", "inputs"].includes(dependency.origin as string)) {
-      originType = this.getPathType(this.workingBop.input, originPath, this.getCustomTypes(this.workingBop));
-    } else {
-      if(["constants", "constant"].includes(dependency.origin as string)) {
-        originType = this.workingBop.constants.find(constant => constant.name === originPath[0]).type;
-      }
-      if(["variable", "variables"].includes(dependency.origin as string)) {
-        originType = this.workingBop.variables.find(variable => variable.name === originPath[0]).type;
-      }
-    }
+    const originType = this.getStaticDependencyType(dependency);
+
     if(targetType === originType) return;
     if(targetType.startsWith("array") && originType.startsWith("array")) {
       if(targetType.split(".")[1] == "any") return;
     }
+
+    const originPath = dependency.originPath.split(".");
     console.log(this.getHeader("Type Error"),
       `  >> Possibly invalid type from ${dependency.origin} "${originPath.join(".")}"\n`,
       `     :: ${originType} type may not be assignable to ${targetType}`,
@@ -136,62 +154,6 @@ export class DependencyPropValidator {
     }
   }
 
-  private infoResolver : { [type in ModuleType] :
-    (name : string, packageName ?: string) => FunctionInfoType } = {
-    "internal": (name) => {
-      return this.internalInfo.get(name);
-    },
-    "external": (name, packageName) => {
-      const externalInfo = this.externalManager.getFunctionInfo(name, packageName);
-      return externalInfo;
-    },
-    "bop": (name) => {
-      return this.systemConfig.businessOperations.find(bop => bop.name === name);
-    },
-    "protocol": (name, modulePackage) => {
-      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage).packageDetails;
-      const functionInfo = protocolInfo.functionsDefinitions.find(funct => funct.functionName === name);
-      return functionInfo;
-    },
-    // eslint-disable-next-line max-lines-per-function
-    "schemaFunction": (name, modulePackage) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
-      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name));
-      resolvableParameters.forEach(param => {
-        Object.keys(schemaFunctionInfo[param]).forEach(key => {
-          if(schemaFunctionInfo[param][key].type === "%entity") {
-            schemaFunctionInfo[param][key].type = `$${modulePackage}`;
-          }
-          if(schemaFunctionInfo[param][key]["subtype"] === "%entity") {
-            schemaFunctionInfo[param][key]["subtype"] = `$${modulePackage}`;
-          }
-        });
-      });
-      const referredSchema = this.systemConfig.schemas.find(schema => schema.name === modulePackage);
-      schemaFunctionInfo.customTypes.push({
-        name: modulePackage,
-        type: referredSchema.format,
-      });
-      return schemaFunctionInfo;
-    },
-    "variable": (name) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
-      const info = clone(VariableContext.variablesInfo.get(name));
-      resolvableParameters.forEach(param => {
-        Object.keys(info[param]).forEach(key => {
-          if(key === "%variableName") {
-            delete info[param][key];
-            this.workingBop.variables.forEach(variable => {
-              info[param][variable.name] = { type: variable.type, required: false };
-            });
-          }
-        });
-      });
-      return info;
-    },
-    "output": () => undefined,
-  }
-
   private isOutputAvailable (dependency : Dependency, functionInfo : FunctionInfoType) : void {
     if(functionInfo === undefined) return;
     const outputs = this.getFunctionOutput(functionInfo) ?? {};
@@ -201,7 +163,8 @@ export class DependencyPropValidator {
     if(!Object.keys(outputs).includes(originPathArray[0])) {
       console.warn(
         this.getHeader("Origin Unavailable"),
-        `  >> Requested property "${originPathArray[0]}" is not output of function "${moduleName}"\n`,
+        `  >> Requested property "${originPathArray[0]}" is not output of function "${moduleName}"` +
+        ` (${dependency.origin})\n`,
         `     :: Available outputs are: ${Object.keys(outputs)}`,
       );
     }
@@ -270,20 +233,59 @@ export class DependencyPropValidator {
     }
   }
 
-  private requiredInputsFullfilled (module : BopsConfigurationEntry) : void {
-    const functionInfo = this.getFunctionInfo(module);
-    if(functionInfo === undefined) return;
-    const inputs = this.getFunctionInput(functionInfo) ?? {};
-    const requiredInputs : Array<string> = [];
-    for(const input in inputs) {
-      if(inputs[input].required) requiredInputs.push(input);
-    }
-    const configuredInputs = module.dependencies.map(dependency => dependency.targetPath?.split(".")[0]);
-
-    const isFullfilled = requiredInputs.every(input => configuredInputs.includes(input));
-    if(!isFullfilled) {
-      console.log(this.getHeader("Missing Required Inputs"),
-        `  >> Required inputs are ${requiredInputs} but only ${configuredInputs} was given`);
-    }
+  private infoResolver : { [type in ModuleType] :
+    (name : string, packageName ?: string) => FunctionInfoType } = {
+    "internal": (name) => {
+      return this.internalManager.infoMap.get(name);
+    },
+    "external": (name, packageName) => {
+      const externalInfo = this.externalManager.getFunctionInfo(name, packageName);
+      return externalInfo;
+    },
+    "bop": (name) => {
+      return this.systemConfig.businessOperations.find(bop => bop.name === name);
+    },
+    "protocol": (name, modulePackage) => {
+      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage).packageDetails;
+      const functionInfo = protocolInfo.functionsDefinitions.find(funct => funct.functionName === name);
+      return functionInfo;
+    },
+    // eslint-disable-next-line max-lines-per-function
+    "schemaFunction": (name, modulePackage) => {
+      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
+      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name));
+      resolvableParameters.forEach(param => {
+        Object.keys(schemaFunctionInfo[param]).forEach(key => {
+          if(schemaFunctionInfo[param][key].type === "%entity") {
+            schemaFunctionInfo[param][key].type = `$${modulePackage}`;
+          }
+          if(schemaFunctionInfo[param][key]["subtype"] === "%entity") {
+            schemaFunctionInfo[param][key]["subtype"] = `$${modulePackage}`;
+          }
+        });
+      });
+      const referredSchema = this.systemConfig.schemas.find(schema => schema.name === modulePackage);
+      schemaFunctionInfo.customTypes.push({
+        name: modulePackage,
+        type: referredSchema.format,
+      });
+      return schemaFunctionInfo;
+    },
+    "variable": (name) => {
+      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
+      const info = clone(VariableContext.variablesInfo.get(name));
+      resolvableParameters.forEach(param => {
+        Object.keys(info[param]).forEach(key => {
+          if(key === "%variableName") {
+            delete info[param][key];
+            this.workingBop.variables.forEach(variable => {
+              info[param][variable.name] = { type: variable.type, required: false };
+            });
+          }
+        });
+      });
+      return info;
+    },
+    "output": () => undefined,
   }
 }
