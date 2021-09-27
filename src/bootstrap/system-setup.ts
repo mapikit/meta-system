@@ -10,6 +10,7 @@ import chalk from "chalk";
 import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager";
 import { ProtocolsSetup } from "./protocols-setup";
 import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper";
+import { runtimeDefaults } from "../configuration/runtime-config/defaults";
 
 const fsPromise = FS.promises;
 
@@ -44,6 +45,7 @@ export class SystemSetup {
 
     await prettifyNPMPackageFile(systemConfig.name, systemConfig.version,
       `${systemConfig.name} System - Made in Meta-System.`,
+      runtimeDefaults.externalFunctionInstallFolder,
     );
 
     console.log("[System Setup] Starting protocols");

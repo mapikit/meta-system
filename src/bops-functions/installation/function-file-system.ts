@@ -27,7 +27,7 @@ export class FunctionFileSystem {
   public async getDescriptionFile (moduleName : string, moduleType : "function" | "package") : Promise<string> {
     const fileName = moduleType === "function" ? this.configurationFileName : this.packageFileName;
 
-    const filePath = Path.join(this.customFunctionsLocation, moduleName, fileName);
+    const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName, fileName);
 
     console.log(`[BOPs Function] Retrieving Description File for ${moduleName}`);
 
@@ -43,7 +43,7 @@ export class FunctionFileSystem {
 
   public async import (moduleName : string, entrypoint : string, mainFunctionName ?: string)
     : Promise<Function | Record<string, Function>> {
-    const filePath = Path.join(this.customFunctionsLocation, moduleName, entrypoint);
+    const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName, entrypoint);
     console.log(`[BOPs Function] Retrieving main function for ${moduleName}`);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires

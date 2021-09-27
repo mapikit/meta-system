@@ -10,7 +10,7 @@ export class FunctionsInstaller {
     private readonly functionsFolder : string,
   ) { }
 
-  private installationManager = new DependenciesManager();
+  private installationManager = new DependenciesManager(this.functionsFolder);
 
   public async install (moduleName : string, version : string, kind : ModuleKind) : Promise<void> {
     if (kind === ModuleKind.GITHUB) {

@@ -22,7 +22,7 @@ export class ProtocolFileSystem {
    * @param moduleName
    */
   public async getDescriptionFile (moduleName : string) : Promise<string> {
-    const filePath = Path.join(this.installLocation, moduleName, this.configurationFileName);
+    const filePath = Path.join(this.installLocation, "node_modules", moduleName, this.configurationFileName);
 
     console.log(`[Meta Protocols] Retrieving Description File for ${moduleName}`);
 
@@ -39,7 +39,7 @@ export class ProtocolFileSystem {
   public async importClass (
     moduleName : string, entrypoint : string, className : string)
     : Promise<new (arg1 : unknown, arg2 : FunctionManager) => MetaProtocol<unknown>> {
-    const filePath = Path.join(this.installLocation, moduleName, entrypoint);
+    const filePath = Path.join(this.installLocation, "node_modules", moduleName, entrypoint);
     console.log(`[Meta Protocols] Retrieving class for ${moduleName}`);
 
     const importedEntrypoint = await import(filePath);

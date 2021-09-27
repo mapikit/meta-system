@@ -105,6 +105,5 @@ dist
 
 /test-functions
 ./vscode
-/bops-functions
-/external-functions
 /test-configs
+/runtime

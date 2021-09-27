@@ -11,9 +11,9 @@ export class ProtocolDescriptionValidation {
     private readonly descriptionFileContent : string,
   ) { }
 
-  public async validate () : Promise<this> {
+  public async validate (customPath : string) : Promise<this> {
     await MetaProtocolHelper
-      .validateProtocolStringConfiguration(this.descriptionFileContent);
+      .validateProtocolStringConfiguration(this.descriptionFileContent, { filePath: customPath });
     this.validated = true;
 
     return this;
