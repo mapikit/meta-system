@@ -19,7 +19,7 @@ export const arrayIncludesBopsFunction = (input : { array : unknown[]; searchedI
 };
 
 export const arrayIncludesBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "arrayIncludesBopsFunction",
+  functionName: "includes",
   version: "1.0.0",
   description: "Verifies if the array contains an Item",
   inputParameters: {

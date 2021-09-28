@@ -5,7 +5,7 @@ export const dateNowBopsFunction = () : { now : Date } => {
 };
 
 export const dateNowBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "dateNowBopsFunction",
+  functionName: "dateNow",
   version: "1.0.0",
   description: "Gets the current date.",
   outputData: {

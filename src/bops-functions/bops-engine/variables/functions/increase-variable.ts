@@ -26,7 +26,7 @@ export const increaseVariableFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Increases all the given variables by the given amount",
   inputParameters: {
-    "${variableName}": { type: "number", required: true },
+    "%variableName": { type: "number", required: true },
   },
   outputData: {
     updatedCount: { type: "number", required: false },

@@ -1,31 +1,26 @@
 import { expect } from "chai";
 import { FunctionSetup } from "../../src/bootstrap/function-setup";
 import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup";
-import { externalFunctionManagerSingleton } from "../../src/bops-functions/function-managers/external-function-manager";
 import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
-import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager";
+import { purgeTestPackages, testExternalManager, testProtocolManager } from "../test-managers";
 import { testSystem } from "./data/system";
 
-
-
 describe("Protocols Testing", () => {
-  let functionsManager : FunctionSetup;
-  let protocolsSetup : ProtocolsSetup;
 
-  beforeEach(() => {
-    functionsManager = new FunctionSetup(
-      internalFunctionManager,
-      externalFunctionManagerSingleton,
-      protocolFunctionManagerSingleton,
-      testSystem,
-    );
+  const functionsManager = new FunctionSetup(
+    internalFunctionManager,
+    testExternalManager,
+    testProtocolManager,
+    testSystem,
+  );
+  const protocolsSetup = new ProtocolsSetup(
+    testSystem,
+    testProtocolManager,
+    functionsManager.getBopsManager(),
+  );
 
-    protocolsSetup = new ProtocolsSetup(
-      testSystem,
-      protocolFunctionManagerSingleton,
-      functionsManager.getBopsManager(),
-    );
-  });
+  before(purgeTestPackages);
+  afterEach(purgeTestPackages);
 
   it("Protocol setup", (done) => {
     protocolsSetup.execute()

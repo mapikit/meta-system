@@ -6,7 +6,7 @@ export const objectToStringBopsFunction = (input : { object : CloudedObject }) :
 };
 
 export const objectToStringBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "objectToStringBopsFunction",
+  functionName: "objectToString",
   version: "1.0.0",
   description: "Transforms an object into a JSON-like string",
   inputParameters: {

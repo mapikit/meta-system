@@ -14,6 +14,7 @@ import { ConfigurationType } from "../configuration/configuration-type";
 import { SchemasType } from "../configuration/schemas/schemas-type";
 import { SchemasManager } from "../schemas/application/schemas-manager";
 import { ModuleType } from "../configuration/business-operations/business-operations-type";
+import { DependencyPropValidator } from "./dependency-validator";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();
@@ -41,6 +42,14 @@ export class FunctionSetup {
     await this.bootstrapExternalDependencies(allBopsDependencies);
     this.bootstrapProtocols(allBopsDependencies);
     this.checkExternalDependencies();
+
+    const propValidator = new DependencyPropValidator(
+      this.systemConfiguration,
+      this.internalFunctionManager,
+      this.externalFunctionManager,
+      this.protocolFunctionManager,
+    );
+    propValidator.verifyAll();
 
     const moduleManager = new ModuleManager({
       ExternalFunctionManager: this.externalFunctionManager,

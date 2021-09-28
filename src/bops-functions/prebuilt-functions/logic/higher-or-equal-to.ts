@@ -7,7 +7,7 @@ export const higherOrEqualToBopsFunction = (input : { A : number; B : number }) 
 };
 
 export const higherOrEqualToBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "higherOrEqualToBopsFunction",
+  functionName: "higherOrEqualTo",
   version: "1.0.0",
   description: "compares A to B, returning if A is higher or equal to B",
   inputParameters: {

@@ -28,7 +28,7 @@ export const setVariablesFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Sets the variables in targetPath to the new value",
   inputParameters: {
-    "${variableName}": { type: "any", required: true },
+    "%variableName": { type: "any", required: true },
   },
   outputData: {
     newValue: { type: "any", required: false },

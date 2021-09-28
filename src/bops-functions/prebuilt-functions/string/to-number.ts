@@ -11,7 +11,7 @@ export const stringToNumberBopsFunction = (input : { string : string }) : unknow
 };
 
 export const stringToNumberBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "stringToNumberBopsFunction",
+  functionName: "stringToNumber",
   version: "1.0.0",
   description: "Converts a given string to a Number",
   inputParameters: {

@@ -10,7 +10,7 @@ import { TypeStringQuery,
   TypeDateArrayQuery,
   TypeObjectArrayQuery,
   QueryTypes,
-  QueryType } from "../schema-bops-funtions/query-type";
+  QueryType } from "./query-type";
 
 export const valueToReplaceString = "__value__";
 export const valueToReplaceStringArray = [valueToReplaceString];

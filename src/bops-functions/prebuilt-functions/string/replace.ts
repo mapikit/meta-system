@@ -10,7 +10,7 @@ export const stringReplaceFunction = (input : { baseString : string; search : st
 };
 
 export const stringReplaceFunctionInformation : InternalMetaFunction = {
-  functionName: "stringReplaceFunction",
+  functionName: "stringReplace",
   version: "1.0.0",
   description: "Replaces a part of a string",
   inputParameters: {

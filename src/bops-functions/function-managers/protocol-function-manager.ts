@@ -24,6 +24,10 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     return this.functionMap.get(protocolNameAndFunction);
   }
 
+  public getProtocolDescription (protocolName : string) : BuiltMetaProtocolDefinition {
+    return this.descriptionsMap.get(protocolName);
+  }
+
   public async installProtocol (protocolName : string, version = "latest") : Promise<void> {
     await this.functionsInstaller.install(protocolName, version, ModuleKind.NPM);
     const protocolDescription = await this.protocolFileSystem.getDescriptionFile(protocolName);

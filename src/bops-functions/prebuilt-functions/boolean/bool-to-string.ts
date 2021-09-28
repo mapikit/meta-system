@@ -5,7 +5,7 @@ export const boolToStringBopsFunction = (input : { boolean : boolean }) : unknow
 };
 
 export const boolToStringBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "boolToStringBopsFunction",
+  functionName: "boolToString",
   version: "1.0.0",
   description: "Converts a boolean to its string representation",
   inputParameters: {

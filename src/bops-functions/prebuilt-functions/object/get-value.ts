@@ -11,7 +11,7 @@ export const getObjectPropertyValueBopsFunction = (input : { object : CloudedObj
 };
 
 export const getObjectPropertyValueBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "getObjectPropertyValueBopsFunction",
+  functionName: "getObjectPropertyValue",
   version: "1.0.0",
   description: "Get a value of an object's propery by one Key",
   inputParameters: {

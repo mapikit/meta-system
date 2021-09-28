@@ -6,9 +6,14 @@ export class DependenciesManager {
   constructor (private dependencyPath : string) {}
   private readonly installedDeps : Set<string> = new Set();
 
-  private checkInstalled (name : string) : boolean {
-    const installedModulesPath = join(this.dependencyPath, "node_modules", name);
-    return FS.existsSync(installedModulesPath);
+  private checkInstalled (name : string, version : string) : boolean {
+    const modulePackagePath = join(this.dependencyPath, "node_modules", name, "package.json");
+    try {
+      const packageFile = FS.readFileSync(modulePackagePath, "utf8");
+      const installedVersion = JSON.parse(packageFile).version.replace("^", "");
+      if(version === installedVersion) return true;
+    } catch { return false; }
+    return false;
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -20,7 +25,7 @@ export class DependenciesManager {
       throw Error(errorMessage);
     };
 
-    if (this.checkInstalled(moduleName)) {
+    if (this.checkInstalled(moduleName, version)) {
       console.log(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
       return;
     };

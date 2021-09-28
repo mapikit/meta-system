@@ -9,7 +9,7 @@ export const tryCatchBopsFunction = async (input : { function : Function }) : Pr
 };
 
 export const tryCatchBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "tryCatchBopsFunction",
+  functionName: "tryCatch",
   version: "1.0.0",
   description: "Tries to execute a function, returning the result or error, if present",
   inputParameters: {

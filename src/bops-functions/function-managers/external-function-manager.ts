@@ -1,6 +1,6 @@
 
 import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
-import { FunctionManager } from "meta-function-helper";
+import { BuiltMetaPackage, FunctionManager, MetaFunction } from "meta-function-helper";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
 import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
@@ -9,6 +9,7 @@ import { FunctionsInstaller, ModuleKind } from "../installation/functions-instal
 
 export class ExternalFunctionManagerClass implements FunctionManager {
   private functionMap : Map<string, Function> = new Map();
+  private infoMap : Map<string, MetaFunction> = new Map();
 
   public constructor (
     private functionsInstaller = new FunctionsInstaller(runtimeDefaults.externalFunctionInstallFolder),
@@ -42,6 +43,10 @@ export class ExternalFunctionManagerClass implements FunctionManager {
     const functionDeclaration = await this.functionFileSystem
       .import(fileDescriptionMode, moduleConfig.entrypoint, functionLocation);
 
+    const info = moduleType === "package" ?
+      (moduleConfig as BuiltMetaPackage).functionsDefinitions.find(funct => funct.functionName === functionName) :
+      (moduleConfig as MetaFunction);
+    this.infoMap.set(packageName ? `${packageName}.${functionName}` : functionName, info);
     this.addFunctionsToMap(functionName, functionDeclaration, packageName);
   }
 
@@ -73,6 +78,11 @@ export class ExternalFunctionManagerClass implements FunctionManager {
     }
 
     return this.functionMap.get(name) !== undefined;
+  }
+
+  public getFunctionInfo (functionName : string, packageName ?: string) : MetaFunction {
+    const fullName = packageName !== undefined ? `${packageName}.${functionName}` : functionName;
+    return this.infoMap.get(fullName);
   }
 }
 

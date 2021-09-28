@@ -4,9 +4,10 @@ import { ConfigurationType } from "../../..";
 import { ExtendedJsonTypes } from "../../../common/types/json-types";
 import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
 import { MappedFunctions, ModuleFullName } from "../modules-manager";
-import { decreaseVariablesFunction } from "./functions/decrease-variable";
-import { increaseVariablesFunction } from "./functions/increase-variable";
-import { setVariablesFunction } from "./functions/set-variable";
+import { decreaseVariableFunctionInformation, decreaseVariablesFunction } from "./functions/decrease-variable";
+import { increaseVariableFunctionInformation, increaseVariablesFunction } from "./functions/increase-variable";
+import { setVariablesFunction, setVariablesFunctionInformation } from "./functions/set-variable";
+import { InternalMetaFunction } from "bops-functions/internal-meta-function";
 
 type ResolvedVariable = { type : ExtendedJsonTypes | "any", value : unknown };
 export type ResolvedVariables = Record<string, ResolvedVariable>;
@@ -62,4 +63,10 @@ export class VariableContext {
   private wrapVariables (varFunction : Function) : Function {
     return (inputs : unknown) : unknown => varFunction(inputs, this.variables);
   }
+
+  public static variablesInfo : Map<string, InternalMetaFunction> = new Map([
+    ["setVariables", setVariablesFunctionInformation],
+    ["increaseVariables", increaseVariableFunctionInformation],
+    ["decreaseVaraibles", decreaseVariableFunctionInformation],
+  ])
 }

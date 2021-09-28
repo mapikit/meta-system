@@ -26,7 +26,7 @@ export const decreaseVariableFunctionInformation : InternalMetaFunction = {
   version: "1.0.0",
   description: "Decreases all given variables by the given amount",
   inputParameters: {
-    "${variableName}": { type: "number", required: true },
+    "%variableName": { type: "number", required: true },
   },
   outputData: {
     updatedCount: { type: "number", required: false },
