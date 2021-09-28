@@ -19,7 +19,7 @@ type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 export class DependencyPropValidator {
   private workingBop : BusinessOperations;
   private getHeader : (errorType : string) => string;
-  private typeCheckingLevel = 0;
+  private typeCheckingLevel = 1;
   // eslint-disable-next-line max-params
   constructor (
     private systemConfig : ConfigurationType,
