@@ -1,12 +1,10 @@
 import { BopsEngine } from "../../../src/bops-functions/bops-engine/bops-engine";
 import { ModuleManager } from "../../../src/bops-functions/bops-engine/modules-manager";
-import { FunctionsInstaller } from "../../../src/bops-functions/installation/functions-installer";
 import { SchemasManager } from "../../../src/schemas/application/schemas-manager";
 import { createFakeMongo } from "../../doubles/mongo-server";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { testSystem } from "./test-data/test-system";
-import { FunctionFileSystem } from "../../../src/bops-functions/installation/function-file-system";
 import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type";
 import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
@@ -14,8 +12,6 @@ import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
 import faker from "faker";
-import Path from "path";
-import { ExternalFunctionManagerClass } from "../../../src/bops-functions/function-managers/external-function-manager";
 import { CheckBopsFunctionsDependencies }
   from "../../../src/configuration/business-operations/check-bops-functions-dependencies";
 import { BusinessOperation } from "../../../src/configuration/business-operations/business-operation";
@@ -23,9 +19,8 @@ import internalFunctionManager from "../../../src/bops-functions/function-manage
 import { BopsManagerClass } from "../../../src/bops-functions/function-managers/bops-manager";
 import { ConfigurationType } from "../../../src/configuration/configuration-type";
 import { variableBop } from "./test-data/business-operations/variables-bop";
-import { ProtocolFunctionManagerClass } from "../../../src/bops-functions/function-managers/protocol-function-manager";
-import { ProtocolFileSystem } from "../../../src/bops-functions/installation/protocol-file-system";
 import { packageBop } from "./test-data/business-operations/package-bop";
+import { purgeTestPackages, testExternalManager, testProtocolManager } from "../../test-managers";
 
 interface EngineInput {
   ModuleManager : ModuleManager;
@@ -38,22 +33,15 @@ let fakeMongo : MongoClient;
 const maxExecutionTime = 100;
 
 const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<EngineInput> => {
-  const functionsFolder = "test-functions";
-  const installationHandler = new FunctionsInstaller(functionsFolder);
-  const installPath = Path.join(process.cwd(), functionsFolder);
-  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json", "meta-package.json");
-  const protocolFileSystem = new ProtocolFileSystem(installPath, "meta-protocol.json");
-  const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
-  const protocolFunctionManager = new ProtocolFunctionManagerClass(installationHandler, protocolFileSystem);
   const bopsManager = new BopsManagerClass();
 
   const schemasManager = new SchemasManager(testSystem.name, fakeMongo);
   await schemasManager.addSystemSchemas(testSystem.schemas as SchemasType[]);
   const moduleManager = new ModuleManager({
     SchemasManager: schemasManager,
-    ExternalFunctionManager: externalFunctionHandler,
     InternalFunctionManager: internalFunctionManager,
-    protocolFunctionManager: protocolFunctionManager,
+    ExternalFunctionManager: testExternalManager,
+    protocolFunctionManager: testProtocolManager,
     BopsManager: bopsManager,
   });
 
@@ -64,13 +52,13 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     testSystem.schemas,
     businessOperations,
     new BusinessOperation(bop),
-    externalFunctionHandler,
+    testExternalManager,
     internalFunctionManager,
-    protocolFunctionManager,
+    testProtocolManager,
   ).bopsDependencies;
 
   for (const externalDependency of bopsDependencies.external) {
-    await externalFunctionHandler.add(externalDependency.name, externalDependency.version, externalDependency.package);
+    await testExternalManager.add(externalDependency.name, externalDependency.version, externalDependency.package);
   }
 
   const bopsEngineInputOptions : EngineInput = {
@@ -83,13 +71,8 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
 };
 
 describe("Bops Engine Testing", () => {
-  before(async () => {
-    fakeMongo = await createFakeMongo();
-  });
-
-  afterEach(async () => {
-    fakeMongo = await createFakeMongo();
-  });
+  beforeEach(async () => { fakeMongo = await createFakeMongo(); });
+  after(purgeTestPackages);
 
   it("Test of prebuilt functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(mapikitProvidedBop);
