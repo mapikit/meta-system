@@ -4,11 +4,12 @@
 - :heavy_check_mark: Support to Function Packages;
 - :heavy_check_mark: Introduces external protocols;
 - :heavy_check_mark: Protocols can provide their BOps functions as well;
+- :heavy_check_mark: BETA - Verification of modules dependency property accesses;
 
 ### 0.3 - Future Release
 - Introduces DBProtocols - Databases becomes part of the protocol definition;
 - Schemas need to define a protocol Database to connect to;
-- Verification of module dependecy property access;
+- Verification of module dependecy property accesss;
 
 ### 0.4 - Future Release
 - Meta-System can be run on the Browser;
