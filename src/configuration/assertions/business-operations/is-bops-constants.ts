@@ -10,12 +10,12 @@ export function isBopsConstants (input : unknown) : asserts input is BopsConstan
 
   const constants = input as BopsConstant[];
 
-  const jsonTypesArray = [
-    "string", "date", "number", "boolean",
+  const extendedJsonTypesArray = [
+    "string", "date", "number", "boolean", "object", "array", "any",
   ];
 
   constants.forEach((constant) => {
     isType("string", "Constant name should be string", constant.name);
-    stringIsOneOf(constant.type, jsonTypesArray);
+    stringIsOneOf(constant.type, extendedJsonTypesArray);
   });
 }

@@ -7,6 +7,7 @@ import {
 } from "../../src/configuration/business-operations/check-bops-functions-dependencies";
 import { expect } from "chai";
 import Path from "path";
+import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager";
 
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -19,7 +20,7 @@ describe("Check BOPS functions dependencies", () => {
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
   const installPath = Path.join(process.cwd(), functionsFolder);
-  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json");
+  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json", "meta-package.json");
   const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
 
   it("Successfully fetches and checks all dependencies", () => {
@@ -29,6 +30,7 @@ describe("Check BOPS functions dependencies", () => {
       configurationExample["businessOperations"][0],
       externalFunctionHandler,
       internalFunctionManager,
+      protocolFunctionManagerSingleton,
     );
 
     const result = command.checkAllDependencies();
@@ -43,6 +45,7 @@ describe("Check BOPS functions dependencies", () => {
       configurationExample["businessOperations"][0],
       externalFunctionHandler,
       internalFunctionManager,
+      protocolFunctionManagerSingleton,
     );
 
     const result = command.checkSchemaFunctionsDependenciesMet();
@@ -57,6 +60,7 @@ describe("Check BOPS functions dependencies", () => {
       unreferencedInput["businessOperations"][0],
       externalFunctionHandler,
       internalFunctionManager,
+      protocolFunctionManagerSingleton,
     );
 
     const result = command.checkConfigurationalDependenciesMet();

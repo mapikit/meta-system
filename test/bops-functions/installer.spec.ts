@@ -1,38 +1,27 @@
 
-import { FunctionsInstaller, ModuleKind } from "../../src/bops-functions/installation/functions-installer";
+import { ModuleKind } from "../../src/bops-functions/installation/functions-installer";
 import { expect } from "chai";
 import { random } from "faker";
-import Path from "path";
+import { purgeTestPackages, testInstaller } from "../test-managers";
 
 describe("BOps Functions Installation (external functions)", () => {
   const testFunction = "bops-function-hello-world";
   const testFunctionVersion = "1.0.0";
-  const functionInstallLocation = "./test-functions";
-  const workingDirectory = process.cwd();
 
-  const installationHandler = new FunctionsInstaller(
-    Path.join(workingDirectory, functionInstallLocation),
-  );
+  afterEach(purgeTestPackages);
 
   it("Installs a function correctly", async () => {
-    const result = await installationHandler
+    const result = await testInstaller
       .install(testFunction, testFunctionVersion, ModuleKind.NPM);
 
     expect(result).to.be.undefined;
   });
 
   it("Fails to install a function - Function does not Exist", async () => {
-    const resultFails = await installationHandler
+    const resultFails = await testInstaller
       .install(random.alphaNumeric(15), random.alphaNumeric(6), ModuleKind.NPM)
       .catch(() => true);
 
     expect(resultFails).to.be.true;
-  });
-
-  after(async () => {
-    await installationHandler.purgePackages()
-      .catch(() => {
-        throw Error("Failed to purge test packaged during test! Aborting!");
-      });
   });
 });

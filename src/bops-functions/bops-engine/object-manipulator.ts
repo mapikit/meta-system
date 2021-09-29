@@ -1,5 +1,5 @@
 import { CloudedObject } from "../../common/types/clouded-object";
-import { inspect } from "util";
+// import { inspect } from "util";
 
 export class ObjectResolver {
   public static flattenObject (source : unknown) : CloudedObject {
@@ -19,10 +19,16 @@ export class ObjectResolver {
     if(!path) return source;
     let current = source;
     path.forEach(level => {
-      const isFound = current[level] !== undefined && current[level] !== null;
+      // TODO: Later on we will make this type-safe by receiving the object definition
+      // from which the property is being extracted
 
-      if(!isFound) throw new Error(`${level} was not found in ${inspect(source, false, null, true)}`);
-      current = current[level];
+      // const isFound = current[level] !== undefined && current[level] !== null;
+      // if(!isFound) throw new Error(`${level} was not found in ${inspect(source, false, null, true)}`);
+      try {
+        current = current[level];
+      } catch {
+        current = undefined;
+      }
     });
     return current;
   }

@@ -20,7 +20,7 @@ export const roundBopsFunction = (input : { input : number; precision : number }
 };
 
 export const roundFunctionInformation : InternalMetaFunction = {
-  functionName: "roundBopsFunction",
+  functionName: "round",
   version: "1.0.0",
   description: "Rounds Input to a given precision",
   inputParameters: {

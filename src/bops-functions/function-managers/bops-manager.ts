@@ -4,10 +4,6 @@ export class BopsManagerClass implements FunctionManager {
   private bopsMap = new Map<string, Function>();
 
   public get (functionName : string) : Function {
-    if (functionName.charAt(0) === "+") {
-      return this.bopsMap.get(functionName.slice(1));
-    }
-
     return this.bopsMap.get(functionName);
   }
 

@@ -9,44 +9,51 @@ import { SchemaNotFoundError } from "./engine-errors/schema-not-found-error";
 export interface ModuleResolverInputs {
   ExternalFunctionManager : FunctionManager;
   InternalFunctionManager : FunctionManager;
+  protocolFunctionManager : FunctionManager;
   SchemasManager : SchemasManager;
   BopsManager : FunctionManager;
 }
 
-enum RepoStartingCharacter {
-  schemaFunctions = "@",
-  internalFunctions = "#",
-  externalFunctions = ":",
-  bops = "+"
+enum ModuleTypes {
+  schemaFunctions = "schemaFunction",
+  internalFunctions = "internal",
+  protocolFunctions = "protocol",
+  externalFunctions = "external",
+  bops = "bop"
 }
-// Internal Bops (stating with '+') and Bop Output (starting with '%') are resolved separately
+// Internal Bops (embedded) and Bop Outputs are resolved separately
 
 export type ModuleResolverType = {
-  [char in RepoStartingCharacter] : (module : BopsConfigurationEntry) => Function;
+  [char in ModuleTypes] : (module : BopsConfigurationEntry) => Function;
 }
 
 export class ModuleResolver {
   private externalFunctionManager : FunctionManager;
   private internalFunctionManager : FunctionManager;
+  private protocolFunctionManager : FunctionManager;
   private schemasManager : SchemasManager;
   private bopsManager : FunctionManager;
 
   constructor (options : ModuleResolverInputs)  {
     this.externalFunctionManager = options.ExternalFunctionManager;
     this.internalFunctionManager = options.InternalFunctionManager;
+    this.protocolFunctionManager = options.protocolFunctionManager;
     this.schemasManager = options.SchemasManager;
     this.bopsManager = options.BopsManager;
   }
 
   public resolve : ModuleResolverType = {
-    "+": (module) : Function => {
-      const result = this.bopsManager.get(module.moduleRepo.slice(1));
+    "protocol": (module) : Function => {
+      return this.protocolFunctionManager.get(`${module.modulePackage}.${module.moduleName}`);
+    },
+    "bop": (module) : Function => {
+      const result = this.bopsManager.get(module.moduleName);
 
       return result;
     },
-    "@": (module) : Function => {
-      const moduleName = module.moduleRepo.slice(1);
-      const [schema, operation] = moduleName.split("@");
+    "schemaFunction": (module) : Function => {
+      const schema = module.modulePackage;
+      const operation = module.moduleName;
       if(!Object.keys(SchemasFunctions).includes(operation)) throw new OperationNotFoundError(operation, schema);
 
       const schemaToLook = this.schemasManager.schemas.get(schema);
@@ -55,15 +62,19 @@ export class ModuleResolver {
       return schemaToLook.bopsFunctions[operation];
     },
 
-    "#" : (module) : Function => {
-      const functionName = module.moduleRepo.slice(1);
+    "internal" : (module) : Function => {
+      const functionName = module.moduleName;
       const foundFunction = this.internalFunctionManager.get(functionName);
-      if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleRepo);
+      if(!foundFunction) throw new ProvidedFunctionNotFound(module.moduleName);
       return foundFunction;
     },
 
-    ":" : (module) : Function => {
-      return this.externalFunctionManager.get(module.moduleRepo.slice(1));
+    "external" : (module) : Function => {
+      if (module.modulePackage !== undefined) {
+        return this.externalFunctionManager.get(`${module.modulePackage}.${module.moduleName}`);
+      }
+
+      return this.externalFunctionManager.get(module.moduleName);
     },
   }
 }

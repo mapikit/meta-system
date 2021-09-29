@@ -1,34 +1,35 @@
+import { CloudedObject } from "../../../../common/types/clouded-object";
 import { InternalMetaFunction } from "../../../internal-meta-function";
 import { ResolvedVariables } from "../variables-context";
 
-type IncreaseVariableInput = { variableName : string; value : number };
+export function increaseVariablesFunction (input : CloudedObject, variables : ResolvedVariables) : unknown {
+  let updatedCount = 0;
+  for(const variableName of Object.keys(input)) {
+    const foundVariable = variables[variableName];
 
-export function increaseVariableFunction (input : IncreaseVariableInput, variables : ResolvedVariables) : unknown {
-  input.value = input.value ?? 1;
-  const foundVariable = variables[input.variableName];
+    if(foundVariable === undefined) {
+      return { errorMessage: `No variable named "${input.variableName}" was found` };
+    }
 
-  if(foundVariable === undefined) {
-    return { errorMessage: `No variable named "${input.variableName}" was found` };
+    if(typeof  input[variableName] !== "number" || foundVariable.type !== "number") {
+      return { errorMessage: `Input value ${input[variableName]} is not a number` };
+    }
+
+    (foundVariable.value as number) += input[variableName] as number;
+    updatedCount++;
   }
-
-  if(typeof  input.value !== "number" || foundVariable.type !== "number") {
-    return { errorMessage: `Input value ${input.value} is not a number` };
-  }
-
-  (foundVariable.value as number) += input.value;
-  return { newValue: variables[input.variableName] };
+  return { updatedCount };
 }
 
 export const increaseVariableFunctionInformation : InternalMetaFunction = {
-  functionName: "increaseVariable",
+  functionName: "increaseVariables",
   version: "1.0.0",
-  description: "Increases the referenced variable value by the given amount (defaults to 1)",
+  description: "Increases all the given variables by the given amount",
   inputParameters: {
-    variableName: { type: "string", required: true },
-    value: { type: "number", required: true },
+    "%variableName": { type: "number", required: true },
   },
   outputData: {
-    newValue: { type: "number", required: false },
+    updatedCount: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },
 };

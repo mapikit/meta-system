@@ -5,7 +5,7 @@ export const notBopsFunction = (input : { A : boolean }) : unknown => {
 };
 
 export const notBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "notBopsFunction",
+  functionName: "not",
   version: "1.0.0",
   description: "Inverts the boolean value of A",
   inputParameters: {

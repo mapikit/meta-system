@@ -3,7 +3,10 @@ import { countStringFunction } from "../../../src/bops-functions/prebuilt-functi
 import { indexOfStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/index-of";
 import { stringReplaceFunction } from "../../../src/bops-functions/prebuilt-functions/string/replace";
 import { stringToNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/to-number";
+import { stringTemplateFunction } from "../../../src/bops-functions/prebuilt-functions/string/template";
+import { stringConcatFunction } from "../../../src/bops-functions/prebuilt-functions/string/concat";
 import { expect } from "chai";
+import faker from "faker";
 
 describe("String BOPs functions", () => {
   describe("CharAt", () => {
@@ -112,4 +115,38 @@ describe("String BOPs functions", () => {
       expect(result).to.be.deep.equal({ errorMessage: "Given string is not convertible to a number" });
     });
   });
+
+  describe("String Template", () => {
+    it("Success of regular use of templates", () => {
+      const [name, surname] = [faker.name.firstName(), faker.name.lastName()];
+      const age = faker.random.number({ min: 18, max: 80, precision: 1 }).toString();
+      const template = "His full name is ${name} ${surname} and he is ${age}";
+
+      const result = stringTemplateFunction({ template, replacers: { name, surname, age } });
+      expect(result).to.be.deep.equal({ result: `His full name is ${name} ${surname} and he is ${age}` });
+    });
+
+    it("Success of edge cases use of templates", () => {
+      const word = faker.random.words(1);
+      const empty = "";
+
+      const template = "${word} is a random word that shows up here too: ${word} but this is empty: ${empty}";
+
+      const result = stringTemplateFunction({ template, replacers: { word } });
+      expect(result).to.be.deep.equal({
+        result: `${word} is a random word that shows up here too: ${word} but this is empty: ${empty}`,
+      });
+    });
+  });
+
+  describe("String Concat", () => {
+    it("Successfully concatenates all the strings", () => {
+      const first = faker.random.words(4);
+      const second = faker.random.words(6);
+
+      const result = stringConcatFunction({ strings: { first, second } });
+      expect(result).to.be.deep.equal({ result: first + second });
+    });
+  });
 });
+

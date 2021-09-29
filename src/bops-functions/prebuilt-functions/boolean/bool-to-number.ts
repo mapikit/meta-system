@@ -5,7 +5,7 @@ export const boolToNumberBopsFunction = (input : { boolean : boolean }) : unknow
 };
 
 export const boolToNumberBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "boolToNumberBopsFunction",
+  functionName: "boolToNumber",
   version: "1.0.0",
   description: "Converts a boolean to its numerical representation",
   inputParameters: {

@@ -1,16 +1,17 @@
+import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager";
 import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager";
 import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager";
 import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
 import { Schema } from "../schemas/schema";
 import { BusinessOperation } from "./business-operation";
 
-
 export interface BopsDependencies {
-  fromSchemas : string[];
+  fromSchemas : Array<{ functionName : string; schemaName : string; }>;
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
-  external : Array<{ name : string; version : string }>;
+  external : Array<{ name : string; version : string; package ?: string }>;
+  protocol : Array<{ name : string; version : string; package ?: string }>
   fromBops : string[];
   bopName : string;
 }
@@ -38,6 +39,7 @@ export class CheckBopsFunctionsDependencies {
     currentBusinessOperation : BusinessOperation,
     private externalFunctionManager : ExternalFunctionManagerClass,
     private internalFunctionManager : InternalFunctionManagerClass,
+    private protocolFunctionManager : ProtocolFunctionManagerClass,
   ) {
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
@@ -58,6 +60,7 @@ export class CheckBopsFunctionsDependencies {
       this.checkSchemaFunctionsDependenciesMet(),
       this.checkExternalRequiredFunctionsMet(),
       this.checkOutputDependencyMet(),
+      this.checkProtocolDependenciesMet(),
     ];
 
     return !results.includes(false);
@@ -70,18 +73,20 @@ export class CheckBopsFunctionsDependencies {
     const outputsDependencies = [];
     const schemasDependencies = [];
     const configurationalDependencies = [];
+    const protocolsDependencies = [];
     const bopsDependencies = [];
 
     // eslint-disable-next-line max-lines-per-function
     this.businessOperation.configuration.forEach((bopsFunctionConfig) => {
-      const typeChar = bopsFunctionConfig.moduleRepo.charAt(0);
+      const type = bopsFunctionConfig.moduleType;
 
-      const typeCharsEnum = {
-        internal: "#",
-        schema: "@",
-        bops: "+",
-        outputs: "%",
-        external: ":",
+      const typesEnum = {
+        internal: "internal",
+        schema: "schemaFunction",
+        protocol: "protocol",
+        bops: "bop",
+        outputs: "output",
+        external: "external",
       };
 
       bopsFunctionConfig.dependencies.forEach((dependency) => {
@@ -92,26 +97,38 @@ export class CheckBopsFunctionsDependencies {
         }
       });
 
-      if (typeChar === typeCharsEnum.internal) {
-        return internalDependencies.push(bopsFunctionConfig.moduleRepo);
+      if (type === typesEnum.internal) {
+        return internalDependencies.push(bopsFunctionConfig.moduleName);
       }
 
-      if (typeChar === typeCharsEnum.outputs) {
-        return outputsDependencies.push(bopsFunctionConfig.moduleRepo);
+      if (type === typesEnum.outputs) {
+        return outputsDependencies.push(bopsFunctionConfig.moduleName);
       }
 
-      if (typeChar === typeCharsEnum.schema) {
-        return schemasDependencies.push(bopsFunctionConfig.moduleRepo);
+      if (type === typesEnum.schema) {
+        return schemasDependencies.push({
+          functionName: bopsFunctionConfig.moduleName,
+          schemaName: bopsFunctionConfig.modulePackage,
+        });
       }
 
-      if (typeChar === typeCharsEnum.bops) {
-        return bopsDependencies.push(bopsFunctionConfig.moduleRepo);
+      if (type === typesEnum.bops) {
+        return bopsDependencies.push(bopsFunctionConfig.moduleName);
       }
 
-      if(typeChar === typeCharsEnum.external) {
-        externalDependencies.push({
-          name: bopsFunctionConfig.moduleRepo,
+      if(type === typesEnum.external) {
+        return externalDependencies.push({
+          name: bopsFunctionConfig.moduleName,
           version: bopsFunctionConfig.version,
+          package: bopsFunctionConfig.modulePackage,
+        });
+      }
+
+      if (type === typesEnum.protocol) {
+        protocolsDependencies.push({
+          name: bopsFunctionConfig.moduleName,
+          version: bopsFunctionConfig.version,
+          package: bopsFunctionConfig.modulePackage,
         });
       }
     });
@@ -123,6 +140,7 @@ export class CheckBopsFunctionsDependencies {
       fromSchemas: schemasDependencies,
       fromConfigurations: configurationalDependencies,
       fromBops: bopsDependencies,
+      protocol: protocolsDependencies,
       bopName: this.businessOperation.name,
     };
   }
@@ -157,7 +175,7 @@ export class CheckBopsFunctionsDependencies {
 
   public checkOutputDependencyMet () : boolean {
     let result = true;
-    const availableOutputFunction = "%output";
+    const availableOutputFunction = "output";
 
     for (const outputDependency of this.dependencies.fromOutputs) {
       result = outputDependency === availableOutputFunction;
@@ -173,8 +191,6 @@ export class CheckBopsFunctionsDependencies {
   /**
    * This method should be used to remove properties access when you just need the
    * plain type of the string.
-   *
-   * This does not remove the initial path indication, such as the "!" or "%"
    */
   private fromPropertyPathToType (fullPath : string) : string {
     const firstAccessIndex = fullPath.indexOf(".");
@@ -190,8 +206,7 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const internalDependencyName of this.dependencies.internal) {
-      const functionName = internalDependencyName.slice(1);
-      result = this.internalFunctionManager.functionIsInstalled(functionName);
+      result = this.internalFunctionManager.functionIsInstalled(internalDependencyName);
 
       if (!result) {
         console.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
@@ -207,13 +222,8 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const schemaDependecy of this.dependencies.fromSchemas) {
-      const requiredSchema = schemaDependecy.substring(1,
-        schemaDependecy.lastIndexOf("@"),
-      );
-
-      const requiredFunction = schemaDependecy
-        .substring(schemaDependecy.lastIndexOf("@") + 1);
-
+      const requiredSchema = schemaDependecy.schemaName;
+      const requiredFunction = schemaDependecy.functionName;
 
       result = this.schemas.has(requiredSchema);
       if (!result) {
@@ -235,9 +245,7 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const bopsDependency of this.dependencies.fromBops) {
-      const requiredBop = bopsDependency.substring(1);
-
-      result = this.bops.has(requiredBop);
+      result = this.bops.has(bopsDependency);
 
       if (!result) {
         console.error(`[Dependency Check] Unmet BOp dependency: "${bopsDependency}"`);
@@ -253,7 +261,7 @@ export class CheckBopsFunctionsDependencies {
 
     for (const externalDependency of this.dependencies.external) {
       result = this.externalFunctionManager
-        .functionIsInstalled(externalDependency.name.slice(1), externalDependency.version);
+        .functionIsInstalled(externalDependency.name, externalDependency.package);
 
       if (!result) {
         console.error(
@@ -264,5 +272,24 @@ export class CheckBopsFunctionsDependencies {
     }
 
     return true;
+  }
+
+  public checkProtocolDependenciesMet () : boolean {
+    let result = true;
+
+    for (const protocolDependency of this.dependencies.protocol) {
+      result = this.protocolFunctionManager
+        .get(`${protocolDependency.package}.${protocolDependency.name}`) !== undefined;
+
+      if (!result) {
+        console.error(
+          // eslint-disable-next-line max-len
+          `[Dependency Check] Unmet protocol dependency: "${protocolDependency.name}@${protocolDependency.version}.${protocolDependency.name}"`,
+        );
+        return false;
+      }
+    }
+
+    return result;
   }
 }

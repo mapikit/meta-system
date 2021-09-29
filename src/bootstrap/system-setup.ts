@@ -5,15 +5,19 @@ import { FunctionManager } from "../bops-functions/function-managers/function-ma
 import internalFunctionManager from "../bops-functions/function-managers/internal-function-manager";
 import { Configuration } from "../configuration/configuration";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
-import { MetaProtocol } from "../configuration/protocols/meta-protocol";
 import { FunctionSetup } from "../bootstrap/function-setup";
-import { protocolClassesMap } from "../bootstrap/protocol-classes";
 import chalk from "chalk";
+import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager";
+import { ProtocolsSetup } from "./protocols-setup";
+import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper";
+import { runtimeDefaults } from "../configuration/runtime-config/defaults";
 
 const fsPromise = FS.promises;
 
 export class SystemSetup {
-  private runningProtocols : MetaProtocol<unknown>[] = [];
+  private protocolsManager : ProtocolsSetup;
+
+  // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {
     console.log(chalk.greenBright("[System Setup] System setup starting"));
     console.log("[System Setup] Retrieving system configuration");
@@ -22,21 +26,38 @@ export class SystemSetup {
     console.log(chalk.greenBright("[System Setup] File found - Validating content"));
     const systemConfig = this.desserializeConfiguration(fileContent);
     console.log(chalk.greenBright("[System Setup] Validation successful"));
-    console.log("[System Setup] Starting System functions bootstrap sequence");
-    const systemFunctions = await this.bootstrapFunctions(systemConfig);
 
-    console.log(chalk.greenBright("[System Setup] Done - Loading Protocols"));
-    await this.setupProtocols(systemFunctions, systemConfig);
-    console.log(chalk.greenBright("[System Setup] Setup Done"));
+    const functionSetupCommand = new FunctionSetup(
+      internalFunctionManager,
+      externalFunctionManagerSingleton,
+      protocolFunctionManagerSingleton,
+      systemConfig,
+    );
+
+    const systemFunctionsManager = functionSetupCommand.getBopsManager();
+
+    console.log(chalk.greenBright("[Protocol Installation] Starting protocol installation"));
+    this.protocolsManager = await this.setupProtocols(systemFunctionsManager, systemConfig);
+    console.log(chalk.greenBright("[Protocol Installation] Protocol installation complete"));
+
+    console.log("[System Setup] Starting System functions bootstrap sequence");
+    await functionSetupCommand.setup();
+
+    await prettifyNPMPackageFile(systemConfig.name, systemConfig.version,
+      `${systemConfig.name} System - Made in Meta-System.`,
+      runtimeDefaults.externalFunctionInstallFolder,
+    );
+
+    console.log("[System Setup] Starting protocols");
+    this.protocolsManager.startAllProtocols();
   }
 
   public async stop () : Promise<void> {
     console.log(chalk.yellowBright("[System Shutdown] Shutting down system"));
-    console.log("[System Shutdown] Stopping", this.runningProtocols.length, "protocol(s)");
-    for(let index = this.runningProtocols.length-1; index >= 0; index--) {
-      await this.runningProtocols[index].stop();
-      this.runningProtocols.pop();
-    }
+    console.log("[System Shutdown] Stopping protocol(s)");
+
+    await this.protocolsManager.stopAllProtocols();
+
     console.log(chalk.blueBright("[System Shutdown] System stopped gracefully"));
   }
 
@@ -45,8 +66,9 @@ export class SystemSetup {
     this.stop()
       .then(() => {
         this.execute()
-          .catch(error => console.error("Error while starting system", error));
-      }).catch(error => console.error("Error while shutting down system", error));
+          .catch(error => console.log(chalk.red("Error when attempting to start the system:", error)));
+      })
+      .catch(error => console.log(chalk.red("Error when attempting to stop the system:", error)));
   }
 
   private desserializeConfiguration (validationContent : string) : Configuration {
@@ -77,28 +99,12 @@ export class SystemSetup {
     return result;
   }
 
-  private async bootstrapFunctions (systemConfig : Configuration) : Promise<FunctionManager> {
-    const functionSetup = new FunctionSetup(
-      internalFunctionManager,
-      externalFunctionManagerSingleton,
-      systemConfig,
-    );
-
-    await functionSetup.setup();
-
-    return functionSetup.getBopsManager();
-  }
-
   private async setupProtocols (
     systemFunctionsManager : FunctionManager, systemConfig : Configuration,
-  ) : Promise<void> {
-    for (const protocolConfig of systemConfig.protocols) {
-      const NewableProtocol = protocolClassesMap[protocolConfig
-        .protocolType] as unknown as new <T>(...args : unknown[]) => MetaProtocol<T>;
+  ) : Promise<ProtocolsSetup> {
+    const protocolsSetup = new ProtocolsSetup(systemConfig, protocolFunctionManagerSingleton, systemFunctionsManager);
+    await protocolsSetup.execute();
 
-      const protocol = new NewableProtocol(protocolConfig.configuration, systemFunctionsManager);
-      await protocol.start();
-      this.runningProtocols.push(protocol);
-    };
+    return protocolsSetup;
   };
 }

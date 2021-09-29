@@ -19,7 +19,7 @@ export const divideBopsFunction = (input : { A : number; B : number }) : unknown
 };
 
 export const divideFunctionInformation : InternalMetaFunction = {
-  functionName: "divideBopsFunction",
+  functionName: "divide",
   version: "1.0.0",
   description: "Divides A by B",
   inputParameters: {

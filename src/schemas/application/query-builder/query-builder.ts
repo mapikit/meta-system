@@ -1,6 +1,6 @@
 import { FilterQuery, QuerySelector } from "mongodb";
 import { SchemaObject, SchemasType, SchemaTypeDefinition } from "../../../configuration/schemas/schemas-type";
-import { QueryTypes, QueryType, PropertyQuery } from "../schema-bops-funtions/query-type";
+import { QueryTypes, QueryType, PropertyQuery } from "./query-type";
 import { getObjectProperty } from "./get-object-property";
 import { queryTranslationMap } from "./query-translation-type";
 import { queryValueReplace } from "./query-value-replace";

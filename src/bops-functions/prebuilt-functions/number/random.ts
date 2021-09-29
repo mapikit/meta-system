@@ -8,7 +8,7 @@ export const randomNumberBopsFunction = () : unknown => {
 };
 
 export const randomNumberBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "randomNumberBopsFunction",
+  functionName: "randomNumber",
   version: "1.0.0",
   description: "Generates a Pseudo Random number ([0, 1]) using Mersenne-Twister Algorithm",
   outputData: {

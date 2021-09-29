@@ -1,7 +1,6 @@
 import { ConfigurationType } from "..";
 import { BusinessOperation } from "./business-operations/business-operation";
-import { EnvironmentVariable } from "./configuration-type";
-import { ProtocolConfigType } from "./protocols/protocol-config-type";
+import { EnvironmentVariable, ProtocolConfigType } from "./configuration-type";
 import { Schema } from "./schemas/schema";
 
 

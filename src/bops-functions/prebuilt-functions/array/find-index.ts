@@ -30,7 +30,7 @@ export const arrayFindIndexBopsFunction = (input : { array : unknown[]; searched
 };
 
 export const arrayFindIndexBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "arrayFindIndexBopsFunction",
+  functionName: "arrayFindIndex",
   version: "1.0.0",
   description: "Find the index of a given item in the array",
   inputParameters: {

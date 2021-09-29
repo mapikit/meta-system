@@ -19,13 +19,13 @@ export const ifBopsFunction = async (input : InputType) : Promise<unknown> => {
 };
 
 export const ifBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "ifBopsFunction",
+  functionName: "if",
   version: "1.0.0",
   description: "Returns one of two given values based on whether the given boolean is true or false",
   inputParameters: {
     boolean : { type: "boolean", required: true },
-    valueIfTrue : { type: "any", required: true },
-    valueIfFalse : { type: "any", required: false },
+    ifTrue : { type: "any", required: true },
+    ifFalse : { type: "any", required: false },
   },
   outputData: {
     outputValue: { type: "any", required: true },

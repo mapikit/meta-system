@@ -1,22 +1,17 @@
 import { BopsEngine } from "../../../src/bops-functions/bops-engine/bops-engine";
 import { ModuleManager } from "../../../src/bops-functions/bops-engine/modules-manager";
-import { FunctionsInstaller } from "../../../src/bops-functions/installation/functions-installer";
 import { SchemasManager } from "../../../src/schemas/application/schemas-manager";
 import { createFakeMongo } from "../../doubles/mongo-server";
 import { expect } from "chai";
 import { MongoClient } from "mongodb";
 import { testSystem } from "./test-data/test-system";
-import { FunctionFileSystem } from "../../../src/bops-functions/installation/function-file-system";
 import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type";
 import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
 import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
-// import { internalBop } from "./test-data/business-operations/internal-bop";
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
 import faker from "faker";
-import Path from "path";
-import { ExternalFunctionManagerClass } from "../../../src/bops-functions/function-managers/external-function-manager";
 import { CheckBopsFunctionsDependencies }
   from "../../../src/configuration/business-operations/check-bops-functions-dependencies";
 import { BusinessOperation } from "../../../src/configuration/business-operations/business-operation";
@@ -24,6 +19,8 @@ import internalFunctionManager from "../../../src/bops-functions/function-manage
 import { BopsManagerClass } from "../../../src/bops-functions/function-managers/bops-manager";
 import { ConfigurationType } from "../../../src/configuration/configuration-type";
 import { variableBop } from "./test-data/business-operations/variables-bop";
+import { packageBop } from "./test-data/business-operations/package-bop";
+import { purgeTestPackages, testExternalManager, testProtocolManager } from "../../test-managers";
 
 interface EngineInput {
   ModuleManager : ModuleManager;
@@ -36,19 +33,15 @@ let fakeMongo : MongoClient;
 const maxExecutionTime = 100;
 
 const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<EngineInput> => {
-  const functionsFolder = "test-functions";
-  const installationHandler = new FunctionsInstaller(functionsFolder);
-  const installPath = Path.join(process.cwd(), functionsFolder);
-  const fileSystem = new FunctionFileSystem(installPath, "meta-function.json");
-  const externalFunctionHandler = new ExternalFunctionManagerClass(installationHandler, fileSystem);
   const bopsManager = new BopsManagerClass();
 
   const schemasManager = new SchemasManager(testSystem.name, fakeMongo);
   await schemasManager.addSystemSchemas(testSystem.schemas as SchemasType[]);
   const moduleManager = new ModuleManager({
     SchemasManager: schemasManager,
-    ExternalFunctionManager: externalFunctionHandler,
     InternalFunctionManager: internalFunctionManager,
+    ExternalFunctionManager: testExternalManager,
+    protocolFunctionManager: testProtocolManager,
     BopsManager: bopsManager,
   });
 
@@ -59,12 +52,13 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     testSystem.schemas,
     businessOperations,
     new BusinessOperation(bop),
-    externalFunctionHandler,
+    testExternalManager,
     internalFunctionManager,
+    testProtocolManager,
   ).bopsDependencies;
 
   for (const externalDependency of bopsDependencies.external) {
-    await externalFunctionHandler.add(externalDependency.name.slice(1), externalDependency.version);
+    await testExternalManager.add(externalDependency.name, externalDependency.version, externalDependency.package);
   }
 
   const bopsEngineInputOptions : EngineInput = {
@@ -77,13 +71,8 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
 };
 
 describe("Bops Engine Testing", () => {
-  before(async () => {
-    fakeMongo = await createFakeMongo();
-  });
-
-  afterEach(async () => {
-    fakeMongo = await createFakeMongo();
-  });
+  beforeEach(async () => { fakeMongo = await createFakeMongo(); });
+  after(purgeTestPackages);
 
   it("Test of prebuilt functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(mapikitProvidedBop);
@@ -94,19 +83,6 @@ describe("Bops Engine Testing", () => {
 
     expect(res["output"]).to.be.equal(Math.pow(3, randomNumber));
   });
-
-  // it("Test of BOp as internal function", async () => {
-  //   bopsEnginePrerequisites = await setupBopsEngineRequisites(internalBop);
-  //   const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
-  //   // <<<<< This was done to avoid coding the entire bootstrap process inside of these tests
-  //   const provided = bopsEngine.stitch(mapikitProvidedBop, maxExecutionTime);
-  //   const mappedFunctions = bopsEnginePrerequisites.ModuleManager.set("+prebuilt-functions", provided);
-  //   // >>>>> End
-  //   const stitched = bopsEngine.stitch(internalBop, maxExecutionTime);
-  //   const res = await stitched();
-
-  //   expect(res["output"]).to.be.equal(73);
-  // });
 
   it("Test of schema BOps functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(schemaBop);
@@ -131,17 +107,30 @@ describe("Bops Engine Testing", () => {
   });
 
   it("Test of variable capability", async () => {
-    bopsEnginePrerequisites = await setupBopsEngineRequisites(externalBop);
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(variableBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(variableBop, maxExecutionTime);
 
     const randomNumber = Math.random()*1000;
-    const result = await stitched({ aNumber: randomNumber });
+    const result = await stitched({ aNumber: randomNumber, randomValue: { thisVar: "isAnObject" } });
 
     expect(result).not.to.be.undefined;
     expect(result.initialValue).to.be.equal(15);
-    expect(result.functionOutput).to.be.equal(randomNumber);
+    expect(result.functionOutput).to.be.equal(2);
     expect(result.newValue).to.be.equal(randomNumber);
+    expect(result.randomItem).to.be.deep.equal({ thisVar: "isAnObject" });
+  });
+
+  it("Test package functions", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(packageBop);
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(packageBop, maxExecutionTime);
+
+    const result1 = await stitched({ age: 50 });
+    expect(result1["over18"]).to.be.true;
+
+    const result2 = await stitched({ age: 12 });
+    expect(result2["over18"]).to.be.false;
   });
 });
 

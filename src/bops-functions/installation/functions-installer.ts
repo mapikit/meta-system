@@ -1,4 +1,4 @@
-import { PluginManager } from "live-plugin-manager";
+import { DependenciesManager } from "../../dependencies-management";
 
 export enum ModuleKind {
   NPM = "NPM",
@@ -10,17 +10,15 @@ export class FunctionsInstaller {
     private readonly functionsFolder : string,
   ) { }
 
-  private installationManager = new PluginManager({
-    pluginsPath: this.functionsFolder,
-  });
+  private installationManager = new DependenciesManager(this.functionsFolder);
 
   public async install (moduleName : string, version : string, kind : ModuleKind) : Promise<void> {
-    if (kind !== ModuleKind.NPM) {
+    if (kind === ModuleKind.GITHUB) {
       throw Error("Not Implemented");
     }
 
     console.log(`[BOps Function] Installing ${moduleName}@${version}`);
-    await this.installationManager.installFromNpm(moduleName, version)
+    await this.installationManager.install(moduleName, version)
       .catch((error : Error) => {
         console.error(`[BOps Function] FAILED TO INSTALL - ${moduleName}@${version}`);
 
@@ -31,11 +29,11 @@ export class FunctionsInstaller {
   }
 
   public async uninstall (moduleName : string, kind : ModuleKind) : Promise<void> {
-    if (kind !== ModuleKind.NPM) {
+    if (kind === ModuleKind.GITHUB) {
       throw Error("Not Implemented");
     }
 
-    return this.installationManager.uninstall(moduleName)
+    return this.installationManager.remove(moduleName)
       .then(() => void(0));
   }
 

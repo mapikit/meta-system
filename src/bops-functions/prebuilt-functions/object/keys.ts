@@ -13,7 +13,7 @@ export const getObjectKeysBopsFunction = (input : { object : CloudedObject }) : 
 };
 
 export const getObjectKeysBopsFunctionInformation : InternalMetaFunction = {
-  functionName: "getObjectKeysBopsFunction",
+  functionName: "getObjectKeys",
   version: "1.0.0",
   description: "Get a list of the keys of the given object",
   inputParameters: {

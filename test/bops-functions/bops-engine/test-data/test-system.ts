@@ -3,8 +3,8 @@ import { ConfigurationType } from "../../../../src/configuration/configuration-t
 import { internalBop } from "./business-operations/internal-bop";
 import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";
-import { availableProtocolsNames } from "../../../../src/configuration/protocols/available-protocols-enum";
 import { variableBop } from "./business-operations/variables-bop";
+import { packageBop } from "./business-operations/package-bop";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -26,15 +26,9 @@ export const testSystem : ConfigurationType = {
     schemaBop,
     externalBop,
     variableBop,
+    packageBop,
   ],
   protocols: [
-    {
-      protocolType: availableProtocolsNames.HTTP_JSONBODY,
-      configuration: {
-        port: 8080,
-        routes: [],
-      },
-    },
   ],
 };
 

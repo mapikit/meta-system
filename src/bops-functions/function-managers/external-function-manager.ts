@@ -1,21 +1,22 @@
 
-import { MetaFunction } from "meta-function-helper";
+import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
+import { BuiltMetaPackage, FunctionManager, MetaFunction } from "meta-function-helper";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
 import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
 import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer";
-import { FunctionManager } from "./function-manager";
 
 
 export class ExternalFunctionManagerClass implements FunctionManager {
   private functionMap : Map<string, Function> = new Map();
-  private fucntionConfigurationMap : Map<string, MetaFunction> = new Map();
+  private infoMap : Map<string, MetaFunction> = new Map();
 
   public constructor (
     private functionsInstaller = new FunctionsInstaller(runtimeDefaults.externalFunctionInstallFolder),
     private functionFileSystem = new FunctionFileSystem(
       runtimeDefaults.externalFunctionInstallFolder,
       runtimeDefaults.externalFunctionConfigFileName,
+      runtimeDefaults.externalPackageConfigFileName,
     ),
   ) { }
 
@@ -23,26 +24,65 @@ export class ExternalFunctionManagerClass implements FunctionManager {
     return this.functionMap.get(functionName);
   }
 
-  public getConfiguration (functionName : string) : MetaFunction {
-    return this.fucntionConfigurationMap.get(functionName);
-  }
+  // eslint-disable-next-line max-lines-per-function
+  public async add (functionName : string, functionVersion = "latest", packageName ?: string) : Promise<void> {
+    await this.functionsInstaller.install(packageName ?? functionName, functionVersion, ModuleKind.NPM);
+    const moduleType = packageName === undefined ? "function" : "package";
+    const fileDescriptionMode = packageName === undefined ? functionName : packageName;
+    const moduleConfigString = await this.functionFileSystem.getDescriptionFile(fileDescriptionMode, moduleType);
 
-  public async add (functionName : string, functionVersion = "latest") : Promise<void> {
-    await this.functionsInstaller.install(functionName, functionVersion, ModuleKind.NPM);
-    const functionConfigString = await this.functionFileSystem.getFunctionDescriptionFile(functionName);
-    const functionConfig = new MetaFunctionDescriptionValidation(functionConfigString)
-      .validate()
-      .getFunctionConfiguration();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const moduleConfig = packageName === undefined ?
+      new MetaFunctionDescriptionValidation(moduleConfigString).validate().getFunctionConfiguration() :
+      await (await new MetaPackageDescriptionValidation(moduleConfigString).validate())
+        .getPackageConfiguration();
+
+    // Only populated if the module is a function
+    const functionLocation : string | undefined = moduleConfig["mainFunction"];
 
     const functionDeclaration = await this.functionFileSystem
-      .importMain(functionName, functionConfig.entrypoint, functionConfig.mainFunction);
+      .import(fileDescriptionMode, moduleConfig.entrypoint, functionLocation);
 
-    this.functionMap.set(functionName, functionDeclaration);
-    this.fucntionConfigurationMap.set(`${functionName}@${functionVersion}`, functionConfig);
+    const info = moduleType === "package" ?
+      (moduleConfig as BuiltMetaPackage).functionsDefinitions.find(funct => funct.functionName === functionName) :
+      (moduleConfig as MetaFunction);
+    this.infoMap.set(packageName ? `${packageName}.${functionName}` : functionName, info);
+    this.addFunctionsToMap(functionName, functionDeclaration, packageName);
   }
 
-  public functionIsInstalled (functionName : string, functionVersion = "latest") : boolean {
-    return this.fucntionConfigurationMap.get(`${functionName}@${functionVersion}`) !== undefined;
+  // eslint-disable-next-line max-lines-per-function
+  private addFunctionsToMap (
+    name : string,
+    input : Function | Record<string, Function>,
+    packageName ?: string,
+  ) : void {
+    if (typeof input === "function") {
+      this.functionMap.set(name, input);
+
+      return;
+    }
+
+    const functionDeclaration = input[name] ?? input.default[name];
+
+    if (functionDeclaration === undefined) {
+      throw Error(`[BOPs Function] ERROR - Misconfigured package "${packageName}". `
+      + `Function "${name}" not found!`);
+    }
+
+    this.functionMap.set(`${packageName}.${name}`, functionDeclaration);
+  }
+
+  public functionIsInstalled (name : string, packageName ?: string) : boolean {
+    if (packageName !== undefined) {
+      return this.functionMap.get(`${packageName}.${name}`) !== undefined;
+    }
+
+    return this.functionMap.get(name) !== undefined;
+  }
+
+  public getFunctionInfo (functionName : string, packageName ?: string) : MetaFunction {
+    const fullName = packageName !== undefined ? `${packageName}.${functionName}` : functionName;
+    return this.infoMap.get(fullName);
   }
 }
 

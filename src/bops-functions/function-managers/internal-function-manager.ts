@@ -1,132 +1,148 @@
-import { arrayAtBopsFunction } from "../prebuilt-functions/array/array-at";
-import { arrayFindIndexBopsFunction } from "../prebuilt-functions/array/find-index";
-import { arrayIncludesBopsFunction } from "../prebuilt-functions/array/inlcudes";
-import { arrayJoinBopsFunction } from "../prebuilt-functions/array/join";
-import { arrayLengthBopsFunction } from "../prebuilt-functions/array/length";
-import { arrayPushBopsFunction } from "../prebuilt-functions/array/push";
-import { arrayRemoveBopsFunction } from "../prebuilt-functions/array/remove";
-import { isNillBopsFunction } from "../prebuilt-functions/assertion/is-nill";
-import { boolToNumberBopsFunction } from "../prebuilt-functions/boolean/bool-to-number";
-import { boolToStringBopsFunction } from "../prebuilt-functions/boolean/bool-to-string";
-import { dateNowBopsFunction } from "../prebuilt-functions/date/date-now";
-import { forLoopFunction } from "../prebuilt-functions/flux-control/forLoop";
-import { ifBopsFunction } from "../prebuilt-functions/flux-control/if";
-import { tryCatchBopsFunction } from "../prebuilt-functions/flux-control/try-catch";
-import { andGateBopsFunction } from "../prebuilt-functions/logic/and";
-import { isEqualToBopsFunction } from "../prebuilt-functions/logic/equal";
-import { higherOrEqualToBopsFunction } from "../prebuilt-functions/logic/higher-or-equal-to";
-import { higherThanBopsFunction } from "../prebuilt-functions/logic/higher-than";
-import { lowerOrEqualToBopsFunction } from "../prebuilt-functions/logic/lower-or-equal-to";
-import { lowerThanBopsFunction } from "../prebuilt-functions/logic/lower-than";
-import { notBopsFunction } from "../prebuilt-functions/logic/not";
-import { orGateBopsFunction } from "../prebuilt-functions/logic/or";
-import { absoluteBopsFunction } from "../prebuilt-functions/math/absolute";
-import { addBopsFunction } from "../prebuilt-functions/math/add";
-import { divideBopsFunction } from "../prebuilt-functions/math/divide";
-import { exponentialBopsFunction } from "../prebuilt-functions/math/exponential";
-import { modulusBopsFunction } from "../prebuilt-functions/math/modulus";
-import { multiplyBopsFunction } from "../prebuilt-functions/math/multipy";
-import { roundBopsFunction } from "../prebuilt-functions/math/round";
-import { squareRootBopsFunction } from "../prebuilt-functions/math/square-root";
-import { subtractBopsFunction } from "../prebuilt-functions/math/subtract";
-import { randomNumberBopsFunction } from "../prebuilt-functions/number/random";
-import { toExponentialBopsFunction } from "../prebuilt-functions/number/to-exponential";
-import { numberToStringFunction } from "../prebuilt-functions/number/to-string";
-import { combineObjectBopsFunction } from "../prebuilt-functions/object/combine";
-import { createObjectBopsFunction } from "../prebuilt-functions/object/create";
-import { getObjectPropertyValueBopsFunction } from "../prebuilt-functions/object/get-value";
-import { getObjectKeysBopsFunction } from "../prebuilt-functions/object/keys";
-import { objectToStringBopsFunction } from "../prebuilt-functions/object/to-string";
-import { getObjectValuesBopsFunction } from "../prebuilt-functions/object/values";
-import { charAtBopsFunction } from "../prebuilt-functions/string/char-at";
-import { countStringFunction } from "../prebuilt-functions/string/count";
-import { indexOfStringFunction } from "../prebuilt-functions/string/index-of";
-import { stringReplaceFunction } from "../prebuilt-functions/string/replace";
-import { stringToNumberBopsFunction } from "../prebuilt-functions/string/to-number";
+/* eslint-disable max-len */
+import { InternalMetaFunction } from "bops-functions/internal-meta-function";
+import { arrayAtBopsFunction, arrayAtBopsFunctionInformation } from "../prebuilt-functions/array/array-at";
+import { arrayFindIndexBopsFunction, arrayFindIndexBopsFunctionInformation } from "../prebuilt-functions/array/find-index";
+import { arrayIncludesBopsFunction, arrayIncludesBopsFunctionInformation } from "../prebuilt-functions/array/inlcudes";
+import { arrayJoinBopsFunction, arrayJoinBopsFunctionInformation } from "../prebuilt-functions/array/join";
+import { arrayLengthBopsFunction, arrayLengthBopsFunctionInformation } from "../prebuilt-functions/array/length";
+import { arrayPushBopsFunction, arrayPushBopsFunctionInformation } from "../prebuilt-functions/array/push";
+import { arrayRemoveBopsFunction, arrayRemoveBopsFunctionInformation } from "../prebuilt-functions/array/remove";
+import { isNillBopsFunction, isNillBopsFunctionInformation } from "../prebuilt-functions/assertion/is-nill";
+import { boolToNumberBopsFunction, boolToNumberBopsFunctionInformation } from "../prebuilt-functions/boolean/bool-to-number";
+import { boolToStringBopsFunction, boolToStringBopsFunctionInformation } from "../prebuilt-functions/boolean/bool-to-string";
+import { dateNowBopsFunction, dateNowBopsFunctionInformation } from "../prebuilt-functions/date/date-now";
+import { forLoopFunction, forLoopInformation } from "../prebuilt-functions/flux-control/forLoop";
+import { ifBopsFunction, ifBopsFunctionInformation } from "../prebuilt-functions/flux-control/if";
+import { tryCatchBopsFunction, tryCatchBopsFunctionInformation } from "../prebuilt-functions/flux-control/try-catch";
+import { andGateBopsFunction, andGateBopsFunctionInformation } from "../prebuilt-functions/logic/and";
+import { isEqualToBopsFunction, isEqualToBopsFunctionInformation } from "../prebuilt-functions/logic/equal";
+import { higherOrEqualToBopsFunction, higherOrEqualToBopsFunctionInformation } from "../prebuilt-functions/logic/higher-or-equal-to";
+import { higherThanBopsFunction, higherThanBopsFunctionInformation } from "../prebuilt-functions/logic/higher-than";
+import { lowerOrEqualToBopsFunction, lowerOrEqualToBopsFunctionInformation } from "../prebuilt-functions/logic/lower-or-equal-to";
+import { lowerThanBopsFunction, lowerThanBopsFunctionInformation } from "../prebuilt-functions/logic/lower-than";
+import { notBopsFunction, notBopsFunctionInformation } from "../prebuilt-functions/logic/not";
+import { orGateBopsFunction, orGateBopsFunctionInformation } from "../prebuilt-functions/logic/or";
+import { absoluteBopsFunction, absoluteFunctionInformation } from "../prebuilt-functions/math/absolute";
+import { addBopsFunction, addFunctionInformation } from "../prebuilt-functions/math/add";
+import { divideBopsFunction, divideFunctionInformation } from "../prebuilt-functions/math/divide";
+import { exponentialBopsFunction, exponentialFunctionInformation } from "../prebuilt-functions/math/exponential";
+import { modulusBopsFunction, modulusFunctionInformation } from "../prebuilt-functions/math/modulus";
+import { multiplyBopsFunction, multiplyFunctionInformation } from "../prebuilt-functions/math/multipy";
+import { roundBopsFunction, roundFunctionInformation } from "../prebuilt-functions/math/round";
+import { squareRootBopsFunction, squareRootFunctionInformation } from "../prebuilt-functions/math/square-root";
+import { subtractBopsFunction, subtractFunctionInformation } from "../prebuilt-functions/math/subtract";
+import { randomNumberBopsFunction, randomNumberBopsFunctionInformation } from "../prebuilt-functions/number/random";
+import { toExponentialBopsFunction, toExponentialBopsFunctionInformation } from "../prebuilt-functions/number/to-exponential";
+import { numberToStringFunction, numberToStringFunctionInformation } from "../prebuilt-functions/number/to-string";
+import { combineObjectBopsFunction, combineObjectBopsFunctionInformation } from "../prebuilt-functions/object/combine";
+import { createObjectBopsFunction, createObjectBopsFunctionInformation } from "../prebuilt-functions/object/create";
+import { getObjectPropertyValueBopsFunction, getObjectPropertyValueBopsFunctionInformation } from "../prebuilt-functions/object/get-value";
+import { getObjectKeysBopsFunction, getObjectKeysBopsFunctionInformation } from "../prebuilt-functions/object/keys";
+import { objectToStringBopsFunction, objectToStringBopsFunctionInformation } from "../prebuilt-functions/object/to-string";
+import { getObjectValuesBopsFunction, getObjectValuesBopsFunctionInformation } from "../prebuilt-functions/object/values";
+import { charAtBopsFunction, charAtBopsFunctionInformation } from "../prebuilt-functions/string/char-at";
+import { countStringFunction, countStringFunctionInformation } from "../prebuilt-functions/string/count";
+import { indexOfStringFunction, indexOfStringFunctionInformation } from "../prebuilt-functions/string/index-of";
+import { stringReplaceFunction, stringReplaceFunctionInformation } from "../prebuilt-functions/string/replace";
+import { stringToNumberBopsFunction, stringToNumberBopsFunctionInformation } from "../prebuilt-functions/string/to-number";
 import { FunctionManager } from "./function-manager";
+import { executeWithArgs, executeWithArgsFunctionInformation } from "../prebuilt-functions/system/execute-with-args";
+import { getSystemFunction, getSystemFunctionFunctionInformation } from "../prebuilt-functions/system/get-system-function";
 
 
 export class InternalFunctionManagerClass implements FunctionManager {
   private functionMap = new Map<string, Function>()
+  public infoMap = new Map<string, InternalMetaFunction>()
 
   public get (functionName : string) : Function {
     return this.functionMap.get(functionName);
   }
 
-  public add (functionName : string, declaration : Function) : void {
-    this.functionMap.set(functionName, declaration);
+  public add (declaration : Function, functionInfo : InternalMetaFunction) : void {
+    this.infoMap.set(functionInfo.functionName, functionInfo);
+    this.functionMap.set(functionInfo.functionName, declaration);
   }
 
   public functionIsInstalled (functionName : string) : boolean {
     return this.get(functionName) !== undefined;
+  }
+
+  public replace (functionName : string, declaration : Function) : void {
+    const currentInfo = this.infoMap.get(functionName);
+    this.functionMap.delete(functionName);
+    this.add(declaration, currentInfo);
   }
 }
 
 const internalFunctionManager = new InternalFunctionManagerClass();
 
 // Math Functions
-internalFunctionManager.add("add", addBopsFunction);
-internalFunctionManager.add("subtract", subtractBopsFunction);
-internalFunctionManager.add("divide", divideBopsFunction);
-internalFunctionManager.add("multiply", multiplyBopsFunction);
-internalFunctionManager.add("absolute", absoluteBopsFunction);
-internalFunctionManager.add("exponential", exponentialBopsFunction);
-internalFunctionManager.add("modulus", modulusBopsFunction);
-internalFunctionManager.add("round", roundBopsFunction);
-internalFunctionManager.add("sqrt", squareRootBopsFunction);
+internalFunctionManager.add(addBopsFunction, addFunctionInformation);
+internalFunctionManager.add(subtractBopsFunction, subtractFunctionInformation);
+internalFunctionManager.add(divideBopsFunction, divideFunctionInformation);
+internalFunctionManager.add(multiplyBopsFunction, multiplyFunctionInformation);
+internalFunctionManager.add(absoluteBopsFunction, absoluteFunctionInformation);
+internalFunctionManager.add(exponentialBopsFunction, exponentialFunctionInformation);
+internalFunctionManager.add(modulusBopsFunction, modulusFunctionInformation);
+internalFunctionManager.add(roundBopsFunction, roundFunctionInformation);
+internalFunctionManager.add(squareRootBopsFunction, squareRootFunctionInformation);
 
 // Assertion Functions
-internalFunctionManager.add("isNill", isNillBopsFunction);
+internalFunctionManager.add(isNillBopsFunction, isNillBopsFunctionInformation);
 
 // Boolean Functions
-internalFunctionManager.add("boolToNumber", boolToNumberBopsFunction);
-internalFunctionManager.add("boolToString", boolToStringBopsFunction);
+internalFunctionManager.add(boolToNumberBopsFunction, boolToNumberBopsFunctionInformation);
+internalFunctionManager.add(boolToStringBopsFunction, boolToStringBopsFunctionInformation);
 
 // Number Functions
-internalFunctionManager.add("randomNumber", randomNumberBopsFunction);
-internalFunctionManager.add("toExponential", toExponentialBopsFunction);
-internalFunctionManager.add("numberToString", numberToStringFunction);
+internalFunctionManager.add(randomNumberBopsFunction, randomNumberBopsFunctionInformation);
+internalFunctionManager.add(toExponentialBopsFunction, toExponentialBopsFunctionInformation);
+internalFunctionManager.add(numberToStringFunction, numberToStringFunctionInformation);
 
 // String Functions
-internalFunctionManager.add("charAt", charAtBopsFunction);
-internalFunctionManager.add("countString", countStringFunction);
-internalFunctionManager.add("indexOf", indexOfStringFunction);
-internalFunctionManager.add("stringReplace", stringReplaceFunction);
-internalFunctionManager.add("stringToNumber", stringToNumberBopsFunction);
+internalFunctionManager.add(charAtBopsFunction, charAtBopsFunctionInformation);
+internalFunctionManager.add(countStringFunction, countStringFunctionInformation);
+internalFunctionManager.add(indexOfStringFunction, indexOfStringFunctionInformation);
+internalFunctionManager.add(stringReplaceFunction, stringReplaceFunctionInformation);
+internalFunctionManager.add(stringToNumberBopsFunction, stringToNumberBopsFunctionInformation);
 
 // Object Functions
-internalFunctionManager.add("combineObject", combineObjectBopsFunction);
-internalFunctionManager.add("createObject", createObjectBopsFunction);
-internalFunctionManager.add("getObjectValue", getObjectPropertyValueBopsFunction);
-internalFunctionManager.add("objectKeys", getObjectKeysBopsFunction);
-internalFunctionManager.add("objectValues", getObjectValuesBopsFunction);
-internalFunctionManager.add("objectToString", objectToStringBopsFunction);
+internalFunctionManager.add(combineObjectBopsFunction, combineObjectBopsFunctionInformation);
+internalFunctionManager.add(createObjectBopsFunction, createObjectBopsFunctionInformation);
+internalFunctionManager.add(getObjectPropertyValueBopsFunction, getObjectPropertyValueBopsFunctionInformation);
+internalFunctionManager.add(getObjectKeysBopsFunction, getObjectKeysBopsFunctionInformation);
+internalFunctionManager.add(getObjectValuesBopsFunction, getObjectValuesBopsFunctionInformation);
+internalFunctionManager.add(objectToStringBopsFunction, objectToStringBopsFunctionInformation);
 
 // Array Functions
-internalFunctionManager.add("join", arrayJoinBopsFunction);
-internalFunctionManager.add("findIndex", arrayFindIndexBopsFunction);
-internalFunctionManager.add("includes", arrayIncludesBopsFunction);
-internalFunctionManager.add("arrayAt", arrayAtBopsFunction);
-internalFunctionManager.add("arrayLength", arrayLengthBopsFunction);
-internalFunctionManager.add("push", arrayPushBopsFunction);
-internalFunctionManager.add("arrayRemove", arrayRemoveBopsFunction);
+internalFunctionManager.add(arrayJoinBopsFunction, arrayJoinBopsFunctionInformation);
+internalFunctionManager.add(arrayFindIndexBopsFunction, arrayFindIndexBopsFunctionInformation);
+internalFunctionManager.add(arrayIncludesBopsFunction, arrayIncludesBopsFunctionInformation);
+internalFunctionManager.add(arrayAtBopsFunction, arrayAtBopsFunctionInformation);
+internalFunctionManager.add(arrayLengthBopsFunction, arrayLengthBopsFunctionInformation);
+internalFunctionManager.add(arrayPushBopsFunction, arrayPushBopsFunctionInformation);
+internalFunctionManager.add(arrayRemoveBopsFunction, arrayRemoveBopsFunctionInformation);
 
 // Logic Functions
-internalFunctionManager.add("and", andGateBopsFunction);
-internalFunctionManager.add("equalTo", isEqualToBopsFunction);
-internalFunctionManager.add("higherThan", higherThanBopsFunction);
-internalFunctionManager.add("higherOrEqualTo", higherOrEqualToBopsFunction);
-internalFunctionManager.add("lowerOrEqualTo", lowerOrEqualToBopsFunction);
-internalFunctionManager.add("lowerThan", lowerThanBopsFunction);
-internalFunctionManager.add("not", notBopsFunction);
-internalFunctionManager.add("or", orGateBopsFunction);
+internalFunctionManager.add(andGateBopsFunction, andGateBopsFunctionInformation);
+internalFunctionManager.add(isEqualToBopsFunction, isEqualToBopsFunctionInformation);
+internalFunctionManager.add(higherThanBopsFunction, higherThanBopsFunctionInformation);
+internalFunctionManager.add(higherOrEqualToBopsFunction, higherOrEqualToBopsFunctionInformation);
+internalFunctionManager.add(lowerOrEqualToBopsFunction, lowerOrEqualToBopsFunctionInformation);
+internalFunctionManager.add(lowerThanBopsFunction, lowerThanBopsFunctionInformation);
+internalFunctionManager.add(notBopsFunction, notBopsFunctionInformation);
+internalFunctionManager.add(orGateBopsFunction, orGateBopsFunctionInformation);
 
 // Flux-Control Functions
-internalFunctionManager.add("if", ifBopsFunction);
-internalFunctionManager.add("tryCatch", tryCatchBopsFunction);
-internalFunctionManager.add("forLoop", forLoopFunction);
+internalFunctionManager.add(ifBopsFunction, ifBopsFunctionInformation);
+internalFunctionManager.add(tryCatchBopsFunction, tryCatchBopsFunctionInformation);
+internalFunctionManager.add(forLoopFunction, forLoopInformation);
 
 // Date Functions
-internalFunctionManager.add("dateNow", dateNowBopsFunction);
+internalFunctionManager.add(dateNowBopsFunction, dateNowBopsFunctionInformation);
+
+// System Functions
+internalFunctionManager.add(getSystemFunction, getSystemFunctionFunctionInformation);
+internalFunctionManager.add(executeWithArgs, executeWithArgsFunctionInformation);
 
 export default internalFunctionManager;
