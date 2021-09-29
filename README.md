@@ -8,7 +8,7 @@
 - [Roadmap](https://github.com/mapikit/meta-system/blob/master/ROADMAP.md)
 
 ## What is Meta-System?
-Meta-System is a software made for simplyfying the creation of any system, with any level of complexity. You can create entities, business rules, and set the way to interact with them.
+Meta-System is a software made for simplifying the creation of any system, with any level of complexity. You can create entities, business rules, and set the way to interact with them.
 
 Meta-System unifies the practicality of a no-code software with the flexibility of a functional programming language.
 
