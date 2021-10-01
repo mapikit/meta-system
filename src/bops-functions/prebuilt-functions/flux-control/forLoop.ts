@@ -1,5 +1,6 @@
 import { InternalMetaFunction } from "../../internal-meta-function";
 
+// eslint-disable-next-line max-lines-per-function
 export const forLoopFunction = async (input : {
   quantity : number;
   module : Function;
@@ -8,13 +9,17 @@ export const forLoopFunction = async (input : {
 }) : Promise<unknown> => {
   if(typeof input.quantity !== "number") return { errorMessage: "property \"quantity\" must be a number" };
 
-  let i : number;
-  for(i = 0; i <= input.quantity-1; i++) {
+  let finalIndex = 0;
+
+  for(let i = 0; i <= input.quantity-1; i++) {
+    console.log(input, i);
     await input.module();
     await input.postEach();
+
+    finalIndex = i;
   }
   await input.postAll();
-  return ({ lastIndexValue: i });
+  return ({ lastIndexValue: finalIndex });
 };
 
 export const forLoopInformation : InternalMetaFunction = {

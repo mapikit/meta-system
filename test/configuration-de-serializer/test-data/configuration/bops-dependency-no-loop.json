@@ -65,7 +65,18 @@
       "constants": [],
       "variables": [],
       "customObjects": [],
-      "configuration": []
+      "configuration": [
+        {
+          "key": 15,
+          "moduleName": "function-2",
+          "moduleType": "bop",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "id" },
+            { "origin": "constants", "originPath": "trueValue", "targetPath": "sold" },
+            { "origin": 16 }
+          ]
+        }
+      ]
     },
     {
       "name": "car-sell",
@@ -208,6 +219,16 @@
         {
           "key": 15,
           "moduleName": "function-2",
+          "moduleType": "bop",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "id" },
+            { "origin": "constants", "originPath": "trueValue", "targetPath": "sold" },
+            { "origin": 16 }
+          ]
+        },
+        {
+          "key": 155,
+          "moduleName": "function-3",
           "moduleType": "bop",
           "dependencies": [
             { "origin": "input", "originPath": "carId", "targetPath": "id" },
