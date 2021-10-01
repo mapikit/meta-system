@@ -31,6 +31,7 @@ export class BopsEngine {
     this.variables = VariableContext.validateSystemVariables(options.SystemConfig);
     this.moduleManager = options.ModuleManager;
     this.systemConfig = options.SystemConfig;
+    console.log(this.variables);
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -39,7 +40,10 @@ export class BopsEngine {
 
     const output = operation.configuration.find(module => module.moduleType === "output");
 
+    console.log(this.variables[operation.name]);
+
     const stitched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
+      console.log("Runnin BOp =======================", operation.name);
       const variablesInfo = new VariableContext(this.variables[operation.name]);
       this.mappedFunctions = variablesInfo.appendVariableFunctions(this.mappedFunctions);
 
@@ -49,8 +53,10 @@ export class BopsEngine {
         variables: variablesInfo.variables,
         results : new Map<number, unknown>(),
       };
+      const res = await this.getInputs(output.dependencies, workingBopContext, _inputs);
+      console.log("End of BOp =======================", operation.name);
 
-      return this.getInputs(output.dependencies, workingBopContext, _inputs);
+      return res;
     };
     return addTimeout(msTimeout, stitched);
   }
@@ -84,8 +90,8 @@ export class BopsEngine {
     const [origin, ...paths] = input.originPath.split(".");
 
     if(origin === "result") {
-      const results = currentBop.results.get(dependency.key) ?? await moduleFunction(resolvedInputs);
-      currentBop.results.set(dependency.key, results);
+      const results = /*currentBop.results.get(dependency.key) ??*/ await moduleFunction(resolvedInputs);
+      //currentBop.results.set(dependency.key, results);
       return { [input.targetPath]: ObjectResolver.extractProperty(results, paths) };
     }
 
@@ -120,7 +126,8 @@ export class BopsEngine {
 
   private wrapFunction (fn : Function, params : unknown, path : string[]) : () => Promise<unknown> {
     return async function () : Promise<unknown> {
-      return ObjectResolver.extractProperty(await fn(params), path);
+      const result = ObjectResolver.extractProperty(await fn(params), path);
+      return result;
     };
   };
 };
