@@ -42,14 +42,17 @@ export class FunctionSetup {
     await this.bootstrapExternalDependencies(allBopsDependencies);
     this.bootstrapProtocols(allBopsDependencies);
     this.checkExternalDependencies();
+    this.checkBopsInterDependencies();
 
-    const propValidator = new DependencyPropValidator(
-      this.systemConfiguration,
-      this.internalFunctionManager,
-      this.externalFunctionManager,
-      this.protocolFunctionManager,
-    );
-    propValidator.verifyAll();
+    if (!process.argv.includes("--skip-prop-validation")) {
+      const propValidator = new DependencyPropValidator(
+        this.systemConfiguration,
+        this.internalFunctionManager,
+        this.externalFunctionManager,
+        this.protocolFunctionManager,
+      );
+      propValidator.verifyAll();
+    }
 
     const moduleManager = new ModuleManager({
       ExternalFunctionManager: this.externalFunctionManager,
@@ -120,6 +123,19 @@ export class FunctionSetup {
 
       if (!result) {
         throw Error(`Unmet internal dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
+      }
+    });
+  }
+
+  private checkBopsInterDependencies () : void {
+    console.log("[Function Setup] Checking for BOps inter dependency");
+    this.bopsDependencyCheck.forEach((depCheck) => {
+      const result = depCheck.checkBopsFunctionsDependenciesMet();
+
+      if (!result) {
+        throw Error(`Unmet BOp dependency found in BOp "${depCheck.bopsDependencies.bopName}" \n`
+          + "Read logs above for more information",
+        );
       }
     });
   }

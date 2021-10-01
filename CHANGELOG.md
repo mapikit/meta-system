@@ -1,4 +1,9 @@
 # Changelog
+## 0.2.1
+- Fixed verification for BOps dependency in BOps.
+- Added logs for when the dependency prop validation fails.
+- Added flag for skipping validation entirely: `--skip-prop-validation`.
+
 ## 0.2.0 - Gemini
 Gemini is here! Meta-System got a power up on the protocols and the external functions. There was also a gib difference in the configuration of BOps. Check the differences below!
 ### Protocols

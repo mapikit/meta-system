@@ -18,7 +18,10 @@ const main = async () : Promise<void> => {
   const absolutePath = Path.join(fileLocation);
   const setupProcess = new SystemSetup();
 
-  setupProcess.execute().catch(error => console.log(chalk.red(error)));
+  setupProcess.execute().catch((error : Error) => {
+    console.log(chalk.red(error.message));
+    console.error(error.stack);
+  });
 
   process.stdin.on("data", (data) => {
     if(data.toString().includes("rs")) setupProcess.restart();

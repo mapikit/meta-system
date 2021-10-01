@@ -71,15 +71,21 @@ export class DependencyPropValidator {
     if(module.moduleType !== "output") {
       enum of { origin, target }
       let types : [string, string];
-      switch (typeof dependency.origin) {
-        case "number":
-          const refersTo = bop.configuration.find(mod => mod.key == dependency.origin);
-          const referredInfo = this.getFunctionInfo(refersTo);
-          types = this.getModularTypes(referredInfo, moduleInfo, dependency);
-          break;
-        case "string":
-          types = this.getStaticTypes(dependency, moduleInfo);
-          break;
+      try {
+        switch (typeof dependency.origin) {
+          case "number":
+            const refersTo = bop.configuration.find(mod => mod.key == dependency.origin);
+            const referredInfo = this.getFunctionInfo(refersTo);
+            types = this.getModularTypes(referredInfo, moduleInfo, dependency);
+            break;
+          case "string":
+            types = this.getStaticTypes(dependency, moduleInfo);
+            break;
+        }
+      } catch (e) {
+        console.log(chalk.redBright("[Dependency Validation] Failed to validate types - Aborting! " +
+        `@ ${bop.name} -> ${module.key} (${module.moduleName}) Dependency: [${JSON.stringify(dependency)}]`));
+        throw e;
       }
       if(types[of.origin] === types[of.target] || types[of.target] === "any") return;
       if(types.every(type => type.startsWith("array")) && types[of.target].endsWith("any")) return;
