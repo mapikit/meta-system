@@ -61,11 +61,8 @@ export class VariableContext {
   ];
 
   private wrapVariables (varFunction : Function) : Function {
-    console.log("wraping", varFunction.name, "with", Object.keys(this.variables));
     const resultFunction = (inputs : unknown) : unknown => {
-      console.log("Running var fun", varFunction.name, this.variables);
       const res = varFunction(inputs, this.variables);
-      console.log(res);
       return res;
     };
     return resultFunction;

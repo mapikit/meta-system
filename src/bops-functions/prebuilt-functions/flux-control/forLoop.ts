@@ -12,10 +12,8 @@ export const forLoopFunction = async (input : {
   let finalIndex = 0;
 
   for(let i = 0; i <= input.quantity-1; i++) {
-    console.log(input, i);
     await input.module();
     await input.postEach();
-
     finalIndex = i;
   }
   await input.postAll();

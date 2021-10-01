@@ -4,7 +4,7 @@ import { ResolvedVariables } from "../variables-context";
 
 export function increaseVariablesFunction (input : CloudedObject, variables : ResolvedVariables) : unknown {
   let updatedCount = 0;
-  console.log(input, variables);
+
   for(const variableName of Object.keys(input)) {
     const foundVariable = variables[variableName];
 
@@ -17,9 +17,10 @@ export function increaseVariablesFunction (input : CloudedObject, variables : Re
     }
 
     (foundVariable.value as number) += 1; //input[variableName] as number;
+    console.log(foundVariable.value);
     updatedCount++;
   }
-  console.log(updatedCount);
+
   return { updatedCount };
 }
 
