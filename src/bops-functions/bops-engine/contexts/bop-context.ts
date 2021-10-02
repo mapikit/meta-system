@@ -7,7 +7,7 @@ export class BopContext {
   public readonly constants : ResolvedConstants;
   public readonly variables : ResolvedVariables;
   public readonly config : BopsConfigurationEntry[];
-  public readonly results : Map<number, unknown> = new Map();
+  public readonly resultsCache : Map<number, unknown> = new Map();
   public readonly availableFunctions;
 
   // eslint-disable-next-line max-params

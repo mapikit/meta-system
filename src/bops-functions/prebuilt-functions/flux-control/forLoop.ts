@@ -13,10 +13,14 @@ export const forLoopFunction = async (input : {
 
   for(let i = 0; i <= input.quantity-1; i++) {
     await input.module();
-    await input.postEach();
+
+    if (input.postEach !== undefined) await input.postEach();
+
     finalIndex = i;
   }
-  await input.postAll();
+
+  if (input.postAll !== undefined) await input?.postAll();
+
   return ({ lastIndexValue: finalIndex });
 };
 

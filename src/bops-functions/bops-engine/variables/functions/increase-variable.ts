@@ -17,7 +17,6 @@ export function increaseVariablesFunction (input : CloudedObject, variables : Re
     }
 
     (foundVariable.value as number) += 1; //input[variableName] as number;
-    console.log(foundVariable.value);
     updatedCount++;
   }
 
