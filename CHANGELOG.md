@@ -1,4 +1,10 @@
 # Changelog
+## 0.2.2
+- Fixed variable functions not working with multiple internal BOps.
+- Fixed modular inputs (`originPath: "module"`) flow.
+  - Now all the modular inputs (and its dependencies) are executed on a separated context.
+  - In practice this means they are isolated from the rest of the flow, and only called by other functions.
+
 ## 0.2.1
 - Fixed verification for BOps dependency in BOps.
 - Added logs for when the dependency prop validation fails.
