@@ -3,7 +3,7 @@ const BopsDependencyLoop = require("./test-data/configuration/bops-dependency-lo
 const BopsDependencyNoLoop = require("./test-data/configuration/bops-dependency-no-loop.json");
 import { expect } from "chai";
 
-describe.only("BOps Cyclic Dependency Check", () => {
+describe("BOps Cyclic Dependency Check", () => {
   it("Fails to execute when there is cyclic dependency", () => {
     const checkDependencies = new BopsCyclicDependencyCheck(BopsDependencyLoop["businessOperations"]);
 
