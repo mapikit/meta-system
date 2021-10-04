@@ -1,62 +1,53 @@
 import { getObjectProperty } from "../../schemas/application/query-builder/get-object-property";
 import constants from "../../common/constants";
-import { BopsVariable, BusinessOperations, Dependency }
+import { BusinessOperations, Dependency }
   from "../../configuration/business-operations/business-operations-type";
 import { ConfigurationType } from "../../configuration/configuration-type";
 import { addTimeout } from "./add-timeout";
-import { ModuleManager, MappedFunctions } from "./modules-manager";
+import { ModuleManager } from "./modules-manager";
 import { ObjectResolver } from "./object-manipulator";
-import { ResolvedConstants, StaticSystemInfo } from "./static-info-validation";
-import { ResolvedVariables, VariableContext } from "./variables/variables-context";
+import { VariableContext } from "./variables/variables-context";
+import { SystemContext } from "./contexts/system-context";
+import { BopContext } from "./contexts/bop-context";
 
-type RelevantBopInfo = {
-  constants : ResolvedConstants;
-  variables : ResolvedVariables;
-  config : BusinessOperations["configuration"];
-  results : Map<number, unknown>;
-}
-
+/**
+ * This is the engine responsible for stitching all the functions in all the BOps in the system
+ */
 export class BopsEngine {
-  private readonly constants : Record<string, ResolvedConstants>;
-  private readonly variables : Record<string, BopsVariable[]>;
-  private readonly moduleManager : ModuleManager;
-  private mappedFunctions ?: MappedFunctions;
-  private systemConfig : ConfigurationType;
+  private readonly systemContext : SystemContext;
 
   constructor (options : {
     ModuleManager : ModuleManager;
     SystemConfig : ConfigurationType;
   }) {
-    this.constants = StaticSystemInfo.validateSystemStaticInfo(options.SystemConfig);
-    this.variables = VariableContext.validateSystemVariables(options.SystemConfig);
-    this.moduleManager = options.ModuleManager;
-    this.systemConfig = options.SystemConfig;
+    this.systemContext = new SystemContext(options);
   }
 
   // eslint-disable-next-line max-lines-per-function
   public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
-    this.mappedFunctions = this.moduleManager.resolveSystemModules(this.systemConfig);
-
+    this.systemContext.generateMappedFunctions();
     const output = operation.configuration.find(module => module.moduleType === "output");
 
     const stitched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
-      const variablesInfo = new VariableContext(this.variables[operation.name]);
-      this.mappedFunctions = variablesInfo.appendVariableFunctions(this.mappedFunctions);
+      const variablesInfo = new VariableContext(this.systemContext.variables[operation.name]);
+      const bopContext = new BopContext(
+        operation.configuration,
+        variablesInfo.variables,
+        this.systemContext.constants[operation.name],
+        variablesInfo.appendVariableFunctions(this.systemContext.mappedFunctions),
+      );
 
-      const workingBopContext : RelevantBopInfo = {
-        config: operation.configuration,
-        constants: this.constants[operation.name],
-        variables: variablesInfo.variables,
-        results : new Map<number, unknown>(),
-      };
+      const res = await this.getInputs(output.dependencies, bopContext, _inputs);
 
-      return this.getInputs(output.dependencies, workingBopContext, _inputs);
+      return res;
     };
     return addTimeout(msTimeout, stitched);
   }
 
-  private async getInputs (inputs : Dependency[], currentBop : RelevantBopInfo, _inputs : object) : Promise<object> {
+  /** Executes required modules to get the value of inputs */
+  private async getInputs (inputs : Dependency[], currentBop : BopContext, _inputs : object) : Promise<object> {
     const resolved = new Array<object>();
+
     for(const input of inputs) {
       if(typeof input.origin === "string") resolved.push(this.solveStaticInput(input, currentBop, _inputs));
       if(typeof input.origin === "number") resolved.push(await this.solveModularInput(input, currentBop, _inputs));
@@ -68,29 +59,35 @@ export class BopsEngine {
   // eslint-disable-next-line max-lines-per-function
   private async solveModularInput (
     input : Dependency,
-    currentBop : RelevantBopInfo,
+    currentBopContext : BopContext,
     _inputs : object) : Promise<object> {
-    const dependency = currentBop.config.find(module => module.key === input.origin);
+    const dependency = currentBopContext.config.find(module => module.key === input.origin);
     const dependencyName = ModuleManager.getFullModuleName(dependency);
-    const moduleFunction = this.mappedFunctions.get(dependencyName);
-    const resolvedInputs = await this.getInputs(dependency.dependencies, currentBop, _inputs);
+    const moduleFunction = currentBopContext.availableFunctions.get(dependencyName);
 
     if(input.originPath === undefined) {
+      const resolvedInputs = await this.getInputs(dependency.dependencies, currentBopContext, _inputs);
       const result = await moduleFunction(resolvedInputs);
-      currentBop.results.set(dependency.key, result);
+      currentBopContext.resultsCache.set(dependency.key, result);
       return;
     }
 
     const [origin, ...paths] = input.originPath.split(".");
 
     if(origin === "result") {
-      const results = currentBop.results.get(dependency.key) ?? await moduleFunction(resolvedInputs);
-      currentBop.results.set(dependency.key, results);
+      const resolvedInputs = await this.getInputs(dependency.dependencies, currentBopContext, _inputs);
+      const results = currentBopContext.resultsCache.get(dependency.key) ?? await moduleFunction(resolvedInputs);
+      currentBopContext.resultsCache.set(dependency.key, results);
       return { [input.targetPath]: ObjectResolver.extractProperty(results, paths) };
     }
 
     if(origin === "module") {
-      const wrappedFunction = this.wrapFunction(moduleFunction, resolvedInputs, paths);
+      const paramsGetter = async () : Promise<unknown> => {
+        const context = BopContext.cloneToNewContext(currentBopContext);
+        return this.getInputs(dependency.dependencies, context, _inputs);
+      };
+
+      const wrappedFunction = this.wrapFunction(moduleFunction, paramsGetter, paths);
       return { [input.targetPath]: wrappedFunction };
     }
 
@@ -99,7 +96,7 @@ export class BopsEngine {
 
   // eslint-disable-next-line max-lines-per-function
   private solveStaticInput (
-    input : Dependency, currentBop : RelevantBopInfo, _inputs : object) : object {
+    input : Dependency, currentBop : BopContext, _inputs : object) : object {
     switch (input.origin) {
       case "constants":
         const foundConstant = currentBop.constants[input.originPath];
@@ -118,9 +115,12 @@ export class BopsEngine {
     }
   }
 
-  private wrapFunction (fn : Function, params : unknown, path : string[]) : () => Promise<unknown> {
+  private wrapFunction (
+    fn : Function, paramsGetter : () => Promise<unknown>, path : string[]) : () => Promise<unknown> {
     return async function () : Promise<unknown> {
-      return ObjectResolver.extractProperty(await fn(params), path);
+      const params = await paramsGetter();
+      const result = ObjectResolver.extractProperty(await fn(params), path);
+      return result;
     };
   };
 };

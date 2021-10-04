@@ -22,7 +22,7 @@ export class VariableContext {
   public static validateSystemVariables (systemConfig : ConfigurationType) : Record<string, BopsVariable[]> {
     const systemVariables : Record<string, BopsVariable[]> = {};
     for(const bop of systemConfig.businessOperations) {
-      systemVariables[bop.name] = this.validateBopVariables(bop.variables);
+      systemVariables[bop.name] = VariableContext.validateBopVariables(bop.variables);
     }
     return systemVariables;
   }
@@ -50,18 +50,22 @@ export class VariableContext {
   public appendVariableFunctions (functionsMap : MappedFunctions) : MappedFunctions {
     return new Map([
       ...Array.from(functionsMap),
-      ...this.variableFunctions,
+      ...this.getVariableFunctions(),
     ]);
   }
 
-  private variableFunctions : Array<[ModuleFullName<"variable">, Function]> = [
-    ["variable.setVariables", this.wrapVariables(setVariablesFunction)],
+  private getVariableFunctions : () => Array<[ModuleFullName<"variable">, Function]> = () => [
     ["variable.increaseVariables", this.wrapVariables(increaseVariablesFunction)],
+    ["variable.setVariables", this.wrapVariables(setVariablesFunction)],
     ["variable.decreaseVariables", this.wrapVariables(decreaseVariablesFunction)],
   ];
 
   private wrapVariables (varFunction : Function) : Function {
-    return (inputs : unknown) : unknown => varFunction(inputs, this.variables);
+    const resultFunction = (inputs : unknown) : unknown => {
+      const res = varFunction(inputs, this.variables);
+      return res;
+    };
+    return resultFunction;
   }
 
   public static variablesInfo : Map<string, InternalMetaFunction> = new Map([

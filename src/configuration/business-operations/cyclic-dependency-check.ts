@@ -11,16 +11,20 @@ export class BopsCyclicDependencyCheck {
     });
   }
 
-  public checkBopDependencyChain (bopsName : string, requireChain : string[] = []) : void {
-    if (requireChain.includes(bopsName)) {
+  public checkBopDependencyChain (
+    initialBopsName : string, requireChain : string[] = [], currentDependencyName ?: string) : void {
+    if (requireChain.includes(initialBopsName)) {
       throw Error("Cannot run a BOp with a cyclic dependecy: " + requireChain.join(", "));
     }
 
-    requireChain.push(bopsName);
+    if (currentDependencyName !== undefined) requireChain.push(currentDependencyName);
 
-    const currentDependencies = this.getBopsDependencies(bopsName);
+    const currentDependencies = this.getBopsDependencies(
+      currentDependencyName === undefined ? initialBopsName : currentDependencyName,
+    );
+
     currentDependencies.forEach((dependency) => {
-      this.checkBopDependencyChain(dependency, requireChain);
+      this.checkBopDependencyChain(initialBopsName, requireChain, dependency);
     });
   }
 
