@@ -24,4 +24,84 @@ describe("BOps Functions Installation (external functions)", () => {
 
     expect(resultFails).to.be.true;
   });
+
+  it("Fails to install multiple versions of the same PACKAGE", async () => {
+    const packageName = "logger-meta-functions";
+    const packageVersion = "1.0.0";
+    const packageVersion2 = "1.0.1";
+    const successfullInstall = await testInstaller
+      .install(packageName, packageVersion, ModuleKind.NPM);
+
+    const failedInstall = await testInstaller
+      .install(packageName, packageVersion2, ModuleKind.NPM)
+      .catch(() => true);
+
+    expect(successfullInstall).to.be.undefined;
+    expect(failedInstall).to.be.true;
+  });
+
+  it("Fails to install multiple versions of the same FUNCTION", async () => {
+    const successfullInstall = await testInstaller
+      .install(testFunction, testFunctionVersion, ModuleKind.NPM);
+
+    const versionBump = "1.1.1";
+    const failedInstall = await testInstaller
+      .install(testFunction, versionBump, ModuleKind.NPM)
+      .catch(() => true);
+
+    expect(successfullInstall).to.be.undefined;
+    expect(failedInstall).to.be.true;
+  });
+
+  it("Fails to install multiple versions of the same PACKAGE - latest case", async () => {
+    const packageName = "logger-meta-functions";
+    const packageVersion = "1.0.0";
+    const latestVersion = "latest";
+    const successfullInstall = await testInstaller
+      .install(packageName, packageVersion, ModuleKind.NPM);
+
+    const failedInstall = await testInstaller
+      .install(packageName, latestVersion, ModuleKind.NPM)
+      .catch(() => true);
+
+    expect(successfullInstall).to.be.undefined;
+    expect(failedInstall).to.be.true;
+  });
+
+  it("Fails to install multiple versions of the same FUNCTION - latest case", async () => {
+    const successfullInstall = await testInstaller
+      .install(testFunction, testFunctionVersion, ModuleKind.NPM);
+
+    const failedInstall = await testInstaller
+      .install(testFunction, "latest", ModuleKind.NPM)
+      .catch(() => true);
+
+    expect(successfullInstall).to.be.undefined;
+    expect(failedInstall).to.be.true;
+  });
+
+  it("Succeeds to install latest versions of the same PACKAGE", async () => {
+    const packageName = "logger-meta-functions";
+    const successfullInstall = await testInstaller
+      .install(packageName, "latest", ModuleKind.NPM);
+
+    const successfulRetry = await testInstaller
+      .install(packageName, "latest", ModuleKind.NPM)
+      .catch(() => true);
+
+    expect(successfullInstall).to.be.undefined;
+    expect(successfulRetry).to.be.undefined;
+  });
+
+  it("Succeeds to install latest versions of the same FUNCTION", async () => {
+    const successfullInstall = await testInstaller
+      .install(testFunction, "latest", ModuleKind.NPM);
+
+    const successfulRetry = await testInstaller
+      .install(testFunction, "latest", ModuleKind.NPM)
+      .catch(() => true);
+
+    expect(successfullInstall).to.be.undefined;
+    expect(successfulRetry).to.be.undefined;
+  });
 });
