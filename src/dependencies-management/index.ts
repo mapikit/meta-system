@@ -1,39 +1,42 @@
 import { exec } from "child_process";
 import { join } from "path";
 import FS from "fs";
+import chalk from "chalk";
+
+type ModuleName = string;
+type ModuleVersion = string;
 
 export class DependenciesManager {
   constructor (private dependencyPath : string) {}
   private readonly installedDeps : Set<string> = new Set();
+  private readonly latestVersions : Map<ModuleName, ModuleVersion> = new Map();
 
-  private checkInstalled (name : string, version : string) : boolean {
-    const modulePackagePath = join(this.dependencyPath, "node_modules", name, "package.json");
+  private checkVersionIsInstalled (moduleName : string, version : string) : boolean {
+    let currentVersion = version;
+
     try {
-      const packageFile = FS.readFileSync(modulePackagePath, "utf8");
-      const installedVersion = JSON.parse(packageFile).version.replace("^", "");
-      if(version === installedVersion) return true;
+      const installedVersion = this.getInstalledModuleVersion(moduleName);
+      if (version === "latest") {
+        currentVersion = this.latestVersions.get(moduleName);
+      }
+
+      if (currentVersion === installedVersion) {
+        return true;
+      };
     } catch { return false; }
     return false;
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public async install (moduleName : string, version = "latest") : Promise<void> {
-    if (this.installedDeps.has(`${moduleName}`)) {
-      const errorMessage = "[Dependencies Install] ERROR: Cannot install two versions of the same dependency!"
-        + ` ${moduleName}@${version}`;
-
-      throw Error(errorMessage);
-    };
-
-    if (this.checkInstalled(moduleName, version)) {
-      console.log(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
-      return;
-    };
+    if (!this.requiresInstallation(moduleName, version)) { return; }
 
     const installationPromise : Promise<void> = new Promise((resolve, reject) => {
       exec(`npm i --prefix ${this.dependencyPath} ${moduleName}@${version} --save`, (err) => {
         if (err === null) {
           this.installedDeps.add(moduleName);
+
+          if (version === "latest") this.postInstallLatest(moduleName);
+
           return resolve();
         }
 
@@ -41,7 +44,47 @@ export class DependenciesManager {
       });
     });
 
-    return installationPromise;
+    await installationPromise;
+  }
+
+  /**
+   * Gets the raw installed version of the given module. This should be used inside a
+   * try catch block due to the nature of sync file system accesses.
+   */
+  private getInstalledModuleVersion (moduleName : string) : string | undefined {
+    const modulePackagePath = join(this.dependencyPath, "node_modules", moduleName, "package.json");
+    const packageFile = FS.readFileSync(modulePackagePath, "utf8");
+    return JSON.parse(packageFile).version.replace("^", "");
+  }
+
+  private postInstallLatest (moduleName : string) : void {
+    try {
+      const installedVersion = this.getInstalledModuleVersion(moduleName);
+      this.latestVersions.set(moduleName, installedVersion);
+    } catch (err) {
+      const message = "[Dependencies Install] Something went wrong during package installation checking, ABORTING!";
+      console.error(chalk.redBright(message));
+
+      throw Error(err);
+    }
+  }
+
+  private requiresInstallation (moduleName : string, version : string) : boolean {
+    const isInstalled = this.checkVersionIsInstalled(moduleName, version);
+    if (isInstalled) {
+      console.log(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
+      return false;
+    }
+
+    if (this.installedDeps.has(moduleName) && !isInstalled) {
+      const errorMessage = "[Dependencies Install] ERROR: Cannot install two versions of the same dependency!"
+        + ` ${moduleName}@${version}`;
+
+      console.error(chalk.redBright(errorMessage));
+      throw Error(errorMessage);
+    };
+
+    return true;
   }
 
   public async remove (moduleName : string) : Promise<void> {

@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.3
+- Fixed bug #64 . The package dependency manager was not handling the case of having multiple installations of the same package if its version was "latest"
+
 ## 0.2.2
 - Fixed variable functions not working with multiple internal BOps.
 - Fixed modular inputs (`originPath: "module"`) flow.
