@@ -4,8 +4,10 @@
 /test
 /test-configs
 /test-functions
+/runtime
 .eslintrc
 nodemon.json
 tsconfig.json
 tsconfig.base.json
 tsconfig.build.json
+.gitignore
