@@ -1,6 +1,7 @@
 import { isSchema } from "../assertions/schema/is-schema";
 import { Schema } from "./schema";
 import { SchemasType } from "./schemas-type";
+import { PathUtils } from "../path-alias-utils";
 
 export class DeserializeSchemasCommand {
   private result : Schema[] = [];
@@ -15,7 +16,8 @@ export class DeserializeSchemasCommand {
   }
 
   public execute (schemaList : unknown[]) : void {
-    schemaList.forEach((input) => {
+    const _schemaList = PathUtils.getContent(schemaList);
+    _schemaList.forEach((input) => {
       isSchema(input);
       this.result.push(new Schema(input));
       this.schemaNames.push(input.name);

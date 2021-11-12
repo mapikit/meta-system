@@ -1,4 +1,5 @@
 import { ConfigurationType } from "../../configuration-type";
+import { PathUtils } from "../../path-alias-utils";
 import { isType } from "../is-type";
 import { isEnvironmentVariable } from "./is-environment-variable";
 
@@ -20,11 +21,18 @@ export function isConfigurationType (input : unknown) : asserts input is Configu
     isEnvironmentVariable(envEntry);
   });
 
-  if (!Array.isArray(configurationTypeInput.businessOperations)) {
+  const businessOperations = PathUtils.getContent(configurationTypeInput.businessOperations);
+  if (!Array.isArray(businessOperations)) {
     throw Error("\"businessOperations\" should be an array");
   }
 
-  if (!Array.isArray(configurationTypeInput.schemas)) {
+  const schemas = PathUtils.getContent(configurationTypeInput.schemas);
+  if (!Array.isArray(schemas)) {
     throw Error("\"schemas\" should be an array");
+  }
+
+  const protocols = PathUtils.getContent(configurationTypeInput.protocols);
+  if (!Array.isArray(protocols)) {
+    throw Error("\"protocols\" should be an array");
   }
 }

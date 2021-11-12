@@ -4,8 +4,8 @@ import { sync as glob } from "glob";
 import Path from "path";
 
 export class PathUtils {
-  public static getContent<T> (value : string | T, parentValue ?: string | T[]) : T[] {
-    if(typeof value !== "string") return [value];
+  public static getContent<T> (value : string | T[] | T, parentValue ?: string | T[]) : T[] {
+    if(typeof value !== "string") return [value as T];
     const parentPath = this.resolveParentPath(parentValue);
     const jsons : Array<T> = [];
     const files = glob(Path.resolve(parentPath, value));
