@@ -14,8 +14,11 @@ const main = async () : Promise<void> => {
 
   const fileLocation = process.argv[2];
 
-  const relativePath = Path.join(process.cwd(), fileLocation);
-  const absolutePath = Path.join(fileLocation);
+  process.env.configPath = Path.resolve(fileLocation);
+  process.env.configDir = Path.parse(process.env.configPath).dir;
+
+  if(process.env.configPath === undefined) throw chalk.redBright("Config file not found");
+
   const setupProcess = new SystemSetup();
 
   setupProcess.execute().catch((error : Error) => {
@@ -28,12 +31,7 @@ const main = async () : Promise<void> => {
   });
 
   if (process.argv.includes("--dev")) {
-    let filePath : string;
-    for (const path of [relativePath, absolutePath]) {
-      if(fs.existsSync(path)) filePath = path;
-    }
-    if(filePath !== undefined) fs.watchFile(filePath, () => setupProcess.restart());
-    else console.warn("File to watch for was not found; System will not restart automatically");
+    fs.watchFile(process.env.configPath, () => setupProcess.restart());
   }
 };
 
