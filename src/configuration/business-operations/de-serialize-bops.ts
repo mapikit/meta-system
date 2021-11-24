@@ -1,5 +1,4 @@
 import { isBusinessOperations } from "../assertions/business-operations/is-business-operations";
-import { PathUtils } from "../path-alias-utils";
 import { BusinessOperation } from "./business-operation";
 import { BopsCyclicDependencyCheck } from "./cyclic-dependency-check";
 import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects";
@@ -13,8 +12,7 @@ export class DeserializeBopsCommand {
   }
 
   public execute (businessOperations : unknown[]) : void {
-    const _businessOperations = PathUtils.getContent(businessOperations);
-    _businessOperations.forEach((businessOperationData) => {
+    businessOperations.forEach((businessOperationData) => {
       isBusinessOperations(businessOperationData);
       const businessOperationInstance = new BusinessOperation(businessOperationData);
 
