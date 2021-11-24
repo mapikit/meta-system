@@ -4,6 +4,7 @@ import Path from "path";
 import fs from "fs";
 import packageData from "../../package.json";
 import chalk from "chalk";
+import { environment } from "../common/execution-env";
 
 // eslint-disable-next-line max-lines-per-function
 const main = async () : Promise<void> => {
@@ -14,10 +15,10 @@ const main = async () : Promise<void> => {
 
   const fileLocation = process.argv[2];
 
-  process.env.configPath = Path.resolve(fileLocation);
-  process.env.configDir = Path.parse(process.env.configPath).dir;
+  environment.constants.configPath = Path.resolve(fileLocation);
+  environment.constants.configDir = Path.parse(environment.constants.configPath as string).dir;
 
-  if(process.env.configPath === undefined) throw chalk.redBright("Config file not found");
+  if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
 
   const setupProcess = new SystemSetup();
 
@@ -31,7 +32,7 @@ const main = async () : Promise<void> => {
   });
 
   if (process.argv.includes("--dev")) {
-    fs.watchFile(process.env.configPath, () => setupProcess.restart());
+    fs.watchFile(environment.constants.configPath as string, () => setupProcess.restart());
   }
 };
 

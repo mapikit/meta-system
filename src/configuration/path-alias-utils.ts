@@ -2,6 +2,7 @@
 import { readFileSync } from "fs";
 import { sync as glob } from "glob";
 import Path from "path";
+import { environment } from "../common/execution-env";
 
 export class PathUtils {
   public static getContents <T> (arrayOrPath : T[] | string, parentPath = "") : T[] {
@@ -38,7 +39,7 @@ export class PathUtils {
   }
 
   private static resolveParentPath (parentValue : string | unknown) : string {
-    if(typeof parentValue !== "string") return process.env.configDir ?? "";
+    if(typeof parentValue !== "string") return environment.constants.configDir as string ?? "";
     return Path.parse(parentValue).dir;
   }
 }
