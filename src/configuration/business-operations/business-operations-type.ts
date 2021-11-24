@@ -1,4 +1,3 @@
-import { ProtocolConfigType } from "configuration/configuration-type";
 import { ObjectDefinition } from "meta-function-helper";
 import { ExtendedJsonTypes } from "../../common/types/json-types";
 
@@ -10,7 +9,6 @@ export interface BusinessOperations {
   variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];
   customObjects : BopsCustomObject[];
-  protocols ?: ProtocolConfigType[];
 }
 
 export type ExtendedJsonTypeDict<T = ExtendedJsonTypes | "any"> =
