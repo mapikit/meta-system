@@ -1,5 +1,3 @@
-import Path from "path";
-import FS from "fs";
 import { externalFunctionManagerSingleton } from "../bops-functions/function-managers/external-function-manager";
 import { FunctionManager } from "../bops-functions/function-managers/function-manager";
 import internalFunctionManager from "../bops-functions/function-managers/internal-function-manager";
@@ -11,8 +9,7 @@ import { protocolFunctionManagerSingleton } from "../bops-functions/function-man
 import { ProtocolsSetup } from "./protocols-setup";
 import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper";
 import { runtimeDefaults } from "../configuration/runtime-config/defaults";
-
-const fsPromise = FS.promises;
+import { environment } from "../common/execution-env";
 
 export class SystemSetup {
   private protocolsManager : ProtocolsSetup;
@@ -24,7 +21,7 @@ export class SystemSetup {
     const fileContent = await this.getFileContents();
 
     console.log(chalk.greenBright("[System Setup] File found - Validating content"));
-    const systemConfig = this.desserializeConfiguration(fileContent);
+    const systemConfig = await this.deserializeConfiguration(fileContent);
     console.log(chalk.greenBright("[System Setup] Validation successful"));
 
     const functionSetupCommand = new FunctionSetup(
@@ -71,32 +68,18 @@ export class SystemSetup {
       .catch(error => console.log(chalk.red("Error when attempting to stop the system:", error)));
   }
 
-  private desserializeConfiguration (validationContent : string) : Configuration {
+  private async deserializeConfiguration (validationContent : unknown) : Promise<Configuration> {
     const deserializer = new DeserializeConfigurationCommand();
-    deserializer.execute(JSON.parse(validationContent));
+    await deserializer.execute(validationContent);
 
     return deserializer.result;
   }
 
   private async getFileContents () : Promise<string> {
-    const fileLocation = process.argv[2];
+    console.log(`[System Setup] Searching system configuration in paths: "${environment.constants.configPath}"`);
 
-    const filePath = Path.join(process.cwd(), fileLocation);
-    const absoluteFilePath = Path.join(fileLocation);
-
-    console.log(`[System Setup] Searching system configuration in paths: "${filePath}" and "${absoluteFilePath}"`);
-
-    const result = await fsPromise.readFile(filePath, "utf8")
-      .catch(async () => {
-        return fsPromise.readFile(absoluteFilePath, "utf8")
-          .catch((error) => {
-            console.error("COULD NOT READ SYSTEM CONFIGURATION IN ", filePath, " OR ", absoluteFilePath);
-
-            throw error;
-          });
-      });
-
-    return result;
+    const content = await import(environment.constants.configPath as string);
+    return content.default;
   }
 
   private async setupProtocols (

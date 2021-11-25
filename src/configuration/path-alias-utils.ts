@@ -1,40 +1,41 @@
-/* eslint-disable max-lines-per-function */
-import { readFileSync } from "fs";
 import { sync as glob } from "glob";
 import Path from "path";
 import { environment } from "../common/execution-env";
 
 export class PathUtils {
-  public static getContents <T> (arrayOrPath : T[] | string, parentPath = "") : T[] {
+  public static async getContents <T> (arrayOrPath : T[] | string, parentPath = "") : Promise<T[]> {
     if(Array.isArray(arrayOrPath)) {
       const contents = [];
-      arrayOrPath.forEach(entry => contents.push(...this.getContent(entry, parentPath)));
+      for(const entry of arrayOrPath) {
+        contents.push(...(await this.getContent(entry, parentPath)));
+      }
       return contents;
     } else if(typeof arrayOrPath === "string") {
-      const contents = this.getContentsFromPath<T>(arrayOrPath, parentPath);
+      const contents = await this.getContentsFromPath<T>(arrayOrPath, parentPath);
       return this.getContents(contents, arrayOrPath);
     }
   }
 
-  private static getContent <T> (valueOrPath : T | string, parentValue ?: string | T[]) : T[] {
+  private static async getContent <T> (valueOrPath : T | string, parentValue ?: string | T[]) : Promise<T[]> {
     const parentPath = this.resolveParentPath(parentValue);
-    if(typeof valueOrPath === "string") return this.getContentsFromPath(valueOrPath, parentPath);
+    if(typeof valueOrPath === "string") {
+      return this.getContentsFromPath<T>(valueOrPath, parentPath);
+    }
     if(Array.isArray(valueOrPath)) return this.getContents(valueOrPath, parentPath);
 
     return [valueOrPath];
   }
 
-  private static getContentsFromPath<T> (path : string, parentPath : string) : T[] {
+  private static async getContentsFromPath<T> (path : string, parentPath : string) : Promise<T[]> {
     const jsons : Array<T> = [];
     const files = glob(Path.resolve(parentPath, path));
-    files.forEach(file => {
-      const fileContent = readFileSync(file, "utf8");
-      const fileInfo = JSON.parse(fileContent) as T | T[];
-      const infoArray = Array.isArray(fileInfo) ?
-        this.getContents(fileInfo, path) :
-        [fileInfo];
-      jsons.push(...infoArray);
-    });
+    for(const file of files) {
+      const fileInfo = await import(file);
+      const infoArray = Array.isArray(fileInfo.default) ?
+        await this.getContents(fileInfo.default, path) :
+        [fileInfo.default];
+      jsons.push(...(infoArray as T[]));
+    }
     return jsons;
   }
 

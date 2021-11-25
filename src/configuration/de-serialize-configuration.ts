@@ -19,8 +19,8 @@ export class DeserializeConfigurationCommand {
   };
 
   // eslint-disable-next-line max-lines-per-function
-  public execute (input : unknown) : void {
-    this.replaceReferences(input);
+  public async execute (input : unknown) : Promise<void> {
+    await this.replaceReferences(input);
     isConfigurationType(input);
 
     const schemasValidationCommand = new DeserializeSchemasCommand();
@@ -42,9 +42,9 @@ export class DeserializeConfigurationCommand {
     );
   }
 
-  private replaceReferences (input : unknown) : void {
-    referenceableProperties.forEach(property => {
-      input[property] = PathUtils.getContents(input[property]);
-    });
+  private async replaceReferences (input : unknown) : Promise<void> {
+    for(const property of referenceableProperties) {
+      input[property] = await PathUtils.getContents(input[property]);
+    }
   }
 }
