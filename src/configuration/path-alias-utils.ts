@@ -10,10 +10,9 @@ export class PathUtils {
         contents.push(...(await this.getContent(entry, parentPath)));
       }
       return contents;
-    } else if(typeof arrayOrPath === "string") {
-      const contents = await this.getContentsFromPath<T>(arrayOrPath, parentPath);
-      return this.getContents(contents, arrayOrPath);
     }
+    const contents = await this.getContentsFromPath<T>(arrayOrPath, parentPath);
+    return this.getContents(contents, arrayOrPath);
   }
 
   private static async getContent <T> (valueOrPath : T | string, parentValue ?: string | T[]) : Promise<T[]> {
