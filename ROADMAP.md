@@ -7,7 +7,7 @@
 - :heavy_check_mark: BETA - Verification of modules dependency property accesses;
 
 ### 0.3 - Future Release
-- Meta-System configuration can be split in multiple files, as long as there is a path declared;
+- :heavy_check_mark: Meta-System configuration can be split in multiple files, as long as there is a path declared;
 - Introduces DBProtocols - Databases becomes part of the protocol definition;
 - Schemas need to define a protocol Database to connect to;
 - Add StdOut Debugging capabilities to BOps;
