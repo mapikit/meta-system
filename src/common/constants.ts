@@ -8,4 +8,5 @@ export default Object.freeze({
     PASS: "apipass",
   },
   CLIENT_DB_DIGITS: 8,
+  DEFAULT_LOG_LEVEL: "error",
 });

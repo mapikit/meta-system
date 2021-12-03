@@ -75,6 +75,7 @@
     "@meta-system/meta-protocol-helper": "^0.2.6",
     "@meta-system/object-definition": "^1.0.7",
     "chalk": "^2.4.2",
+    "commander": "^8.3.0",
     "decimal.js": "^10.3.1",
     "glob": "^7.2.0",
     "just-clone": "^3.2.1",
