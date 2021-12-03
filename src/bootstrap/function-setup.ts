@@ -153,9 +153,8 @@ export class FunctionSetup {
   private checkSchemaDependencies () : void {
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkSchemaFunctionsDependenciesMet();
-      const schemaDeps =  depCheck.bopsDependencies.fromSchemas.join(", ");
+      const schemaDeps = depCheck.bopsDependencies.fromSchemas.map(dep => dep.functionName).join(", ");
       const schemaDepsName = schemaDeps === "" ? "NO SCHEMA DEPENDENCIES" : schemaDeps;
-
       console.log(`[Function Setup] Checking schema function dependencies for BOp "${
         depCheck.bopsDependencies.bopName
       }": "${schemaDepsName}"`);
