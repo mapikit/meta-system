@@ -14,6 +14,7 @@ import clone from "just-clone";
 import { InternalFunctionManagerClass } from "bops-functions/function-managers/internal-function-manager";
 import chalk from "chalk";
 import { ObjectDefinition } from "@meta-system/object-definition";
+import { logger } from "../common/logger/logger";
 
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 
@@ -31,7 +32,7 @@ export class DependencyPropValidator {
 
   // eslint-disable-next-line max-lines-per-function
   public verifyAll () : void {
-    console.log(chalk.greenBright("[Dependency Validation] Starting validation of all registered dependencies"));
+    logger.success("[Dependency Validation] Starting validation of all registered dependencies");
     const typeSafeArgIndex = process.argv.indexOf("--type-check");
     if(typeSafeArgIndex > -1) {
       const selectedLevel = Number(process.argv[typeSafeArgIndex+1]);
@@ -46,7 +47,7 @@ export class DependencyPropValidator {
         this.getHeader = (errorType : string) : string =>
           chalk.yellowBright(`[${errorType} in BOp "${bop.name}" @ key ${module.key} (${module.moduleName})]\n`);
 
-        this.requiredInputsFullfilled(module);
+        this.requiredInputsFulfilled(module);
         module.dependencies.forEach(dependency => {
           if(dependency.originPath === undefined) return;
           this.validateIO(dependency, module, bop);
@@ -54,7 +55,7 @@ export class DependencyPropValidator {
         });
       });
     });
-    console.log(chalk.greenBright("[Dependency Validation] Finished validating dependencies"));
+    logger.success("[Dependency Validation] Finished validating dependencies");
   }
 
   private getCustomTypes (info : FunctionInfoType) : CustomType[] {
@@ -84,8 +85,8 @@ export class DependencyPropValidator {
             break;
         }
       } catch (e) {
-        console.log(chalk.redBright("[Dependency Validation] Failed to validate types - Aborting! " +
-        `@ ${bop.name} -> ${module.key} (${module.moduleName}) Dependency: [${JSON.stringify(dependency)}]`));
+        logger.fatal("[Dependency Validation] Failed to validate types - Aborting! " +
+        `@ ${bop.name} -> ${module.key} (${module.moduleName}) Dependency: [${JSON.stringify(dependency)}]`);
         throw e;
       }
       if(types[of.origin] === types[of.target] || types[of.target] === "any") return;
@@ -93,14 +94,14 @@ export class DependencyPropValidator {
 
       if(this.typeCheckingLevel === 1) {
         if(types.includes("unknown")) return;
-        return console.log(this.getHeader("Type Error"),
+        return logger.warn(this.getHeader("Type Error"),
           `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
           `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
         );
       }
 
       if(this.typeCheckingLevel === 2) {
-        return console.log(this.getHeader("Type Error"),
+        return logger.warn(this.getHeader("Type Error"),
           `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
           `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
         );
@@ -108,7 +109,7 @@ export class DependencyPropValidator {
 
       if(this.typeCheckingLevel === 3) {
         if(types.includes("unknown")) {
-          return console.log(this.getHeader("Type Error"),
+          return logger.warn(this.getHeader("Type Error"),
             `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
             `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
           );
@@ -128,7 +129,7 @@ export class DependencyPropValidator {
     }
   }
 
-  private requiredInputsFullfilled (module : BopsConfigurationEntry) : void {
+  private requiredInputsFulfilled (module : BopsConfigurationEntry) : void {
     const functionInfo = this.getFunctionInfo(module);
     if(functionInfo === undefined) return;
     const inputs = this.getFunctionInput(functionInfo) ?? {};
@@ -138,9 +139,9 @@ export class DependencyPropValidator {
     }
     const configuredInputs = module.dependencies.map(dependency => dependency.targetPath?.split(".")[0]);
 
-    const isFullfilled = requiredInputs.every(input => configuredInputs.includes(input));
-    if(!isFullfilled) {
-      console.log(this.getHeader("Missing Required Inputs"),
+    const isFulfilled = requiredInputs.every(input => configuredInputs.includes(input));
+    if(!isFulfilled) {
+      logger.warn(this.getHeader("Missing Required Inputs"),
         `  >> Required inputs are ${requiredInputs} but only ${configuredInputs} were given`);
     }
   }
@@ -205,7 +206,7 @@ export class DependencyPropValidator {
     const moduleName = functionInfo["functionName"] ?? functionInfo["name"];
     if(originPathArray[0] === undefined) return;
     if(!Object.keys(outputs).includes(originPathArray[0])) {
-      console.warn(
+      logger.warn(
         this.getHeader("Origin Unavailable"),
         `  >> Requested property "${originPathArray[0]}" is not output of function "${moduleName}"` +
         ` (${dependency.origin})\n`,
@@ -261,7 +262,7 @@ export class DependencyPropValidator {
     const targetPath = dependency.targetPath.split(".");
     if(targetPath[0] === undefined) return;
     if(!Object.keys(inputs).includes(targetPath[0])) {
-      console.log(this.getHeader("Input Unavailable"),
+      logger.warn(this.getHeader("Input Unavailable"),
         `  >> Targeted property "${targetPath[0]}" is not input of function "${functionName}"\n`,
         `     :: Available inputs are: ${Object.keys(inputs)}`,
       );

@@ -2,6 +2,7 @@
 
 import { getClassConstructor, getDescriptorFileContent } from "@meta-system/meta-function-helper";
 import Path from "path";
+import { logger } from "../../common/logger/logger";
 
 export class FunctionFileSystem {
   private readonly customFunctionsLocation : string;
@@ -26,10 +27,10 @@ export class FunctionFileSystem {
     const fileName = moduleType === "function" ? this.configurationFileName : this.packageFileName;
     const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName);
 
-    console.log(`[BOPs Function] Retrieving Description File for ${moduleName}`);
+    logger.operation(`[BOPs Function] Retrieving Description File for ${moduleName}`);
     const file = await getDescriptorFileContent(filePath, fileName)
       .then((result) => {
-        console.log(`[BOPs Function] Success - Retrieved Description File for ${moduleName}`);
+        logger.success(`[BOPs Function] Success - Retrieved Description File for ${moduleName}`);
 
         return result;
       });
@@ -40,11 +41,11 @@ export class FunctionFileSystem {
   public async import (moduleName : string, entrypoint : string, mainFunctionName ?: string)
     : Promise<Function | Record<string, Function>> {
     const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName);
-    console.log(`[BOPs Function] Retrieving main function/package for ${moduleName}`);
+    logger.operation(`[BOPs Function] Retrieving main function/package for ${moduleName}`);
 
     // Actually just a general "import"
     const result = await getClassConstructor(filePath, entrypoint, mainFunctionName);
-    console.log(`[BOPs Function] Success - Retrieved main function for ${moduleName}`);
+    logger.success(`[BOPs Function] Success - Retrieved main function for ${moduleName}`);
 
     return result as Function | Record<string, Function>;
   }

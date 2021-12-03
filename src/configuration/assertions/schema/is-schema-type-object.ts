@@ -1,6 +1,7 @@
 import { isObjectDefinition } from "@meta-system/object-definition";
 import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/src/object-definition-type";
 import { SchemaDefinitionExtension } from "configuration/schemas/schemas-type";
+import { logger } from "../../../common/logger/logger";
 
 export function isSchemaTypeObject (input : unknown) : asserts input is TypeDefinitionDeep & SchemaDefinitionExtension {
   if (input["subtype"] === undefined) {
@@ -8,7 +9,7 @@ export function isSchemaTypeObject (input : unknown) : asserts input is TypeDefi
   }
 
   if (input["refName"] !== undefined) {
-    console.warn("Warning - Ignoring refName field for Schema property with type Object");
+    logger.warn("Warning - Ignoring refName field for Schema property with type Object");
   }
 
   isObjectDefinition((input as object)["subtype"]);

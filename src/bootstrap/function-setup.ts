@@ -1,5 +1,4 @@
 import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
-import chalk from "chalk";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
 import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager";
 import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
@@ -14,6 +13,7 @@ import { SchemaType } from "../configuration/schemas/schemas-type";
 import { SchemasManager } from "../schemas/application/schemas-manager";
 import { ModuleType } from "../configuration/business-operations/business-operations-type";
 import { DependencyPropValidator } from "./dependency-validator";
+import { logger } from "../common/logger/logger";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();
@@ -30,7 +30,7 @@ export class FunctionSetup {
 
   // eslint-disable-next-line max-lines-per-function
   public async setup () : Promise<void> {
-    console.log(`[Function Setup] Starting bootstrap process for BOps functions in system "${
+    logger.operation(`[Function Setup] Starting bootstrap process for BOps functions in system "${
       this.systemConfiguration.name
     }"`);
 
@@ -68,10 +68,10 @@ export class FunctionSetup {
       SystemConfig: this.systemConfiguration,
     });
 
-    console.log("[Function Setup] Starting BOps build process");
+    logger.operation("[Function Setup] Starting BOps build process");
 
     this.buildBops();
-    console.log(chalk.greenBright("[Function Setup] Success - Function Setup complete"));
+    logger.success("[Function Setup] Success - Function Setup complete");
   }
 
   private replaceGetSystemFunction (manager : ModuleManager, systemConfig : ConfigurationType) : void {
@@ -116,7 +116,7 @@ export class FunctionSetup {
   }
 
   private checkInternalDependencies () : void {
-    console.log("[Function Setup] Checking BOps internal dependencies");
+    logger.operation("[Function Setup] Checking BOps internal dependencies");
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkInternalFunctionsDependenciesMet();
 
@@ -127,7 +127,7 @@ export class FunctionSetup {
   }
 
   private checkBopsInterDependencies () : void {
-    console.log("[Function Setup] Checking for BOps inter dependency");
+    logger.operation("[Function Setup] Checking for BOps inter dependency");
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkBopsFunctionsDependenciesMet();
 
@@ -140,7 +140,7 @@ export class FunctionSetup {
   }
 
   private checkExternalDependencies () : void {
-    console.log("[Function Setup] Checking BOps external dependencies");
+    logger.operation("[Function Setup] Checking BOps external dependencies");
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkExternalRequiredFunctionsMet();
 
@@ -155,7 +155,7 @@ export class FunctionSetup {
       const result = depCheck.checkSchemaFunctionsDependenciesMet();
       const schemaDeps = depCheck.bopsDependencies.fromSchemas.map(dep => dep.functionName).join(", ");
       const schemaDepsName = schemaDeps === "" ? "NO SCHEMA DEPENDENCIES" : schemaDeps;
-      console.log(`[Function Setup] Checking schema function dependencies for BOp "${
+      logger.operation(`[Function Setup] Checking schema function dependencies for BOp "${
         depCheck.bopsDependencies.bopName
       }": "${schemaDepsName}"`);
 
@@ -167,7 +167,7 @@ export class FunctionSetup {
 
   // eslint-disable-next-line max-lines-per-function
   private async bootstrapExternalDependencies (allBopsDependencies : BopsDependencies[]) : Promise<void> {
-    console.log("[Function Setup] Starting Bootstrap sequence for all system external dependencies");
+    logger.operation("[Function Setup] Starting Bootstrap sequence for all system external dependencies");
     const externalDependenciesArray = allBopsDependencies
       .map((bopDependencies) => bopDependencies.external);
 
@@ -185,7 +185,7 @@ export class FunctionSetup {
 
   // eslint-disable-next-line max-lines-per-function
   private bootstrapProtocols (allBopsDependencies : BopsDependencies[]) : void {
-    console.log("[Function Setup] Starting Bootstrap sequence for all system protocols dependencies");
+    logger.operation("[Function Setup] Starting Bootstrap sequence for all system protocols dependencies");
     const protocolsDependenciesArray = allBopsDependencies
       .map((bopDependencies) => bopDependencies.protocol);
 
@@ -227,7 +227,7 @@ export class FunctionSetup {
     );
 
     const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");
-    console.log(`[Schemas Setup] Adding schemas to the system: "${schemasNames}"`);
+    logger.operation(`[Schemas Setup] Adding schemas to the system: "${schemasNames}"`);
 
     await manager.addSystemSchemas(systemSchemas);
 
@@ -241,11 +241,11 @@ export class FunctionSetup {
     }).filter((bopName) => !this.bopsManager.functionIsDeclared(bopName));
 
     if (unbuiltBopsNames.length === 0) {
-      console.log(chalk.greenBright("[BOps Build] All BOps are built"));
+      logger.success("[BOps Build] All BOps are built");
       return;
     }
 
-    console.log(`[BOps Build] Remaining BOps: [${unbuiltBopsNames.join(", ")}]`);
+    logger.operation(`[BOps Build] Remaining BOps: [${unbuiltBopsNames.join(", ")}]`);
 
     const bopsWithMetDependencies = unbuiltBopsNames.filter((bopName) => {
       const bopsDependencies = this.bopsDependencyCheck.get(bopName).bopsDependencies;
@@ -261,7 +261,7 @@ export class FunctionSetup {
     bopsWithMetDependencies.forEach((bopName) => {
       const currentBopConfig = this.systemConfiguration.businessOperations
         .find((bopConfig) => bopConfig.name === bopName);
-      console.log(`[BOps Build] Stitching "${bopName}"`);
+      logger.operation(`[BOps Build] Stitching "${bopName}"`);
 
       this.bopsManager.add(
         bopName,

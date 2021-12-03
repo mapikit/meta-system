@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import { logger } from "../../common/logger/logger";
 import { BusinessOperation } from "./business-operation";
 import { BopsConfigurationEntry } from "./business-operations-type";
 
@@ -71,8 +71,8 @@ export class ValidateBopsPipelineFlowCommand {
   private checkForUnusedModules () : void {
     for(const functionKey of Array.from(this.functions.keys())) {
       if(!this.mappedPaths.some(path => path.includes(functionKey))) {
-        console.warn(chalk.yellowBright(`Function with key ${functionKey} in "${this.businessOperation.name}" ` +
-        "is not part of any execution flow and will therefore not be executed"));
+        logger.warn(`Function with key ${functionKey} in "${this.businessOperation.name}" ` +
+        "is not part of any execution flow and will therefore not be executed");
       }
     }
   }

@@ -1,6 +1,8 @@
 
 export enum LoggingLevels {
   fatal,
+  success,
+  operation,
   error,
   warn,
   info,
