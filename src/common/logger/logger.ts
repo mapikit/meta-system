@@ -2,7 +2,7 @@ import { environment } from "../execution-env";
 import { defaultStyler } from "./default-styler-functions";
 import { AvailableLogLevels, Logger, LoggingLevels, Styling, StylingFunction } from "./types";
 
-function createLogger (styleFunctions : Styling = {}) : Logger {
+export function createLogger (styleFunctions : Styling = {}) : Logger {
   const logger = {};
   const namedLevels = Object.keys(LoggingLevels)
     .filter(key => !isNaN(Number(LoggingLevels[key]))) as AvailableLogLevels[];
@@ -10,11 +10,10 @@ function createLogger (styleFunctions : Styling = {}) : Logger {
   for(const level of namedLevels) {
     const style : StylingFunction = styleFunctions[level] ?? styleFunctions.default ?? defaultStyler;
 
-    logger[level] = (...messages : string[]) : void => {
+    logger[level] = (...data : unknown[]) : void => {
       if(environment.constants.logLevel <= LoggingLevels[level]) return;
 
-      process.stdout.write(style(level, new Date(), messages));
-      process.stdout.write("\n");
+      process.stdout.write(style(level, new Date(), data) + "\n");
     };
   }
   return logger as Logger;
