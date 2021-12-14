@@ -11,6 +11,6 @@ export enum LoggingLevels {
 
 export type AvailableLogLevels = keyof typeof LoggingLevels;
 
-export type Logger = { [Level in AvailableLogLevels] : (...data : string[]) => void; }
-export type StylingFunction = (header : AvailableLogLevels, date : Date, messages : string[]) => string
+export type Logger = { [Level in AvailableLogLevels] : (...data : unknown[]) => void; }
+export type StylingFunction = (header : AvailableLogLevels, date : Date, data : unknown[]) => string
 export type Styling = Partial<{ [Level in AvailableLogLevels | "default"] : StylingFunction }>
