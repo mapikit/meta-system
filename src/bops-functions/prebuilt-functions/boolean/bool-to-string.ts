@@ -8,10 +8,10 @@ export const boolToStringBopsFunctionInformation : InternalMetaFunction = {
   functionName: "boolToString",
   version: "1.0.0",
   description: "Converts a boolean to its string representation",
-  inputParameters: {
+  input: {
     boolean: { type: "boolean", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "string", required: true },
   },
 };

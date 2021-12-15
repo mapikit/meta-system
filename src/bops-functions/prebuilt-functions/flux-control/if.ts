@@ -22,12 +22,12 @@ export const ifBopsFunctionInformation : InternalMetaFunction = {
   functionName: "if",
   version: "1.0.0",
   description: "Returns one of two given values based on whether the given boolean is true or false",
-  inputParameters: {
+  input: {
     boolean : { type: "boolean", required: true },
     ifTrue : { type: "any", required: true },
     ifFalse : { type: "any", required: false },
   },
-  outputData: {
+  output: {
     outputValue: { type: "any", required: true },
   },
 };

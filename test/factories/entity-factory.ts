@@ -1,7 +1,7 @@
-import { SchemasType, SchemaTypeDefinition } from "../../src/configuration/schemas/schemas-type";
+import { SchemaType, SchemaTypeDefinition } from "../../src/configuration/schemas/schemas-type";
 import faker from "faker";
 
-export const entityFactory = (schemaFormat : SchemasType["format"]) : object => {
+export const entityFactory = (schemaFormat : SchemaType["format"]) : object => {
   const entity = {};
   for(const prop in schemaFormat) {
     entity[prop] = typeCreation[schemaFormat[prop].type](schemaFormat[prop]["subtype"]);

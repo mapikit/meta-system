@@ -1,12 +1,12 @@
 import { isSchema } from "../assertions/schema/is-schema";
 import { Schema } from "./schema";
-import { SchemasType } from "./schemas-type";
+import { SchemaType } from "./schemas-type";
 
 export class DeserializeSchemasCommand {
   private result : Schema[] = [];
   private schemaNames : string[] = [];
 
-  public get resultSchemas () : SchemasType[] {
+  public get resultSchemas () : SchemaType[] {
     return this.result;
   };
 

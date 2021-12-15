@@ -11,7 +11,7 @@ import { BusinessOperation } from "../configuration/business-operations/business
 import { BopsDependencies, CheckBopsFunctionsDependencies }
   from "../configuration/business-operations/check-bops-functions-dependencies";
 import { ConfigurationType } from "../configuration/configuration-type";
-import { SchemasType } from "../configuration/schemas/schemas-type";
+import { SchemaType } from "../configuration/schemas/schemas-type";
 import { SchemasManager } from "../schemas/application/schemas-manager";
 import { ModuleType } from "../configuration/business-operations/business-operations-type";
 import { DependencyPropValidator } from "./dependency-validator";
@@ -222,7 +222,7 @@ export class FunctionSetup {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private async createSchemasManager (systemSchemas : SchemasType[]) : Promise<SchemasManager> {
+  private async createSchemasManager (systemSchemas : SchemaType[]) : Promise<SchemasManager> {
     const dbConnection = new MongoClient(
       this.systemConfiguration.dbConnectionString,
       {

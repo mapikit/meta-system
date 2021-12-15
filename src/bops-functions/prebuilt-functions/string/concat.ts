@@ -13,10 +13,10 @@ export const stringConcatFunctionInformation : InternalMetaFunction = {
   functionName: "stringConcat",
   version: "1.0.0",
   description: "Concatenates all given strings in order",
-  inputParameters: {
+  input: {
     strings: { type: "object", required: true, subtype: "string" },
   },
-  outputData: {
+  output: {
     result: { type: "string", required: true },
   },
 };

@@ -1,8 +1,8 @@
 // Controls file and dependency structure for Meta Protocols.
 import FS from "fs";
-import { FunctionManager } from "meta-function-helper";
-import { MetaProtocol } from "meta-protocol-helper/dist/src/meta-protocol";
+import { FunctionManager, getClassConstructor } from "@meta-system/meta-function-helper";
 import Path from "path";
+import { MetaProtocol } from "@meta-system/meta-protocol-helper";
 const fsPromise = FS.promises;
 
 export class ProtocolFileSystem {
@@ -39,13 +39,10 @@ export class ProtocolFileSystem {
   public async importClass (
     moduleName : string, entrypoint : string, className : string)
     : Promise<new (arg1 : unknown, arg2 : FunctionManager) => MetaProtocol<unknown>> {
-    const filePath = Path.join(this.installLocation, "node_modules", moduleName, entrypoint);
+    const filePath = Path.join(this.installLocation, "node_modules", moduleName);
     console.log(`[Meta Protocols] Retrieving class for ${moduleName}`);
 
-    const importedEntrypoint = await import(filePath);
-
-    const metaProtocolClass = importedEntrypoint[className];
-
-    return metaProtocolClass;
+    return (await getClassConstructor(filePath, entrypoint, className)) as
+      new (...args : unknown[]) => MetaProtocol<unknown>; // Type defionition in this line
   }
 }

@@ -1,5 +1,5 @@
 import * as Mongo from "mongodb";
-import { SchemasType } from "../configuration/schemas/schemas-type";
+import { SchemaType } from "../configuration/schemas/schemas-type";
 
 export class MetaRepository {
   private connection : Mongo.MongoClient;
@@ -10,7 +10,7 @@ export class MetaRepository {
     this.connection = connection;
   }
 
-  public async initialize (schema : SchemasType, systemName : string) : Promise<void> {
+  public async initialize (schema : SchemaType, systemName : string) : Promise<void> {
     if(!this.connection.isConnected()) {
       await this.connection.connect();
     }

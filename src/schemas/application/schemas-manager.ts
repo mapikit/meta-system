@@ -1,30 +1,33 @@
-import { MongoClient } from "mongodb";
-import { MetaRepository } from "../../common/meta-repository";
-import { SchemasType } from "../../configuration/schemas/schemas-type";
+import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager";
+import { isDbProtocol } from "configuration/protocols/is-db-protocol";
+import { SchemaType } from "../../configuration/schemas/schemas-type";
 import { SchemaManager } from "./schema-manager";
 
 export class SchemasManager {
-  private readonly dbConnection : MongoClient;
   private readonly systemName : string;
   public schemas : Map<string, SchemaManager> = new Map();
+  private protocolsManager : ProtocolFunctionManagerClass;
 
-  constructor (systemName : string, mongoConnection : MongoClient) {
-    this.dbConnection = mongoConnection;
+  constructor (systemName : string, protocolFunctionManager : ProtocolFunctionManagerClass) {
     this.systemName = systemName;
+    this.protocolsManager = protocolFunctionManager;
   }
 
-  private async addSchema (schema : SchemasType) : Promise<void> {
-    const repository = new MetaRepository(this.dbConnection);
-    await repository.initialize(schema, this.systemName);
+  private async addSchema (schema : SchemaType) : Promise<void> {
+    console.log(`[Schemas] Adding Schema "${schema.name}" - DB protocol "${schema.dbProtocol}"`);
+    const dbProtocol = this.protocolsManager.getProtocolInstance(schema.dbProtocol);
+    isDbProtocol(dbProtocol);
+
+    await dbProtocol.initialize();
 
     const schemaManager = new SchemaManager({
-      schema, metaRepository: repository, systemName: this.systemName,
+      schema, dbProtocol, systemName: this.systemName,
     });
 
     this.schemas.set(schema.name, schemaManager);
   }
 
-  public async addSystemSchemas (systemSchemas : SchemasType[]) : Promise<void> {
+  public async addSystemSchemas (systemSchemas : SchemaType[]) : Promise<void> {
     for (const schema of systemSchemas) {
       await this.addSchema(schema)
         .then(async () => {

@@ -1,10 +1,14 @@
-export interface SchemasType {
+import { ObjectDefinition } from "@meta-system/object-definition";
+
+export interface SchemaType {
   name : string;
   format : SchemaObject;
+  dbProtocol : string;
+  identifier : string;
 }
 
 export type SchemaObject = {
-  [K in string] : SchemaTypeDefinition;
+  [K in string] : ObjectDefinition;
 }
 
 export type SchemaTypeDefinition = SchemaTypeDefinitionParameter

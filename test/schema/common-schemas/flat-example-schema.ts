@@ -1,6 +1,6 @@
-import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
+import { SchemaType } from "../../../src/configuration/schemas/schemas-type";
 
-export const flatExampleSchema : SchemasType = {
+export const flatExampleSchema : SchemaType = {
   name: "exampleFlatSchema",
   format: {
     name: { type: "string" },

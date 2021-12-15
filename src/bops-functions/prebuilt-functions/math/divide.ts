@@ -22,11 +22,11 @@ export const divideFunctionInformation : InternalMetaFunction = {
   functionName: "divide",
   version: "1.0.0",
   description: "Divides A by B",
-  inputParameters: {
+  input: {
     A: { type: "number", required: true },
     B: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorNaN: { type: "string", required: false },
     errorDivideByZero: { type: "string",  required: false },

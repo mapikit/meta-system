@@ -1,4 +1,4 @@
-import { ObjectDefinition } from "meta-function-helper";
+import { ObjectDefinition } from "@meta-system/meta-function-helper";
 import { ExtendedJsonTypes } from "../../common/types/json-types";
 
 export interface BusinessOperations {

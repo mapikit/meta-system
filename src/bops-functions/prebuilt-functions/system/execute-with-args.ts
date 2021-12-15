@@ -9,12 +9,12 @@ export const executeWithArgs = async (input : { module : Function; arguments : C
 export const executeWithArgsFunctionInformation : InternalMetaFunction = {
   functionName: "executeWithArgs",
   description: "Gets a function from a functionManager",
-  inputParameters: {
+  input: {
     module: { type: "function", required: true },
     arguments: { type: "cloudedObject", required: true },
   },
   version: "1.0.0",
-  outputData: {
+  output: {
     moduleOutput: { type: "any", required: false },
   },
 };

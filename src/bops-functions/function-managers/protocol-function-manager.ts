@@ -2,15 +2,19 @@ import { FunctionsInstaller, ModuleKind } from "../../bops-functions/installatio
 import { ProtocolDescriptionValidation } from "../../bops-functions/installation/protocol-configuration-validation";
 import { ProtocolFileSystem } from "../../bops-functions/installation/protocol-file-system";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
-import { FunctionManager } from "meta-function-helper";
-import Protocols, { BuiltMetaProtocolDefinition } from "meta-protocol-helper";
-import { MetaProtocol } from "meta-protocol-helper/dist/src/meta-protocol";
+import { FunctionManager } from "@meta-system/meta-function-helper";
 import Path from "path";
+import {
+  MetaProtocol,
+  DBProtocol,
+  validateProtocolConfiguration,
+  MetaProtocolDefinition,
+} from "@meta-system/meta-protocol-helper";
 
 export class ProtocolFunctionManagerClass implements FunctionManager {
   private functionMap : Map<string, Function>= new Map();
-  private descriptionsMap : Map<string, BuiltMetaProtocolDefinition> = new Map();
-  private instanceMap : Map<string, MetaProtocol<unknown>> = new Map();
+  private descriptionsMap : Map<string, MetaProtocolDefinition> = new Map();
+  private instanceMap : Map<string, MetaProtocol<unknown> | DBProtocol<unknown>> = new Map();
 
   public constructor (
     private functionsInstaller = new FunctionsInstaller(runtimeDefaults.externalFunctionInstallFolder),
@@ -24,7 +28,7 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     return this.functionMap.get(protocolNameAndFunction);
   }
 
-  public getProtocolDescription (protocolName : string) : BuiltMetaProtocolDefinition {
+  public getProtocolDescription (protocolName : string) : MetaProtocolDefinition {
     return this.descriptionsMap.get(protocolName);
   }
 
@@ -33,7 +37,8 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     const protocolDescription = await this.protocolFileSystem.getDescriptionFile(protocolName);
 
     const path = Path.join(runtimeDefaults.externalFunctionInstallFolder, "node_modules", protocolName);
-    await Protocols.validateProtocolStringConfiguration(protocolDescription, { filePath: path });
+    const CHANGE_ME = false; // TODO change this to db protocols
+    await validateProtocolConfiguration(protocolDescription, path, CHANGE_ME);
 
     const configValidation = await new ProtocolDescriptionValidation(protocolDescription).validate(path);
 
@@ -51,11 +56,12 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     return this.instanceMap.get(protocolName) !== undefined;
   }
 
-  public addProtocolInstance (protocolInstance : MetaProtocol<unknown>, protocolName : string) : void {
+  public addProtocolInstance (
+    protocolInstance : MetaProtocol<unknown> | DBProtocol<unknown>, protocolName : string) : void {
     this.instanceMap.set(protocolName, protocolInstance);
   }
 
-  public getProtocolInstance (name : string) : MetaProtocol<unknown> {
+  public getProtocolInstance (name : string) : MetaProtocol<unknown> | DBProtocol<unknown> {
     return this.instanceMap.get(name);
   }
 

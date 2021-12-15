@@ -12,11 +12,11 @@ export const numberToStringFunctionInformation : InternalMetaFunction = {
   functionName: "numberToString",
   version: "1.0.0",
   description: "Gets the index of a substring in the string",
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },
-  inputParameters: {
+  input: {
     number: { type: "number", required: true },
   },
 };

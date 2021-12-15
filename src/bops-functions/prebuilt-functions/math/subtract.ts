@@ -16,11 +16,11 @@ export const subtractFunctionInformation : InternalMetaFunction = {
   functionName: "subtract",
   version: "1.0.0",
   description: "Subtracts B from A",
-  inputParameters: {
+  input: {
     A: { type: "number",  required: true },
     B: { type: "number",  required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number",  required: false },
     errorMessage: { type: "string",  required: false },
   },

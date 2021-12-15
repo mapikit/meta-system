@@ -10,10 +10,10 @@ export const orGateBopsFunctionInformation : InternalMetaFunction = {
   functionName: "or",
   version: "1.0.0",
   description: "OR gate comparing boolean values for A and B",
-  outputData: {
+  output: {
     eitherIsTrue: { type: "boolean", required: true },
   },
-  inputParameters: {
+  input: {
     A: { type: "boolean", required: true },
     B: { type: "boolean", required: true },
   },

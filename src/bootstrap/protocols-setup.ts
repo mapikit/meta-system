@@ -1,4 +1,4 @@
-import { FunctionManager } from "meta-function-helper";
+import { FunctionManager } from "@meta-system/meta-function-helper";
 import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
 import { ConfigurationType } from "../configuration/configuration-type";
 

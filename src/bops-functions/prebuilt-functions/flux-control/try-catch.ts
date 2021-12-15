@@ -12,10 +12,10 @@ export const tryCatchBopsFunctionInformation : InternalMetaFunction = {
   functionName: "tryCatch",
   version: "1.0.0",
   description: "Tries to execute a function, returning the result or error, if present",
-  inputParameters: {
+  input: {
     function : { type: "function", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "any", required: false },
     error: { type: "any", required: false },
   },

@@ -7,7 +7,7 @@ import { MongoClient } from "mongodb";
 import { testSystem } from "./test-data/test-system";
 import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type";
-import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
+import { SchemaType } from "../../../src/configuration/schemas/schemas-type";
 import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
@@ -36,7 +36,7 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
   const bopsManager = new BopsManagerClass();
 
   const schemasManager = new SchemasManager(testSystem.name, fakeMongo);
-  await schemasManager.addSystemSchemas(testSystem.schemas as SchemasType[]);
+  await schemasManager.addSystemSchemas(testSystem.schemas as SchemaType[]);
   const moduleManager = new ModuleManager({
     SchemasManager: schemasManager,
     InternalFunctionManager: internalFunctionManager,

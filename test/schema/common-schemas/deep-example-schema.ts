@@ -1,6 +1,6 @@
-import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
+import { SchemaType } from "../../../src/configuration/schemas/schemas-type";
 
-export const deepExampleSchema : SchemasType = {
+export const deepExampleSchema : SchemaType = {
   name: "exampleDeepSchema",
   format: {
     name: { type: "string" },

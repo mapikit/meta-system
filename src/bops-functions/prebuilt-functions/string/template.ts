@@ -16,11 +16,11 @@ export const stringTemplateFunctionInformation : InternalMetaFunction = {
   functionName: "stringTemplate",
   version: "1.0.0",
   description: "Replaces the values of a string template with the corresponding given values",
-  inputParameters: {
+  input: {
     template: { type: "string", required: true },
     replacers: { type: "object", required: true, subtype: "string" },
   },
-  outputData: {
+  output: {
     result: { type: "string", required: true },
   },
 };

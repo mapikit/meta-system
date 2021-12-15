@@ -5,11 +5,11 @@ export const updateInfo : InternalMetaFunction = {
   description: "Updates all entities in the database, filtering by the properties given",
   author: "mapikit",
   version: "0.0.1",
-  inputParameters: {
+  input: {
     query: { type: "cloudedObject", required: true },
     valuesToUpdate: { type: "cloudedObject", required: true },
   },
-  outputData: {
+  output: {
     updateError: { type: "$errorMessage", required: false },
     updatedCount: { type: "number", required: false },
   },

@@ -12,11 +12,11 @@ export const isEqualToBopsFunctionInformation : InternalMetaFunction = {
   functionName: "equalTo",
   version: "1.0.0",
   description: "compares A to B, returning if A is lower than B",
-  inputParameters: {
+  input: {
     A: { type: "any", required: true },
     B: { type: "any", required: true },
   },
-  outputData: {
+  output: {
     isEqual: { type: "boolean", required: true  },
   },
 };

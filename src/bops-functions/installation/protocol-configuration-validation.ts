@@ -1,8 +1,8 @@
 // Validates the meta-function.json of the custom BOps function
 import MetaProtocolHelper, { BuiltMetaProtocolDefinition, MetaProtocolDefinition } from "meta-protocol-helper";
-import { buildFullPackageDescription } from "meta-function-helper/dist/src/build-full-package-description";
-import { isMetaFunction } from "meta-function-helper/dist/src/is-meta-function";
-import { MetaFunction } from "meta-function-helper";
+import { buildFullPackageDescription } from "@meta-system/meta-function-helper/dist/src/build-full-package-description";
+import { isMetaFunction } from "@meta-system/meta-function-helper/dist/src/is-meta-function";
+import { MetaFunction } from "@meta-system/meta-function-helper";
 
 export class ProtocolDescriptionValidation {
   private validated = false;

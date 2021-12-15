@@ -1,4 +1,4 @@
-import { SchemaObject, SchemasType, SchemaTypeDefinition } from "./schemas-type";
+import { SchemaObject, SchemaType, SchemaTypeDefinition } from "./schemas-type";
 
 const getRef = (typeDefinition : SchemaTypeDefinition) : string[] => {
   if (typeDefinition.type === "object") {
@@ -12,12 +12,12 @@ const getRef = (typeDefinition : SchemaTypeDefinition) : string[] => {
   return [];
 };
 
-export class Schema implements SchemasType {
+export class Schema implements SchemaType {
   public readonly name : string;
 
   public readonly format : SchemaObject;
 
-  public constructor (schema : SchemasType) {
+  public constructor (schema : SchemaType) {
     this.name = schema.name;
     this.format = schema.format;
   }

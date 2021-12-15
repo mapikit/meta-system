@@ -1,4 +1,4 @@
-import { MetaFunction } from "meta-function-helper";
+import { MetaFunction } from "@meta-system/meta-function-helper";
 
 export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction">;
 
@@ -8,11 +8,11 @@ const metaFunctionType : MetaFunction = {
   functionName: "",
   version: "1.0.0",
   description: "this is a test meta-function",
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },
-  inputParameters: {
+  input: {
     numberToRound: { type: "number", required: true },
     precision: { type: "number", required: false },
   },

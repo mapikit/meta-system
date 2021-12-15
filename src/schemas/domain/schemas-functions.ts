@@ -1,9 +1,10 @@
 export enum SchemasFunctions {
-  create = "create",
-  getById = "getById",
-  get = "get",
+  insert = "insert",
+  findById = "findById",
+  find = "find",
   updateById = "updateById",
   update = "update",
   deleteById = "deleteById",
-  delete = "delete"
+  delete = "delete",
+  count = "count"
 }

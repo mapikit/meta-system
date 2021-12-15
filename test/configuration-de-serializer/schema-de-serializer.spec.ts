@@ -1,7 +1,7 @@
 
 import { DeserializeSchemasCommand } from "../../src/configuration/schemas/de-serialize-schemas";
 import { expect } from "chai";
-import { ObjectDefinition } from "meta-function-helper";
+import { ObjectDefinition } from "@meta-system/meta-function-helper";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const configurationExample = require("./test-data/configuration-example.json");

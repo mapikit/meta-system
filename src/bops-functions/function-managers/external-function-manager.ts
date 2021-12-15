@@ -1,6 +1,6 @@
 
 import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
-import { BuiltMetaPackage, FunctionManager, MetaFunction } from "meta-function-helper";
+import { BuiltMetaPackage, FunctionManager, MetaFunction } from "@meta-system/meta-function-helper";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
 import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";

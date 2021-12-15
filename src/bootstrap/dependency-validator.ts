@@ -6,13 +6,14 @@ import {
   Dependency,
   ModuleType } from "../configuration/business-operations/business-operations-type";
 import { ConfigurationType } from "../configuration/configuration-type";
-import { CustomType, ObjectDefinition } from "meta-function-helper";
+import { CustomType, MetaFunction } from "@meta-system/meta-function-helper";
 import { schemaFunctionInfoMap } from "../schemas/application/schema-functions-info";
 import { VariableContext } from "../bops-functions/bops-engine/variables/variables-context";
 import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager";
 import clone from "just-clone";
 import { InternalFunctionManagerClass } from "bops-functions/function-managers/internal-function-manager";
 import chalk from "chalk";
+import { ObjectDefinition } from "@meta-system/object-definition";
 
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 
@@ -172,12 +173,12 @@ export class DependencyPropValidator {
 
   private getFunctionOutput (functionInfo : FunctionInfoType) : ObjectDefinition {
     if(functionInfo === undefined) return {};
-    return functionInfo["outputData"] ?? functionInfo["output"] ?? {};
+    return functionInfo["output"] ?? functionInfo["output"] ?? {};
   }
 
   private getFunctionInput (functionInfo : FunctionInfoType) : ObjectDefinition {
     if(functionInfo === undefined) return {};
-    return functionInfo["inputParameters"] ?? functionInfo["input"];
+    return functionInfo["input"] ?? functionInfo["input"];
   }
 
   private getFunctionInfo (module : BopsConfigurationEntry) : FunctionInfoType {
@@ -268,9 +269,10 @@ export class DependencyPropValidator {
   }
 
   private infoResolver : { [type in ModuleType] :
-    (name : string, packageName ?: string) => FunctionInfoType } = {
+    (name : string, packageName ?: string) => MetaFunction } = {
     "internal": (name) => {
-      return this.internalManager.infoMap.get(name);
+      // Internals does not require complete Meta-Function
+      return this.internalManager.infoMap.get(name) as MetaFunction;
     },
     "external": (name, packageName) => {
       const externalInfo = this.externalManager.getFunctionInfo(name, packageName);
@@ -286,7 +288,7 @@ export class DependencyPropValidator {
     },
     // eslint-disable-next-line max-lines-per-function
     "schemaFunction": (name, modulePackage) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
+      const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
       const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name));
       resolvableParameters.forEach(param => {
         Object.keys(schemaFunctionInfo[param]).forEach(key => {
@@ -306,7 +308,7 @@ export class DependencyPropValidator {
       return schemaFunctionInfo;
     },
     "variable": (name) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
+      const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
       const info = clone(VariableContext.variablesInfo.get(name));
       resolvableParameters.forEach(param => {
         Object.keys(info[param]).forEach(key => {

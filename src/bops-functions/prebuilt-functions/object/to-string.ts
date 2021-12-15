@@ -9,10 +9,10 @@ export const objectToStringBopsFunctionInformation : InternalMetaFunction = {
   functionName: "objectToString",
   version: "1.0.0",
   description: "Transforms an object into a JSON-like string",
-  inputParameters: {
+  input: {
     object: { type: "cloudedObject",  required: true  },
   },
-  outputData: {
+  output: {
     result: { type: "string",  required: true },
   },
 };

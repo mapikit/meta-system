@@ -1,6 +1,6 @@
 // Validates the meta-function.json of the custom BOps function
-import MetaFunctionHelper, { BuiltMetaPackage, MetaPackage } from "meta-function-helper";
-import { buildFullPackageDescription } from "meta-function-helper/dist/src/build-full-package-description";
+import MetaFunctionHelper, { BuiltMetaPackage, MetaPackage } from "@meta-system/meta-function-helper";
+import { buildFullPackageDescription } from "@meta-system/meta-function-helper/dist/src/build-full-package-description";
 
 export class MetaPackageDescriptionValidation {
   private validated = false;

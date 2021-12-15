@@ -1,5 +1,5 @@
 // Validates the meta-function.json of the custom BOps function
-import MetaFunctionHelper, { MetaFunction } from "meta-function-helper";
+import MetaFunctionHelper, { MetaFunction } from "@meta-system/meta-function-helper";
 
 export class MetaFunctionDescriptionValidation {
   private validated = false;

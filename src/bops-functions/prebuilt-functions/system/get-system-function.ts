@@ -14,13 +14,13 @@ export const getSystemFunction = (
 export const getSystemFunctionFunctionInformation : InternalMetaFunction = {
   functionName: "getSystemFunction",
   description: "Gets a function from a functionManager",
-  inputParameters: {
+  input: {
     moduleName: { type: "string", required: true },
     modulePackage: { type: "string", required: false },
     moduleType: { type: "string", required: true },
   },
   version: "1.0.0",
-  outputData: {
+  output: {
     callableFunction: { type: "function", required: false },
     found: { type: "boolean", required: true },
   },
