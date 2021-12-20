@@ -1,4 +1,3 @@
-import { getObjectProperty } from "../../schemas/application/query-builder/get-object-property";
 import constants from "../../common/constants";
 import { BusinessOperations, Dependency }
   from "../../configuration/business-operations/business-operations-type";
@@ -9,6 +8,7 @@ import { ObjectResolver } from "./object-manipulator";
 import { VariableContext } from "./variables/variables-context";
 import { SystemContext } from "./contexts/system-context";
 import { BopContext } from "./contexts/bop-context";
+import { getObjectProperty } from "../../common/helpers/get-object-property";
 
 /**
  * This is the engine responsible for stitching all the functions in all the BOps in the system

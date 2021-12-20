@@ -1,16 +1,15 @@
-import { SchemaTypeDefinitionObject } from "../../schemas/schemas-type";
-import { isSchemaFormat } from "./is-schema-format";
+import { isObjectDefinition } from "@meta-system/object-definition";
+import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/src/object-definition-type";
+import { SchemaDefinitionExtension } from "configuration/schemas/schemas-type";
 
-export function isSchemaTypeObject (input : unknown) : asserts input is SchemaTypeDefinitionObject {
-  const schemaTypeDefinition = input as SchemaTypeDefinitionObject;
-
-  if (schemaTypeDefinition.subtype === undefined) {
+export function isSchemaTypeObject (input : unknown) : asserts input is TypeDefinitionDeep & SchemaDefinitionExtension {
+  if (input["subtype"] === undefined) {
     throw TypeError("Schema with incorrect format found: 'subtype is not defined for Object type'");
   }
 
-  if (schemaTypeDefinition["refName"] !== undefined) {
+  if (input["refName"] !== undefined) {
     console.warn("Warning - Ignoring refName field for Schema property with type Object");
   }
 
-  isSchemaFormat(schemaTypeDefinition.subtype);
+  isObjectDefinition((input as object)["subtype"]);
 };

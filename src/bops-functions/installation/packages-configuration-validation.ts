@@ -1,6 +1,10 @@
 // Validates the meta-function.json of the custom BOps function
-import MetaFunctionHelper, { BuiltMetaPackage, MetaPackage } from "@meta-system/meta-function-helper";
-import { buildFullPackageDescription } from "@meta-system/meta-function-helper/dist/src/build-full-package-description";
+import {
+  buildAllFunctionDefinitions,
+  BuiltMetaPackage,
+  MetaPackage,
+  validatePackageConfiguration
+} from "@meta-system/meta-function-helper";
 
 export class MetaPackageDescriptionValidation {
   private validated = false;
@@ -10,8 +14,7 @@ export class MetaPackageDescriptionValidation {
   ) { }
 
   public async validate () : Promise<this> {
-    await MetaFunctionHelper
-      .validatePackageStringConfiguration(this.descriptionFileContent);
+    await validatePackageConfiguration(this.descriptionFileContent);
     this.validated = true;
 
     return this;
@@ -23,8 +26,10 @@ export class MetaPackageDescriptionValidation {
     }
 
     const fileContent = JSON.parse(this.descriptionFileContent) as MetaPackage;
+    // TODO: Get the name of the file and generate the path
 
-    return buildFullPackageDescription(fileContent);
+    fileContent.functionsDefinitions = await buildAllFunctionDefinitions(fileContent.functionsDefinitions);
+    return fileContent as BuiltMetaPackage;
   }
 }
 

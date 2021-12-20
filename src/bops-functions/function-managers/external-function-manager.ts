@@ -44,10 +44,25 @@ export class ExternalFunctionManagerClass implements FunctionManager {
       .import(fileDescriptionMode, moduleConfig.entrypoint, functionLocation);
 
     const info = moduleType === "package" ?
-      (moduleConfig as BuiltMetaPackage).functionsDefinitions.find(funct => funct.functionName === functionName) :
+      this.getMetaFunctionFromMetaPackage(moduleConfig as BuiltMetaPackage, functionName) :
       (moduleConfig as MetaFunction);
     this.infoMap.set(packageName ? `${packageName}.${functionName}` : functionName, info);
     this.addFunctionsToMap(functionName, functionDeclaration, packageName);
+  }
+
+  private getMetaFunctionFromMetaPackage (builtMetaPackage : BuiltMetaPackage, functionName : string) : MetaFunction {
+    const functionDefinition = builtMetaPackage.functionsDefinitions.find(funct => funct.functionName === functionName);
+
+    const result : MetaFunction = {
+      "description": builtMetaPackage.description,
+      "version": builtMetaPackage.version,
+      "functionName": functionName,
+      "entrypoint": builtMetaPackage.entrypoint,
+      "mainFunction": "",
+      ...functionDefinition,
+    };
+
+    return result;
   }
 
   // eslint-disable-next-line max-lines-per-function

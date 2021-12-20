@@ -1,5 +1,5 @@
 import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager";
-import { isDbProtocol } from "configuration/protocols/is-db-protocol";
+import { assertsDbProtocol } from "configuration/protocols/is-db-protocol";
 import { SchemaType } from "../../configuration/schemas/schemas-type";
 import { SchemaManager } from "./schema-manager";
 
@@ -16,7 +16,7 @@ export class SchemasManager {
   private async addSchema (schema : SchemaType) : Promise<void> {
     console.log(`[Schemas] Adding Schema "${schema.name}" - DB protocol "${schema.dbProtocol}"`);
     const dbProtocol = this.protocolsManager.getProtocolInstance(schema.dbProtocol);
-    isDbProtocol(dbProtocol);
+    assertsDbProtocol(dbProtocol);
 
     await dbProtocol.initialize();
 

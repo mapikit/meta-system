@@ -14,4 +14,5 @@ export const randomNumberBopsFunctionInformation : InternalMetaFunction = {
   output: {
     result: { type: "number", required: true },
   },
+  input :{},
 };

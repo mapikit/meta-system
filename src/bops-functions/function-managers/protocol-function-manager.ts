@@ -8,12 +8,12 @@ import {
   MetaProtocol,
   DBProtocol,
   validateProtocolConfiguration,
-  MetaProtocolDefinition,
+  BuiltMetaProtocolDefinition,
 } from "@meta-system/meta-protocol-helper";
 
 export class ProtocolFunctionManagerClass implements FunctionManager {
   private functionMap : Map<string, Function>= new Map();
-  private descriptionsMap : Map<string, MetaProtocolDefinition> = new Map();
+  private descriptionsMap : Map<string, BuiltMetaProtocolDefinition> = new Map();
   private instanceMap : Map<string, MetaProtocol<unknown> | DBProtocol<unknown>> = new Map();
 
   public constructor (
@@ -28,7 +28,7 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     return this.functionMap.get(protocolNameAndFunction);
   }
 
-  public getProtocolDescription (protocolName : string) : MetaProtocolDefinition {
+  public getProtocolDescription (protocolName : string) : BuiltMetaProtocolDefinition {
     return this.descriptionsMap.get(protocolName);
   }
 
@@ -41,6 +41,9 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     await validateProtocolConfiguration(protocolDescription, path, CHANGE_ME);
 
     const configValidation = await new ProtocolDescriptionValidation(protocolDescription).validate(path);
+
+    await configValidation.getPackageConfiguration();
+
 
     this.descriptionsMap.set(protocolName, await configValidation.getPackageConfiguration());
   }

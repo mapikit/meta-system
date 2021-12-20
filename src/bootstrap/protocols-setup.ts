@@ -1,4 +1,6 @@
 import { FunctionManager } from "@meta-system/meta-function-helper";
+import { DBProtocol, MetaProtocol } from "@meta-system/meta-protocol-helper";
+import { isDbProtocol } from "configuration/protocols/is-db-protocol";
 import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
 import { ConfigurationType } from "../configuration/configuration-type";
 
@@ -26,6 +28,7 @@ export class ProtocolsSetup {
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public startAllProtocols () : void {
     const requiredProtocols = this.systemConfig.protocols !== undefined
       ? this.systemConfig.protocols : [];
@@ -34,10 +37,20 @@ export class ProtocolsSetup {
       const classInstance = this.protocolsManager.getProtocolInstance(protocolConfig.protocolType);
 
       console.log("[System Protocols] Starting Protocol", protocolConfig.protocolType);
-      classInstance.start();
+      if (isDbProtocol(classInstance)) {
+        (classInstance as DBProtocol<unknown>).initialize()
+          .catch((error) => {
+            console.error(`"${protocolConfig.protocolType}" - Protocol Failed to boot!`);
+            throw error;
+          });
+        continue;
+      }
+
+      (classInstance as MetaProtocol<unknown>).start();
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public stopAllProtocols () : void {
     const requiredProtocols = this.systemConfig.protocols !== undefined
       ? this.systemConfig.protocols : [];
@@ -45,7 +58,16 @@ export class ProtocolsSetup {
     for (const protocolConfig of requiredProtocols) {
       const classInstance = this.protocolsManager.getProtocolInstance(protocolConfig.protocolType);
 
-      classInstance.stop();
+      if (isDbProtocol(classInstance)) {
+        (classInstance as DBProtocol<unknown>).shutdown()
+          .catch((error) => {
+            console.error(`"${protocolConfig.protocolType}" - Protocol Failed to stop executing!`);
+            throw error;
+          });
+        continue;
+      }
+
+      (classInstance as MetaProtocol<unknown>).stop();
     }
   }
 }

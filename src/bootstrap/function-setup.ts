@@ -1,6 +1,5 @@
 import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
 import chalk from "chalk";
-import { MongoClient } from "mongodb";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
 import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager";
 import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
@@ -223,16 +222,9 @@ export class FunctionSetup {
 
   // eslint-disable-next-line max-lines-per-function
   private async createSchemasManager (systemSchemas : SchemaType[]) : Promise<SchemasManager> {
-    const dbConnection = new MongoClient(
-      this.systemConfiguration.dbConnectionString,
-      {
-        useUnifiedTopology: true,
-      },
-    );
-
     const manager = new SchemasManager(
       this.systemConfiguration.name,
-      dbConnection,
+      this.protocolFunctionManager,
     );
 
     const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");

@@ -269,7 +269,7 @@ export class DependencyPropValidator {
   }
 
   private infoResolver : { [type in ModuleType] :
-    (name : string, packageName ?: string) => MetaFunction } = {
+    (name : string, packageName ?: string) => FunctionInfoType } = {
     "internal": (name) => {
       // Internals does not require complete Meta-Function
       return this.internalManager.infoMap.get(name) as MetaFunction;
@@ -279,12 +279,28 @@ export class DependencyPropValidator {
       return externalInfo;
     },
     "bop": (name) => {
-      return this.systemConfig.businessOperations.find(bop => bop.name === name);
+      const bopDetails = this.systemConfig.businessOperations.find(bop => bop.name === name);
+
+      return {
+        "input": bopDetails.input,
+        "output": bopDetails.output,
+        "functionName": name,
+        "entrypoint": "",
+        "description": "",
+        "mainFunction": "",
+        "version": "",
+      };
     },
     "protocol": (name, modulePackage) => {
-      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage).packageDetails;
-      const functionInfo = protocolInfo.functionsDefinitions.find(funct => funct.functionName === name);
-      return functionInfo;
+      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage);
+      const functionInfo = protocolInfo.functionDefinitions.find(funct => funct.functionName === name);
+      return {
+        description: protocolInfo.description,
+        version: protocolInfo.version,
+        entrypoint: protocolInfo.entrypoint,
+        mainFunction:  protocolInfo.className,
+        ... functionInfo,
+      };
     },
     // eslint-disable-next-line max-lines-per-function
     "schemaFunction": (name, modulePackage) => {

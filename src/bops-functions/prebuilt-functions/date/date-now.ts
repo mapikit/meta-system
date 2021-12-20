@@ -11,4 +11,5 @@ export const dateNowBopsFunctionInformation : InternalMetaFunction = {
   output: {
     now: { type: "date", required: true },
   },
+  input: {},
 };

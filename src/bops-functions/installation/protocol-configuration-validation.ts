@@ -1,8 +1,11 @@
 // Validates the meta-function.json of the custom BOps function
-import MetaProtocolHelper, { BuiltMetaProtocolDefinition, MetaProtocolDefinition } from "meta-protocol-helper";
-import { buildFullPackageDescription } from "@meta-system/meta-function-helper/dist/src/build-full-package-description";
 import { isMetaFunction } from "@meta-system/meta-function-helper/dist/src/is-meta-function";
-import { MetaFunction } from "@meta-system/meta-function-helper";
+import { buildAllFunctionDefinitions, MetaFunction } from "@meta-system/meta-function-helper";
+import {
+  BuiltMetaProtocolDefinition,
+  MetaProtocolDefinition,
+  validateProtocolConfiguration
+} from "@meta-system/meta-protocol-helper";
 
 export class ProtocolDescriptionValidation {
   private validated = false;
@@ -12,8 +15,7 @@ export class ProtocolDescriptionValidation {
   ) { }
 
   public async validate (customPath : string) : Promise<this> {
-    await MetaProtocolHelper
-      .validateProtocolStringConfiguration(this.descriptionFileContent, { filePath: customPath });
+    await validateProtocolConfiguration(this.descriptionFileContent, customPath);
     this.validated = true;
 
     return this;
@@ -27,14 +29,16 @@ export class ProtocolDescriptionValidation {
 
     const fileContent = JSON.parse(this.descriptionFileContent) as MetaProtocolDefinition;
 
-    if (fileContent.packageDetails !== undefined) {
-      if (!Array.isArray(fileContent.packageDetails.functionsDefinitions)) {
+    if (fileContent.functionDefinitions !== undefined) {
+      if (!Array.isArray(fileContent.functionDefinitions)) {
         throw Error("Protocol Contains bad configuration in its functions definitions");
       }
-      fileContent.packageDetails = await buildFullPackageDescription(fileContent.packageDetails);
 
-      fileContent.packageDetails.functionsDefinitions.forEach((functionDef) => {
-        isMetaFunction(functionDef as MetaFunction, true);
+      // TODO: Get the name of the file and generate the path
+      fileContent.functionDefinitions = await buildAllFunctionDefinitions(fileContent.functionDefinitions);
+
+      fileContent.functionDefinitions.forEach((functionDef) => {
+        isMetaFunction(functionDef as MetaFunction);
       });
     }
 
