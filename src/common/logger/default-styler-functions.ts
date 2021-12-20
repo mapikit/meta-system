@@ -1,8 +1,8 @@
 import chalk, { Chalk } from "chalk";
-import { inspect } from "util";
-import { AvailableLogLevels, StylingFunction } from "./types";
+import { LogLevelsType, logLevelsArray, Styles } from "./logger-types";
+import { fullObject } from "./logging-utils";
 
-export const defaultColors : Record<AvailableLogLevels, Chalk> = {
+const defaultColors : Record<LogLevelsType, Chalk> = {
   fatal: chalk.red,
   success: chalk.green,
   operation: chalk.white,
@@ -13,14 +13,27 @@ export const defaultColors : Record<AvailableLogLevels, Chalk> = {
 };
 
 
-export const defaultStyler : StylingFunction = (header : AvailableLogLevels, date : Date, data : unknown[])
-: string => {
-  const messages = data.map(message => {
-    if(typeof message === "object") return inspect(message, false, null, true);
-    return String(message);
-  });
-  return `${defaultColors[header]("["+header.toUpperCase()+"]")} :: ` +
-    `${chalk.magenta(date.toISOString())} :: ${defaultColors[header](messages.join(" "))}` ;
-};
+export const defaultStyleFunctions : Styles = (() : Styles => {
+  const defaultStyling : Styles = { default: undefined };
 
+  for(const level of logLevelsArray) {
+    const color = defaultColors[level];
+    const formattedLevel = level.toUpperCase();
+    defaultStyling[level] = (data : unknown[]) : string => {
+      const message = data.map(item => String(item)).join(" ");
+      const date = chalk.magenta(new Date().toISOString());
+
+      return `${color(`[${formattedLevel}]`)} :: ${date} :: ${color(message)}\n`;
+    };
+    // By default, only the debug level will attempt to "open" the entire object for performance reasons.
+    // This avoids unnecessary `inspect` in arguments and checking in logger functions
+    defaultStyling.debug = (data : unknown[]) : string => {
+      const message = data.map(item => typeof item === "object" ? fullObject(item) : String(item)).join(" ");
+      const date = chalk.magenta(new Date().toISOString());
+
+      return `${color("["+level.toUpperCase()+"]")} :: ${date} :: ${color(message)}\n`;
+    };
+  }
+  return defaultStyling;
+})();
 

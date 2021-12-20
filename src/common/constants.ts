@@ -1,3 +1,5 @@
+import { LogLevelsType } from "./logger/logger-types";
+
 export default Object.freeze({
   JWT_KEY: "tempKey",
   ARRAY_INDICATOR: "[$source]",
@@ -8,5 +10,5 @@ export default Object.freeze({
     PASS: "apipass",
   },
   CLIENT_DB_DIGITS: 8,
-  DEFAULT_LOG_LEVEL: "error",
+  DEFAULT_LOG_LEVEL: "error" as LogLevelsType,
 });

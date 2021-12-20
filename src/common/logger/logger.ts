@@ -1,22 +1,22 @@
-import { environment } from "../execution-env";
-import { defaultStyler } from "./default-styler-functions";
-import { AvailableLogLevels, Logger, LoggingLevels, Styling, StylingFunction } from "./types";
+import constants from "../constants";
+import { defaultStyleFunctions } from "./default-styler-functions";
+import { LogLevelsType, LoggerType, LogLevels, logLevelsArray, Styles, StylingFunction } from "./logger-types";
 
-export function createLogger (styleFunctions : Styling = {}) : Logger {
-  const logger = {};
-  const namedLevels = Object.keys(LoggingLevels)
-    .filter(key => !isNaN(Number(LoggingLevels[key]))) as AvailableLogLevels[];
+export class LoggerClass {
+  constructor () { this.initialize(constants.DEFAULT_LOG_LEVEL); }
 
-  for(const level of namedLevels) {
-    const style : StylingFunction = styleFunctions[level] ?? styleFunctions.default ?? defaultStyler;
+  public initialize (logLevel : LogLevelsType, styles : Styles = defaultStyleFunctions) : LoggerType {
 
-    logger[level] = (...data : unknown[]) : void => {
-      if(environment.constants.logLevel <= LoggingLevels[level]) return;
+    for(const level of logLevelsArray) {
+      const style : StylingFunction = styles[level] ?? styles.default ?? String;
 
-      process.stdout.write(style(level, new Date(), data) + "\n");
-    };
-  }
-  return logger as Logger;
-};
+      const inLogRange = LogLevels[logLevel] >= LogLevels[level];
+      this[level] = inLogRange ?
+        (...data : unknown[]) : void => { process.stdout.write(style(data)); } :
+        () : void => { /* EMPTY LOG FUNCTION */ };
+    }
+    return logger as LoggerType;
+  };
+}
 
-export const logger = createLogger();
+export const logger = new LoggerClass() as unknown as (LoggerType & LoggerClass);
