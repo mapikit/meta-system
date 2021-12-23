@@ -56,7 +56,6 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     return this.nameDescriptionMap.get(protocol);
   }
 
-  // eslint-disable-next-line max-params
   public async installProtocol (protocolInfo : Protocol) : Promise<void> {
     await this.functionsInstaller.install(protocolInfo.protocol, protocolInfo.protocolVersion, ModuleKind.NPM);
     const protocolDescription = await this.protocolFileSystem.getDescriptionFile(protocolInfo.protocol);
