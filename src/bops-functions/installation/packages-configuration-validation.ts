@@ -3,14 +3,15 @@ import {
   buildAllFunctionDefinitions,
   BuiltMetaPackage,
   MetaPackage,
-  validatePackageConfiguration
+  validatePackageConfiguration,
 } from "@meta-system/meta-function-helper";
+import { runtimeDefaults } from "configuration/runtime-config/defaults";
 
 export class MetaPackageDescriptionValidation {
   private validated = false;
 
   public constructor (
-    private readonly descriptionFileContent : string,
+    private readonly descriptionFileContent : object,
   ) { }
 
   public async validate () : Promise<this> {
@@ -25,10 +26,12 @@ export class MetaPackageDescriptionValidation {
       throw Error("Package Description Not Validated");
     }
 
-    const fileContent = JSON.parse(this.descriptionFileContent) as MetaPackage;
-    // TODO: Get the name of the file and generate the path
+    const pathLib = await import("path");
 
-    fileContent.functionsDefinitions = await buildAllFunctionDefinitions(fileContent.functionsDefinitions);
+    const fileContent = this.descriptionFileContent as MetaPackage;
+    const path = pathLib.join(runtimeDefaults.externalFunctionInstallFolder, fileContent.name,fileContent.entrypoint);
+
+    fileContent.functionsDefinitions = await buildAllFunctionDefinitions(fileContent.functionsDefinitions, path);
     return fileContent as BuiltMetaPackage;
   }
 }

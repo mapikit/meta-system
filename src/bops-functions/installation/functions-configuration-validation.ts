@@ -5,7 +5,7 @@ export class MetaFunctionDescriptionValidation {
   private validated = false;
 
   public constructor (
-    private readonly descriptionFileContent : string,
+    private readonly descriptionFileContent : object,
   ) { }
 
   public validate () : this {
@@ -17,7 +17,7 @@ export class MetaFunctionDescriptionValidation {
 
   public getFunctionConfiguration () : MetaFunction {
     if (this.validated) {
-      return JSON.parse(this.descriptionFileContent) as MetaFunction;
+      return this.descriptionFileContent as MetaFunction;
     }
 
     throw Error("Description Not Validated");

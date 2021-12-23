@@ -3,7 +3,6 @@ import { ModuleManager } from "../../../src/bops-functions/bops-engine/modules-m
 import { SchemasManager } from "../../../src/schemas/application/schemas-manager";
 import { createFakeMongo } from "../../doubles/mongo-server";
 import { expect } from "chai";
-import { MongoClient } from "mongodb";
 import { testSystem } from "./test-data/test-system";
 import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
 import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type";
@@ -21,6 +20,8 @@ import { ConfigurationType } from "../../../src/configuration/configuration-type
 import { variableBop } from "./test-data/business-operations/variables-bop";
 import { packageBop } from "./test-data/business-operations/package-bop";
 import { purgeTestPackages, testExternalManager, testProtocolManager } from "../../test-managers";
+import { Protocol } from "../../../src/configuration/protocols/protocols";
+import { DBProtocolNewable } from "../../../src/bops-functions/function-managers/protocol-function-manager";
 
 interface EngineInput {
   ModuleManager : ModuleManager;
@@ -29,21 +30,11 @@ interface EngineInput {
 }
 
 let bopsEnginePrerequisites : EngineInput;
-let fakeMongo : MongoClient;
+let fakeMongoUri : string;
 const maxExecutionTime = 100;
 
 const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<EngineInput> => {
   const bopsManager = new BopsManagerClass();
-
-  const schemasManager = new SchemasManager(testSystem.name, fakeMongo);
-  await schemasManager.addSystemSchemas(testSystem.schemas as SchemaType[]);
-  const moduleManager = new ModuleManager({
-    SchemasManager: schemasManager,
-    InternalFunctionManager: internalFunctionManager,
-    ExternalFunctionManager: testExternalManager,
-    protocolFunctionManager: testProtocolManager,
-    BopsManager: bopsManager,
-  });
 
   const businessOperations = testSystem.businessOperations
     .map((plainBop) => { return new BusinessOperation(plainBop) ;});
@@ -56,6 +47,26 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
     internalFunctionManager,
     testProtocolManager,
   ).bopsDependencies;
+
+  for (const protocol of testSystem.protocols) {
+    const config = { ...protocol.configuration };
+    config["dbConnectionString"] = fakeMongoUri;
+    await testProtocolManager.installProtocol(new Protocol(protocol));
+    const newable = await testProtocolManager.getProtocolNewable(protocol.protocol) as DBProtocolNewable;
+    const instance = new newable(config, testSystem.schemas as SchemaType[]);
+    testProtocolManager.addProtocolInstance(instance, protocol.identifier);
+  }
+
+  const schemasManager = new SchemasManager(testSystem.name, testProtocolManager);
+  await schemasManager.addSystemSchemas(testSystem.schemas as SchemaType[]);
+  const moduleManager = new ModuleManager({
+    SchemasManager: schemasManager,
+    InternalFunctionManager: internalFunctionManager,
+    ExternalFunctionManager: testExternalManager,
+    protocolFunctionManager: testProtocolManager,
+    BopsManager: bopsManager,
+  });
+
 
   for (const externalDependency of bopsDependencies.external) {
     await testExternalManager.add(externalDependency.name, externalDependency.version, externalDependency.package);
@@ -71,8 +82,13 @@ const setupBopsEngineRequisites = async (bop : BusinessOperations) : Promise<Eng
 };
 
 describe("Bops Engine Testing", () => {
-  beforeEach(async () => { fakeMongo = await createFakeMongo(); });
-  after(purgeTestPackages);
+  beforeEach(async () => { fakeMongoUri = await createFakeMongo(); });
+  afterEach(() => {
+    testProtocolManager.flush();
+  });
+  after(async () => {
+    await purgeTestPackages();
+  });
 
   it("Test of prebuilt functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(mapikitProvidedBop);
@@ -92,7 +108,7 @@ describe("Bops Engine Testing", () => {
     const car = { model: "fakeModel", year: randomYear };
     const res = await stitched({ aCar: car });
 
-    expect(res["output"]["deletedCount"]).to.be.equal(1);
+    expect(res["output"]["affectedEntities"]).to.be.equal(1);
   });
 
   it("Test of external BOps functions", async () => {

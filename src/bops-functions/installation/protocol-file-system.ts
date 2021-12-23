@@ -1,9 +1,7 @@
 // Controls file and dependency structure for Meta Protocols.
-import FS from "fs";
-import { FunctionManager, getClassConstructor } from "@meta-system/meta-function-helper";
+import { FunctionManager, getClassConstructor, getDescriptorFileContent } from "@meta-system/meta-function-helper";
 import Path from "path";
 import { MetaProtocol } from "@meta-system/meta-protocol-helper";
-const fsPromise = FS.promises;
 
 export class ProtocolFileSystem {
   private readonly installLocation : string;
@@ -21,19 +19,19 @@ export class ProtocolFileSystem {
    * Finds and retrieve the configuration file for a given moduleName
    * @param moduleName
    */
-  public async getDescriptionFile (moduleName : string) : Promise<string> {
-    const filePath = Path.join(this.installLocation, "node_modules", moduleName, this.configurationFileName);
+  public async getDescriptionFile (moduleName : string) : Promise<object> {
+    const filePath = Path.join(this.installLocation, "node_modules", moduleName);
 
     console.log(`[Meta Protocols] Retrieving Description File for ${moduleName}`);
 
-    const file = fsPromise.readFile(filePath, "utf8")
+    const file = await getDescriptorFileContent(filePath, this.configurationFileName)
       .then((result) => {
         console.log(`[Meta Protocols] Success - Retrieved Description File for ${moduleName}`);
 
         return result;
       });
 
-    return file;
+    return file as object;
   }
 
   public async importClass (

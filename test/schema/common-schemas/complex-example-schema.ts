@@ -17,4 +17,6 @@ export const complexExampleSchema : SchemaType = {
       },
     },
   },
+  identifier: "someIdentifier",
+  dbProtocol: "aDbProtocol",
 };

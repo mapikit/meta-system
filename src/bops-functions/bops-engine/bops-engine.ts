@@ -91,6 +91,7 @@ export class BopsEngine {
       return { [input.targetPath]: wrappedFunction };
     }
 
+    console.log(origin, paths, input, "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV");
     throw new Error("Incorrect originPath configuration");
   }
 

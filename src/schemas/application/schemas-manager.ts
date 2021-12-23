@@ -6,7 +6,7 @@ import { SchemaManager } from "./schema-manager";
 export class SchemasManager {
   private readonly systemName : string;
   public schemas : Map<string, SchemaManager> = new Map();
-  private protocolsManager : ProtocolFunctionManagerClass;
+  private readonly protocolsManager : ProtocolFunctionManagerClass;
 
   constructor (systemName : string, protocolFunctionManager : ProtocolFunctionManagerClass) {
     this.systemName = systemName;
@@ -16,9 +16,9 @@ export class SchemasManager {
   private async addSchema (schema : SchemaType) : Promise<void> {
     console.log(`[Schemas] Adding Schema "${schema.name}" - DB protocol "${schema.dbProtocol}"`);
     const dbProtocol = this.protocolsManager.getProtocolInstance(schema.dbProtocol);
-    assertsDbProtocol(dbProtocol);
+    assertsDbProtocol(dbProtocol, " - Could not add protocol to schema!");
 
-    await dbProtocol.initialize();
+    await this.protocolsManager.initializeDbProtocol(schema.dbProtocol);
 
     const schemaManager = new SchemaManager({
       schema, dbProtocol, systemName: this.systemName,

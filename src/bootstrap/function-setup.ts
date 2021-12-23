@@ -198,11 +198,11 @@ export class FunctionSetup {
     }, []);
 
     for (const dependency of protocolDependencies) {
-      this.addProtocolFunction(dependency.name, dependency.version, dependency.package);
+      this.addProtocolFunction(dependency.name, dependency.package);
     }
   }
 
-  private addProtocolFunction (functionName : string, version : string, packageName : string) : void {
+  private addProtocolFunction (functionName : string, packageName : string) : void {
     // Protocols are installed before this whole class is created, so here we just add the functions of already
     // existing instances of protocols.
     const exists = this.protocolFunctionManager.get(`${packageName}.${functionName}`);

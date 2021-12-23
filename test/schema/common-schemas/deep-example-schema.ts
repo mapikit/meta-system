@@ -13,4 +13,6 @@ export const deepExampleSchema : SchemaType = {
       },
     },
   },
+  identifier: "someIdentifier",
+  dbProtocol: "aDbProtocol",
 };

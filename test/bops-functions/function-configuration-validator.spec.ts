@@ -7,7 +7,7 @@ import { purgeTestPackages, testFunctionFileSystem, testInstaller } from "../tes
 
 describe("BOps Function Configuration Validator", () =>{
   const testFunctionName = "bops-function-hello-world";
-  const testFunctionVersion = "1.1.1";
+  const testFunctionVersion = "1.1.2";
 
   afterEach(purgeTestPackages);
 
@@ -18,7 +18,7 @@ describe("BOps Function Configuration Validator", () =>{
     const metaFunctionContent = await testFunctionFileSystem
       .getDescriptionFile(testFunctionName, "function");
 
-    const validator = new MetaFunctionDescriptionValidation(metaFunctionContent);
+    const validator = new MetaFunctionDescriptionValidation(metaFunctionContent as object);
 
     const execution = () : unknown => validator.validate();
 
@@ -31,7 +31,7 @@ describe("BOps Function Configuration Validator", () =>{
     const metaFunctionContent = await testFunctionFileSystem
       .getDescriptionFile(testFunctionName, "function");
 
-    const validator = new MetaFunctionDescriptionValidation(metaFunctionContent);
+    const validator = new MetaFunctionDescriptionValidation(metaFunctionContent as object);
 
     validator.validate();
 

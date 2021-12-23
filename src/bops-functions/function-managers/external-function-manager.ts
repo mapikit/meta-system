@@ -33,8 +33,8 @@ export class ExternalFunctionManagerClass implements FunctionManager {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const moduleConfig = packageName === undefined ?
-      new MetaFunctionDescriptionValidation(moduleConfigString).validate().getFunctionConfiguration() :
-      await (await new MetaPackageDescriptionValidation(moduleConfigString).validate())
+      new MetaFunctionDescriptionValidation(moduleConfigString as object).validate().getFunctionConfiguration() :
+      await (await new MetaPackageDescriptionValidation(moduleConfigString as object).validate())
         .getPackageConfiguration();
 
     // Only populated if the module is a function
@@ -98,6 +98,11 @@ export class ExternalFunctionManagerClass implements FunctionManager {
   public getFunctionInfo (functionName : string, packageName ?: string) : MetaFunction {
     const fullName = packageName !== undefined ? `${packageName}.${functionName}` : functionName;
     return this.infoMap.get(fullName);
+  }
+
+  public async flush () : Promise<void> {
+    this.functionMap = new Map();
+    this.infoMap = new Map();
   }
 }
 

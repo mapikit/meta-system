@@ -152,7 +152,7 @@
         },
         {
           "key": 10,
-          "moduleName": "getById",
+          "moduleName": "findById",
           "moduleType": "schemaFunction",
           "modulePackage": "car",
           "dependencies": [
@@ -161,7 +161,7 @@
         },
         {
           "key": 11,
-          "moduleName": "getById",
+          "moduleName": "findById",
           "moduleType": "schemaFunction",
           "modulePackage": "client",
           "dependencies": [
@@ -170,7 +170,7 @@
         },
         {
           "key": 12,
-          "moduleName": "getById",
+          "moduleName": "findById",
           "moduleType": "schemaFunction",
           "modulePackage": "car",
           "dependencies": [
@@ -206,7 +206,7 @@
         },
         {
           "key": 16,
-          "moduleName": "create",
+          "moduleName": "insert",
           "moduleType": "schemaFunction",
           "modulePackage": "purchase",
           "dependencies": [
@@ -229,8 +229,9 @@
   ],
   "protocols": [
     {
-      "protocolType": "HTTP_JSONBODY",
-      "configuration": { }
+      "protocol": "HTTP_JSONBODY",
+      "configuration": { },
+      "identifier": "http1"
     }
   ]
 }

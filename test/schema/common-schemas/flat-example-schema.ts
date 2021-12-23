@@ -9,4 +9,6 @@ export const flatExampleSchema : SchemaType = {
     eyeColour: { type: "string" },
     height: { type: "number" },
   },
+  identifier: "someIdentifier",
+  dbProtocol: "aDbProtocol",
 };

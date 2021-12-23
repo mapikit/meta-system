@@ -4,18 +4,20 @@ import { buildAllFunctionDefinitions, MetaFunction } from "@meta-system/meta-fun
 import {
   BuiltMetaProtocolDefinition,
   MetaProtocolDefinition,
-  validateProtocolConfiguration
+  validateProtocolConfiguration,
 } from "@meta-system/meta-protocol-helper";
 
 export class ProtocolDescriptionValidation {
   private validated = false;
 
   public constructor (
-    private readonly descriptionFileContent : string,
+    private readonly descriptionFileContent : object,
+    private readonly path : string,
+    private readonly isDbProtocol : boolean,
   ) { }
 
-  public async validate (customPath : string) : Promise<this> {
-    await validateProtocolConfiguration(this.descriptionFileContent, customPath);
+  public async validate () : Promise<this> {
+    await validateProtocolConfiguration(this.descriptionFileContent, this.path, this.isDbProtocol);
     this.validated = true;
 
     return this;
@@ -27,15 +29,14 @@ export class ProtocolDescriptionValidation {
       throw Error("Package Description Not Validated");
     }
 
-    const fileContent = JSON.parse(this.descriptionFileContent) as MetaProtocolDefinition;
+    const fileContent = this.descriptionFileContent as MetaProtocolDefinition;
 
     if (fileContent.functionDefinitions !== undefined) {
       if (!Array.isArray(fileContent.functionDefinitions)) {
         throw Error("Protocol Contains bad configuration in its functions definitions");
       }
 
-      // TODO: Get the name of the file and generate the path
-      fileContent.functionDefinitions = await buildAllFunctionDefinitions(fileContent.functionDefinitions);
+      fileContent.functionDefinitions = await buildAllFunctionDefinitions(fileContent.functionDefinitions, this.path);
 
       fileContent.functionDefinitions.forEach((functionDef) => {
         isMetaFunction(functionDef as MetaFunction);

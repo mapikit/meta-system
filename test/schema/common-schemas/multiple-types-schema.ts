@@ -24,4 +24,6 @@ export const multipleTypesSchema : SchemaType = {
       subtype: "boolean",
     },
   },
+  identifier: "someIdentifier",
+  dbProtocol: "aDbProtocol",
 };

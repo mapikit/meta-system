@@ -1,4 +1,4 @@
-import { ProtocolConfigType } from "../../../src/configuration/configuration-type";
+import { ProtocolConfigType } from "../../../src/configuration/protocols/protocols-type";
 
 export const cronjobPeriod = 100;
 export const cronjobProtocol : ProtocolConfigType = {
@@ -7,6 +7,7 @@ export const cronjobProtocol : ProtocolConfigType = {
     periodMillis: cronjobPeriod,
     arguments: {},
   },
-  protocolType: "cronjob-protocol",
+  protocol: "cronjob-protocol",
+  identifier: "someIdentifier",
   protocolVersion: "latest",
 };

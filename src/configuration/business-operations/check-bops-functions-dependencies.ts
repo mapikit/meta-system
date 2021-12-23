@@ -125,6 +125,7 @@ export class CheckBopsFunctionsDependencies {
       }
 
       if (type === typesEnum.protocol) {
+        // The modulePackage - for Protocols - is their identifier, not their name
         protocolsDependencies.push({
           name: bopsFunctionConfig.moduleName,
           version: bopsFunctionConfig.version,
@@ -279,6 +280,7 @@ export class CheckBopsFunctionsDependencies {
 
     for (const protocolDependency of this.dependencies.protocol) {
       result = this.protocolFunctionManager
+        // The package for protocols in BOps **IS** the protocol identifier
         .get(`${protocolDependency.package}.${protocolDependency.name}`) !== undefined;
 
       if (!result) {

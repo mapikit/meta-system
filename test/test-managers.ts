@@ -21,13 +21,14 @@ const testProtocolFileSystem = new ProtocolFileSystem(
 );
 
 const testInstaller = new FunctionsInstaller(testPath);
+const testExternalManager = new ExternalFunctionManagerClass(testInstaller, testFunctionFileSystem);
+const testProtocolManager = new ProtocolFunctionManagerClass(testInstaller, testProtocolFileSystem);
 
 const purgeTestPackages = async () : Promise<void> => {
   await testInstaller.purgePackages()
     .catch(error => { throw error; });
-};
 
-const testExternalManager = new ExternalFunctionManagerClass(testInstaller, testFunctionFileSystem);
-const testProtocolManager = new ProtocolFunctionManagerClass(testInstaller, testProtocolFileSystem);
+  await testExternalManager.flush();
+};
 
 export { testInstaller, testFunctionFileSystem, testExternalManager, testProtocolManager, purgeTestPackages };

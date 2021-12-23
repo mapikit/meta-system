@@ -12,6 +12,7 @@ export class FunctionsInstaller {
 
   private installationManager = new DependenciesManager(this.functionsFolder);
 
+  // eslint-disable-next-line max-lines-per-function
   public async install (moduleName : string, version : string, kind : ModuleKind) : Promise<void> {
     if (kind === ModuleKind.GITHUB) {
       throw Error("Not Implemented");
