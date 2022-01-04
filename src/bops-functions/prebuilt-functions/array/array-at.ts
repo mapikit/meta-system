@@ -14,11 +14,11 @@ export const arrayAtBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayAt",
   version: "1.0.0",
   description: "Gets the item in the array at the index given",
-  inputParameters: {
+  input: {
     array: { type: "array", subtype: "any", required: true },
     index: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     found: { type: "any", required: false },
     notFoundMessage: { type: "string", required: false },
   },

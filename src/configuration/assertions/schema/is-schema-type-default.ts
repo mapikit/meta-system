@@ -1,7 +1,8 @@
-import { SchemaTypeDefinitionParameter } from "../../schemas/schemas-type";
+import { TypeDefinition } from "@meta-system/object-definition";
+import { SchemaDefinitionExtension } from "configuration/schemas/schemas-type";
 
-export function isSchemaTypeDefault (input : object) : asserts input is SchemaTypeDefinitionParameter {
-  const schemaProperty = input as SchemaTypeDefinitionParameter;
+export function isSchemaTypeDefault (input : object) : asserts input is TypeDefinition<SchemaDefinitionExtension> {
+  const schemaProperty = input as TypeDefinition<SchemaDefinitionExtension>;
 
   if (schemaProperty.refName !== undefined) {
     if (schemaProperty.type !== "string") {

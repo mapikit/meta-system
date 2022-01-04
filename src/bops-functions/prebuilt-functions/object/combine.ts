@@ -15,11 +15,11 @@ export const combineObjectBopsFunctionInformation : InternalMetaFunction = {
   functionName: "combineObject",
   version: "1.0.0",
   description: "Combine two objects into one, with the latter object overriding conflicting keys",
-  inputParameters: {
+  input: {
     object1: { type: "cloudedObject",  required: true  },
     object2: { type: "cloudedObject",  required: true  },
   },
-  outputData: {
+  output: {
     combined: { type: "cloudedObject",  required: true },
   },
 };

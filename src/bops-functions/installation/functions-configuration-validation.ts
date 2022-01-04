@@ -1,15 +1,15 @@
 // Validates the meta-function.json of the custom BOps function
-import MetaFunctionHelper, { MetaFunction } from "meta-function-helper";
+import { MetaFunction, validateFunctionDefinitionConfiguration } from "@meta-system/meta-function-helper";
 
 export class MetaFunctionDescriptionValidation {
   private validated = false;
 
   public constructor (
-    private readonly descriptionFileContent : string,
+    private readonly descriptionFileContent : object,
   ) { }
 
   public validate () : this {
-    MetaFunctionHelper.validateStringConfiguration(this.descriptionFileContent);
+    validateFunctionDefinitionConfiguration(this.descriptionFileContent);
     this.validated = true;
 
     return this;
@@ -17,7 +17,7 @@ export class MetaFunctionDescriptionValidation {
 
   public getFunctionConfiguration () : MetaFunction {
     if (this.validated) {
-      return JSON.parse(this.descriptionFileContent) as MetaFunction;
+      return this.descriptionFileContent as MetaFunction;
     }
 
     throw Error("Description Not Validated");

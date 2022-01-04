@@ -1,6 +1,6 @@
 import { BusinessOperations } from "./business-operations/business-operations-type";
 import { ProtocolConfigType } from "./protocols/protocols-type";
-import { SchemasType } from "./schemas/schemas-type";
+import { SchemaType } from "./schemas/schemas-type";
 
 export interface ConfigurationType {
   name : string;
@@ -8,7 +8,7 @@ export interface ConfigurationType {
   protocols ?: ProtocolConfigType[];
   envs ?: EnvironmentVariable[];
   dbConnectionString : string;
-  schemas : SchemasType[];
+  schemas : SchemaType[];
   businessOperations : BusinessOperations[];
 }
 

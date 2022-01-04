@@ -31,12 +31,10 @@ export class DependenciesManager {
     if (!this.requiresInstallation(moduleName, version)) { return; }
 
     const installationPromise : Promise<void> = new Promise((resolve, reject) => {
-      exec(`npm i --prefix ${this.dependencyPath} ${moduleName}@${version} --save`, (err) => {
+      exec(`npm i --save --prefix ${this.dependencyPath} ${moduleName}@${version}`, (err) => {
         if (err === null) {
           this.installedDeps.add(moduleName);
-
           if (version === "latest") this.postInstallLatest(moduleName);
-
           return resolve();
         }
 
@@ -100,7 +98,9 @@ export class DependenciesManager {
   }
 
   public async uninstallAll () : Promise<void> {
-    await FS.promises.rmdir(`${this.dependencyPath}`, { recursive: true });
+    await FS.promises.rmdir(this.dependencyPath, { recursive: true });
+
     this.installedDeps.clear();
+    this.latestVersions.clear();
   }
 }

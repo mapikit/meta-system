@@ -9,26 +9,37 @@ export const schemaBop : BusinessOperations = {
   constants: [
     { name: "numericThree", type: "number", value: 3 },
     { name: "numericEight", type: "number", value: 8 },
+    { name: "zero", type: "number", value: 0 },
     { name: "targetValue", type: "number", value: 5093 },
   ],
   variables: [],
   configuration: [
     {
-      moduleName: "create",
+      moduleName: "insert",
       modulePackage: "car",
       moduleType: "schemaFunction",
       key: 5,
       dependencies: [
-        { origin: "inputs", originPath: "aCar", targetPath: "entity" },
+        { origin: "inputs", originPath: "aCar", targetPath: "data" },
       ],
     },
     {
-      moduleName: "getById",
+      moduleName: "find",
       modulePackage: "car",
       moduleType: "schemaFunction",
       key: 4,
       dependencies: [
-        { origin: 5, originPath: "result.createdEntity._id", targetPath: "id" },
+        { origin: 5 },
+        { origin: "inputs", originPath: "aCar.year", targetPath: "query.year.equal_to" },
+      ],
+    },
+    {
+      moduleName: "arrayAt",
+      moduleType: "internal",
+      key: 6,
+      dependencies: [
+        { origin: 4, originPath: "result.data", targetPath: "array" },
+        { origin: "constants", originPath: "zero", targetPath: "index" },
       ],
     },
     {
@@ -37,7 +48,7 @@ export const schemaBop : BusinessOperations = {
       modulePackage: "car",
       key: 3,
       dependencies: [
-        { origin: 4, originPath: "result.entity.year", targetPath: "query.year.equal_to" },
+        { origin: 6, originPath: "result.found.year", targetPath: "query.year.equal_to" },
       ],
     },
     {

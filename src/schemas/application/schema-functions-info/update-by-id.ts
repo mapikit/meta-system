@@ -5,11 +5,11 @@ export const updateByIdInfo : InternalMetaFunction = {
   description: "Updates the values of properties of an entity based on a provided ID.",
   author: "mapikit",
   version: "0.0.1",
-  inputParameters: {
+  input: {
     id: { type: "string", required: true },
     valuesToUpdate: { type: "cloudedObject", required: true },
   },
-  outputData: {
+  output: {
     updateError: { type: "$errorMessage", required: false },
     updatedEntity: { type: "%entity", required: false },
   },

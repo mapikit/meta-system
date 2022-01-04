@@ -14,10 +14,10 @@ export const absoluteFunctionInformation : InternalMetaFunction = {
   functionName: "absolute",
   version: "1.0.0",
   description: "Gets the absolute value of a number",
-  inputParameters: {
+  input: {
     input: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },

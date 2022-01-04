@@ -10,11 +10,11 @@ export const higherOrEqualToBopsFunctionInformation : InternalMetaFunction = {
   functionName: "higherOrEqualTo",
   version: "1.0.0",
   description: "compares A to B, returning if A is higher or equal to B",
-  inputParameters: {
+  input: {
     A: { type: "number", required: true },
     B: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     isHigherOrEqual: { type: "boolean", required: true },
   },
 };

@@ -14,11 +14,11 @@ export const getObjectPropertyValueBopsFunctionInformation : InternalMetaFunctio
   functionName: "getObjectPropertyValue",
   version: "1.0.0",
   description: "Get a value of an object's propery by one Key",
-  inputParameters: {
+  input: {
     object: { type: "cloudedObject",  required: true  },
     key: { type: "string",  required: true  },
   },
-  outputData: {
+  output: {
     value: { type: "cloudedObject",  required: true },
   },
 };

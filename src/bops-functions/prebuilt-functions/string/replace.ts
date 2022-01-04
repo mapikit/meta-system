@@ -13,12 +13,12 @@ export const stringReplaceFunctionInformation : InternalMetaFunction = {
   functionName: "stringReplace",
   version: "1.0.0",
   description: "Replaces a part of a string",
-  inputParameters: {
+  input: {
     baseString: { type: "string", required: true },
     search: { type: "string", required: true },
     replacer: { type: "string", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "string", required: true },
   },
 };

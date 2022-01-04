@@ -1,6 +1,6 @@
-import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
+import { SchemaType } from "../../../src/configuration/schemas/schemas-type";
 
-export const complexExampleSchema : SchemasType = {
+export const complexExampleSchema : SchemaType = {
   name: "exampleComplexSchema",
   format: {
     name: { type: "string" },
@@ -17,4 +17,6 @@ export const complexExampleSchema : SchemasType = {
       },
     },
   },
+  identifier: "someIdentifier",
+  dbProtocol: "aDbProtocol",
 };

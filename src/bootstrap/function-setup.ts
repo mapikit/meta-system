@@ -1,6 +1,5 @@
 import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
 import chalk from "chalk";
-import { MongoClient } from "mongodb";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
 import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager";
 import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
@@ -11,7 +10,7 @@ import { BusinessOperation } from "../configuration/business-operations/business
 import { BopsDependencies, CheckBopsFunctionsDependencies }
   from "../configuration/business-operations/check-bops-functions-dependencies";
 import { ConfigurationType } from "../configuration/configuration-type";
-import { SchemasType } from "../configuration/schemas/schemas-type";
+import { SchemaType } from "../configuration/schemas/schemas-type";
 import { SchemasManager } from "../schemas/application/schemas-manager";
 import { ModuleType } from "../configuration/business-operations/business-operations-type";
 import { DependencyPropValidator } from "./dependency-validator";
@@ -199,11 +198,11 @@ export class FunctionSetup {
     }, []);
 
     for (const dependency of protocolDependencies) {
-      this.addProtocolFunction(dependency.name, dependency.version, dependency.package);
+      this.addProtocolFunction(dependency.name, dependency.package);
     }
   }
 
-  private addProtocolFunction (functionName : string, version : string, packageName : string) : void {
+  private addProtocolFunction (functionName : string, packageName : string) : void {
     // Protocols are installed before this whole class is created, so here we just add the functions of already
     // existing instances of protocols.
     const exists = this.protocolFunctionManager.get(`${packageName}.${functionName}`);
@@ -222,17 +221,10 @@ export class FunctionSetup {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private async createSchemasManager (systemSchemas : SchemasType[]) : Promise<SchemasManager> {
-    const dbConnection = new MongoClient(
-      this.systemConfiguration.dbConnectionString,
-      {
-        useUnifiedTopology: true,
-      },
-    );
-
+  private async createSchemasManager (systemSchemas : SchemaType[]) : Promise<SchemasManager> {
     const manager = new SchemasManager(
       this.systemConfiguration.name,
-      dbConnection,
+      this.protocolFunctionManager,
     );
 
     const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");

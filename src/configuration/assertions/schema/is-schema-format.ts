@@ -1,9 +1,10 @@
-import { SchemaTypeDefinition, SchemaObject } from "../../schemas/schemas-type";
+import { ObjectDefinition, TypeDefinition } from "@meta-system/object-definition";
+import { SchemaDefinitionExtension } from "configuration/schemas/schemas-type";
 import { isSchemaTypeArray } from "./is-schema-type-array";
 import { isSchemaTypeDefault } from "./is-schema-type-default";
 import { isSchemaTypeObject } from "./is-schema-type-object";
 
-type FunctionMapper = Record<SchemaTypeDefinition["type"], (input : unknown) => void>;
+type FunctionMapper = Record<TypeDefinition["type"], (input : unknown) => void>;
 
 const formatFunctionMapper : FunctionMapper = {
   "array": isSchemaTypeArray,
@@ -15,13 +16,13 @@ const formatFunctionMapper : FunctionMapper = {
 };
 
 // eslint-disable-next-line max-lines-per-function
-export function isSchemaFormat (input : unknown) : asserts input is SchemaObject {
+export function isSchemaFormat (input : unknown) : asserts input is ObjectDefinition<SchemaDefinitionExtension> {
   if (typeof input !== "object") {
     throw new TypeError("Schema with incorrect format found: 'Property \"format\" is expected to be an object'");
   }
 
   Object.values(input).forEach((inputValue) => {
-    const currentType = (inputValue as SchemaTypeDefinition).type;
+    const currentType = (inputValue as TypeDefinition).type;
     const validationFunction = formatFunctionMapper[currentType];
 
     if (validationFunction === undefined) {

@@ -3,7 +3,8 @@ import { isType, optionalIsType } from "../is-type";
 
 const requiredProtocolsKeys : (keyof ProtocolConfigType)[] = [
   "configuration",
-  "protocolType",
+  "protocol",
+  "identifier",
 ];
 
 export function isProtocol (input : unknown) : asserts input is ProtocolConfigType {
@@ -22,6 +23,6 @@ export function isProtocol (input : unknown) : asserts input is ProtocolConfigTy
   const protocolInput = input as ProtocolConfigType;
 
   optionalIsType("string", "Protocol version with incorrect format", protocolInput.protocolVersion);
-  isType("string", "Protocol type with incorrect format", protocolInput.protocolType);
+  isType("string", "Protocol type with incorrect format", protocolInput.protocol);
   isType("object", "Protocol configuration with incorrect format", protocolInput.configuration);
 };

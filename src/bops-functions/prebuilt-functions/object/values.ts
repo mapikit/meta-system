@@ -15,10 +15,10 @@ export const getObjectValuesBopsFunctionInformation : InternalMetaFunction = {
   functionName: "getObjectValues",
   version: "1.0.0",
   description: "Get a list of the values of the given object",
-  inputParameters: {
+  input: {
     object: { type: "cloudedObject",  required: true  },
   },
-  outputData: {
+  output: {
     values: { type: "array", subtype: "any",  required: true },
   },
 };

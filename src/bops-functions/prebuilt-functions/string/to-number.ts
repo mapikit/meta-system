@@ -14,10 +14,10 @@ export const stringToNumberBopsFunctionInformation : InternalMetaFunction = {
   functionName: "stringToNumber",
   version: "1.0.0",
   description: "Converts a given string to a Number",
-  inputParameters: {
+  input: {
     string: { type: "string", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },

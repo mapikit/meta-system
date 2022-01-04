@@ -1,9 +1,11 @@
-import { SchemaTypeDefinitionArray } from "../../schemas/schemas-type";
+
+import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/src/object-definition-type";
+import { SchemaDefinitionExtension } from "../../../configuration/schemas/schemas-type";
 import { isSchemaFormat } from "./is-schema-format";
 
 // eslint-disable-next-line max-lines-per-function
-export function isSchemaTypeArray (input : object) : asserts input is SchemaTypeDefinitionArray {
-  const schemaTypeDefinition = input as SchemaTypeDefinitionArray;
+export function isSchemaTypeArray (input : object) : asserts input is TypeDefinitionDeep & SchemaDefinitionExtension {
+  const schemaTypeDefinition = input as TypeDefinitionDeep & SchemaDefinitionExtension;
 
   if (schemaTypeDefinition.subtype === undefined) {
     throw TypeError("Schema with incorrect format found: 'subtype is not defined for Array type'");

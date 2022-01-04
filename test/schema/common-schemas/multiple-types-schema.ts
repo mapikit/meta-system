@@ -1,6 +1,6 @@
-import { SchemasType } from "../../../src/configuration/schemas/schemas-type";
+import { SchemaType } from "../../../src/configuration/schemas/schemas-type";
 
-export const multipleTypesSchema : SchemasType = {
+export const multipleTypesSchema : SchemaType = {
   name: "exampleFlatSchema",
   format: {
     name: { type: "string" },
@@ -24,4 +24,6 @@ export const multipleTypesSchema : SchemasType = {
       subtype: "boolean",
     },
   },
+  identifier: "someIdentifier",
+  dbProtocol: "aDbProtocol",
 };

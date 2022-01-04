@@ -1,4 +1,4 @@
-import { ObjectDefinition } from "meta-function-helper";
+import { ObjectDefinition } from "@meta-system/object-definition";
 
 export function isValidType (value : unknown, typeName : string, typeDef ?: ObjectDefinition) : boolean {
   if(ComplexTypes[typeName] === undefined) {

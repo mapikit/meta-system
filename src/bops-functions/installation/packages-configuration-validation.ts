@@ -1,17 +1,21 @@
 // Validates the meta-function.json of the custom BOps function
-import MetaFunctionHelper, { BuiltMetaPackage, MetaPackage } from "meta-function-helper";
-import { buildFullPackageDescription } from "meta-function-helper/dist/src/build-full-package-description";
+import {
+  buildAllFunctionDefinitions,
+  BuiltMetaPackage,
+  MetaPackage,
+  validatePackageConfiguration,
+} from "@meta-system/meta-function-helper";
+import { runtimeDefaults } from "configuration/runtime-config/defaults";
 
 export class MetaPackageDescriptionValidation {
   private validated = false;
 
   public constructor (
-    private readonly descriptionFileContent : string,
+    private readonly descriptionFileContent : object,
   ) { }
 
   public async validate () : Promise<this> {
-    await MetaFunctionHelper
-      .validatePackageStringConfiguration(this.descriptionFileContent);
+    await validatePackageConfiguration(this.descriptionFileContent);
     this.validated = true;
 
     return this;
@@ -22,9 +26,13 @@ export class MetaPackageDescriptionValidation {
       throw Error("Package Description Not Validated");
     }
 
-    const fileContent = JSON.parse(this.descriptionFileContent) as MetaPackage;
+    const pathLib = await import("path");
 
-    return buildFullPackageDescription(fileContent);
+    const fileContent = this.descriptionFileContent as MetaPackage;
+    const path = pathLib.join(runtimeDefaults.externalFunctionInstallFolder, fileContent.name,fileContent.entrypoint);
+
+    fileContent.functionsDefinitions = await buildAllFunctionDefinitions(fileContent.functionsDefinitions, path);
+    return fileContent as BuiltMetaPackage;
   }
 }
 

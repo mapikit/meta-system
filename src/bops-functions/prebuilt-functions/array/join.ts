@@ -8,11 +8,11 @@ export const arrayJoinBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayJoin",
   version: "1.0.0",
   description: "Joins Items of an array",
-  inputParameters: {
+  input: {
     array: { type: "array", subtype: "any", required: true },
     separator: { type: "string", required: false },
   },
-  outputData: {
+  output: {
     result: { type: "array", subtype: "any", required: true },
   },
 };

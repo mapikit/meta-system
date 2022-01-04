@@ -5,10 +5,10 @@ export const getInfo : InternalMetaFunction = {
   description: "Gets an entity from the database by the properties given",
   author: "mapikit",
   version: "0.0.1",
-  inputParameters: {
+  input: {
     query: { type: "cloudedObject", required: true },
   },
-  outputData: {
+  output: {
     getError: { type: "$errorMessage", required: false },
     results: { type: "array", required: false, subtype: "%entity" },
   },

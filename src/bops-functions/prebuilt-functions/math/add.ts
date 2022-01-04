@@ -21,10 +21,10 @@ export const addFunctionInformation : InternalMetaFunction = {
   functionName: "add",
   version: "1.0.0",
   description: "Adds numbers together",
-  inputParameters: {
+  input: {
     numbersToAdd: { type: "array", subtype: "number", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },

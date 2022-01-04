@@ -1,14 +1,22 @@
 import { CloudedObject } from "../../common/types/clouded-object";
-import { ProtocolConfigType } from "./protocols-type";
+import { ProtocolConfigType, ProtocolKind } from "./protocols-type";
 
 export class Protocol implements ProtocolConfigType {
-  public protocolType : string;
+  public protocol : string;
   public protocolVersion : string;
   public configuration : CloudedObject;
+  public protocolKind : ProtocolKind;
+  public identifier : string;
 
   constructor (protocol : ProtocolConfigType) {
     this.protocolVersion = protocol.protocolVersion;
-    this.protocolType = protocol.protocolType;
+    this.protocol = protocol.protocol;
     this.configuration = protocol.configuration;
+    this.protocolKind = protocol.protocolKind ?? ProtocolKind.normal;
+    this.identifier = protocol.identifier;
+  }
+
+  public get isDbProtocol () : boolean {
+    return this.protocolKind === ProtocolKind.dbProtocol;
   }
 };
