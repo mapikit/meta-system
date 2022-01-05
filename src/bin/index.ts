@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { SystemSetup } from "../bootstrap/system-setup";
 import Path from "path";
-import fs from "fs";
 import packageData from "../../package.json";
 import chalk from "chalk";
 import { environment } from "../common/execution-env";
@@ -58,8 +57,9 @@ async function main (fileLocation : string) : Promise<void> {
     if(data.toString().includes("rs")) setupProcess.restart();
   });
 
-  if (environment.constants.dev) {
-    fs.watchFile(environment.constants.configPath as string, () => setupProcess.restart());
-  }
+  // Deprecated - Will be reimplemented in 0.5
+  // if (environment.constants.dev) {
+  //   fs.watchFile(environment.constants.configPath as string, () => setupProcess.restart());
+  // }
 };
 
