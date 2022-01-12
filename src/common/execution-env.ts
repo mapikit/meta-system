@@ -1,6 +1,6 @@
 class Environment {
-  public variables : Record<string, unknown> = {};
-  public constants : Record<string, unknown> = new Proxy({}, {
+  public variables : Record<string, any> = {};
+  public constants : Record<string, any> = new Proxy({}, {
     set: (object, property, value) : boolean => constantSetter(object, property, value, false),
     defineProperty: (object, property, value) : boolean => constantSetter(object, property, value, false),
     deleteProperty: (_object, property) : true => {

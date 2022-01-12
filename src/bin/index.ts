@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import { SystemSetup } from "../bootstrap/system-setup";
 import Path from "path";
 import packageData from "../../package.json";
 import chalk from "chalk";
 import { environment } from "../common/execution-env";
 import { Command, Option } from "commander";
-import { LogLevelsType, logLevelsArray } from "../common/logger/logger-types";
+import { logLevelsArray } from "../common/logger/logger-types";
 import constants from "../common/constants";
 import { hookConsoleToFile } from "../common/logger/hook-console-to-file";
 import { logger } from "../common/logger/logger";
 import { getSystemInfo } from "../common/logger/get-system-info";
+import { runtimeDefaults } from "../configuration/runtime-config/defaults";
 
 const program = new Command("meta-system");
 program
@@ -36,17 +36,19 @@ program.parse();
 // eslint-disable-next-line max-lines-per-function
 async function main (fileLocation : string) : Promise<void> {
   Object.assign(environment.constants, program.opts());
-  logger.initialize(environment.constants.logLevel as LogLevelsType);
+  logger.initialize(environment.constants.logLevel);
 
   environment.constants.configPath = Path.resolve(fileLocation);
-  environment.constants.configDir = Path.parse(environment.constants.configPath as string).dir;
-
+  environment.constants.configDir = Path.parse(environment.constants.configPath).dir;
+  environment.constants.installDir = Path.resolve(
+    environment.constants.configDir,
+    runtimeDefaults.defaultInstallFolder);
   if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
   if(environment.constants.saveLog) hookConsoleToFile(`${environment.constants.configDir}/logs`);
 
   logger.debug(getSystemInfo());
 
-  const setupProcess = new SystemSetup();
+  const setupProcess = new (await import("../bootstrap/system-setup")).SystemSetup();
 
   setupProcess.execute().catch((error : Error) => {
     logger.fatal(error.message);
@@ -57,7 +59,7 @@ async function main (fileLocation : string) : Promise<void> {
     if(data.toString().includes("rs")) setupProcess.restart();
   });
 
-  // Deprecated - Will be reimplemented in 0.5
+  // Disabled - Will be reimplemented in 0.5
   // if (environment.constants.dev) {
   //   fs.watchFile(environment.constants.configPath as string, () => setupProcess.restart());
   // }

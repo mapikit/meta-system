@@ -7,7 +7,6 @@ import { FunctionSetup } from "../bootstrap/function-setup";
 import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager";
 import { ProtocolsSetup } from "./protocols-setup";
 import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper";
-import { runtimeDefaults } from "../configuration/runtime-config/defaults";
 import { environment } from "../common/execution-env";
 import { logger } from "../common/logger/logger";
 
@@ -42,7 +41,7 @@ export class SystemSetup {
 
     await prettifyNPMPackageFile(systemConfig.name, systemConfig.version,
       `${systemConfig.name} System - Made in Meta-System.`,
-      runtimeDefaults.externalFunctionInstallFolder,
+      environment.constants.installDir,
     );
 
     logger.operation("[System Setup] Starting protocols");

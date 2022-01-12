@@ -8,7 +8,7 @@ import { runtimeDefaults } from "../src/configuration/runtime-config/defaults";
 
 const testPath = join(process.cwd(), "test-functions/");
 
-runtimeDefaults.externalFunctionInstallFolder = testPath;
+runtimeDefaults.defaultInstallFolder = testPath;
 
 const testFunctionFileSystem = new FunctionFileSystem(
   testPath,

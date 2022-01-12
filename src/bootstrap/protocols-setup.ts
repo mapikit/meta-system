@@ -68,6 +68,7 @@ export class ProtocolsSetup {
 
     for (const protocolConfig of requiredProtocols) {
       const classInstance = this.protocolsManager.getProtocolInstance(protocolConfig.identifier);
+      if(classInstance === undefined) continue;
 
       if (isDbProtocol(classInstance)) {
         (classInstance as DBProtocol<unknown>).shutdown()

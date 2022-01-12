@@ -15,6 +15,7 @@ import { InternalFunctionManagerClass } from "bops-functions/function-managers/i
 import chalk from "chalk";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { logger } from "../common/logger/logger";
+import { SchemasFunctions } from "../schemas/domain/schemas-functions";
 
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 
@@ -306,7 +307,7 @@ export class DependencyPropValidator {
     // eslint-disable-next-line max-lines-per-function
     "schemaFunction": (name, modulePackage) => {
       const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
-      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name));
+      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name as keyof typeof SchemasFunctions));
       resolvableParameters.forEach(param => {
         Object.keys(schemaFunctionInfo[param]).forEach(key => {
           if(schemaFunctionInfo[param][key].type === "%entity") {
