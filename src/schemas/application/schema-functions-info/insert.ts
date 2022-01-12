@@ -1,7 +1,7 @@
 import { InternalMetaFunction } from "bops-functions/internal-meta-function";
 
 export const createInfo : InternalMetaFunction = {
-  functionName: "create",
+  functionName: "insert",
   description: "Inserts the given entity in the database",
   author: "mapikit",
   version: "0.0.1",
