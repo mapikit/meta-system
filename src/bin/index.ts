@@ -17,7 +17,7 @@ program
   .helpOption("-h, --help", "Displays this help panel")
   .version("Currently on version " + packageData.version, "-v, --version", "Displays the current meta-system version")
   .option("-d, --debug", "Logs additional info on the execution of BOps", () => {
-    environment.constants.logLevel = "debug";
+    environment.silent.constants.logLevel = "debug";
   })
   .option("-L, --create-log-file, --log-file", "Saves logs to a file inside logs folder")
   //.option("-D, --dev", "Automatically restarts the system on config file update")
@@ -35,7 +35,7 @@ program.parse();
 
 // eslint-disable-next-line max-lines-per-function
 async function main (fileLocation : string) : Promise<void> {
-  Object.assign(environment.constants, program.opts());
+  Object.assign(environment.silent.constants, program.opts());
   logger.initialize(environment.constants.logLevel);
 
   environment.constants.configPath = Path.resolve(fileLocation);

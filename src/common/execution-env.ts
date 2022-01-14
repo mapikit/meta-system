@@ -1,5 +1,7 @@
 class Environment {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public variables : Record<string, any> = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public constants : Record<string, any> = new Proxy({}, {
     set: (object, property, value) : boolean => constantSetter(object, property, value, false),
     defineProperty: (object, property, value) : boolean => constantSetter(object, property, value, false),
