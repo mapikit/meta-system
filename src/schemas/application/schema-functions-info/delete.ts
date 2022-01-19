@@ -9,8 +9,8 @@ export const deleteInfo : InternalMetaFunction = {
     query : { type: "cloudedObject", required: true },
   },
   output: {
-    deletedCount: { type: "number", required: false },
-    deleteError: { type: "$errorMessage", required: false },
+    success: { type: "boolean", required: true },
+    affectedEntities: { type: "number", required: false },
   },
   customTypes: [
     {

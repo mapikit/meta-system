@@ -9,17 +9,8 @@ export const getByIdInfo : InternalMetaFunction = {
     id: { type: "string", required: true },
   },
   output: {
-    entity: { type: "%entity", required: false },
-    found: { type: "boolean", required: true },
-    getError: { type: "$errorMessage", required: false },
+    success: { type: "boolean", required: true },
+    data: { type: "%entity", required: false },
   },
-  customTypes: [
-    {
-      name: "errorMessage",
-      type: {
-        message: { type: "string" },
-        errorCode: { type: "string" },
-      },
-    },
-  ],
+  customTypes: [],
 };

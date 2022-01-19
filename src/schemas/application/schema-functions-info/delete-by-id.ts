@@ -9,18 +9,9 @@ export const deleteByIdInfo : MetaFunction = {
     id: { type: "string", required: true },
   },
   output: {
-    deleteError: { type: "$errorMessage", required: false },
-    deleted: { type: "%entity", required: false },
+    success: { type: "boolean", required: true },
   },
   entrypoint: "index.ts",
   mainFunction: "main",
-  customTypes: [
-    {
-      name: "errorMessage",
-      type: {
-        message: { type: "string" },
-        errorCode: { type: "string" },
-      },
-    },
-  ],
+  customTypes: [],
 };

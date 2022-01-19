@@ -9,16 +9,8 @@ export const createInfo : InternalMetaFunction = {
     entity: { type: "%entity", required: true },
   },
   output: {
-    createError: { type: "$errorMessage", required: false },
-    createdEntity: { type: "%entity", required: false },
+    success: { type: "boolean", required: true },
+    insertedId: { type: "string", required: false },
   },
-  customTypes: [
-    {
-      name: "errorMessage",
-      type: {
-        message: { type: "string" },
-        errorCode: { type: "string" },
-      },
-    },
-  ],
+  customTypes: [],
 };
