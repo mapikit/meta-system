@@ -7,19 +7,11 @@ export const updateInfo : InternalMetaFunction = {
   version: "0.0.1",
   input: {
     query: { type: "cloudedObject", required: true },
-    valuesToUpdate: { type: "cloudedObject", required: true },
+    data: { type: "cloudedObject", required: true },
   },
   output: {
-    updateError: { type: "$errorMessage", required: false },
-    updatedCount: { type: "number", required: false },
+    success: { type: "boolean", required: true },
+    affectedEntities: { type: "number", required: false },
   },
-  customTypes: [
-    {
-      name: "errorMessage",
-      type: {
-        message: { type: "string" },
-        errorCode: { type: "string" },
-      },
-    },
-  ],
+  customTypes: [],
 };

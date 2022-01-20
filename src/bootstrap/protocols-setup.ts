@@ -7,6 +7,7 @@ import {
   MetaProtocolNewable,
   ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
 import { ConfigurationType } from "../configuration/configuration-type";
+import { logger } from "../common/logger/logger";
 
 export class ProtocolsSetup {
   public constructor (
@@ -17,7 +18,7 @@ export class ProtocolsSetup {
 
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {
-    console.log("[System Protocols] Starting setup of system Protocols");
+    logger.operation("[System Protocols] Starting setup of system Protocols");
     const requiredProtocols = this.systemConfig.protocols !== undefined
       ? this.systemConfig.protocols : [];
 
@@ -35,7 +36,7 @@ export class ProtocolsSetup {
         createdProtocol = new (NewableProtocol as MetaProtocolNewable)(protocol.configuration, this.bopsManager);
       }
 
-      console.log("[System Protocols] - Validating protocol configuration for ", protocol.protocol);
+      logger.operation("[System Protocols] - Validating protocol configuration for ", protocol.protocol);
       createdProtocol.validateConfiguration();
 
       this.protocolsManager.addProtocolInstance(createdProtocol, protocol.identifier);
@@ -50,7 +51,7 @@ export class ProtocolsSetup {
     for (const protocolConfig of requiredProtocols) {
       const classInstance = this.protocolsManager.getProtocolInstance(protocolConfig.identifier);
 
-      console.log("[System Protocols] Starting Protocol", protocolConfig.protocol);
+      logger.operation("[System Protocols] Starting Protocol", protocolConfig.protocol);
       if (isDbProtocol(classInstance)) {
         // We boot DB protocols while adding the schemas
         continue;
@@ -67,6 +68,7 @@ export class ProtocolsSetup {
 
     for (const protocolConfig of requiredProtocols) {
       const classInstance = this.protocolsManager.getProtocolInstance(protocolConfig.identifier);
+      if(classInstance === undefined) continue;
 
       if (isDbProtocol(classInstance)) {
         (classInstance as DBProtocol<unknown>).shutdown()

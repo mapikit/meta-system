@@ -13,6 +13,7 @@ import {
 import { Protocol } from "../../configuration/protocols/protocols";
 import { isDbProtocol } from "../../configuration/protocols/is-db-protocol";
 import { SchemaType } from "../../configuration/schemas/schemas-type";
+import { environment } from "../../common/execution-env";
 
 type DualNewable = DBProtocolNewable | MetaProtocolNewable;
 
@@ -27,12 +28,20 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
   private initializedSet : Set<string> = new Set();
 
   public constructor (
-    private functionsInstaller = new FunctionsInstaller(runtimeDefaults.externalFunctionInstallFolder),
+    private functionsInstaller = new FunctionsInstaller(environment.constants.installDir),
     private protocolFileSystem = new ProtocolFileSystem(
-      runtimeDefaults.externalFunctionInstallFolder,
+      environment.constants.installDir,
       runtimeDefaults.externalProtocolConfigFileName,
     ),
   ) {}
+
+  public getAvailableDbProtocolsNames () : string[] {
+    const availableDbProtocols : string[] = [];
+    this.instanceMap.forEach((protocol, name) => {
+      if(isDbProtocol(protocol)) availableDbProtocols.push(name);
+    });
+    return availableDbProtocols;
+  }
 
   public async initializeDbProtocol (protocolIdentifier : string) : Promise<void> {
     const protocol = this.getProtocolInstance(protocolIdentifier);
@@ -44,8 +53,8 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     this.initializedSet.add(protocolIdentifier);
   }
 
-  public get (protocolIndentifierAndFunction : string) : Function {
-    return this.functionMap.get(protocolIndentifierAndFunction);
+  public get (protocolIdentifierAndFunction : string) : Function {
+    return this.functionMap.get(protocolIdentifierAndFunction);
   }
 
   public getProtocolDescription (protocolIdentifier : string) : BuiltMetaProtocolDefinition {
@@ -60,7 +69,7 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     await this.functionsInstaller.install(protocolInfo.protocol, protocolInfo.protocolVersion, ModuleKind.NPM);
     const protocolDescription = await this.protocolFileSystem.getDescriptionFile(protocolInfo.protocol);
 
-    const path = Path.join(runtimeDefaults.externalFunctionInstallFolder, "node_modules", protocolInfo.protocol);
+    const path = Path.join(environment.constants.installDir as string, "node_modules", protocolInfo.protocol);
     await validateProtocolConfiguration(protocolDescription, path, protocolInfo.isDbProtocol);
 
     const configValidation = await new ProtocolDescriptionValidation(

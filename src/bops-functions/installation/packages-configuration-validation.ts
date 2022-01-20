@@ -5,7 +5,7 @@ import {
   MetaPackage,
   validatePackageConfiguration,
 } from "@meta-system/meta-function-helper";
-import { runtimeDefaults } from "configuration/runtime-config/defaults";
+import { environment } from "../../common/execution-env";
 
 export class MetaPackageDescriptionValidation {
   private validated = false;
@@ -29,7 +29,7 @@ export class MetaPackageDescriptionValidation {
     const pathLib = await import("path");
 
     const fileContent = this.descriptionFileContent as MetaPackage;
-    const path = pathLib.join(runtimeDefaults.externalFunctionInstallFolder, fileContent.name,fileContent.entrypoint);
+    const path = pathLib.join(environment.constants.installDir, fileContent.name,fileContent.entrypoint);
 
     fileContent.functionsDefinitions = await buildAllFunctionDefinitions(fileContent.functionsDefinitions, path);
     return fileContent as BuiltMetaPackage;

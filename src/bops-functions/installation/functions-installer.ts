@@ -1,3 +1,4 @@
+import { logger } from "../../common/logger/logger";
 import { DependenciesManager } from "../../dependencies-management";
 
 export enum ModuleKind {
@@ -17,15 +18,15 @@ export class FunctionsInstaller {
       throw Error("Not Implemented");
     }
 
-    console.log(`[BOps Function] Installing ${moduleName}@${version}`);
+    logger.operation(`[BOps Function] Installing ${moduleName}@${version}`);
     await this.installationManager.install(moduleName, version)
       .catch((error : Error) => {
-        console.error(`[BOps Function] FAILED TO INSTALL - ${moduleName}@${version}`);
+        logger.fatal(`[BOps Function] FAILED TO INSTALL - ${moduleName}@${version}`);
 
         throw error;
       });
 
-    console.log(`[BOps Function] Installed ${moduleName}@${version}`);
+    logger.operation(`[BOps Function] Installed ${moduleName}@${version}`);
   }
 
   public async uninstall (moduleName : string, kind : ModuleKind) : Promise<void> {

@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { join } from "path";
 import FS from "fs";
-import chalk from "chalk";
+import { logger } from "../common/logger/logger";
 
 type ModuleName = string;
 type ModuleVersion = string;
@@ -61,7 +61,7 @@ export class DependenciesManager {
       this.latestVersions.set(moduleName, installedVersion);
     } catch (err) {
       const message = "[Dependencies Install] Something went wrong during package installation checking, ABORTING!";
-      console.error(chalk.redBright(message));
+      logger.fatal(message);
 
       throw Error(err);
     }
@@ -70,7 +70,7 @@ export class DependenciesManager {
   private requiresInstallation (moduleName : string, version : string) : boolean {
     const isInstalled = this.checkVersionIsInstalled(moduleName, version);
     if (isInstalled) {
-      console.log(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
+      logger.operation(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
       return false;
     }
 
@@ -78,7 +78,7 @@ export class DependenciesManager {
       const errorMessage = "[Dependencies Install] ERROR: Cannot install two versions of the same dependency!"
         + ` ${moduleName}@${version}`;
 
-      console.error(chalk.redBright(errorMessage));
+      logger.fatal(errorMessage);
       throw Error(errorMessage);
     };
 

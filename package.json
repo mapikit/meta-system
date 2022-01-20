@@ -74,11 +74,13 @@
     "@meta-system/meta-function-helper": "^0.3.3",
     "@meta-system/meta-protocol-helper": "^0.2.6",
     "@meta-system/object-definition": "^1.0.7",
-    "chalk": "^2.4.2",
+    "chalk": "^4.1.2",
+    "commander": "^8.3.0",
     "decimal.js": "^10.3.1",
     "glob": "^7.2.0",
     "just-clone": "^3.2.1",
-    "mersenne-twister": "^1.1.0"
+    "mersenne-twister": "^1.1.0",
+    "strip-ansi": "^6.0.1"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",
   "devDependencies": {

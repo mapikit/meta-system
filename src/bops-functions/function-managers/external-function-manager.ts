@@ -5,6 +5,7 @@ import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
 import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
 import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer";
+import { environment } from "../../common/execution-env";
 
 
 export class ExternalFunctionManagerClass implements FunctionManager {
@@ -12,9 +13,9 @@ export class ExternalFunctionManagerClass implements FunctionManager {
   private infoMap : Map<string, MetaFunction> = new Map();
 
   public constructor (
-    private functionsInstaller = new FunctionsInstaller(runtimeDefaults.externalFunctionInstallFolder),
+    private functionsInstaller = new FunctionsInstaller(environment.constants.installDir),
     private functionFileSystem = new FunctionFileSystem(
-      runtimeDefaults.externalFunctionInstallFolder,
+      environment.constants.installDir,
       runtimeDefaults.externalFunctionConfigFileName,
       runtimeDefaults.externalPackageConfigFileName,
     ),

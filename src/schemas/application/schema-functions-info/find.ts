@@ -1,16 +1,19 @@
 import { InternalMetaFunction } from "bops-functions/internal-meta-function";
 
 export const getInfo : InternalMetaFunction = {
-  functionName: "get",
+  functionName: "find",
   description: "Gets an entity from the database by the properties given",
   author: "mapikit",
   version: "0.0.1",
   input: {
     query: { type: "cloudedObject", required: true },
+    limit: { type: "number", required: false },
+    offset: { type: "number", required: false },
   },
   output: {
-    getError: { type: "$errorMessage", required: false },
-    results: { type: "array", required: false, subtype: "%entity" },
+    success: { type: "boolean", required: true },
+    data: { type: "array", required: true, subtype: "%entity" },
+    pages: { type: "number", required: false },
   },
   customTypes: [
     {
