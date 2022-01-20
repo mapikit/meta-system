@@ -35,7 +35,7 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
     ),
   ) {}
 
-  public getAvailableDbProtocols () : string[] {
+  public getAvailableDbProtocolsNames () : string[] {
     const availableDbProtocols : string[] = [];
     this.instanceMap.forEach((protocol, name) => {
       if(isDbProtocol(protocol)) availableDbProtocols.push(name);

@@ -19,7 +19,7 @@ export class SchemasManager {
     const dbProtocol = this.protocolsManager.getProtocolInstance(schema.dbProtocol);
     if(dbProtocol === undefined) {
       throw Error(`No db protocol registered as "${schema.dbProtocol}". ` +
-      `Available are: ${this.protocolsManager.getAvailableDbProtocols().join(", ")}`);
+      `Available are: ${this.protocolsManager.getAvailableDbProtocolsNames().join(", ")}`);
     }
     assertsDbProtocol(dbProtocol, " - Could not add protocol to schema!");
 

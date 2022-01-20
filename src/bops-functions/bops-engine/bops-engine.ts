@@ -74,7 +74,7 @@ export class BopsEngine {
     const moduleFunction = currentBopContext.availableFunctions.get(dependencyName);
     if(input.originPath === undefined) {
       const resolvedInputs = await this.getInputs(dependency.dependencies, currentBopContext, _inputs);
-      logger.debug(`[Execute Only] Executing ${dependency.moduleName} @${dependency.key} with input:
+      logger.debug(`[Functional Dependency] Executing ${dependency.moduleName} @${dependency.key} with input:
       >>`, resolvedInputs);
       const result = await moduleFunction(resolvedInputs);
       currentBopContext.resultsCache.set(dependency.key, result);

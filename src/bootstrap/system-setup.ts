@@ -15,7 +15,7 @@ export class SystemSetup {
 
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {
-    logger.success("[System Setup] System setup starting");
+    logger.operation("[System Setup] System setup starting");
     logger.operation("[System Setup] Retrieving system configuration");
     const fileContent = await this.getFileContents();
 
@@ -32,9 +32,9 @@ export class SystemSetup {
 
     const systemFunctionsManager = functionSetupCommand.getBopsManager();
 
-    logger.success("[Protocol Installation] Starting protocol installation");
+    logger.operation("[Protocol Installation] Starting protocol installation");
     this.protocolsManager = await this.setupProtocols(systemFunctionsManager, systemConfig);
-    logger.operation("[Protocol Installation] Protocol installation complete");
+    logger.success("[Protocol Installation] Protocol installation complete");
 
     logger.operation("[System Setup] Starting System functions bootstrap sequence");
     await functionSetupCommand.setup();

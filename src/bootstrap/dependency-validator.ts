@@ -33,7 +33,7 @@ export class DependencyPropValidator {
 
   // eslint-disable-next-line max-lines-per-function
   public verifyAll () : void {
-    logger.success("[Dependency Validation] Starting validation of all registered dependencies");
+    logger.operation("[Dependency Validation] Starting validation of all registered dependencies");
     const typeSafeArgIndex = process.argv.indexOf("--type-check");
     if(typeSafeArgIndex > -1) {
       const selectedLevel = Number(process.argv[typeSafeArgIndex+1]);
