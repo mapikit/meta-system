@@ -8,6 +8,13 @@
   - A glob pattern that includes those configurations
   - An array of glob patterns that include multiple configurations
   - Or a mix of all the above. For more info consult our [documentation](https://mapikit.github.io/meta-system-docs/)
+- Databases are now protocols, allowing for multiple databases to be implemented
+  - MongoDB, previously baked into meta-system, has been separated as its own db protocol: [@meta-system/mongodb-db-protocol](https://www.npmjs.com/package/@meta-system/mongodb-db-protocol)
+- Added a custom logger for meta-system and added debugging to BOps execution flow
+  - This new implementation also comes with logging levels (see below)
+- Improved the meta-system CLI options
+  - Currently the available options are debug, create-log-file, log-level, and type-check.
+  - For more info on those as well as some extra accessory options you can use the --help to option
 
 ## 0.2.3
 - Fixed bug #64 . The package dependency manager was not handling the case of having multiple installations of the same package if its version was "latest"
