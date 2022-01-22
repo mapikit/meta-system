@@ -12,7 +12,7 @@ const missingRefNameSchema =
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Schemas De-Serializer", () => {
-  it("Desserializes schemas correctly formated", () => {
+  it("Desserializes schemas correctly formatted", () => {
     const command = new DeserializeSchemasCommand();
 
     command.execute(configurationExample["schemas"]);

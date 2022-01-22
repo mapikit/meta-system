@@ -2,6 +2,8 @@
   "schemas": [
     {
       "name": "arrayTypesSchemas",
+      "identifier": "test1",
+      "dbProtocol": "fakeDb",
       "format": {
         "stringArray": { "type": "array", "subtype": "string" },
         "booleanArray": { "type": "array", "subtype": "boolean" },
@@ -15,6 +17,8 @@
     },
     {
       "name": "other",
+      "identifier": "other",
+      "dbProtocol": "fakeDb",
       "format": {
         "aProperty": { "type": "boolean" }
       }

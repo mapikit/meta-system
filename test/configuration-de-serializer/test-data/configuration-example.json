@@ -7,6 +7,8 @@
   "schemas": [
     {
       "name": "client",
+      "identifier": "client",
+      "dbProtocol": "testDb",
       "format": {
         "id": { "type": "string" },
         "name": { "type": "string" },
@@ -17,6 +19,8 @@
     },
     {
       "name": "purchase",
+      "identifier": "purchase",
+      "dbProtocol": "testDb",
       "format": {
         "id": { "type": "string" },
         "date": { "type": "date" },
@@ -28,6 +32,8 @@
     },
     {
       "name": "employee",
+      "identifier": "employee",
+      "dbProtocol": "testDb",
       "format": {
         "id": { "type": "string" },
         "name": { "type": "string" },
@@ -36,6 +42,8 @@
     },
     {
       "name": "car",
+      "identifier": "car",
+      "dbProtocol": "testDb",
       "format": {
         "id": { "type": "string" },
         "model": { "type": "string" },
@@ -47,7 +55,6 @@
       }
     }
   ],
-  "dbConnectionString": "mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin",
   "businessOperations": [
     {
       "name": "car-sell",
