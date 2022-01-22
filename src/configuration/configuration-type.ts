@@ -7,7 +7,6 @@ export interface ConfigurationType {
   version : string;
   protocols ?: ProtocolConfigType[];
   envs ?: EnvironmentVariable[];
-  dbConnectionString : string;
   schemas : SchemaType[];
   businessOperations : BusinessOperations[];
 }

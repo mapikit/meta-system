@@ -9,7 +9,6 @@ export class Configuration implements ConfigurationType {
   public readonly name : string;
   public readonly version : string;
   public readonly envs : EnvironmentVariable[];
-  public readonly dbConnectionString : string;
   public readonly schemas : Schema[];
   public readonly protocols : ProtocolConfigType[];
   public readonly businessOperations : BusinessOperation[];
@@ -18,7 +17,6 @@ export class Configuration implements ConfigurationType {
     this.name = input.name;
     this.version = input.version;
     this.envs = input.envs;
-    this.dbConnectionString = input.dbConnectionString;
     this.schemas = input.schemas;
     this.businessOperations = input.businessOperations.map((businessOperationData) => {
       return new BusinessOperation(businessOperationData);
