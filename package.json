@@ -1,6 +1,6 @@
 {
   "name": "meta-system",
-  "version": "0.3.0rc1",
+  "version": "0.3.0-RC1",
   "description": "A system to be any system",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
