@@ -1,5 +1,5 @@
+import { isObjectDefinition } from "@meta-system/meta-function-helper/dist/src/object-definition/is-object-definition";
 import { SchemaType } from "../../schemas/schemas-type";
-import { isSchemaFormat } from "./is-schema-format";
 
 /**
  * Tests if the input given is a schema
@@ -29,5 +29,5 @@ export function isSchema (input : unknown) : asserts input is SchemaType {
     throw TypeError("Schema name must be a string");
   }
 
-  isSchemaFormat(schemaLikeInput.format);
+  isObjectDefinition(schemaLikeInput.format);
 };

@@ -37,7 +37,7 @@ export class ProtocolsSetup {
       }
 
       logger.operation("[System Protocols] - Validating protocol configuration for ", protocol.protocol);
-      createdProtocol.validateConfiguration();
+      createdProtocol.validateConfiguration(protocolConfig);
 
       this.protocolsManager.addProtocolInstance(createdProtocol, protocol.identifier);
     }
