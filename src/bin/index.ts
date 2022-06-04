@@ -51,8 +51,8 @@ async function main (fileLocation : string) : Promise<void> {
   const setupProcess = new (await import("../bootstrap/system-setup")).SystemSetup();
 
   setupProcess.execute().catch((error : Error) => {
-    logger.fatal(error.message);
-    logger.fatal(error.stack);
+    logger.fatal(error?.message ?? "UNKNOWN ERROR");
+    logger.fatal(error?.stack ?? "UNKNOWN ERROR");
   });
 
   process.stdin.on("data", (data) => {
