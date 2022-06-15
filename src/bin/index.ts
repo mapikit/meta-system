@@ -13,4 +13,3 @@ program
 program.parse();
 
 // eslint-disable-next-line max-lines-per-function
-
