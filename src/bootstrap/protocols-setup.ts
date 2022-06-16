@@ -38,7 +38,10 @@ export class ProtocolsSetup {
       }
 
       logger.operation("[System Protocols] - Validating protocol configuration for ", protocol.protocol);
-      createdProtocol.validateConfiguration(protocolConfig);
+      const protocolConfigurationDefinition = this.protocolsManager
+        .getProtocolDescriptionFromName(protocol.protocol)["configurationFormat"];
+      createdProtocol.validateConfiguration(protocolConfigurationDefinition);
+      logger.success(`[System Protocols] - Validating protocol configuration for ${protocol.protocol} is valid.`);
 
       this.protocolsManager.addProtocolInstance(createdProtocol, protocol.identifier);
     }

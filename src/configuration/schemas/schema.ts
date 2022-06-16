@@ -1,6 +1,5 @@
-import { TypeDefinitionDeep }
-  from "@meta-system/meta-function-helper/dist/src/object-definition/object-definition-type";
 import { ObjectDefinition, TypeDefinition } from "@meta-system/object-definition";
+import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/src/object-definition-type";
 import { SchemaDefinitionExtension, SchemaType } from "./schemas-type";
 
 const getRef = (typeDefinition : TypeDefinition<SchemaDefinitionExtension>) : string[] => {

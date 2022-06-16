@@ -1,4 +1,4 @@
-import { isObjectDefinition } from "@meta-system/meta-function-helper/dist/src/object-definition/is-object-definition";
+import { isObjectDefinition } from "@meta-system/object-definition";
 import { SchemaType } from "../../schemas/schemas-type";
 
 /**

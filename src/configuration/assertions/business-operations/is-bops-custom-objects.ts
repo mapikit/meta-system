@@ -1,4 +1,4 @@
-import { isObjectDefinition } from "@meta-system/meta-function-helper/dist/src/object-definition/is-object-definition";
+import { isObjectDefinition } from "@meta-system/object-definition";
 import { BopsCustomObject } from "../../business-operations/business-operations-type";
 import { isType } from "../is-type";
 
