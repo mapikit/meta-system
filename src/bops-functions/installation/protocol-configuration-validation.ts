@@ -1,6 +1,5 @@
 // Validates the meta-function.json of the custom BOps function
-import { isMetaFunction } from "@meta-system/meta-function-helper/dist/src/is-meta-function";
-import { buildAllFunctionDefinitions, MetaFunction } from "@meta-system/meta-function-helper";
+import { isFunctionDefinition } from "@meta-system/meta-function-helper";
 import {
   BuiltMetaProtocolDefinition,
   MetaProtocolDefinition,
@@ -36,10 +35,9 @@ export class ProtocolDescriptionValidation {
         throw Error("Protocol Contains bad configuration in its functions definitions");
       }
 
-      fileContent.functionDefinitions = await buildAllFunctionDefinitions(fileContent.functionDefinitions, this.path);
 
       fileContent.functionDefinitions.forEach((functionDef) => {
-        isMetaFunction(functionDef as MetaFunction);
+        isFunctionDefinition(functionDef);
       });
     }
 

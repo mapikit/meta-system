@@ -1,4 +1,5 @@
-import { promises } from "fs";
+import { promises, existsSync } from "fs";
+import Path from "path";
 import { environment } from "../common/execution-env";
 
 export type FreshPackageFile = {
@@ -16,6 +17,7 @@ export const prettifyNPMPackageFile = async (
 // eslint-disable-next-line max-params
 ) : Promise<void> => {
   const packagePath = customPath ?? environment.constants.installDir;
+  if(!existsSync(Path.join(packagePath, "package.json"))) return; // Return if nothing is installed
   const fileContent = await getNPMPackageFileContent(packagePath);
 
   const result = {
