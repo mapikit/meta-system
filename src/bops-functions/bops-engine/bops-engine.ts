@@ -60,7 +60,7 @@ export class BopsEngine {
       if(typeof input.origin === "number") resolved.push(await this.solveModularInput(input, currentBop, _inputs));
     }
 
-    return ObjectResolver.flattenObject(Object.assign({}, ...resolved));
+    return ObjectResolver.flattenObject(resolved);
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -68,7 +68,6 @@ export class BopsEngine {
     input : Dependency,
     currentBopContext : BopContext,
     _inputs : object) : Promise<object> {
-    logger.debug("Solving modular input", input);
     const dependency = currentBopContext.config.find(module => module.key === input.origin);
     const dependencyName = ModuleManager.getFullModuleName(dependency);
     const moduleFunction = currentBopContext.availableFunctions.get(dependencyName);
@@ -99,7 +98,6 @@ export class BopsEngine {
         const context = BopContext.cloneToNewContext(currentBopContext);
         return this.getInputs(dependency.dependencies, context, _inputs);
       };
-      logger.debug(`[Wrap] Wrapping function ${dependencyName} @${dependency.key}`);
       const wrappedFunction = this.wrapFunction(moduleFunction, paramsGetter, paths, dependencyName);
       return { [input.targetPath]: wrappedFunction };
     }
@@ -110,7 +108,6 @@ export class BopsEngine {
   // eslint-disable-next-line max-lines-per-function
   private solveStaticInput (
     input : Dependency, currentBop : BopContext, _inputs : object) : object {
-    logger.debug("Solving static input:", input);
     switch (input.origin) {
       case "constants":
         const foundConstant = currentBop.constants[input.originPath];
@@ -135,7 +132,7 @@ export class BopsEngine {
   ) : () => Promise<unknown> {
     return async function () : Promise<unknown> {
       const params = await paramsGetter();
-      logger.debug(`[Wrapped Function] Running wrapped function "${functionName}" with inputs`, params);
+      logger.debug(`\t[Wrapped Function] Running wrapped function "${functionName}" with inputs`, params);
       const result = ObjectResolver.extractProperty(await fn(params), path);
       return result;
     };

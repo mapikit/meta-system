@@ -23,7 +23,8 @@ function isDependencies (input : unknown) : asserts input is Dependency[] {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export function isBopsConfigurationEntry (input : unknown) : asserts input is BopsConfigurationEntry[] {
+export function isBopsConfigurationEntry (input : unknown, parent : string)
+  : asserts input is BopsConfigurationEntry[] {
   if (!Array.isArray(input)) {
     throw Error("Business Operation Configuration with wrong type found: configuration should be an Array");
   }
@@ -35,7 +36,8 @@ export function isBopsConfigurationEntry (input : unknown) : asserts input is Bo
 
     const moduleTypes = ["schemaFunction", "external", "internal", "bop", "output", "variable", "protocol"];
     if (!moduleTypes.includes(config.moduleType)) {
-      throw Error("\"moduleType\" must be one of the following: " + moduleTypes.join(", "));
+      const header = `(${config.key}@${parent}})`;
+      throw Error(`${header}\"moduleType\" must be one of the following: " + ${moduleTypes.join(", ")}`);
     }
 
     validateModulePackage(config);

@@ -235,13 +235,15 @@ export class FunctionSetup {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private buildBops () : void {
-    const unbuiltBopsNames = this.systemConfiguration.businessOperations.map((bopConfig) => {
-      return bopConfig.name;
-    }).filter((bopName) => !this.bopsManager.functionIsDeclared(bopName));
+  private buildBops (alreadyBuilt = 0) : void {
+    const unbuiltBopsNames = this.systemConfiguration.businessOperations
+      .map(bopConfig => bopConfig.name)
+      .filter(bopName => !this.bopsManager.functionIsDeclared(bopName));
 
     if (unbuiltBopsNames.length === 0) {
-      logger.success("[BOps Build] All BOps are built");
+      if(alreadyBuilt === 0) logger.warn("[BOps Build] No bops were built");
+
+      logger.success(`[BOps Build] Finished building ${alreadyBuilt} bops.`);
       return;
     }
 
@@ -258,6 +260,8 @@ export class FunctionSetup {
       return true;
     });
 
+    let bopsBuilt = 0;
+
     bopsWithMetDependencies.forEach((bopName) => {
       const currentBopConfig = this.systemConfiguration.businessOperations
         .find((bopConfig) => bopConfig.name === bopName);
@@ -267,9 +271,10 @@ export class FunctionSetup {
         bopName,
         this.bopsEngine.stitch(currentBopConfig),
       );
+      bopsBuilt++;
     });
 
-    this.buildBops();
+    this.buildBops(bopsBuilt);
   }
 
   public getBopsManager () : FunctionManager {

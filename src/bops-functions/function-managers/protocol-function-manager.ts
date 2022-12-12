@@ -102,8 +102,8 @@ export class ProtocolFunctionManagerClass implements FunctionManager {
 
   public addFunction (functionName : string, protocolIdentifier : string) : void {
     if(!this.protocolIsInstantiated(protocolIdentifier)) {
-      throw Error(`Protocol function "${functionName}" from protocol "${protocolIdentifier}" was required `
-        + "in the config but such protocol is not installed");
+      throw Error(`Protocol function "${functionName}" from protocol id "${protocolIdentifier}" was required `
+        + `in the config but such protocol is not installed \n\tAvailable: ${Array.from(this.instanceMap.keys())}`);
     }
     const instance = this.getProtocolInstance(protocolIdentifier);
     const protocolInstanceFunction = instance.getProtocolPublicMethods()[functionName];

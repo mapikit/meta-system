@@ -5,7 +5,7 @@ import { LogLevelsType, LoggerType, LogLevels, logLevelsArray, Styles, StylingFu
 export class LoggerClass {
   constructor () { this.initialize(constants.DEFAULT_LOG_LEVEL); }
 
-  public initialize (logLevel : LogLevelsType, styles : Styles = defaultStyleFunctions) : LoggerType {
+  public initialize (logLevel : LogLevelsType, styles : Styles = defaultStyleFunctions) : void {
 
     for(const level of logLevelsArray) {
       const style : StylingFunction = styles[level] ?? styles.default ?? String;
@@ -15,7 +15,6 @@ export class LoggerClass {
         (...data : unknown[]) : void => { process.stdout.write(style(data)); } :
         () : void => { /* EMPTY LOG FUNCTION */ };
     }
-    return logger as LoggerType;
   };
 }
 
