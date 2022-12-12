@@ -13,6 +13,7 @@ import { ObjectDefinition } from "@meta-system/object-definition";
 import ReadLine from "readline";
 import { ExtendedJsonTypes } from "../common/types/json-types";
 import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type";
+import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
 
 
 // eslint-disable-next-line max-lines-per-function
@@ -70,7 +71,9 @@ export async function testBopFunction (configPath : string, bopName : string) : 
   const functionToTest = functionsManager.get(bopName);
 
   // functionToTest(JSON.parse(testInput));
-  const bopInfo = environment.constants.currentConfig.businessOperations.find(bop => bop.name === bopName);
+  const deserializer = new DeserializeConfigurationCommand();
+  await deserializer.execute(await import(environment.constants.configPath));
+  const bopInfo = deserializer.result.businessOperations.find(bop => bop.name === bopName);
   await new Promise<void>(res => setTimeout(res, 500));
   while(true) {
     const input = resolveInputTypes(bopInfo.input, await getTestInput(bopInfo.input));

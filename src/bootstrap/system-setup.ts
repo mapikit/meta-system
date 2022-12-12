@@ -14,7 +14,7 @@ export class SystemSetup {
   private protocolsManager : ProtocolsSetup;
 
   // eslint-disable-next-line max-lines-per-function
-  public async execute () : Promise<void> {
+  public async execute () : Promise<FunctionManager> {
     logger.operation("[System Setup] System setup starting");
     logger.operation("[System Setup] Retrieving system configuration");
     const fileContent = await this.getFileContents();
@@ -46,6 +46,7 @@ export class SystemSetup {
 
     logger.operation("[System Setup] Starting protocols");
     this.protocolsManager.startAllProtocols();
+    return systemFunctionsManager;
   }
 
   public async stop () : Promise<void> {
@@ -67,6 +68,24 @@ export class SystemSetup {
       .catch(error => logger.fatal("Error when attempting to stop the system:", error));
   }
 
+  public async testBop (bopName : string, stringInput : string) : Promise<void> {
+    logger.operation("Testing bop", bopName, "with", stringInput);
+
+    const functionsManager = await this.execute();
+
+
+    const requiredFunction = functionsManager.get(bopName);
+    if(requiredFunction === undefined) {
+      logger.error("Function to test does not exist");
+      return;
+    }
+
+    try {
+      const parsedInput = stringInput !== undefined ? JSON.parse(stringInput) : {};
+      await requiredFunction(parsedInput);
+    } catch (error) { throw error; }
+  }
+
   private async deserializeConfiguration (validationContent : unknown) : Promise<Configuration> {
     const deserializer = new DeserializeConfigurationCommand();
     await deserializer.execute(validationContent);
@@ -74,7 +93,7 @@ export class SystemSetup {
     return deserializer.result;
   }
 
-  private async getFileContents () : Promise<string> {
+  public async getFileContents () : Promise<object> {
     logger.operation(`[System Setup] Searching system configuration in paths: "${environment.constants.configPath}"`);
 
     const content = await import(environment.constants.configPath as string);

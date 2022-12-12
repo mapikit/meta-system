@@ -7,7 +7,7 @@ export const updateInfo : InternalMetaFunction = {
   version: "0.0.1",
   input: {
     query: { type: "cloudedObject", required: true },
-    data: { type: "cloudedObject", required: true },
+    data: { type: "%entity", required: true },
   },
   output: {
     success: { type: "boolean", required: true },
