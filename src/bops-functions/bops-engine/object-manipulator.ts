@@ -2,17 +2,44 @@ import { CloudedObject } from "../../common/types/clouded-object";
 // import { inspect } from "util";
 
 export class ObjectResolver {
-  public static flattenObject (source : unknown) : CloudedObject {
-    const result = {};
-    for(const key of Object.keys(source)) {
+  // eslint-disable-next-line max-lines-per-function
+  public static flattenObject (source : Array<object>, partial = {}) : CloudedObject {
+    const result = partial;
+    for(let sourceIndex = 0; sourceIndex < source.length; sourceIndex++) {
+      if(source[sourceIndex] === undefined) continue;
+      const key = Object.keys(source[sourceIndex])[0];
       const targetLevels = key.split(".");
       let current = result;
-      targetLevels.forEach((level, index) => {
-        current[level] = (index === targetLevels.length-1) ? source[key] : current[level] || {};
-        current = current[level];
+      targetLevels.every((level, index) => {
+        if(level.endsWith("]")) {
+          this.solveArray(targetLevels.slice(index).join("."), source[sourceIndex][key], current);
+          return false;
+        }
+        else {
+          current[level] = (index === targetLevels.length-1) ? source[sourceIndex][key] : current[level] || {};
+          current = current[level];
+        }
+        return true;
       });
     }
     return result;
+  }
+
+  //TODO Maybe look into even better ways of improving the efficiency of this method
+  private static solveArray (level : string, sourceItem : object, targetObject : object) : void {
+    let value = sourceItem;
+    const openBracket = level.indexOf("[");
+    const key = level.slice(0, openBracket);
+    const closeBracket = level.indexOf("]");
+    const index = level.slice(openBracket+1, closeBracket);
+
+    if(targetObject[key] === undefined) targetObject[key] = [];
+    if(level.length-1 > closeBracket) value = this.flattenObject([{ [level.slice(closeBracket+2)]: value }]);
+    if(index === "") targetObject[key].push(value);
+    else {
+      value = typeof value === "object" ? Object.assign(targetObject[key][index] ?? {}, value) : value;
+      targetObject[key][index] = value;
+    }
   }
 
   public static extractProperty (source : unknown, path ?: string[]) : unknown {

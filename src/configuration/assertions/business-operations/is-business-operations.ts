@@ -26,7 +26,8 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
 
   requiredObjectKeys.forEach((requiredKey) => {
     if (!inputKeys.includes(requiredKey)) {
-      throw new Error(`Business Operation with incorrect format found: Missing key "${requiredKey}"`);
+      const name : string = input["name"] ?? "Unnamed";
+      throw new Error(`${name} Business Operation with incorrect format found: Missing key "${requiredKey}"`);
     }
   });
 
@@ -39,5 +40,5 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
   isBopsConstants(businessOperationInput.constants);
   isBopsVariables(businessOperationInput.variables);
   isBopsCustomObjects(businessOperationInput.customObjects);
-  isBopsConfigurationEntry(businessOperationInput.configuration);
+  isBopsConfigurationEntry(businessOperationInput.configuration, businessOperationInput.name);
 };

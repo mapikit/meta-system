@@ -42,6 +42,9 @@ export class DependencyPropValidator {
       }
       this.typeCheckingLevel = selectedLevel > 4 ? 4 : selectedLevel;
     }
+
+    this.validateTargetPaths(this.systemConfig.businessOperations);
+
     this.systemConfig.businessOperations.forEach(bop => {
       this.workingBop = bop;
       bop.configuration.forEach(module => {
@@ -57,6 +60,36 @@ export class DependencyPropValidator {
       });
     });
     logger.success("[Dependency Validation] Finished validating dependencies");
+  }
+
+  private validateTargetPaths (bops : Array<BusinessOperations>) : void {
+    bops.forEach(bop => {
+      bop.configuration.forEach(config => {
+        const infoHeader = `[${bop.name}@${config.key}] `;
+        config.dependencies.forEach(dependency => this.validateTargetPath(infoHeader, dependency));
+      });
+    });
+  }
+
+  private validateTargetPath (infoHeader : string, dep : Dependency) : void {
+    if(dep.targetPath === undefined) return;
+    if(dep.targetPath.includes("[") || dep.targetPath.includes("]")) this.validateArrayPath(dep, infoHeader);
+  }
+
+  private validateArrayPath (dep : Dependency, infoHeader : string) : void {
+    const path = dep.targetPath;
+    if(!(path.includes("[") && path.includes("]"))) {
+      throw Error(infoHeader + " Array target path does is missing an open/close bracket");
+    }
+    const openBracket = path.indexOf("[");
+    const closeBracket = path.indexOf("]");
+    const index = path.slice(openBracket+1, closeBracket);
+    if(index !== "" && (!Number.isInteger(Number(index)) || Number(index) < 0)) {
+      throw Error(infoHeader + "Array target path index must be a positive integer");
+    }
+    if(closeBracket < path.length-1 && index === "") {
+      logger.warn(infoHeader + "Deep array access should only be used with indexed arrays");
+    }
   }
 
   private getCustomTypes (info : FunctionInfoType) : CustomType[] {
