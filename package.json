@@ -99,7 +99,7 @@
     "eslint": "^7.29.0",
     "eslint-plugin-import": "^2.20.2",
     "faker": "^4.1.0",
-    "mocha": "^7.1.1",
+    "mocha": "^10.2.0",
     "mongodb-memory-server": "^6.9.6",
     "nyc": "^14.1.1",
     "sinon": "^8.1.1",
