@@ -15,6 +15,11 @@
 - Improved the meta-system CLI options
   - Currently the available options are debug, create-log-file, log-level, and type-check.
   - For more info on those as well as some extra accessory options you can use the --help to option
+- It is now possible to insert arrays directly from the "targetPath" as described in issue #83
+  - Writing it as `targetArray[]` will push the value to an array called `targetArray`
+  - Writing as `targetArray[n]` will insert the value at the specified `n` index
+  - When using a fixed index, you may also insert complex objects. For instance:
+    - `targetArray[2].name` will add an object at index 2 and set the name property to the given value.
 
 ## 0.2.3
 - Fixed bug #64 . The package dependency manager was not handling the case of having multiple installations of the same package if its version was "latest"
