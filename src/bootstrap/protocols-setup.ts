@@ -45,6 +45,8 @@ export class ProtocolsSetup {
 
       this.protocolsManager.addProtocolInstance(createdProtocol, protocol.identifier);
     }
+
+    logger.success("[System Protocols] - Finished adding all protocols");
   }
 
   // eslint-disable-next-line max-lines-per-function

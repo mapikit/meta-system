@@ -20,7 +20,7 @@ describe("Protocols Testing", () => {
   );
 
   before(purgeTestPackages);
-  afterEach(purgeTestPackages);
+  after(purgeTestPackages);
 
   it("Protocol setup", (done) => {
     protocolsSetup.execute()
@@ -32,10 +32,10 @@ describe("Protocols Testing", () => {
     protocolsSetup.execute()
       .then(() =>
         functionsManager.setup()
-          .then(() => {
+          .then(async () => {
             try {
               protocolsSetup.startAllProtocols();
-              protocolsSetup.stopAllProtocols();
+              await protocolsSetup.stopAllProtocols();
               done();
             }
             catch (error) { expect.fail(error); }

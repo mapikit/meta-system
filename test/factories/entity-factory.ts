@@ -1,6 +1,6 @@
 import { SchemaType } from "../../src/configuration/schemas/schemas-type";
 import faker from "faker";
-import { TypeDefinition } from "@meta-system/meta-function-helper/dist/src/object-definition/object-definition-type";
+import { ObjectDefinition } from "@meta-system/object-definition";
 
 export const entityFactory = (schemaFormat : SchemaType["format"]) : object => {
   const entity = {};
@@ -25,7 +25,7 @@ const typeCreation = {
     return array;
   },
 
-  object: (dataType : Record<string, TypeDefinition>) : object => {
+  object: (dataType : ObjectDefinition) : object => {
     const object = {};
     for(const prop in dataType) {
       object[prop] = typeCreation[dataType[prop].type](dataType[prop]["subtype"]);
