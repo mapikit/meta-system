@@ -98,7 +98,12 @@ export class DependenciesManager {
   }
 
   public async uninstallAll () : Promise<void> {
-    await FS.promises.rmdir(this.dependencyPath, { recursive: true });
+    const hasDependencies = this.installedDeps.size !== 0;
+    await FS.promises.rmdir(this.dependencyPath, { recursive: true })
+      .catch((error) => {
+        if (error.code === "ENOENT" && !hasDependencies) return;
+        throw error;
+      });
 
     this.installedDeps.clear();
     this.latestVersions.clear();

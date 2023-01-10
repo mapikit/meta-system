@@ -25,8 +25,7 @@ export class ProtocolsSetup {
 
     for (const protocolConfig of requiredProtocols) {
       const protocol = new Protocol(protocolConfig);
-      await this.protocolsManager
-        .installProtocol(protocol);
+      await this.protocolsManager.installProtocol(protocol);
       const NewableProtocol = await this.protocolsManager.getProtocolNewable(protocol.protocol);
 
       let createdProtocol;

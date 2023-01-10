@@ -25,7 +25,7 @@ export class BopsEngine {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  public stitch (operation : BusinessOperations, msTimeout = constants.ENGINE_TTL) : Function {
+  public stitch (operation : BusinessOperations, msTimeout : number = constants.ENGINE_TTL) : Function {
     this.systemContext.generateMappedFunctions();
     const output = operation.configuration.find(module => module.moduleType === "output");
 

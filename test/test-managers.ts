@@ -26,8 +26,7 @@ const testExternalManager = new ExternalFunctionManagerClass(testInstaller, test
 const testProtocolManager = new ProtocolFunctionManagerClass(testInstaller, testProtocolFileSystem);
 
 const purgeTestPackages = async () : Promise<void> => {
-  await testInstaller.purgePackages()
-    .catch(error => { throw error; });
+  await testInstaller.purgePackages();
 
   await testExternalManager.flush();
 };

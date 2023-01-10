@@ -86,9 +86,8 @@ describe("Bops Engine Testing", () => {
   afterEach(() => {
     testProtocolManager.flush();
   });
-  after(async () => {
-    await purgeTestPackages();
-  });
+
+  after(purgeTestPackages);
 
   it("Test of prebuilt functions", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(mapikitProvidedBop);
