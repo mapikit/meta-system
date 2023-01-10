@@ -38,7 +38,7 @@ export class DependenciesManager {
           return resolve();
         }
 
-        reject();
+        reject(err);
       });
     });
 

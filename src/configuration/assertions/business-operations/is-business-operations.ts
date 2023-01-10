@@ -1,10 +1,10 @@
 import { isBopsConstants } from "./is-bops-constants";
 import { isBopsCustomObjects } from "./is-bops-custom-objects";
 import { isBopsConfigurationEntry } from "./is-bops-configuration";
-import { isObjectDefinition } from "@meta-system/meta-function-helper/dist/src/object-definition/is-object-definition";
 import { BusinessOperations } from "../../business-operations/business-operations-type";
 import { isType } from "../is-type";
 import { isBopsVariables } from "./is-bops-variables";
+import { isObjectDefinition } from "@meta-system/object-definition";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [
   "configuration",
