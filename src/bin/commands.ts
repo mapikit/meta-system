@@ -15,6 +15,7 @@ const run = new Command("run")
     environment.silent.constants.logLevel = "debug";
   })
   .option("-L, --create-log-file, --log-file", "Saves logs to a file inside logs folder")
+  .option("-S, --skip-prop-validation", "Skips validation of properties types")
   .option("-D, --dev", "Automatically restarts the system on config file update")
   // Currently disabled, will be re-enabled in 0.5 with file splitting support
   .addOption(

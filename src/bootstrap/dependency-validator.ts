@@ -16,6 +16,7 @@ import chalk from "chalk";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { logger } from "../common/logger/logger";
 import { SchemasFunctions } from "../schemas/domain/schemas-functions";
+import { environment } from "../common/execution-env";
 
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 
@@ -34,14 +35,7 @@ export class DependencyPropValidator {
   // eslint-disable-next-line max-lines-per-function
   public verifyAll () : void {
     logger.operation("[Dependency Validation] Starting validation of all registered dependencies");
-    const typeSafeArgIndex = process.argv.indexOf("--type-check");
-    if(typeSafeArgIndex > -1) {
-      const selectedLevel = Number(process.argv[typeSafeArgIndex+1]);
-      if(typeof selectedLevel !== "number" || selectedLevel < 0) {
-        throw Error("Invalid type-check value; Must be a number between 0-4");
-      }
-      this.typeCheckingLevel = selectedLevel > 4 ? 4 : selectedLevel;
-    }
+    this.typeCheckingLevel = Number(environment.constants.typeCheck);
 
     this.validateTargetPaths(this.systemConfig.businessOperations);
 

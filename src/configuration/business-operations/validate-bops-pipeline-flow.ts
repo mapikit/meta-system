@@ -19,6 +19,11 @@ export class ValidateBopsPipelineFlowCommand {
 
   private extractModules () : void {
     this.businessOperation.configuration.forEach((configurationEntry) => {
+      if(this.functions.has(configurationEntry.key)) {
+        const sameIdModuleName = this.functions.get(configurationEntry.key).moduleName;
+        throw Error(`Duplicate keys in Bop ${this.businessOperation.name}\n` +
+        `\t- Both modules "${sameIdModuleName}" and "${configurationEntry.moduleName}" have the same identifier`);
+      }
       this.functions.set(configurationEntry.key, configurationEntry);
     });
   }
