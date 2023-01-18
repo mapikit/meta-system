@@ -27,10 +27,10 @@ export const setVariablesFunctionInformation : InternalMetaFunction = {
   functionName: "setVariables",
   version: "1.0.0",
   description: "Sets the variables in targetPath to the new value",
-  inputParameters: {
+  input: {
     "%variableName": { type: "any", required: true },
   },
-  outputData: {
+  output: {
     newValue: { type: "any", required: false },
     errorMessage: { type: "string", required: false },
   },

@@ -19,11 +19,11 @@ export const toExponentialBopsFunctionInformation : InternalMetaFunction = {
   functionName: "toExponential",
   version: "1.0.0",
   description: "Gets the index of a substring in the string",
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage : { type: "string", required: false },
   },
-  inputParameters: {
+  input: {
     string: { type: "string", required: true },
     decimalPlaces: { type: "number", required: false },
   },

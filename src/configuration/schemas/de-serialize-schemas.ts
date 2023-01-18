@@ -1,12 +1,12 @@
 import { isSchema } from "../assertions/schema/is-schema";
 import { Schema } from "./schema";
-import { SchemasType } from "./schemas-type";
+import { SchemaType } from "./schemas-type";
 
 export class DeserializeSchemasCommand {
   private result : Schema[] = [];
   private schemaNames : string[] = [];
 
-  public get resultSchemas () : SchemasType[] {
+  public get resultSchemas () : SchemaType[] {
     return this.result;
   };
 
@@ -15,8 +15,14 @@ export class DeserializeSchemasCommand {
   }
 
   public execute (schemaList : unknown[]) : void {
+    const foundIdentifiers : Record<string, string> = {};
     schemaList.forEach((input) => {
       isSchema(input);
+      if(Object.keys(foundIdentifiers).includes(input.identifier)) {
+        throw Error(`Duplicate schema identifier "${input.identifier}"\n` +
+          `\t - Schemas "${input.name}" and "${foundIdentifiers[input.identifier]}" have the same identifier`);
+      }
+      foundIdentifiers[input.identifier] = input.name;
       this.result.push(new Schema(input));
       this.schemaNames.push(input.name);
     });

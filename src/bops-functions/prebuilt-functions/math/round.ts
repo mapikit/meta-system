@@ -23,11 +23,11 @@ export const roundFunctionInformation : InternalMetaFunction = {
   functionName: "round",
   version: "1.0.0",
   description: "Rounds Input to a given precision",
-  inputParameters: {
+  input: {
     input: { type: "number",  required: true  },
     precision: { type: "number",  required: true  },
   },
-  outputData: {
+  output: {
     result: { type: "number",  required: false },
     errorNaN: { type: "string",  required: false },
   },

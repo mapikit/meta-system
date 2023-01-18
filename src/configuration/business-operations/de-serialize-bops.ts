@@ -1,6 +1,5 @@
 import { isBusinessOperations } from "../assertions/business-operations/is-business-operations";
 import { BusinessOperation } from "./business-operation";
-import { BusinessOperations } from "./business-operations-type";
 import { BopsCyclicDependencyCheck } from "./cyclic-dependency-check";
 import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects";
 import { ValidateBopsPipelineFlowCommand } from "./validate-bops-pipeline-flow";
@@ -22,6 +21,6 @@ export class DeserializeBopsCommand {
       this.result.push(businessOperationInstance);
     });
 
-    new BopsCyclicDependencyCheck(businessOperations as BusinessOperations[]).checkAllBops();
+    new BopsCyclicDependencyCheck(this.result).checkAllBops();
   }
 }

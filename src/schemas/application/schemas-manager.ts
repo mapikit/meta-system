@@ -1,38 +1,46 @@
-import { MongoClient } from "mongodb";
-import { MetaRepository } from "../../common/meta-repository";
-import { SchemasType } from "../../configuration/schemas/schemas-type";
+import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager";
+import { assertsDbProtocol } from "../../configuration/protocols/is-db-protocol";
+import { SchemaType } from "../../configuration/schemas/schemas-type";
+import { logger } from "../../common/logger/logger";
 import { SchemaManager } from "./schema-manager";
 
 export class SchemasManager {
-  private readonly dbConnection : MongoClient;
   private readonly systemName : string;
   public schemas : Map<string, SchemaManager> = new Map();
+  private readonly protocolsManager : ProtocolFunctionManagerClass;
 
-  constructor (systemName : string, mongoConnection : MongoClient) {
-    this.dbConnection = mongoConnection;
+  constructor (systemName : string, protocolFunctionManager : ProtocolFunctionManagerClass) {
     this.systemName = systemName;
+    this.protocolsManager = protocolFunctionManager;
   }
 
-  private async addSchema (schema : SchemasType) : Promise<void> {
-    const repository = new MetaRepository(this.dbConnection);
-    await repository.initialize(schema, this.systemName);
+  private async addSchema (schema : SchemaType) : Promise<void> {
+    logger.operation(`[Schemas] Adding Schema "${schema.name}" - DB protocol "${schema.dbProtocol}"`);
+    const dbProtocol = this.protocolsManager.getProtocolInstance(schema.dbProtocol);
+    if(dbProtocol === undefined) {
+      throw Error(`No db protocol registered as "${schema.dbProtocol}". ` +
+      `Available are: ${this.protocolsManager.getAvailableDbProtocolsNames().join(", ")}`);
+    }
+    assertsDbProtocol(dbProtocol, " - Could not add protocol to schema!");
+
+    await this.protocolsManager.initializeDbProtocol(schema.dbProtocol);
 
     const schemaManager = new SchemaManager({
-      schema, metaRepository: repository, systemName: this.systemName,
+      schema, dbProtocol, systemName: this.systemName,
     });
 
     this.schemas.set(schema.name, schemaManager);
   }
 
-  public async addSystemSchemas (systemSchemas : SchemasType[]) : Promise<void> {
+  public async addSystemSchemas (systemSchemas : SchemaType[]) : Promise<void> {
     for (const schema of systemSchemas) {
       await this.addSchema(schema)
         .then(async () => {
-          console.log(`[Schemas] Schema "${schema.name}" successfully added`);
+          logger.success(`[Schemas] Schema "${schema.name}" successfully added`);
         })
         .catch(err => {
-          console.log(`[Schemas] Error while adding schema "${schema.name}"`);
-          console.log(err);
+          logger.error(`[Schemas] Error while adding schema "${schema.name}"`);
+          logger.error(err);
         });
     }
   }

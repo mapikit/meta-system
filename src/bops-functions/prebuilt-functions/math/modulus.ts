@@ -22,11 +22,11 @@ export const modulusFunctionInformation : InternalMetaFunction = {
   functionName: "modulus",
   version: "1.0.0",
   description: "Gets the remainder of the division of A by B",
-  inputParameters: {
+  input: {
     A: { type: "number", required: true },
     B: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorNotANumber: { type: "string", required: false },
     errorDivisionByZero: { type: "string", required: false },

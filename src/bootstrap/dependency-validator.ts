@@ -6,13 +6,17 @@ import {
   Dependency,
   ModuleType } from "../configuration/business-operations/business-operations-type";
 import { ConfigurationType } from "../configuration/configuration-type";
-import { CustomType, ObjectDefinition } from "meta-function-helper";
+import { CustomType, MetaFunction } from "@meta-system/meta-function-helper";
 import { schemaFunctionInfoMap } from "../schemas/application/schema-functions-info";
 import { VariableContext } from "../bops-functions/bops-engine/variables/variables-context";
 import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager";
 import clone from "just-clone";
 import { InternalFunctionManagerClass } from "bops-functions/function-managers/internal-function-manager";
 import chalk from "chalk";
+import { ObjectDefinition } from "@meta-system/object-definition";
+import { logger } from "../common/logger/logger";
+import { SchemasFunctions } from "../schemas/domain/schemas-functions";
+import { environment } from "../common/execution-env";
 
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;
 
@@ -30,22 +34,18 @@ export class DependencyPropValidator {
 
   // eslint-disable-next-line max-lines-per-function
   public verifyAll () : void {
-    console.log(chalk.greenBright("[Dependency Validation] Starting validation of all registered dependencies"));
-    const typeSafeArgIndex = process.argv.indexOf("--type-check");
-    if(typeSafeArgIndex > -1) {
-      const selectedLevel = Number(process.argv[typeSafeArgIndex+1]);
-      if(typeof selectedLevel !== "number" || selectedLevel < 0) {
-        throw Error("Invalid type-check value; Must be a number between 0-4");
-      }
-      this.typeCheckingLevel = selectedLevel > 4 ? 4 : selectedLevel;
-    }
+    logger.operation("[Dependency Validation] Starting validation of all registered dependencies");
+    this.typeCheckingLevel = Number(environment.constants.typeCheck);
+
+    this.validateTargetPaths(this.systemConfig.businessOperations);
+
     this.systemConfig.businessOperations.forEach(bop => {
       this.workingBop = bop;
       bop.configuration.forEach(module => {
         this.getHeader = (errorType : string) : string =>
           chalk.yellowBright(`[${errorType} in BOp "${bop.name}" @ key ${module.key} (${module.moduleName})]\n`);
 
-        this.requiredInputsFullfilled(module);
+        this.requiredInputsFulfilled(module);
         module.dependencies.forEach(dependency => {
           if(dependency.originPath === undefined) return;
           this.validateIO(dependency, module, bop);
@@ -53,7 +53,37 @@ export class DependencyPropValidator {
         });
       });
     });
-    console.log(chalk.greenBright("[Dependency Validation] Finished validating dependencies"));
+    logger.success("[Dependency Validation] Finished validating dependencies");
+  }
+
+  private validateTargetPaths (bops : Array<BusinessOperations>) : void {
+    bops.forEach(bop => {
+      bop.configuration.forEach(config => {
+        const infoHeader = `[${bop.name}@${config.key}] `;
+        config.dependencies.forEach(dependency => this.validateTargetPath(infoHeader, dependency));
+      });
+    });
+  }
+
+  private validateTargetPath (infoHeader : string, dep : Dependency) : void {
+    if(dep.targetPath === undefined) return;
+    if(dep.targetPath.includes("[") || dep.targetPath.includes("]")) this.validateArrayPath(dep, infoHeader);
+  }
+
+  private validateArrayPath (dep : Dependency, infoHeader : string) : void {
+    const path = dep.targetPath;
+    if(!(path.includes("[") && path.includes("]"))) {
+      throw Error(infoHeader + " Array target path does is missing an open/close bracket");
+    }
+    const openBracket = path.indexOf("[");
+    const closeBracket = path.indexOf("]");
+    const index = path.slice(openBracket+1, closeBracket);
+    if(index !== "" && (!Number.isInteger(Number(index)) || Number(index) < 0)) {
+      throw Error(infoHeader + "Array target path index must be a positive integer");
+    }
+    if(closeBracket < path.length-1 && index === "") {
+      logger.warn(infoHeader + "Deep array access should only be used with indexed arrays");
+    }
   }
 
   private getCustomTypes (info : FunctionInfoType) : CustomType[] {
@@ -83,8 +113,8 @@ export class DependencyPropValidator {
             break;
         }
       } catch (e) {
-        console.log(chalk.redBright("[Dependency Validation] Failed to validate types - Aborting! " +
-        `@ ${bop.name} -> ${module.key} (${module.moduleName}) Dependency: [${JSON.stringify(dependency)}]`));
+        logger.fatal("[Dependency Validation] Failed to validate types - Aborting! " +
+        `@ ${bop.name} -> ${module.key} (${module.moduleName}) Dependency: [${JSON.stringify(dependency)}]`);
         throw e;
       }
       if(types[of.origin] === types[of.target] || types[of.target] === "any") return;
@@ -92,14 +122,14 @@ export class DependencyPropValidator {
 
       if(this.typeCheckingLevel === 1) {
         if(types.includes("unknown")) return;
-        return console.log(this.getHeader("Type Error"),
+        return logger.warn(this.getHeader("Type Error"),
           `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
           `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
         );
       }
 
       if(this.typeCheckingLevel === 2) {
-        return console.log(this.getHeader("Type Error"),
+        return logger.warn(this.getHeader("Type Error"),
           `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
           `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
         );
@@ -107,7 +137,7 @@ export class DependencyPropValidator {
 
       if(this.typeCheckingLevel === 3) {
         if(types.includes("unknown")) {
-          return console.log(this.getHeader("Type Error"),
+          return logger.warn(this.getHeader("Type Error"),
             `  >> Possibly invalid type from ${dependency.origin} "${dependency.originPath}"\n`,
             `     :: ${types[of.origin]} type may not be assignable to ${types[of.target]}`,
           );
@@ -127,7 +157,7 @@ export class DependencyPropValidator {
     }
   }
 
-  private requiredInputsFullfilled (module : BopsConfigurationEntry) : void {
+  private requiredInputsFulfilled (module : BopsConfigurationEntry) : void {
     const functionInfo = this.getFunctionInfo(module);
     if(functionInfo === undefined) return;
     const inputs = this.getFunctionInput(functionInfo) ?? {};
@@ -137,29 +167,31 @@ export class DependencyPropValidator {
     }
     const configuredInputs = module.dependencies.map(dependency => dependency.targetPath?.split(".")[0]);
 
-    const isFullfilled = requiredInputs.every(input => configuredInputs.includes(input));
-    if(!isFullfilled) {
-      console.log(this.getHeader("Missing Required Inputs"),
+    const isFulfilled = requiredInputs.every(input => configuredInputs.includes(input));
+    if(!isFulfilled) {
+      logger.warn(this.getHeader("Missing Required Inputs"),
         `  >> Required inputs are ${requiredInputs} but only ${configuredInputs} were given`);
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private getStaticDependencyType (dependency : Dependency) : string {
     const origin = dependency.origin as string;
     const originPath = dependency.originPath.split(".");
     if(["input", "inputs"].includes(origin as string)) {
       return this.getPathType(this.workingBop.input, originPath, this.getCustomTypes(this.workingBop));
-    } else {
-      if(["constants", "constant"].includes(origin as string)) {
-        return this.workingBop.constants.find(constant => constant.name === originPath[0]).type;
-      }
-      if(["variable", "variables"].includes(origin as string)) {
-        return this.workingBop.variables.find(variable => variable.name === originPath[0]).type;
-      }
+    }
+    if(["constants", "constant"].includes(origin)) {
+      return this.workingBop.constants.find(constant => constant.name === originPath[0]).type;
+    }
+    if(["variable", "variables"].includes(origin)) {
+      return this.workingBop.variables.find(variable => variable.name === originPath[0]).type;
+    }
+    if(["envs", "env", "environment"].includes(origin)) {
+      return "string";
     }
   }
 
-  // eslint-disable-next-line max-lines-per-function
   private getStaticTypes (dependency : Dependency, inputInfo : FunctionInfoType) : [string, string] {
     const targetPath = dependency.targetPath.split(".");
     const targetInputInfo = this.getFunctionInput(inputInfo);
@@ -172,12 +204,12 @@ export class DependencyPropValidator {
 
   private getFunctionOutput (functionInfo : FunctionInfoType) : ObjectDefinition {
     if(functionInfo === undefined) return {};
-    return functionInfo["outputData"] ?? functionInfo["output"] ?? {};
+    return functionInfo["output"] ?? functionInfo["output"] ?? {};
   }
 
   private getFunctionInput (functionInfo : FunctionInfoType) : ObjectDefinition {
     if(functionInfo === undefined) return {};
-    return functionInfo["inputParameters"] ?? functionInfo["input"];
+    return functionInfo["input"] ?? functionInfo["input"];
   }
 
   private getFunctionInfo (module : BopsConfigurationEntry) : FunctionInfoType {
@@ -204,7 +236,7 @@ export class DependencyPropValidator {
     const moduleName = functionInfo["functionName"] ?? functionInfo["name"];
     if(originPathArray[0] === undefined) return;
     if(!Object.keys(outputs).includes(originPathArray[0])) {
-      console.warn(
+      logger.warn(
         this.getHeader("Origin Unavailable"),
         `  >> Requested property "${originPathArray[0]}" is not output of function "${moduleName}"` +
         ` (${dependency.origin})\n`,
@@ -260,7 +292,7 @@ export class DependencyPropValidator {
     const targetPath = dependency.targetPath.split(".");
     if(targetPath[0] === undefined) return;
     if(!Object.keys(inputs).includes(targetPath[0])) {
-      console.log(this.getHeader("Input Unavailable"),
+      logger.warn(this.getHeader("Input Unavailable"),
         `  >> Targeted property "${targetPath[0]}" is not input of function "${functionName}"\n`,
         `     :: Available inputs are: ${Object.keys(inputs)}`,
       );
@@ -270,24 +302,41 @@ export class DependencyPropValidator {
   private infoResolver : { [type in ModuleType] :
     (name : string, packageName ?: string) => FunctionInfoType } = {
     "internal": (name) => {
-      return this.internalManager.infoMap.get(name);
+      // Internals does not require complete Meta-Function
+      return this.internalManager.infoMap.get(name) as MetaFunction;
     },
     "external": (name, packageName) => {
       const externalInfo = this.externalManager.getFunctionInfo(name, packageName);
       return externalInfo;
     },
     "bop": (name) => {
-      return this.systemConfig.businessOperations.find(bop => bop.name === name);
+      const bopDetails = this.systemConfig.businessOperations.find(bop => bop.name === name);
+
+      return {
+        "input": bopDetails.input,
+        "output": bopDetails.output,
+        "functionName": name,
+        "entrypoint": "",
+        "description": "",
+        "mainFunction": "",
+        "version": "",
+      };
     },
     "protocol": (name, modulePackage) => {
-      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage).packageDetails;
-      const functionInfo = protocolInfo.functionsDefinitions.find(funct => funct.functionName === name);
-      return functionInfo;
+      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage);
+      const functionInfo = protocolInfo.functionDefinitions.find(funct => funct.functionName === name);
+      return {
+        description: protocolInfo.description,
+        version: protocolInfo.version,
+        entrypoint: protocolInfo.entrypoint,
+        mainFunction:  protocolInfo.className,
+        ... functionInfo,
+      };
     },
     // eslint-disable-next-line max-lines-per-function
     "schemaFunction": (name, modulePackage) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
-      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name));
+      const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
+      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name as keyof typeof SchemasFunctions));
       resolvableParameters.forEach(param => {
         Object.keys(schemaFunctionInfo[param]).forEach(key => {
           if(schemaFunctionInfo[param][key].type === "%entity") {
@@ -306,7 +355,7 @@ export class DependencyPropValidator {
       return schemaFunctionInfo;
     },
     "variable": (name) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["inputParameters", "outputData"];
+      const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
       const info = clone(VariableContext.variablesInfo.get(name));
       resolvableParameters.forEach(param => {
         Object.keys(info[param]).forEach(key => {

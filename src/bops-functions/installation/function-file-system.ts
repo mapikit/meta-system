@@ -1,9 +1,8 @@
 // Controls file and dependency structure for BOps functions.
 
-import { assert } from "console";
-import FS from "fs";
+import { getClassConstructor, getDescriptorFileContent } from "@meta-system/meta-function-helper";
 import Path from "path";
-const fsPromise = FS.promises;
+import { logger } from "../../common/logger/logger";
 
 export class FunctionFileSystem {
   private readonly customFunctionsLocation : string;
@@ -24,39 +23,30 @@ export class FunctionFileSystem {
    * Finds and retrieve the configuration file for a given moduleName
    * @param moduleName
    */
-  public async getDescriptionFile (moduleName : string, moduleType : "function" | "package") : Promise<string> {
+  public async getDescriptionFile (moduleName : string, moduleType : "function" | "package") : Promise<unknown> {
     const fileName = moduleType === "function" ? this.configurationFileName : this.packageFileName;
+    const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName);
 
-    const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName, fileName);
-
-    console.log(`[BOPs Function] Retrieving Description File for ${moduleName}`);
-
-    const file = fsPromise.readFile(filePath, "utf8")
+    logger.operation(`[BOPs Function] Retrieving Description File for ${moduleName}`);
+    const file = await getDescriptorFileContent(filePath, fileName)
       .then((result) => {
-        console.log(`[BOPs Function] Success - Retrieved Description File for ${moduleName}`);
+        logger.success(`[BOPs Function] Success - Retrieved Description File for ${moduleName}`);
 
         return result;
       });
 
-    return file;
+    return file["default"];
   }
 
   public async import (moduleName : string, entrypoint : string, mainFunctionName ?: string)
     : Promise<Function | Record<string, Function>> {
-    const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName, entrypoint);
-    console.log(`[BOPs Function] Retrieving main function for ${moduleName}`);
+    const filePath = Path.join(this.customFunctionsLocation, "node_modules", moduleName);
+    logger.operation(`[BOPs Function] Retrieving main function/package for ${moduleName}`);
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const importedEntrypoint = require(filePath);
+    // Actually just a general "import"
+    const result = await getClassConstructor(filePath, entrypoint, mainFunctionName);
+    logger.success(`[BOPs Function] Success - Retrieved main function for ${moduleName}`);
 
-    if (mainFunctionName !== undefined) {
-      const result = importedEntrypoint[mainFunctionName];
-      assert(typeof result === "function");
-      console.log(`[BOPs Function] Success - Retrieved main function for ${moduleName}`);
-      return result;
-    }
-
-    // Packages are an object which the keys are strings and the values are functions.
-    return importedEntrypoint;
+    return result as Function | Record<string, Function>;
   }
 }

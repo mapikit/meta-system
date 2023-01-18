@@ -22,10 +22,10 @@ export const squareRootFunctionInformation : InternalMetaFunction = {
   functionName: "sqrt",
   version: "1.0.0",
   description: "Gets the Square Root of A",
-  inputParameters: {
+  input: {
     A: { type: "number",  required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number",  required: false },
     errorNaN: { type: "string",  required: false },
     errorNegativeA: { type: "string",  required: false },

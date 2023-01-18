@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { asyncTestThrow } from "../helpers/test-throw";
 import { FunctionSetup } from "../../src/bootstrap/function-setup";
 import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup";
 import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
@@ -6,7 +7,6 @@ import { purgeTestPackages, testExternalManager, testProtocolManager } from "../
 import { testSystem } from "./data/system";
 
 describe("Protocols Testing", () => {
-
   const functionsManager = new FunctionSetup(
     internalFunctionManager,
     testExternalManager,
@@ -22,26 +22,29 @@ describe("Protocols Testing", () => {
   before(purgeTestPackages);
   afterEach(purgeTestPackages);
 
-  it("Protocol setup", (done) => {
-    protocolsSetup.execute()
-      .then(() => done())
-      .catch(error => expect.fail(error));
+  it("Protocol setup", async () => {
+    const result = await asyncTestThrow(async () => {
+      await protocolsSetup.execute();
+    });
+
+    expect(result.error).to.be.undefined;
+    expect(result.thrown).to.be.false;
   });
 
-  it("Protocol setup and execution", (done) => {
-    protocolsSetup.execute()
-      .then(() =>
-        functionsManager.setup()
-          .then(() => {
-            try {
-              protocolsSetup.startAllProtocols();
-              protocolsSetup.stopAllProtocols();
-              done();
-            }
-            catch (error) { expect.fail(error); }
-          })
-          .catch(error => expect.fail(error)))
-      .catch(error => expect.fail(error));
+  it("Protocol setup and execution", async () => {
+    const result = await asyncTestThrow(async () => {
+      await protocolsSetup.execute().then(() => {
+        void functionsManager.setup()
+          .then(async () => {
+            protocolsSetup.startAllProtocols();
+            await protocolsSetup.stopAllProtocols();
+          });
+      });
+    });
+
+    expect(result.error).to.be.undefined;
+    expect(result.thrown).to.be.false;
   });
 });
+
 

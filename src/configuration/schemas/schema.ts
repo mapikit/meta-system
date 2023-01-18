@@ -1,8 +1,10 @@
-import { SchemaObject, SchemasType, SchemaTypeDefinition } from "./schemas-type";
+import { ObjectDefinition, TypeDefinition } from "@meta-system/object-definition";
+import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/src/object-definition-type";
+import { SchemaDefinitionExtension, SchemaType } from "./schemas-type";
 
-const getRef = (typeDefinition : SchemaTypeDefinition) : string[] => {
+const getRef = (typeDefinition : TypeDefinition<SchemaDefinitionExtension>) : string[] => {
   if (typeDefinition.type === "object") {
-    return Schema.findRefs(typeDefinition.subtype);
+    return Schema.findRefs((typeDefinition as TypeDefinitionDeep).subtype as ObjectDefinition);
   }
 
   if (typeDefinition.refName !== undefined) {
@@ -12,17 +14,20 @@ const getRef = (typeDefinition : SchemaTypeDefinition) : string[] => {
   return [];
 };
 
-export class Schema implements SchemasType {
+export class Schema implements SchemaType {
   public readonly name : string;
+  public readonly dbProtocol : string;
+  public readonly identifier : string;
+  public readonly format : ObjectDefinition<SchemaDefinitionExtension>;
 
-  public readonly format : SchemaObject;
-
-  public constructor (schema : SchemasType) {
+  public constructor (schema : SchemaType) {
     this.name = schema.name;
     this.format = schema.format;
+    this.dbProtocol = schema.dbProtocol;
+    this.identifier = schema.identifier;
   }
 
-  static findRefs (format : SchemaObject) : string[]  {
+  static findRefs (format : ObjectDefinition<SchemaDefinitionExtension>) : string[]  {
     const values = Object.values(format);
     const results = [];
 

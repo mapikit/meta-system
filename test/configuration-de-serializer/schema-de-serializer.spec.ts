@@ -1,7 +1,7 @@
 
 import { DeserializeSchemasCommand } from "../../src/configuration/schemas/de-serialize-schemas";
 import { expect } from "chai";
-import { ObjectDefinition } from "meta-function-helper";
+import { ObjectDefinition } from "@meta-system/object-definition";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const configurationExample = require("./test-data/configuration-example.json");
@@ -12,7 +12,7 @@ const missingRefNameSchema =
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 describe("Schemas De-Serializer", () => {
-  it("Desserializes schemas correctly formated", () => {
+  it("Desserializes schemas correctly formatted", () => {
     const command = new DeserializeSchemasCommand();
 
     command.execute(configurationExample["schemas"]);

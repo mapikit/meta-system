@@ -10,11 +10,11 @@ export const lowerThanBopsFunctionInformation : InternalMetaFunction = {
   functionName: "lowerThan",
   version: "1.0.0",
   description: "compares A to B, returning if A is lower than B",
-  inputParameters: {
+  input: {
     A: { type: "number", required: true },
     B: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     isLower: { type: "boolean", required: true },
   },
 };

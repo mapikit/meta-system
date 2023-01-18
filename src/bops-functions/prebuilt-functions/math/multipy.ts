@@ -21,10 +21,10 @@ export const multiplyFunctionInformation : InternalMetaFunction = {
   functionName: "multiply",
   version: "1.0.0",
   description: "Multiply the list of numbers provided",
-  inputParameters: {
+  input: {
     numbersToMultiply: { type: "array", subtype: "number",  required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number",  required: false },
     errorMessage: { type: "string",  required: false },
   },

@@ -4,6 +4,7 @@ import { InternalFunctionManagerClass } from "../../bops-functions/function-mana
 import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
 import { Schema } from "../schemas/schema";
 import { BusinessOperation } from "./business-operation";
+import { logger } from "../../common/logger/logger";
 
 export interface BopsDependencies {
   fromSchemas : Array<{ functionName : string; schemaName : string; }>;
@@ -125,6 +126,7 @@ export class CheckBopsFunctionsDependencies {
       }
 
       if (type === typesEnum.protocol) {
+        // The modulePackage - for Protocols - is their identifier, not their name
         protocolsDependencies.push({
           name: bopsFunctionConfig.moduleName,
           version: bopsFunctionConfig.version,
@@ -165,7 +167,7 @@ export class CheckBopsFunctionsDependencies {
       const configurationToVerify = this.fromPropertyPathToType(configurationDependency);
       result = availableInputAndConstantsData.includes(configurationToVerify);
       if (!result) {
-        console.error(`[Dependency Check] Unmet Inputs/Constants dependency: "${configurationDependency}"`);
+        logger.error(`[Dependency Check] Unmet Inputs/Constants dependency: "${configurationDependency}"`);
         return false;
       }
     }
@@ -180,7 +182,7 @@ export class CheckBopsFunctionsDependencies {
     for (const outputDependency of this.dependencies.fromOutputs) {
       result = outputDependency === availableOutputFunction;
       if (!result) {
-        console.error(`[Dependency Check] Unmet output dependency: "${outputDependency}"`);
+        logger.error(`[Dependency Check] Unmet output dependency: "${outputDependency}"`);
         return false;
       }
     }
@@ -209,7 +211,7 @@ export class CheckBopsFunctionsDependencies {
       result = this.internalFunctionManager.functionIsInstalled(internalDependencyName);
 
       if (!result) {
-        console.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
+        logger.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
         return false;
       }
     }
@@ -227,13 +229,13 @@ export class CheckBopsFunctionsDependencies {
 
       result = this.schemas.has(requiredSchema);
       if (!result) {
-        console.error(`[Dependency Check] Unmet schema dependency: "${requiredSchema}" - Missing Schema`);
+        logger.error(`[Dependency Check] Unmet schema dependency: "${requiredSchema}" - Missing Schema`);
         return false;
       }
 
       result = (requiredFunction in SchemasFunctions);
       if (!result) {
-        console.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
+        logger.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
         return false;
       }
     }
@@ -248,7 +250,7 @@ export class CheckBopsFunctionsDependencies {
       result = this.bops.has(bopsDependency);
 
       if (!result) {
-        console.error(`[Dependency Check] Unmet BOp dependency: "${bopsDependency}"`);
+        logger.error(`[Dependency Check] Unmet BOp dependency: "${bopsDependency}"`);
         return false;
       }
     }
@@ -264,7 +266,7 @@ export class CheckBopsFunctionsDependencies {
         .functionIsInstalled(externalDependency.name, externalDependency.package);
 
       if (!result) {
-        console.error(
+        logger.error(
           `[Dependency Check] Unmet external dependency: "${externalDependency.name}@${externalDependency.version}"`,
         );
         return false;
@@ -279,10 +281,11 @@ export class CheckBopsFunctionsDependencies {
 
     for (const protocolDependency of this.dependencies.protocol) {
       result = this.protocolFunctionManager
+        // The package for protocols in BOps **IS** the protocol identifier
         .get(`${protocolDependency.package}.${protocolDependency.name}`) !== undefined;
 
       if (!result) {
-        console.error(
+        logger.error(
           // eslint-disable-next-line max-len
           `[Dependency Check] Unmet protocol dependency: "${protocolDependency.name}@${protocolDependency.version}.${protocolDependency.name}"`,
         );

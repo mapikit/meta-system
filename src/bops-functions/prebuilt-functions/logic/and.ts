@@ -10,11 +10,11 @@ export const andGateBopsFunctionInformation : InternalMetaFunction = {
   functionName: "and",
   version: "1.0.0",
   description: "And gate comparing boolean values for A and B",
-  inputParameters: {
+  input: {
     A: { type: "boolean", required: true },
     B: { type: "boolean", required: true },
   },
-  outputData: {
+  output: {
     bothTrue: { type: "boolean", required: true },
   },
 };

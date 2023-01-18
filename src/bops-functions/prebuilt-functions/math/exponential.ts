@@ -19,11 +19,11 @@ export const exponentialFunctionInformation : InternalMetaFunction = {
   functionName: "exponential",
   version: "1.0.0",
   description: "Raises A to the power of B",
-  inputParameters: {
+  input: {
     A: { type: "number", required: true },
     B: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     result: { type: "number", required: false },
     errorMessage: { type: "string", required: false },
   },

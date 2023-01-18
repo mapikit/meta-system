@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { join } from "path";
 import FS from "fs";
-import chalk from "chalk";
+import { logger } from "../common/logger/logger";
 
 type ModuleName = string;
 type ModuleVersion = string;
@@ -31,16 +31,14 @@ export class DependenciesManager {
     if (!this.requiresInstallation(moduleName, version)) { return; }
 
     const installationPromise : Promise<void> = new Promise((resolve, reject) => {
-      exec(`npm i --prefix ${this.dependencyPath} ${moduleName}@${version} --save`, (err) => {
+      exec(`npm i --save --prefix ${this.dependencyPath} ${moduleName}@${version}`, (err) => {
         if (err === null) {
           this.installedDeps.add(moduleName);
-
           if (version === "latest") this.postInstallLatest(moduleName);
-
           return resolve();
         }
 
-        reject();
+        reject(err);
       });
     });
 
@@ -63,7 +61,7 @@ export class DependenciesManager {
       this.latestVersions.set(moduleName, installedVersion);
     } catch (err) {
       const message = "[Dependencies Install] Something went wrong during package installation checking, ABORTING!";
-      console.error(chalk.redBright(message));
+      logger.fatal(message);
 
       throw Error(err);
     }
@@ -72,7 +70,7 @@ export class DependenciesManager {
   private requiresInstallation (moduleName : string, version : string) : boolean {
     const isInstalled = this.checkVersionIsInstalled(moduleName, version);
     if (isInstalled) {
-      console.log(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
+      logger.operation(`[Dependencies Install] Skipping dependency ${moduleName} as it is already present`);
       return false;
     }
 
@@ -80,7 +78,7 @@ export class DependenciesManager {
       const errorMessage = "[Dependencies Install] ERROR: Cannot install two versions of the same dependency!"
         + ` ${moduleName}@${version}`;
 
-      console.error(chalk.redBright(errorMessage));
+      logger.fatal(errorMessage);
       throw Error(errorMessage);
     };
 
@@ -100,7 +98,14 @@ export class DependenciesManager {
   }
 
   public async uninstallAll () : Promise<void> {
-    await FS.promises.rmdir(`${this.dependencyPath}`, { recursive: true });
+    const hasDependencies = this.installedDeps.size !== 0;
+    await FS.promises.rmdir(this.dependencyPath, { recursive: true })
+      .catch((error) => {
+        if (error.code === "ENOENT" && !hasDependencies) return;
+        throw error;
+      });
+
     this.installedDeps.clear();
+    this.latestVersions.clear();
   }
 }

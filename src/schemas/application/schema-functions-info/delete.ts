@@ -5,12 +5,12 @@ export const deleteInfo : InternalMetaFunction = {
   description: "Deletes all entities in the database, filtering by the properties given",
   author: "mapikit",
   version: "0.0.1",
-  inputParameters: {
+  input: {
     query : { type: "cloudedObject", required: true },
   },
-  outputData: {
-    deletedCount: { type: "number", required: false },
-    deleteError: { type: "$errorMessage", required: false },
+  output: {
+    success: { type: "boolean", required: true },
+    affectedEntities: { type: "number", required: false },
   },
   customTypes: [
     {

@@ -1,10 +1,11 @@
 
 import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
-import { BuiltMetaPackage, FunctionManager, MetaFunction } from "meta-function-helper";
+import { BuiltMetaPackage, FunctionManager, MetaFunction } from "@meta-system/meta-function-helper";
 import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
 import { FunctionFileSystem } from "../installation/function-file-system";
 import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
 import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer";
+import { environment } from "../../common/execution-env";
 
 
 export class ExternalFunctionManagerClass implements FunctionManager {
@@ -12,9 +13,9 @@ export class ExternalFunctionManagerClass implements FunctionManager {
   private infoMap : Map<string, MetaFunction> = new Map();
 
   public constructor (
-    private functionsInstaller = new FunctionsInstaller(runtimeDefaults.externalFunctionInstallFolder),
+    private functionsInstaller = new FunctionsInstaller(environment.constants.installDir),
     private functionFileSystem = new FunctionFileSystem(
-      runtimeDefaults.externalFunctionInstallFolder,
+      environment.constants.installDir,
       runtimeDefaults.externalFunctionConfigFileName,
       runtimeDefaults.externalPackageConfigFileName,
     ),
@@ -33,8 +34,8 @@ export class ExternalFunctionManagerClass implements FunctionManager {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const moduleConfig = packageName === undefined ?
-      new MetaFunctionDescriptionValidation(moduleConfigString).validate().getFunctionConfiguration() :
-      await (await new MetaPackageDescriptionValidation(moduleConfigString).validate())
+      new MetaFunctionDescriptionValidation(moduleConfigString as object).validate().getFunctionConfiguration() :
+      await (await new MetaPackageDescriptionValidation(moduleConfigString as object).validate())
         .getPackageConfiguration();
 
     // Only populated if the module is a function
@@ -44,10 +45,25 @@ export class ExternalFunctionManagerClass implements FunctionManager {
       .import(fileDescriptionMode, moduleConfig.entrypoint, functionLocation);
 
     const info = moduleType === "package" ?
-      (moduleConfig as BuiltMetaPackage).functionsDefinitions.find(funct => funct.functionName === functionName) :
+      this.getMetaFunctionFromMetaPackage(moduleConfig as BuiltMetaPackage, functionName) :
       (moduleConfig as MetaFunction);
     this.infoMap.set(packageName ? `${packageName}.${functionName}` : functionName, info);
     this.addFunctionsToMap(functionName, functionDeclaration, packageName);
+  }
+
+  private getMetaFunctionFromMetaPackage (builtMetaPackage : BuiltMetaPackage, functionName : string) : MetaFunction {
+    const functionDefinition = builtMetaPackage.functionsDefinitions.find(funct => funct.functionName === functionName);
+
+    const result : MetaFunction = {
+      "description": builtMetaPackage.description,
+      "version": builtMetaPackage.version,
+      "functionName": functionName,
+      "entrypoint": builtMetaPackage.entrypoint,
+      "mainFunction": "",
+      ...functionDefinition,
+    };
+
+    return result;
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -83,6 +99,11 @@ export class ExternalFunctionManagerClass implements FunctionManager {
   public getFunctionInfo (functionName : string, packageName ?: string) : MetaFunction {
     const fullName = packageName !== undefined ? `${packageName}.${functionName}` : functionName;
     return this.infoMap.get(fullName);
+  }
+
+  public async flush () : Promise<void> {
+    this.functionMap = new Map();
+    this.infoMap = new Map();
   }
 }
 

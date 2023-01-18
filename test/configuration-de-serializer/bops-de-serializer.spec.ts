@@ -36,11 +36,11 @@ describe("BOPS Desserializer", () => {
       .throw("Loop reference detected on the custom objects of the business operation car-sell");
   });
 
-  it.skip("Fails to deserialize BOp - Loop on the modules configuration", () => {
+  it("Fails to deserialize BOp - Loop on the modules configuration", () => {
     const command = new DeserializeBopsCommand();
     const configurations = configurationLoop["businessOperations"];
 
     expect(() => command.execute(configurations)).to
-      .throw("Duplicated entry in one the branches of the configuration for BOPS car-sell");
+      .throw("Circular dependency found in BOps \"carSell\" configuration.[ key 2 ]");
   });
 });

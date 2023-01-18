@@ -2,6 +2,8 @@
   "schemas": [
     {
       "name": "test1",
+      "identifier": "test1",
+      "dbProtocol": "fakeDb",
       "format": {
         "shallowProperty": { "type": "string" },
         "oneLevelDeepProperty": { "type": "object", "subtype": {

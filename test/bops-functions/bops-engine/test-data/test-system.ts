@@ -5,6 +5,7 @@ import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";
 import { variableBop } from "./business-operations/variables-bop";
 import { packageBop } from "./business-operations/package-bop";
+import { ProtocolKind } from "../../../../src/configuration/protocols/protocols-type";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
@@ -17,9 +18,10 @@ export const testSystem : ConfigurationType = {
         model: { type: "string" },
         year: { type: "string" },
       },
+      dbProtocol: "MainMongoDb",
+      identifier: "3993",
     },
   ],
-  dbConnectionString: "mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin",
   businessOperations: [
     mapikitProvidedBop,
     internalBop,
@@ -29,6 +31,13 @@ export const testSystem : ConfigurationType = {
     packageBop,
   ],
   protocols: [
+    {
+      "protocol": "@meta-system/mongodb-db-protocol",
+      "identifier": "MainMongoDb",
+      "configuration": { databaseName: "test" },
+      "protocolKind": ProtocolKind.dbProtocol,
+      "protocolVersion": "latest",
+    },
   ],
 };
 

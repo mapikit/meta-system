@@ -14,11 +14,11 @@ export const charAtBopsFunctionInformation : InternalMetaFunction = {
   functionName: "charAt",
   version: "1.0.0",
   description: "Gets the character in the string at the index given",
-  inputParameters: {
+  input: {
     string: { type: "string", required: true },
     index: { type: "number", required: true },
   },
-  outputData: {
+  output: {
     found: { type: "string", required: false },
     notFoundMessage: { type: "string", required: false },
   },

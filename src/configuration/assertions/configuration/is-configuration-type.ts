@@ -8,7 +8,6 @@ export function isConfigurationType (input : unknown) : asserts input is Configu
 
   const configurationTypeInput = input as ConfigurationType;
 
-  isType("string", "\"dbConnectionString\" should be a string", configurationTypeInput.dbConnectionString);
   isType("string", "\"name\" should be a string", configurationTypeInput.name);
   isType("string", "\"version\" should be a string", configurationTypeInput.version);
 
@@ -26,5 +25,9 @@ export function isConfigurationType (input : unknown) : asserts input is Configu
 
   if (!Array.isArray(configurationTypeInput.schemas)) {
     throw Error("\"schemas\" should be an array");
+  }
+
+  if (!Array.isArray(configurationTypeInput.protocols)) {
+    throw Error("\"protocols\" should be an array");
   }
 }

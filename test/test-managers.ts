@@ -4,11 +4,12 @@ import { ProtocolFunctionManagerClass } from "../src/bops-functions/function-man
 import { FunctionFileSystem } from "../src/bops-functions/installation/function-file-system";
 import { FunctionsInstaller } from "../src/bops-functions/installation/functions-installer";
 import { ProtocolFileSystem } from "../src/bops-functions/installation/protocol-file-system";
+import { environment } from "../src/common/execution-env";
 import { runtimeDefaults } from "../src/configuration/runtime-config/defaults";
 
 const testPath = join(process.cwd(), "test-functions/");
 
-runtimeDefaults.externalFunctionInstallFolder = testPath;
+environment.silent.constants.installDir = testPath;
 
 const testFunctionFileSystem = new FunctionFileSystem(
   testPath,
@@ -21,13 +22,13 @@ const testProtocolFileSystem = new ProtocolFileSystem(
 );
 
 const testInstaller = new FunctionsInstaller(testPath);
-
-const purgeTestPackages = async () : Promise<void> => {
-  await testInstaller.purgePackages()
-    .catch(error => { throw error; });
-};
-
 const testExternalManager = new ExternalFunctionManagerClass(testInstaller, testFunctionFileSystem);
 const testProtocolManager = new ProtocolFunctionManagerClass(testInstaller, testProtocolFileSystem);
+
+const purgeTestPackages = async () : Promise<void> => {
+  await testInstaller.purgePackages();
+
+  await testExternalManager.flush();
+};
 
 export { testInstaller, testFunctionFileSystem, testExternalManager, testProtocolManager, purgeTestPackages };
