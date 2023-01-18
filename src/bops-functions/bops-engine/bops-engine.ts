@@ -109,20 +109,20 @@ export class BopsEngine {
   private solveStaticInput (
     input : Dependency, currentBop : BopContext, _inputs : object) : object {
     switch (input.origin) {
+      case "constant":
       case "constants":
         const foundConstant = currentBop.constants[input.originPath];
         return { [input.targetPath]: foundConstant };
+      case "input":
       case "inputs":
         return { [input.targetPath]: getObjectProperty(_inputs, input.originPath) };
+      case "variable":
       case "variables":
         return { [input.targetPath]: currentBop.variables[input.originPath].value };
-      case "constant":
-        const constant = currentBop.constants[input.originPath];
-        return { [input.targetPath]: constant };
-      case "input":
-        return { [input.targetPath]: getObjectProperty(_inputs, input.originPath) };
-      case "variable":
-        return { [input.targetPath]: currentBop.variables[input.originPath].value };
+      case "env":
+      case "envs":
+      case "environment":
+        return { [input.targetPath]: this.systemContext.envs[input.originPath] };
     }
   }
 

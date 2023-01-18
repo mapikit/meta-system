@@ -174,22 +174,24 @@ export class DependencyPropValidator {
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private getStaticDependencyType (dependency : Dependency) : string {
     const origin = dependency.origin as string;
     const originPath = dependency.originPath.split(".");
     if(["input", "inputs"].includes(origin as string)) {
       return this.getPathType(this.workingBop.input, originPath, this.getCustomTypes(this.workingBop));
-    } else {
-      if(["constants", "constant"].includes(origin as string)) {
-        return this.workingBop.constants.find(constant => constant.name === originPath[0]).type;
-      }
-      if(["variable", "variables"].includes(origin as string)) {
-        return this.workingBop.variables.find(variable => variable.name === originPath[0]).type;
-      }
+    }
+    if(["constants", "constant"].includes(origin)) {
+      return this.workingBop.constants.find(constant => constant.name === originPath[0]).type;
+    }
+    if(["variable", "variables"].includes(origin)) {
+      return this.workingBop.variables.find(variable => variable.name === originPath[0]).type;
+    }
+    if(["envs", "env", "environment"].includes(origin)) {
+      return "string";
     }
   }
 
-  // eslint-disable-next-line max-lines-per-function
   private getStaticTypes (dependency : Dependency, inputInfo : FunctionInfoType) : [string, string] {
     const targetPath = dependency.targetPath.split(".");
     const targetInputInfo = this.getFunctionInput(inputInfo);
