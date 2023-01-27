@@ -22,6 +22,7 @@ export class BusinessOperation implements BusinessOperations {
   public variables : BopsVariable[];
   public configuration : BopsConfigurationEntry[];
   public customObjects : BopsCustomObject[];
+  public ttl ?: number;
 
   public constructor (parameters : BusinessOperations) {
     this.name = parameters.name;
@@ -31,6 +32,7 @@ export class BusinessOperation implements BusinessOperations {
     this.configuration = parameters.configuration;
     this.customObjects = parameters.customObjects;
     this.variables = parameters.variables;
+    this.ttl = parameters.ttl;
   }
 
   // eslint-disable-next-line max-lines-per-function

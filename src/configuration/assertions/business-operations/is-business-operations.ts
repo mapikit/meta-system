@@ -2,7 +2,7 @@ import { isBopsConstants } from "./is-bops-constants";
 import { isBopsCustomObjects } from "./is-bops-custom-objects";
 import { isBopsConfigurationEntry } from "./is-bops-configuration";
 import { BusinessOperations } from "../../business-operations/business-operations-type";
-import { isType } from "../is-type";
+import { isType, optionalIsType } from "../is-type";
 import { isBopsVariables } from "./is-bops-variables";
 import { isObjectDefinition } from "@meta-system/object-definition";
 
@@ -34,6 +34,7 @@ export function isBusinessOperations (input : unknown) : asserts input is Busine
   const businessOperationInput = input as BusinessOperations;
 
   isType("string", "Business Operation with incorrect format", businessOperationInput.name);
+  optionalIsType("number", `BOp - ${businessOperationInput.name}: TTL must be a number`, businessOperationInput.ttl);
 
   isObjectDefinition(businessOperationInput.input);
   isObjectDefinition(businessOperationInput.output);

@@ -14,6 +14,7 @@ import { SchemasManager } from "../schemas/application/schemas-manager";
 import { ModuleType } from "../configuration/business-operations/business-operations-type";
 import { DependencyPropValidator } from "./dependency-validator";
 import { logger } from "../common/logger/logger";
+import { environment } from "../common/execution-env";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();
@@ -269,7 +270,7 @@ export class FunctionSetup {
 
       this.bopsManager.add(
         bopName,
-        this.bopsEngine.stitch(currentBopConfig),
+        this.bopsEngine.stitch(currentBopConfig, currentBopConfig.ttl ?? environment.constants.ttl),
       );
       bopsBuilt++;
     });

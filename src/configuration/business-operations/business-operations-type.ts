@@ -2,6 +2,7 @@ import { ObjectDefinition } from "@meta-system/object-definition";
 import { ExtendedJsonTypes } from "../../common/types/json-types";
 
 export interface BusinessOperations {
+  ttl ?: number;
   name : string;
   input : ObjectDefinition;
   output : ObjectDefinition;

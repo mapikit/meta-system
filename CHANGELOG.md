@@ -1,4 +1,7 @@
 # Changelog
+## 0.3.1
+- Improved BOps TTL (Time to Live) Configuration
+  - Each BOp may have a specific ttl value and the default can be set via CLI (`--ttl` or `-T`). Default ttl is 2000 ms.
 ## 0.3.0
 ### File Splitting
 - System `schemas`, `businessOperations`, and `protocols` configuration json can now be split into multiple files.
