@@ -30,6 +30,7 @@ export async function main (fileLocation : string) : Promise<void> {
     runtimeDefaults.defaultInstallFolder);
   if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
   if(environment.constants.saveLog) hookConsoleToFile(`${environment.constants.configDir}/logs`);
+  process.chdir(environment.constants.installDir);
 
   logger.debug(getSystemInfo());
 

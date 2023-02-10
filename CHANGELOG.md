@@ -1,4 +1,10 @@
 # Changelog
+# 0.3.2
+- Updated meta-protocol-helper and meta-function-helper
+- Fixed system crashing on BOp failure
+- All BOps working directory will now be the install directory (\<System Config Directory\>/runtime)
+  - This prevents BOp modules that use disk operations from installing in a folder that is not the config folder
+
 ## 0.3.1
 - Improved BOps TTL (Time to Live) Configuration
   - Each BOp may have a specific ttl value and the default can be set via CLI (`--ttl` or `-T`). Default ttl is 2000 ms.
