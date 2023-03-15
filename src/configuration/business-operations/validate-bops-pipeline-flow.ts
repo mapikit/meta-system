@@ -11,7 +11,6 @@ export class ValidateBopsPipelineFlowCommand {
     this.businessOperation = businessOperation;
 
     this.extractModules();
-    this.validateKeys();
     const outputFunction = this.getOutputFunction();
     this.mapFunctionPipelinePath(outputFunction);
     this.checkForUnusedModules();
@@ -25,15 +24,6 @@ export class ValidateBopsPipelineFlowCommand {
         `\t- Both modules "${sameIdModuleName}" and "${configurationEntry.moduleName}" have the same identifier`);
       }
       this.functions.set(configurationEntry.key, configurationEntry);
-    });
-  }
-
-  // All keys should be positive greater than 0 integers
-  private validateKeys () : void {
-    this.functions.forEach((module) => {
-      if (module.key <= 0) {
-        throw Error(`Invalid Key Index @ BOPS ${this.businessOperation.name} - Repository ${module.moduleName}`);
-      }
     });
   }
 
