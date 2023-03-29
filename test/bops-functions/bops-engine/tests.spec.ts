@@ -22,6 +22,7 @@ import { packageBop } from "./test-data/business-operations/package-bop.js";
 import { purgeTestPackages, testExternalManager, testProtocolManager } from "../../test-managers.js";
 import { Protocol } from "../../../src/configuration/protocols/protocols.js";
 import { DBProtocolNewable } from "../../../src/bops-functions/function-managers/protocol-function-manager.js";
+import { envBop } from "./test-data/business-operations/envs-bop.js";
 
 interface EngineInput {
   ModuleManager : ModuleManager;
@@ -146,6 +147,15 @@ describe("Bops Engine Testing", () => {
 
     const result2 = await stitched({ age: 12 });
     expect(result2["over18"]).to.be.false;
+  });
+
+  it.only("Test envs", async () => {
+    bopsEnginePrerequisites = await setupBopsEngineRequisites(envBop);
+    const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
+    const stitched = bopsEngine.stitch(envBop, maxExecutionTime);
+
+    const result = await stitched({});
+    expect(result.output).to.be.equal("test");
   });
 });
 
