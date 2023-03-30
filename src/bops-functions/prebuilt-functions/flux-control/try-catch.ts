@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const tryCatchBopsFunction = async (input : { function : Function }) : Promise<unknown> => {
   try {

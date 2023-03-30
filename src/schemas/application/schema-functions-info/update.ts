@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "bops-functions/internal-meta-function.js";
 
 export const updateInfo : InternalMetaFunction = {
   functionName: "update",

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import packageData from "../../package.json";
 import { Command } from "commander";
-import { run, testBop } from "./commands";
+import { run, testBop } from "./commands.js";
 
 const program = new Command("meta-system");
 program

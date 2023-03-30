@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const boolToStringBopsFunction = (input : { boolean : boolean }) : unknown => {
   return ({ result: input.boolean.toString() });

@@ -1,8 +1,8 @@
 import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager.js";
 import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager.js";
 import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager.js";
-import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
-import { Schema } from "../schemas/schema";
+import { SchemasFunctions } from "../../schemas/domain/schemas-functions.js";
+import { Schema } from "../schemas/schema.js";
 import { BusinessOperation } from "./business-operation.js";
 import { logger } from "../../common/logger/logger.js";
 

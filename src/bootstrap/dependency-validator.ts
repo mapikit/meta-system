@@ -1,5 +1,5 @@
 import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager.js";
-import { InternalMetaFunction } from "../bops-functions/internal-meta-function";
+import { InternalMetaFunction } from "../bops-functions/internal-meta-function.js";
 import {
   BopsConfigurationEntry,
   BusinessOperations,
@@ -7,15 +7,15 @@ import {
   ModuleType } from "../configuration/business-operations/business-operations-type.js";
 import { ConfigurationType } from "../configuration/configuration-type.js";
 import { CustomType, MetaFunction } from "@meta-system/meta-function-helper";
-import { schemaFunctionInfoMap } from "../schemas/application/schema-functions-info";
-import { VariableContext } from "../bops-functions/bops-engine/variables/variables-context";
+import { schemaFunctionInfoMap } from "../schemas/application/schema-functions-info.js";
+import { VariableContext } from "../bops-functions/bops-engine/variables/variables-context.js";
 import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager.js";
 import clone from "just-clone";
 import { InternalFunctionManagerClass } from "bops-functions/function-managers/internal-function-manager.js";
 import chalk from "chalk";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { logger } from "../common/logger/logger.js";
-import { SchemasFunctions } from "../schemas/domain/schemas-functions";
+import { SchemasFunctions } from "../schemas/domain/schemas-functions.js";
 import { environment } from "../common/execution-env.js";
 
 type FunctionInfoType = InternalMetaFunction | BusinessOperations;

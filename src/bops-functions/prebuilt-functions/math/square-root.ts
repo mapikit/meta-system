@@ -1,6 +1,6 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
-import Decimal from "decimal.js";
-import { anyIsNan } from "../non-bops-utils/any-is-nan";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
+import { Decimal } from "decimal.js";
+import { anyIsNan } from "../non-bops-utils/any-is-nan.js";
 
 export const squareRootBopsFunction = (input : { A : number }) : unknown => {
   if (anyIsNan(input.A)) {

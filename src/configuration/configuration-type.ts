@@ -1,5 +1,5 @@
 import { BusinessOperations } from "./business-operations/business-operations-type.js";
-import { ProtocolConfigType } from "./protocols/protocols-type";
+import { ProtocolConfigType } from "./protocols/protocols-type.js";
 import { SchemaType } from "./schemas/schemas-type.js";
 
 export interface ConfigurationType {

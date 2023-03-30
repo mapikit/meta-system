@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const notBopsFunction = (input : { A : boolean }) : unknown => {
   return ({ result: !input.A });

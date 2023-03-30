@@ -5,7 +5,7 @@ import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";
 import { variableBop } from "./business-operations/variables-bop";
 import { packageBop } from "./business-operations/package-bop";
-import { ProtocolKind } from "../../../../src/configuration/protocols/protocols-type";
+import { ProtocolKind } from "../../../../src/configuration/protocols/protocols-type.js";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",

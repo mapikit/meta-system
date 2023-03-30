@@ -1,7 +1,7 @@
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/src/object-definition-type";
 import faker from "faker";
-import { ExtendedJsonTypes, JsonTypes } from "../../src/common/types/json-types";
+import { ExtendedJsonTypes, JsonTypes } from "../../src/common/types/json-types.js";
 
 const basicStrings : JsonTypes[] = ["boolean", "string", "number", "date"];
 const advancedStrings : Exclude<ExtendedJsonTypes, JsonTypes>[] = ["array", "object"];

@@ -1,8 +1,8 @@
 import { ConfigurationType } from "../../../configuration/configuration-type.js";
 import { BopsVariable } from "../../../configuration/business-operations/business-operations-type.js";
 import { MappedFunctions, ModuleManager } from "../modules-manager.js";
-import { ResolvedConstants, StaticSystemInfo } from "../static-info-validation";
-import { VariableContext } from "../variables/variables-context";
+import { ResolvedConstants, StaticSystemInfo } from "../static-info-validation.js";
+import { VariableContext } from "../variables/variables-context.js";
 
 export class SystemContext {
   public readonly constants : Record<string, ResolvedConstants>;

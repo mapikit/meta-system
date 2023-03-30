@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 type InputType = {
   boolean : boolean;

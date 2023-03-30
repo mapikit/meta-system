@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 // This is just a stub function to be inserted in the manager. The true definition
 // of this function is in the FunctionSetup Class

@@ -1,10 +1,10 @@
-import { charAtBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/char-at";
-import { countStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/count";
-import { indexOfStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/index-of";
-import { stringReplaceFunction } from "../../../src/bops-functions/prebuilt-functions/string/replace";
-import { stringToNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/to-number";
-import { stringTemplateFunction } from "../../../src/bops-functions/prebuilt-functions/string/template";
-import { stringConcatFunction } from "../../../src/bops-functions/prebuilt-functions/string/concat";
+import { charAtBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/char-at.js";
+import { countStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/count.js";
+import { indexOfStringFunction } from "../../../src/bops-functions/prebuilt-functions/string/index-of.js";
+import { stringReplaceFunction } from "../../../src/bops-functions/prebuilt-functions/string/replace.js";
+import { stringToNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/string/to-number.js";
+import { stringTemplateFunction } from "../../../src/bops-functions/prebuilt-functions/string/template.js";
+import { stringConcatFunction } from "../../../src/bops-functions/prebuilt-functions/string/concat.js";
 import { expect } from "chai";
 import faker from "faker";
 

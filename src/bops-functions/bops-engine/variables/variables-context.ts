@@ -1,13 +1,13 @@
 
-import { isValidType } from "../../../common/assertions/is-valid-type";
-import { ConfigurationType } from "../../..";
-import { ExtendedJsonTypes } from "../../../common/types/json-types";
+import { isValidType } from "../../../common/assertions/is-valid-type.js";
+import { ConfigurationType } from "../../../index.js";
+import { ExtendedJsonTypes } from "../../../common/types/json-types.js";
 import { BopsVariable } from "../../../configuration/business-operations/business-operations-type.js";
 import { MappedFunctions, ModuleFullName } from "../modules-manager.js";
-import { decreaseVariableFunctionInformation, decreaseVariablesFunction } from "./functions/decrease-variable";
-import { increaseVariableFunctionInformation, increaseVariablesFunction } from "./functions/increase-variable";
-import { setVariablesFunction, setVariablesFunctionInformation } from "./functions/set-variable";
-import { InternalMetaFunction } from "bops-functions/internal-meta-function";
+import { decreaseVariableFunctionInformation, decreaseVariablesFunction } from "./functions/decrease-variable.js";
+import { increaseVariableFunctionInformation, increaseVariablesFunction } from "./functions/increase-variable.js";
+import { setVariablesFunction, setVariablesFunctionInformation } from "./functions/set-variable.js";
+import { InternalMetaFunction } from "bops-functions/internal-meta-function.js";
 
 type ResolvedVariable = { type : ExtendedJsonTypes | "any", value : unknown };
 export type ResolvedVariables = Record<string, ResolvedVariable>;

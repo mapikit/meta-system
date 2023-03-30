@@ -4,7 +4,7 @@ import { SchemasManager } from "../../../src/schemas/application/schemas-manager
 import { createFakeMongo } from "../../doubles/mongo-server";
 import { expect } from "chai";
 import { testSystem } from "./test-data/test-system";
-import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
+import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation.js";
 import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type.js";
 import { SchemaType } from "../../../src/configuration/schemas/schemas-type.js";
 import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
@@ -20,7 +20,7 @@ import { ConfigurationType } from "../../../src/configuration/configuration-type
 import { variableBop } from "./test-data/business-operations/variables-bop";
 import { packageBop } from "./test-data/business-operations/package-bop";
 import { purgeTestPackages, testExternalManager, testProtocolManager } from "../../test-managers";
-import { Protocol } from "../../../src/configuration/protocols/protocols";
+import { Protocol } from "../../../src/configuration/protocols/protocols.js";
 import { DBProtocolNewable } from "../../../src/bops-functions/function-managers/protocol-function-manager.js";
 
 interface EngineInput {

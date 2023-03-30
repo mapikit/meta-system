@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isNillBopsFunction = (input : { value : any }) : unknown => {

@@ -1,5 +1,5 @@
 import { logger } from "../../common/logger/logger.js";
-import { DependenciesManager } from "../../dependencies-management";
+import { DependenciesManager } from "../../dependencies-management/index.js";
 
 export enum ModuleKind {
   NPM = "NPM",

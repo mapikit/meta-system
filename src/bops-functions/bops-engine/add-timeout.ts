@@ -1,5 +1,5 @@
 import { logger } from "../../common/logger/logger.js";
-import { TTLExceededError } from "./engine-errors/execution-time-exceeded";
+import { TTLExceededError } from "./engine-errors/execution-time-exceeded.js";
 
 // eslint-disable-next-line max-lines-per-function
 export function addTimeout (timeoutMs : number, promise : Function) : Function {

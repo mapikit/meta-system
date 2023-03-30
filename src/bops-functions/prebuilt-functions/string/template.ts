@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const stringTemplateFunction = (input : { template : string; replacers : Record<string, string> })
 : unknown => {

@@ -1,8 +1,8 @@
 import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager.js";
-import { assertsDbProtocol } from "../../configuration/protocols/is-db-protocol";
+import { assertsDbProtocol } from "../../configuration/protocols/is-db-protocol.js";
 import { SchemaType } from "../../configuration/schemas/schemas-type.js";
 import { logger } from "../../common/logger/logger.js";
-import { SchemaManager } from "./schema-manager";
+import { SchemaManager } from "./schema-manager.js";
 
 export class SchemasManager {
   private readonly systemName : string;

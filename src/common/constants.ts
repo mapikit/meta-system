@@ -1,4 +1,4 @@
-import { LogLevelsType } from "./logger/logger-types";
+import { LogLevelsType } from "./logger/logger-types.js";
 
 export default Object.freeze({
   JWT_KEY: "tempKey",

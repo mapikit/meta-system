@@ -1,6 +1,6 @@
-import { CloudedObject } from "../../../../common/types/clouded-object";
-import { InternalMetaFunction } from "../../../internal-meta-function";
-import { ResolvedVariables } from "../variables-context";
+import { CloudedObject } from "../../../../common/types/clouded-object.js";
+import { InternalMetaFunction } from "../../../internal-meta-function.js";
+import { ResolvedVariables } from "../variables-context.js";
 
 export function increaseVariablesFunction (input : CloudedObject, variables : ResolvedVariables) : unknown {
   let updatedCount = 0;

@@ -1,6 +1,6 @@
 import { BopsVariable } from "../../business-operations/business-operations-type.js";
-import { isType } from "../is-type";
-import { stringIsOneOf } from "../string-is-one-of";
+import { isType } from "../is-type.js";
+import { stringIsOneOf } from "../string-is-one-of.js";
 
 
 export function isBopsVariables (input : unknown) : asserts input is BopsVariable[] {

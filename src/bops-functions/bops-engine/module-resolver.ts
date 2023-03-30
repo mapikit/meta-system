@@ -1,10 +1,10 @@
 import { BopsConfigurationEntry } from "../../configuration/business-operations/business-operations-type.js";
 import { SchemasManager } from "../../schemas/application/schemas-manager.js";
-import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
+import { SchemasFunctions } from "../../schemas/domain/schemas-functions.js";
 import { FunctionManager } from "../function-managers/function-manager.js";
-import { ProvidedFunctionNotFound } from "./engine-errors/function-not-found";
-import { OperationNotFoundError } from "./engine-errors/operation-not-found-error";
-import { SchemaNotFoundError } from "./engine-errors/schema-not-found-error";
+import { ProvidedFunctionNotFound } from "./engine-errors/function-not-found.js";
+import { OperationNotFoundError } from "./engine-errors/operation-not-found-error.js";
+import { SchemaNotFoundError } from "./engine-errors/schema-not-found-error.js";
 
 export interface ModuleResolverInputs {
   ExternalFunctionManager : FunctionManager;

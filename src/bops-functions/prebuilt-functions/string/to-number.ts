@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const stringToNumberBopsFunction = (input : { string : string }) : unknown => {
   const result = Number(input.string);

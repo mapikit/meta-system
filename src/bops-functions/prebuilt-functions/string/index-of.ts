@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const indexOfStringFunction = (input : { string : string; search : string }) : unknown => {
   return ({ index: input.string.indexOf(input.search) });

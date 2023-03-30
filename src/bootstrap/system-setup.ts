@@ -1,12 +1,12 @@
 import { externalFunctionManagerSingleton } from "../bops-functions/function-managers/external-function-manager.js";
 import { FunctionManager } from "../bops-functions/function-managers/function-manager.js";
 import internalFunctionManager from "../bops-functions/function-managers/internal-function-manager.js";
-import { Configuration } from "../configuration/configuration";
-import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
+import { Configuration } from "../configuration/configuration.js";
+import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { FunctionSetup } from "../bootstrap/function-setup.js";
 import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager.js";
-import { ProtocolsSetup } from "./protocols-setup";
-import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper";
+import { ProtocolsSetup } from "./protocols-setup.js";
+import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper.js";
 import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
 

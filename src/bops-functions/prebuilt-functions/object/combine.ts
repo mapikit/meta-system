@@ -1,5 +1,5 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
-import { CloudedObject } from "../../../common/types/clouded-object";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
+import { CloudedObject } from "../../../common/types/clouded-object.js";
 
 
 export const combineObjectBopsFunction = (input : { object1 : CloudedObject; object2 : CloudedObject }) : unknown => {

@@ -1,4 +1,4 @@
-import { CloudedObject } from "../../common/types/clouded-object";
+import { CloudedObject } from "../../common/types/clouded-object.js";
 
 export interface ProtocolConfigType {
   protocol : string;

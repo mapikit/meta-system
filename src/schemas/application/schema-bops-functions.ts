@@ -1,6 +1,6 @@
 import { DBProtocol } from "@meta-system/meta-protocol-helper";
 import { SchemaType } from "../../configuration/schemas/schemas-type.js";
-import { SchemasFunctions } from "../domain/schemas-functions";
+import { SchemasFunctions } from "../domain/schemas-functions.js";
 
 type SchemasFunctionsTypes = {
   [key in SchemasFunctions] : Function;

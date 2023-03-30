@@ -1,9 +1,9 @@
 import { Command, Option } from "commander";
-import constants from "../common/constants";
+import constants from "../common/constants.js";
 import { environment } from "../common/execution-env.js";
-import { parseInteger } from "../common/helpers/parsers";
-import { logLevelsArray } from "../common/logger/logger-types";
-import { testBopFunction, main } from "./functions";
+import { parseInteger } from "../common/helpers/parsers.js";
+import { logLevelsArray } from "../common/logger/logger-types.js";
+import { testBopFunction, main } from "./functions.js";
 
 const testBop = new Command("test-bop")
   .argument("<config>", "The config file")

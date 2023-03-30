@@ -1,4 +1,4 @@
-import { DeserializeConfigurationCommand } from "../../src/configuration/de-serialize-configuration";
+import { DeserializeConfigurationCommand } from "../../src/configuration/de-serialize-configuration.js";
 import { expect } from "chai";
 import { asyncTestThrow } from "../helpers/test-throw";
 

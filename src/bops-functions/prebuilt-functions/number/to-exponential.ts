@@ -1,5 +1,5 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
-import Decimal from "decimal.js";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
+import { Decimal } from "decimal.js";
 
 export const toExponentialBopsFunction = (input : { number : number; decimalPlaces ?: number }) : unknown => {
   if (Number.isNaN(input.number)) {

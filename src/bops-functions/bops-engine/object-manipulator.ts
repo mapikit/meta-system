@@ -1,4 +1,4 @@
-import { CloudedObject } from "../../common/types/clouded-object";
+import { CloudedObject } from "../../common/types/clouded-object.js";
 // import { inspect } from "util";
 
 export class ObjectResolver {

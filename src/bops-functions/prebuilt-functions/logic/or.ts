@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const orGateBopsFunction = (input : { A : boolean; B : boolean }) : unknown => {
   const eitherAreTrue = input.A || input.B;

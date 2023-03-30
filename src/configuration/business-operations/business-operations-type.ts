@@ -1,5 +1,5 @@
 import { ObjectDefinition } from "@meta-system/object-definition";
-import { ExtendedJsonTypes } from "../../common/types/json-types";
+import { ExtendedJsonTypes } from "../../common/types/json-types.js";
 
 export interface BusinessOperations {
   ttl ?: number;

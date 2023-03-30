@@ -1,6 +1,6 @@
 import { DBProtocol } from "@meta-system/meta-protocol-helper";
 import { SchemaType } from "../../configuration/schemas/schemas-type.js";
-import { SchemasBopsFunctions } from "./schema-bops-functions";
+import { SchemasBopsFunctions } from "./schema-bops-functions.js";
 
 export class SchemaManager {
   public bopsFunctions : SchemasBopsFunctions;

@@ -1,5 +1,5 @@
-import { isSchema } from "../assertions/schema/is-schema";
-import { Schema } from "./schema";
+import { isSchema } from "../assertions/schema/is-schema.js";
+import { Schema } from "./schema.js";
 import { SchemaType } from "./schemas-type.js";
 
 export class DeserializeSchemasCommand {

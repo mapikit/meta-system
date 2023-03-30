@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const absoluteBopsFunction = (input : { input : number }) : unknown => {
   const result = Math.abs(input.input);

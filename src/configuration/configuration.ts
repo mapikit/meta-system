@@ -1,8 +1,8 @@
-import { ConfigurationType } from "..";
+import { ConfigurationType } from "../index.js";
 import { BusinessOperation } from "./business-operations/business-operation.js";
 import { EnvironmentVariable } from "./configuration-type.js";
-import { ProtocolConfigType } from "./protocols/protocols-type";
-import { Schema } from "./schemas/schema";
+import { ProtocolConfigType } from "./protocols/protocols-type.js";
+import { Schema } from "./schemas/schema.js";
 
 
 export class Configuration implements ConfigurationType {

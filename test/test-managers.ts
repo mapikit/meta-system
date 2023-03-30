@@ -3,7 +3,7 @@ import { ExternalFunctionManagerClass } from "../src/bops-functions/function-man
 import { ProtocolFunctionManagerClass } from "../src/bops-functions/function-managers/protocol-function-manager.js";
 import { FunctionFileSystem } from "../src/bops-functions/installation/function-file-system.js";
 import { FunctionsInstaller } from "../src/bops-functions/installation/functions-installer.js";
-import { ProtocolFileSystem } from "../src/bops-functions/installation/protocol-file-system";
+import { ProtocolFileSystem } from "../src/bops-functions/installation/protocol-file-system.js";
 import { environment } from "../src/common/execution-env.js";
 import { runtimeDefaults } from "../src/configuration/runtime-config/defaults.js";
 

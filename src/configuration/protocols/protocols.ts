@@ -1,5 +1,5 @@
-import { CloudedObject } from "../../common/types/clouded-object";
-import { ProtocolConfigType, ProtocolKind } from "./protocols-type";
+import { CloudedObject } from "../../common/types/clouded-object.js";
+import { ProtocolConfigType, ProtocolKind } from "./protocols-type.js";
 
 export class Protocol implements ProtocolConfigType {
   public protocol : string;

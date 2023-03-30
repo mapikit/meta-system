@@ -1,6 +1,6 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
-import { anyIsNan } from "../non-bops-utils/any-is-nan";
-import Decimal from "decimal.js";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
+import { anyIsNan } from "../non-bops-utils/any-is-nan.js";
+import { Decimal } from "decimal.js";
 
 export const modulusBopsFunction = (input : { A : number; B : number }) : unknown => {
   if (input.B === 0) {
