@@ -45,7 +45,7 @@ import { countStringFunction, countStringFunctionInformation } from "../prebuilt
 import { indexOfStringFunction, indexOfStringFunctionInformation } from "../prebuilt-functions/string/index-of";
 import { stringReplaceFunction, stringReplaceFunctionInformation } from "../prebuilt-functions/string/replace";
 import { stringToNumberBopsFunction, stringToNumberBopsFunctionInformation } from "../prebuilt-functions/string/to-number";
-import { FunctionManager } from "./function-manager";
+import { FunctionManager } from "./function-manager.js";
 import { executeWithArgs, executeWithArgsFunctionInformation } from "../prebuilt-functions/system/execute-with-args";
 import { getSystemFunction, getSystemFunctionFunctionInformation } from "../prebuilt-functions/system/get-system-function";
 

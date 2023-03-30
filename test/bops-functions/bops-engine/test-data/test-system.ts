@@ -1,5 +1,5 @@
 import { mapikitProvidedBop } from "../test-data/business-operations/prebuilt-bop";
-import { ConfigurationType } from "../../../../src/configuration/configuration-type";
+import { ConfigurationType } from "../../../../src/configuration/configuration-type.js";
 import { internalBop } from "./business-operations/internal-bop";
 import { schemaBop } from "./business-operations/schema-bop";
 import { externalBop } from "./business-operations/external-bop";

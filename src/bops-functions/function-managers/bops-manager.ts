@@ -1,4 +1,4 @@
-import { FunctionManager } from "./function-manager";
+import { FunctionManager } from "./function-manager.js";
 
 export class BopsManagerClass implements FunctionManager {
   private bopsMap = new Map<string, Function>();

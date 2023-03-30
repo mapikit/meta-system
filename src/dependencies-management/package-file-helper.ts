@@ -1,6 +1,6 @@
 import { promises, existsSync } from "fs";
 import Path from "path";
-import { environment } from "../common/execution-env";
+import { environment } from "../common/execution-env.js";
 
 export type FreshPackageFile = {
   dependencies : Record<string, string>;

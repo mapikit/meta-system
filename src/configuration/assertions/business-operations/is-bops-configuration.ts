@@ -1,4 +1,4 @@
-import { Dependency, BopsConfigurationEntry } from "../../business-operations/business-operations-type";
+import { Dependency, BopsConfigurationEntry } from "../../business-operations/business-operations-type.js";
 import { isType } from "../is-type";
 
 

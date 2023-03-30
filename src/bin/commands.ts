@@ -1,6 +1,6 @@
 import { Command, Option } from "commander";
 import constants from "../common/constants";
-import { environment } from "../common/execution-env";
+import { environment } from "../common/execution-env.js";
 import { parseInteger } from "../common/helpers/parsers";
 import { logLevelsArray } from "../common/logger/logger-types";
 import { testBopFunction, main } from "./functions";

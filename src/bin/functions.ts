@@ -1,18 +1,18 @@
 import chalk from "chalk";
 import { ConfigurationType } from "..";
-import { environment } from "../common/execution-env";
+import { environment } from "../common/execution-env.js";
 import { getSystemInfo } from "../common/logger/get-system-info";
 import { hookConsoleToFile } from "../common/logger/hook-console-to-file";
-import { logger } from "../common/logger/logger";
+import { logger } from "../common/logger/logger.js";
 import { PathUtils } from "../configuration/path-alias-utils";
-import { runtimeDefaults } from "../configuration/runtime-config/defaults";
+import { runtimeDefaults } from "../configuration/runtime-config/defaults.js";
 import Path from "path";
 import fs from "fs";
 import { run } from "./commands";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import ReadLine from "readline";
 import { ExtendedJsonTypes } from "../common/types/json-types";
-import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type";
+import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type.js";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
 
 

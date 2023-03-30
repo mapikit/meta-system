@@ -1,4 +1,4 @@
-import { EnvironmentVariable } from "../../configuration-type";
+import { EnvironmentVariable } from "../../configuration-type.js";
 import { isType } from "../is-type";
 
 export function isEnvironmentVariable (input : unknown) : asserts input is EnvironmentVariable {

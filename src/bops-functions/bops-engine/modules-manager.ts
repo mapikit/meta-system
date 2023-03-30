@@ -1,5 +1,5 @@
-import { BopsConfigurationEntry, ModuleType } from "../../configuration/business-operations/business-operations-type";
-import { ConfigurationType } from "../../configuration/configuration-type";
+import { BopsConfigurationEntry, ModuleType } from "../../configuration/business-operations/business-operations-type.js";
+import { ConfigurationType } from "../../configuration/configuration-type.js";
 import { ModuleResolver, ModuleResolverInputs } from "./module-resolver";
 
 export type MappedFunctions<T extends ModuleType = ModuleType> = Map<ModuleFullName<T>, Function>;

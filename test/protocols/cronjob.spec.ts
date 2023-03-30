@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { asyncTestThrow } from "../helpers/test-throw";
-import { FunctionSetup } from "../../src/bootstrap/function-setup";
+import { FunctionSetup } from "../../src/bootstrap/function-setup.js";
 import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup";
-import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
+import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager.js";
 import { purgeTestPackages, testExternalManager, testProtocolManager } from "../test-managers";
 import { testSystem } from "./data/system";
 

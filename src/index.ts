@@ -1,10 +1,10 @@
-import { FunctionSetup } from "./bootstrap/function-setup";
-import { BopsManagerClass } from "./bops-functions/function-managers/bops-manager";
+import { FunctionSetup } from "./bootstrap/function-setup.js";
+import { BopsManagerClass } from "./bops-functions/function-managers/bops-manager.js";
 import { ExternalFunctionManagerClass,
-  externalFunctionManagerSingleton } from "./bops-functions/function-managers/external-function-manager";
+  externalFunctionManagerSingleton } from "./bops-functions/function-managers/external-function-manager.js";
 import internalFunctionManager,
-{ InternalFunctionManagerClass } from "./bops-functions/function-managers/internal-function-manager";
-import { ConfigurationType as config } from "./configuration/configuration-type";
+{ InternalFunctionManagerClass } from "./bops-functions/function-managers/internal-function-manager.js";
+import { ConfigurationType as config } from "./configuration/configuration-type.js";
 
 export type ConfigurationType = config;
 

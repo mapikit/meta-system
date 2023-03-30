@@ -1,11 +1,12 @@
 
-import { MetaPackageDescriptionValidation } from "../../bops-functions/installation/packages-configuration-validation";
+import { MetaPackageDescriptionValidation } from
+  "../../bops-functions/installation/packages-configuration-validation.js";
 import { BuiltMetaPackage, FunctionManager, MetaFunction } from "@meta-system/meta-function-helper";
-import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
-import { FunctionFileSystem } from "../installation/function-file-system";
-import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation";
-import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer";
-import { environment } from "../../common/execution-env";
+import { runtimeDefaults } from "../../configuration/runtime-config/defaults.js";
+import { FunctionFileSystem } from "../installation/function-file-system.js";
+import { MetaFunctionDescriptionValidation } from "../installation/functions-configuration-validation.js";
+import { FunctionsInstaller, ModuleKind } from "../installation/functions-installer.js";
+import { environment } from "../../common/execution-env.js";
 
 
 export class ExternalFunctionManagerClass implements FunctionManager {

@@ -1,7 +1,7 @@
 import { sync as glob } from "glob";
 import Path from "path";
-import { ConfigurationType } from "./configuration-type";
-import { environment } from "../common/execution-env";
+import { ConfigurationType } from "./configuration-type.js";
+import { environment } from "../common/execution-env.js";
 
 export class PathUtils {
   public static async getContents <T> (arrayOrPath : T[] | string, parentPath = "") : Promise<T[]> {

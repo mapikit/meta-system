@@ -5,7 +5,7 @@ import {
   MetaPackage,
   validatePackageConfiguration,
 } from "@meta-system/meta-function-helper";
-import { environment } from "../../common/execution-env";
+import { environment } from "../../common/execution-env.js";
 
 export class MetaPackageDescriptionValidation {
   private validated = false;

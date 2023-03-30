@@ -1,5 +1,5 @@
 
-import { ModuleKind } from "../../src/bops-functions/installation/functions-installer";
+import { ModuleKind } from "../../src/bops-functions/installation/functions-installer.js";
 import { expect } from "chai";
 import { random } from "faker";
 import { purgeTestPackages, testInstaller } from "../test-managers";

@@ -5,7 +5,7 @@ import {
   BopsCustomObject,
   BopsVariable,
   BusinessOperations,
-} from "./business-operations-type";
+} from "./business-operations-type.js";
 
 interface ModuleRepositoriesData {
   internal : string[];

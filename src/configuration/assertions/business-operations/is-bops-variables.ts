@@ -1,4 +1,4 @@
-import { BopsVariable } from "../../business-operations/business-operations-type";
+import { BopsVariable } from "../../business-operations/business-operations-type.js";
 import { isType } from "../is-type";
 import { stringIsOneOf } from "../string-is-one-of";
 

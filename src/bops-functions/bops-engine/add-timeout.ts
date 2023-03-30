@@ -1,4 +1,4 @@
-import { logger } from "../../common/logger/logger";
+import { logger } from "../../common/logger/logger.js";
 import { TTLExceededError } from "./engine-errors/execution-time-exceeded";
 
 // eslint-disable-next-line max-lines-per-function

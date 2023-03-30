@@ -1,27 +1,27 @@
-import { BopsEngine } from "../../../src/bops-functions/bops-engine/bops-engine";
-import { ModuleManager } from "../../../src/bops-functions/bops-engine/modules-manager";
-import { SchemasManager } from "../../../src/schemas/application/schemas-manager";
+import { BopsEngine } from "../../../src/bops-functions/bops-engine/bops-engine.js";
+import { ModuleManager } from "../../../src/bops-functions/bops-engine/modules-manager.js";
+import { SchemasManager } from "../../../src/schemas/application/schemas-manager.js";
 import { createFakeMongo } from "../../doubles/mongo-server";
 import { expect } from "chai";
 import { testSystem } from "./test-data/test-system";
 import { ResolvedConstants, StaticSystemInfo } from "../../../src/bops-functions/bops-engine/static-info-validation";
-import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type";
-import { SchemaType } from "../../../src/configuration/schemas/schemas-type";
+import { BusinessOperations } from "../../../src/configuration/business-operations/business-operations-type.js";
+import { SchemaType } from "../../../src/configuration/schemas/schemas-type.js";
 import { mapikitProvidedBop } from "./test-data/business-operations/prebuilt-bop";
 import { schemaBop } from "./test-data/business-operations/schema-bop";
 import { externalBop } from "./test-data/business-operations/external-bop";
 import faker from "faker";
 import { CheckBopsFunctionsDependencies }
-  from "../../../src/configuration/business-operations/check-bops-functions-dependencies";
-import { BusinessOperation } from "../../../src/configuration/business-operations/business-operation";
-import internalFunctionManager from "../../../src/bops-functions/function-managers/internal-function-manager";
-import { BopsManagerClass } from "../../../src/bops-functions/function-managers/bops-manager";
-import { ConfigurationType } from "../../../src/configuration/configuration-type";
+  from "../../../src/configuration/business-operations/check-bops-functions-dependencies.js";
+import { BusinessOperation } from "../../../src/configuration/business-operations/business-operation.js";
+import internalFunctionManager from "../../../src/bops-functions/function-managers/internal-function-manager.js";
+import { BopsManagerClass } from "../../../src/bops-functions/function-managers/bops-manager.js";
+import { ConfigurationType } from "../../../src/configuration/configuration-type.js";
 import { variableBop } from "./test-data/business-operations/variables-bop";
 import { packageBop } from "./test-data/business-operations/package-bop";
 import { purgeTestPackages, testExternalManager, testProtocolManager } from "../../test-managers";
 import { Protocol } from "../../../src/configuration/protocols/protocols";
-import { DBProtocolNewable } from "../../../src/bops-functions/function-managers/protocol-function-manager";
+import { DBProtocolNewable } from "../../../src/bops-functions/function-managers/protocol-function-manager.js";
 
 interface EngineInput {
   ModuleManager : ModuleManager;

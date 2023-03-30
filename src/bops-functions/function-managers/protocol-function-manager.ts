@@ -1,7 +1,7 @@
-import { FunctionsInstaller, ModuleKind } from "../../bops-functions/installation/functions-installer";
+import { FunctionsInstaller, ModuleKind } from "../../bops-functions/installation/functions-installer.js";
 import { ProtocolDescriptionValidation } from "../../bops-functions/installation/protocol-configuration-validation";
 import { ProtocolFileSystem } from "../../bops-functions/installation/protocol-file-system";
-import { runtimeDefaults } from "../../configuration/runtime-config/defaults";
+import { runtimeDefaults } from "../../configuration/runtime-config/defaults.js";
 import { FunctionManager } from "@meta-system/meta-function-helper";
 import Path from "path";
 import {
@@ -12,8 +12,8 @@ import {
 } from "@meta-system/meta-protocol-helper";
 import { Protocol } from "../../configuration/protocols/protocols";
 import { isDbProtocol } from "../../configuration/protocols/is-db-protocol";
-import { SchemaType } from "../../configuration/schemas/schemas-type";
-import { environment } from "../../common/execution-env";
+import { SchemaType } from "../../configuration/schemas/schemas-type.js";
+import { environment } from "../../common/execution-env.js";
 
 type DualNewable = DBProtocolNewable | MetaProtocolNewable;
 

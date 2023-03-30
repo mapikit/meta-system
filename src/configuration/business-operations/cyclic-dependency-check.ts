@@ -1,4 +1,4 @@
-import { BusinessOperations } from "./business-operations-type";
+import { BusinessOperations } from "./business-operations-type.js";
 
 export class BopsCyclicDependencyCheck {
   public constructor (

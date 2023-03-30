@@ -1,14 +1,14 @@
-import { externalFunctionManagerSingleton } from "../bops-functions/function-managers/external-function-manager";
-import { FunctionManager } from "../bops-functions/function-managers/function-manager";
-import internalFunctionManager from "../bops-functions/function-managers/internal-function-manager";
+import { externalFunctionManagerSingleton } from "../bops-functions/function-managers/external-function-manager.js";
+import { FunctionManager } from "../bops-functions/function-managers/function-manager.js";
+import internalFunctionManager from "../bops-functions/function-managers/internal-function-manager.js";
 import { Configuration } from "../configuration/configuration";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
-import { FunctionSetup } from "../bootstrap/function-setup";
-import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager";
+import { FunctionSetup } from "../bootstrap/function-setup.js";
+import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager.js";
 import { ProtocolsSetup } from "./protocols-setup";
 import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper";
-import { environment } from "../common/execution-env";
-import { logger } from "../common/logger/logger";
+import { environment } from "../common/execution-env.js";
+import { logger } from "../common/logger/logger.js";
 
 export class SystemSetup {
   private protocolsManager : ProtocolsSetup;

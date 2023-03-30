@@ -1,4 +1,4 @@
-import { ConfigurationType } from "../../configuration-type";
+import { ConfigurationType } from "../../configuration-type.js";
 import { isType } from "../is-type";
 import { isEnvironmentVariable } from "./is-environment-variable";
 

@@ -1,5 +1,5 @@
 import { isObjectDefinition } from "@meta-system/object-definition";
-import { BopsCustomObject } from "../../business-operations/business-operations-type";
+import { BopsCustomObject } from "../../business-operations/business-operations-type.js";
 import { isType } from "../is-type";
 
 export function isBopsCustomObjects (input : unknown) : asserts input is BopsCustomObject[] {

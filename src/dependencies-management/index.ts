@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { join } from "path";
 import FS from "fs";
-import { logger } from "../common/logger/logger";
+import { logger } from "../common/logger/logger.js";
 
 type ModuleName = string;
 type ModuleVersion = string;

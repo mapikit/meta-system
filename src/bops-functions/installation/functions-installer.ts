@@ -1,4 +1,4 @@
-import { logger } from "../../common/logger/logger";
+import { logger } from "../../common/logger/logger.js";
 import { DependenciesManager } from "../../dependencies-management";
 
 export enum ModuleKind {

@@ -1,5 +1,5 @@
-import { BopsConfigurationEntry } from "../../../configuration/business-operations/business-operations-type";
-import { MappedFunctions } from "../modules-manager";
+import { BopsConfigurationEntry } from "../../../configuration/business-operations/business-operations-type.js";
+import { MappedFunctions } from "../modules-manager.js";
 import { ResolvedConstants } from "../static-info-validation";
 import { ResolvedVariables } from "../variables/variables-context";
 

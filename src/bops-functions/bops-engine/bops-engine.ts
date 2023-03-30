@@ -1,15 +1,15 @@
 import constants from "../../common/constants";
 import { BusinessOperations, Dependency }
-  from "../../configuration/business-operations/business-operations-type";
-import { ConfigurationType } from "../../configuration/configuration-type";
+  from "../../configuration/business-operations/business-operations-type.js";
+import { ConfigurationType } from "../../configuration/configuration-type.js";
 import { addTimeout } from "./add-timeout";
-import { ModuleManager } from "./modules-manager";
+import { ModuleManager } from "./modules-manager.js";
 import { ObjectResolver } from "./object-manipulator";
 import { VariableContext } from "./variables/variables-context";
 import { SystemContext } from "./contexts/system-context";
 import { BopContext } from "./contexts/bop-context";
 import { getObjectProperty } from "../../common/helpers/get-object-property";
-import { logger } from "../../common/logger/logger";
+import { logger } from "../../common/logger/logger.js";
 
 /**
  * This is the engine responsible for stitching all the functions in all the BOps in the system

@@ -1,5 +1,5 @@
 import { ExtendedJsonTypes } from "../../../common/types/json-types";
-import { BopsConstant } from "../../business-operations/business-operations-type";
+import { BopsConstant } from "../../business-operations/business-operations-type.js";
 import { isType } from "../is-type";
 import { stringIsOneOf } from "../string-is-one-of";
 

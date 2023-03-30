@@ -1,4 +1,4 @@
-import { SchemaType } from "../../src/configuration/schemas/schemas-type";
+import { SchemaType } from "../../src/configuration/schemas/schemas-type.js";
 import faker from "faker";
 import { ObjectDefinition } from "@meta-system/object-definition";
 

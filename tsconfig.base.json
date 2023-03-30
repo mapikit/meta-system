@@ -2,20 +2,20 @@
 // Other configurations may extend this file with the "extends" parameter. 
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "resolveJsonModule": true,
+    "module": "ES2020",
     "esModuleInterop": true,
-    "declaration": true,
-    "target": "es5",
-    "lib": ["es6"],
+    "target": "ES2020",
+    "lib": ["es6", "ES2017"],
     "types": ["node", "mocha"],
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
+    "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noImplicitAny": false,
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
+    "declaration": true,
     "paths": {
       "*": [
         "node_modules/*",

@@ -1,5 +1,5 @@
 import { isBusinessOperations } from "../assertions/business-operations/is-business-operations";
-import { BusinessOperation } from "./business-operation";
+import { BusinessOperation } from "./business-operation.js";
 import { BopsCyclicDependencyCheck } from "./cyclic-dependency-check";
 import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects";
 import { ValidateBopsPipelineFlowCommand } from "./validate-bops-pipeline-flow";

@@ -1,6 +1,6 @@
-import { ConfigurationType } from "../../../configuration/configuration-type";
-import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
-import { MappedFunctions, ModuleManager } from "../modules-manager";
+import { ConfigurationType } from "../../../configuration/configuration-type.js";
+import { BopsVariable } from "../../../configuration/business-operations/business-operations-type.js";
+import { MappedFunctions, ModuleManager } from "../modules-manager.js";
 import { ResolvedConstants, StaticSystemInfo } from "../static-info-validation";
 import { VariableContext } from "../variables/variables-context";
 

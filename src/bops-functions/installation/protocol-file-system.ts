@@ -2,7 +2,7 @@
 import { FunctionManager, getClassConstructor, getDescriptorFileContent } from "@meta-system/meta-function-helper";
 import Path from "path";
 import { MetaProtocol } from "@meta-system/meta-protocol-helper";
-import { logger } from "../../common/logger/logger";
+import { logger } from "../../common/logger/logger.js";
 
 export class ProtocolFileSystem {
   private readonly installLocation : string;

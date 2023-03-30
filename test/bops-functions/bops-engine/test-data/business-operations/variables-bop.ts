@@ -1,4 +1,4 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type";
+import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const variableBop : BusinessOperations = {
   name: "variables",

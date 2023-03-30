@@ -5,9 +5,9 @@ import { Protocol } from "../configuration/protocols/protocols";
 import {
   DBProtocolNewable,
   MetaProtocolNewable,
-  ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
-import { ConfigurationType } from "../configuration/configuration-type";
-import { logger } from "../common/logger/logger";
+  ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager.js";
+import { ConfigurationType } from "../configuration/configuration-type.js";
+import { logger } from "../common/logger/logger.js";
 import { ProtocolConfigType } from "../configuration/protocols/protocols-type";
 
 export class ProtocolsSetup {

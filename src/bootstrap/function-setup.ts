@@ -1,20 +1,20 @@
-import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
-import { BopsEngine } from "../bops-functions/bops-engine/bops-engine";
-import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager";
-import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager";
-import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager";
-import { FunctionManager } from "../bops-functions/function-managers/function-manager";
-import { InternalFunctionManagerClass } from "../bops-functions/function-managers/internal-function-manager";
-import { BusinessOperation } from "../configuration/business-operations/business-operation";
+import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager.js";
+import { BopsEngine } from "../bops-functions/bops-engine/bops-engine.js";
+import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager.js";
+import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager.js";
+import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager.js";
+import { FunctionManager } from "../bops-functions/function-managers/function-manager.js";
+import { InternalFunctionManagerClass } from "../bops-functions/function-managers/internal-function-manager.js";
+import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
 import { BopsDependencies, CheckBopsFunctionsDependencies }
-  from "../configuration/business-operations/check-bops-functions-dependencies";
-import { ConfigurationType } from "../configuration/configuration-type";
-import { SchemaType } from "../configuration/schemas/schemas-type";
-import { SchemasManager } from "../schemas/application/schemas-manager";
-import { ModuleType } from "../configuration/business-operations/business-operations-type";
-import { DependencyPropValidator } from "./dependency-validator";
-import { logger } from "../common/logger/logger";
-import { environment } from "../common/execution-env";
+  from "../configuration/business-operations/check-bops-functions-dependencies.js";
+import { ConfigurationType } from "../configuration/configuration-type.js";
+import { SchemaType } from "../configuration/schemas/schemas-type.js";
+import { SchemasManager } from "../schemas/application/schemas-manager.js";
+import { ModuleType } from "../configuration/business-operations/business-operations-type.js";
+import { DependencyPropValidator } from "./dependency-validator.js";
+import { logger } from "../common/logger/logger.js";
+import { environment } from "../common/execution-env.js";
 
 export class FunctionSetup {
   private readonly bopsManager = new BopsManagerClass();

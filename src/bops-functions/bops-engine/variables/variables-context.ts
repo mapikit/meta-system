@@ -2,8 +2,8 @@
 import { isValidType } from "../../../common/assertions/is-valid-type";
 import { ConfigurationType } from "../../..";
 import { ExtendedJsonTypes } from "../../../common/types/json-types";
-import { BopsVariable } from "../../../configuration/business-operations/business-operations-type";
-import { MappedFunctions, ModuleFullName } from "../modules-manager";
+import { BopsVariable } from "../../../configuration/business-operations/business-operations-type.js";
+import { MappedFunctions, ModuleFullName } from "../modules-manager.js";
 import { decreaseVariableFunctionInformation, decreaseVariablesFunction } from "./functions/decrease-variable";
 import { increaseVariableFunctionInformation, increaseVariablesFunction } from "./functions/increase-variable";
 import { setVariablesFunction, setVariablesFunctionInformation } from "./functions/set-variable";

@@ -1,7 +1,7 @@
 
 import { MetaFunctionDescriptionValidation }
-  from "../../src/bops-functions/installation/functions-configuration-validation";
-import { ModuleKind } from "../../src/bops-functions/installation/functions-installer";
+  from "../../src/bops-functions/installation/functions-configuration-validation.js";
+import { ModuleKind } from "../../src/bops-functions/installation/functions-installer.js";
 import { expect } from "chai";
 import { purgeTestPackages, testFunctionFileSystem, testInstaller } from "../test-managers";
 

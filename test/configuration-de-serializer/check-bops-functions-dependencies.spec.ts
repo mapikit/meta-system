@@ -1,13 +1,13 @@
-import { ExternalFunctionManagerClass } from "../../src/bops-functions/function-managers/external-function-manager";
-import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
-import { FunctionFileSystem } from "../../src/bops-functions/installation/function-file-system";
-import { FunctionsInstaller } from "../../src/bops-functions/installation/functions-installer";
+import { ExternalFunctionManagerClass } from "../../src/bops-functions/function-managers/external-function-manager.js";
+import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager.js";
+import { FunctionFileSystem } from "../../src/bops-functions/installation/function-file-system.js";
+import { FunctionsInstaller } from "../../src/bops-functions/installation/functions-installer.js";
 import {
   CheckBopsFunctionsDependencies,
-} from "../../src/configuration/business-operations/check-bops-functions-dependencies";
+} from "../../src/configuration/business-operations/check-bops-functions-dependencies.js";
 import { expect } from "chai";
 import Path from "path";
-import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager";
+import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager.js";
 
 
 /* eslint-disable @typescript-eslint/no-var-requires */

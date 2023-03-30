@@ -1,7 +1,7 @@
-import { BopsConfigurationEntry } from "../../configuration/business-operations/business-operations-type";
-import { SchemasManager } from "../../schemas/application/schemas-manager";
+import { BopsConfigurationEntry } from "../../configuration/business-operations/business-operations-type.js";
+import { SchemasManager } from "../../schemas/application/schemas-manager.js";
 import { SchemasFunctions } from "../../schemas/domain/schemas-functions";
-import { FunctionManager } from "../function-managers/function-manager";
+import { FunctionManager } from "../function-managers/function-manager.js";
 import { ProvidedFunctionNotFound } from "./engine-errors/function-not-found";
 import { OperationNotFoundError } from "./engine-errors/operation-not-found-error";
 import { SchemaNotFoundError } from "./engine-errors/schema-not-found-error";

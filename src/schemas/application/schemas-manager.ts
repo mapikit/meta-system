@@ -1,7 +1,7 @@
-import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager";
+import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager.js";
 import { assertsDbProtocol } from "../../configuration/protocols/is-db-protocol";
-import { SchemaType } from "../../configuration/schemas/schemas-type";
-import { logger } from "../../common/logger/logger";
+import { SchemaType } from "../../configuration/schemas/schemas-type.js";
+import { logger } from "../../common/logger/logger.js";
 import { SchemaManager } from "./schema-manager";
 
 export class SchemasManager {

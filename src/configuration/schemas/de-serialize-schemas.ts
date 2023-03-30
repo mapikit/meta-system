@@ -1,6 +1,6 @@
 import { isSchema } from "../assertions/schema/is-schema";
 import { Schema } from "./schema";
-import { SchemaType } from "./schemas-type";
+import { SchemaType } from "./schemas-type.js";
 
 export class DeserializeSchemasCommand {
   private result : Schema[] = [];
