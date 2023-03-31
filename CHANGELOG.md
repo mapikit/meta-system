@@ -1,4 +1,7 @@
 # Changelog
+# 0.3.3
+- Migrated to use ES Modules instead of common JS. This is preparatory work for enabling Meta-System to work on browsers.
+
 # 0.3.2
 - Updated meta-protocol-helper and meta-function-helper
 - Fixed system crashing on BOp failure

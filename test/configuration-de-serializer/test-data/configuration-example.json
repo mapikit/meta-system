@@ -237,6 +237,7 @@
   "protocols": [
     {
       "protocol": "HTTP_JSONBODY",
+      "protocolKind": "normal",
       "configuration": { },
       "identifier": "http1"
     }

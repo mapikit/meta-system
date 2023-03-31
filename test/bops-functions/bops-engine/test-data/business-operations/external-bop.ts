@@ -10,7 +10,7 @@ export const externalBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      version: "1.1.2",
+      version: "latest",
       moduleName: "bops-function-hello-world",
       moduleType: "external",
       key: 6,

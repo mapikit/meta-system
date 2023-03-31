@@ -79,7 +79,8 @@ export class ExternalFunctionManagerClass implements FunctionManager {
       return;
     }
 
-    const functionDeclaration = input[name] ?? input.default[name];
+    // For older modules node might double down on the "default" thingy :/
+    const functionDeclaration = input[name] ?? input.default[name] ?? input.default["default"][name];
 
     if (functionDeclaration === undefined) {
       throw Error(`[BOPs Function] ERROR - Misconfigured package "${packageName}". `

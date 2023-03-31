@@ -1,6 +1,6 @@
-import { ConfigurationType } from "../../../src";
-import { cronjobProtocol } from "./cronjob";
-import { cronjobBop } from "./protocol-bop";
+import { ConfigurationType } from "../../../src/index.js";
+import { cronjobProtocol } from "./cronjob.js";
+import { cronjobBop } from "./protocol-bop.js";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",

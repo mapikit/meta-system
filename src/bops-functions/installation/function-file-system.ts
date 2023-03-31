@@ -35,7 +35,7 @@ export class FunctionFileSystem {
         return result;
       });
 
-    return file["default"];
+    return file["default"] ?? file;
   }
 
   public async import (moduleName : string, entrypoint : string, mainFunctionName ?: string)

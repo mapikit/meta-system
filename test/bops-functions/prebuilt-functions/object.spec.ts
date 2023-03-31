@@ -1,9 +1,9 @@
-import { combineObjectBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/combine";
-import { createObjectBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/create";
-import { getObjectPropertyValueBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/get-value";
-import { getObjectKeysBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/keys";
-import { objectToStringBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/to-string";
-import { getObjectValuesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/values";
+import { combineObjectBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/combine.js";
+import { createObjectBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/create.js";
+import { getObjectPropertyValueBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/get-value.js";
+import { getObjectKeysBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/keys.js";
+import { objectToStringBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/to-string.js";
+import { getObjectValuesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/object/values.js";
 import { expect } from "chai";
 
 describe("Object Bops Functions", () => {

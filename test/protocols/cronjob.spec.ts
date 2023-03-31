@@ -1,10 +1,10 @@
 import { expect } from "chai";
-import { asyncTestThrow } from "../helpers/test-throw";
+import { asyncTestThrow } from "../helpers/test-throw.js";
 import { FunctionSetup } from "../../src/bootstrap/function-setup.js";
-import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup";
+import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup.js";
 import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager.js";
-import { purgeTestPackages, testExternalManager, testProtocolManager } from "../test-managers";
-import { testSystem } from "./data/system";
+import { purgeTestPackages, testExternalManager, testProtocolManager } from "../test-managers.js";
+import { testSystem } from "./data/system.js";
 
 describe("Protocols Testing", () => {
   const functionsManager = new FunctionSetup(
@@ -22,11 +22,13 @@ describe("Protocols Testing", () => {
   before(purgeTestPackages);
   afterEach(purgeTestPackages);
 
-  it("Protocol setup", async () => {
+  it.only("Protocol setup", async () => {
     const result = await asyncTestThrow(async () => {
       await protocolsSetup.execute();
     });
 
+
+    console.log(result.error);
     expect(result.error).to.be.undefined;
     expect(result.thrown).to.be.false;
   });

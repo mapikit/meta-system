@@ -1,6 +1,6 @@
 {
   "name": "meta-system",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A system to be any system",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -12,15 +12,6 @@
   },
   "bin": {
     "meta-system": "./dist/src/bin/index.js"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ],
-    "timeout": 0,
-    "spec": "./test/**/*.ts",
-    "recursive": true
   },
   "nyc": {
     "require": [

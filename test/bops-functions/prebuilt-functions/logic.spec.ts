@@ -1,11 +1,11 @@
-import { andGateBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/and";
-import { isEqualToBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/equal";
-import { higherOrEqualToBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/higher-or-equal-to";
-import { higherThanBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/higher-than";
-import { lowerOrEqualToBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/lower-or-equal-to";
-import { lowerThanBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/lower-than";
-import { notBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/not";
-import { orGateBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/or";
+import { andGateBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/and.js";
+import { isEqualToBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/equal.js";
+import { higherOrEqualToBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/higher-or-equal-to.js";
+import { higherThanBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/higher-than.js";
+import { lowerOrEqualToBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/lower-or-equal-to.js";
+import { lowerThanBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/lower-than.js";
+import { notBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/not.js";
+import { orGateBopsFunction } from "../../../src/bops-functions/prebuilt-functions/logic/or.js";
 import { expect } from "chai";
 
 describe("Logic BOPs function", () => {

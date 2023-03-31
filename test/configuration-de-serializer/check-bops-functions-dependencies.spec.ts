@@ -8,15 +8,13 @@ import {
 import { expect } from "chai";
 import Path from "path";
 import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager.js";
+import { importJsonAndParse } from "../helpers/import-json-and-parse.js";
 
+describe("Check BOPS functions dependencies", async () => {
+  const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");
+  const unreferencedInput =
+    await importJsonAndParse("./test/configuration-de-serializer/test-data/bops/unreferenced-input-dependency.json");
 
-/* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("./test-data/configuration-example.json");
-const unreferencedInput =
-  require("./test-data/bops/unreferenced-input-dependency.json");
-/* eslint-enable @typescript-eslint/no-var-requires */
-
-describe("Check BOPS functions dependencies", () => {
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
   const installPath = Path.join(process.cwd(), functionsFolder);

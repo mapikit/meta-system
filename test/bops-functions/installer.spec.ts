@@ -1,8 +1,10 @@
 
 import { ModuleKind } from "../../src/bops-functions/installation/functions-installer.js";
 import { expect } from "chai";
-import { random } from "faker";
-import { purgeTestPackages, testInstaller } from "../test-managers";
+import faker from "faker";
+import { purgeTestPackages, testInstaller } from "../test-managers.js";
+
+const { random } = faker;
 
 describe("BOps Functions Installation (external functions)", () => {
   const testFunction = "bops-function-hello-world";

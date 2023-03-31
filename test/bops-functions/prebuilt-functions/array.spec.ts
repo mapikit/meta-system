@@ -3,8 +3,8 @@ import { arrayFindIndexBopsFunction } from "../../../src/bops-functions/prebuilt
 import { arrayIncludesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/inlcudes.js";
 import { arrayJoinBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/join.js";
 import { arrayLengthBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/length.js";
-import { arrayPushBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/push";
-import { arrayRemoveBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/remove";
+import { arrayPushBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/push.js";
+import { arrayRemoveBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/remove.js";
 import { expect } from "chai";
 
 describe("Array BOPs functions", () => {

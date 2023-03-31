@@ -64,7 +64,7 @@ export class PathUtils {
       else files.push(Path.resolve(parentPath, value));
     }
     else if(Array.isArray(value)) {
-      value.forEach(val => files.push(...this.getPaths(val, parentPath)));
+      value.forEach(val => files.push(...this.getPaths(val as string, parentPath)));
     }
     return files;
   }
