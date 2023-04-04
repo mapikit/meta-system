@@ -2,6 +2,7 @@ import { sync as glob } from "glob";
 import Path from "path";
 import { ConfigurationType } from "./configuration-type.js";
 import { environment } from "../common/execution-env.js";
+import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
 export class PathUtils {
   public static async getContents <T> (arrayOrPath : T[] | string, parentPath = "") : Promise<T[]> {
@@ -30,10 +31,10 @@ export class PathUtils {
     const jsons : Array<T> = [];
     const files = glob(Path.resolve(parentPath, path));
     for(const file of files) {
-      const fileInfo = await import(file);
-      const infoArray = Array.isArray(fileInfo.default) ?
-        await this.getContents(fileInfo.default, path) :
-        [fileInfo.default];
+      const fileInfo = await importJsonAndParse(file);
+      const infoArray = Array.isArray(fileInfo) ?
+        await this.getContents(fileInfo, path) :
+        [fileInfo];
       jsons.push(...(infoArray as T[]));
     }
     return jsons;

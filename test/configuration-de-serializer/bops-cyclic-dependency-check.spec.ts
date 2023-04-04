@@ -1,6 +1,6 @@
 import { BopsCyclicDependencyCheck } from "../../src/configuration/business-operations/cyclic-dependency-check.js";
 import { expect } from "chai";
-import { importJsonAndParse } from "../helpers/import-json-and-parse.js";
+import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
 describe("BOps Cyclic Dependency Check", async () => {
   const BopsDependencyLoop = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration/bops-dependency-loop.json");

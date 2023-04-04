@@ -9,6 +9,7 @@ import { ProtocolsSetup } from "./protocols-setup.js";
 import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper.js";
 import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
+import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
 export class SystemSetup {
   private protocolsManager : ProtocolsSetup;
@@ -96,8 +97,7 @@ export class SystemSetup {
   public async getFileContents () : Promise<object> {
     logger.operation(`[System Setup] Searching system configuration in paths: "${environment.constants.configPath}"`);
 
-    const content = await import(environment.constants.configPath as string);
-    return content.default;
+    return importJsonAndParse(environment.constants.configPath as string);
   }
 
   private async setupProtocols (

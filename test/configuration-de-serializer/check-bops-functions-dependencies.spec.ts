@@ -8,7 +8,7 @@ import {
 import { expect } from "chai";
 import Path from "path";
 import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager.js";
-import { importJsonAndParse } from "../helpers/import-json-and-parse.js";
+import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
 describe("Check BOPS functions dependencies", async () => {
   const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");

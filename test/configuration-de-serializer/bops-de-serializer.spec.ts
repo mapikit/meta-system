@@ -1,6 +1,6 @@
 
 import { DeserializeBopsCommand } from "../../src/configuration/business-operations/de-serialize-bops.js";
-import { importJsonAndParse } from "../helpers/import-json-and-parse.js";
+import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 import { expect } from "chai";
 
 describe("BOPS Desserializer", async () => {

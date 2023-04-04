@@ -2,7 +2,7 @@
 import { DeserializeSchemasCommand } from "../../src/configuration/schemas/de-serialize-schemas.js";
 import { expect } from "chai";
 import { ObjectDefinition } from "@meta-system/object-definition";
-import { importJsonAndParse } from "../helpers/import-json-and-parse.js";
+import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
 describe("Schemas De-Serializer", async () => {
   const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");
