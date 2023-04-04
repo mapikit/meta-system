@@ -22,13 +22,11 @@ describe("Protocols Testing", () => {
   before(purgeTestPackages);
   afterEach(purgeTestPackages);
 
-  it.only("Protocol setup", async () => {
+  it("Protocol setup", async () => {
     const result = await asyncTestThrow(async () => {
       await protocolsSetup.execute();
     });
 
-
-    console.log(result.error);
     expect(result.error).to.be.undefined;
     expect(result.thrown).to.be.false;
   });
