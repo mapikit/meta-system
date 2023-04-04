@@ -11,7 +11,7 @@
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'"
   },
   "bin": {
-    "meta-system": "./dist/bin/index.js"
+    "meta-system": "./dist/src/bin/index.js"
   },
   "repository": {
     "type": "git",

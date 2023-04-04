@@ -7,10 +7,8 @@ const program = new Command("meta-system");
 const main = async () => {
   let packageFile;
   if (process && process.cwd()) {
-    const fsLib = await import("fs");
-    const pathLib = await import("path");
-
-    packageFile = JSON.parse(fsLib.readFileSync(pathLib.resolve(process.cwd(), "./package.json")).toString());
+    //@ts-ignore I KNOW WHAT I'M DOING
+    packageFile = (await import("../../package.json", { assert: { type: "json" } }))["default"];
   }
   
   program
