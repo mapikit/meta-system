@@ -1,10 +1,10 @@
 import { expect } from "chai";
-import { asyncTestThrow } from "../helpers/test-throw";
-import { FunctionSetup } from "../../src/bootstrap/function-setup";
-import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup";
-import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
-import { purgeTestPackages, testExternalManager, testProtocolManager } from "../test-managers";
-import { testSystem } from "./data/system";
+import { asyncTestThrow } from "../helpers/test-throw.js";
+import { FunctionSetup } from "../../src/bootstrap/function-setup.js";
+import { ProtocolsSetup } from "../../src/bootstrap/protocols-setup.js";
+import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager.js";
+import { purgeTestPackages, testExternalManager, testProtocolManager } from "../test-managers.js";
+import { testSystem } from "./data/system.js";
 
 describe("Protocols Testing", () => {
   const functionsManager = new FunctionSetup(

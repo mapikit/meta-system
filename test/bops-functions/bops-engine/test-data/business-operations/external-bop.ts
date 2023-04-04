@@ -1,4 +1,4 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type";
+import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const externalBop : BusinessOperations = {
   name: "external-bop",
@@ -10,7 +10,7 @@ export const externalBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      version: "1.1.2",
+      version: "latest",
       moduleName: "bops-function-hello-world",
       moduleType: "external",
       key: 6,

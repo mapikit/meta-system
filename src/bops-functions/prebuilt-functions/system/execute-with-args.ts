@@ -1,5 +1,5 @@
-import { CloudedObject } from "../../../common/types/clouded-object";
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { CloudedObject } from "../../../common/types/clouded-object.js";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const executeWithArgs = async (input : { module : Function; arguments : CloudedObject }) : Promise<unknown> => {
   const moduleOutput = await input.module(input.arguments);

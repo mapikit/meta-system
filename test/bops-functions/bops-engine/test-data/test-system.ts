@@ -1,11 +1,11 @@
-import { mapikitProvidedBop } from "../test-data/business-operations/prebuilt-bop";
-import { ConfigurationType } from "../../../../src/configuration/configuration-type";
-import { internalBop } from "./business-operations/internal-bop";
-import { schemaBop } from "./business-operations/schema-bop";
-import { externalBop } from "./business-operations/external-bop";
-import { variableBop } from "./business-operations/variables-bop";
-import { packageBop } from "./business-operations/package-bop";
-import { ProtocolKind } from "../../../../src/configuration/protocols/protocols-type";
+import { mapikitProvidedBop } from "../test-data/business-operations/prebuilt-bop.js";
+import { ConfigurationType } from "../../../../src/configuration/configuration-type.js";
+import { internalBop } from "./business-operations/internal-bop.js";
+import { schemaBop } from "./business-operations/schema-bop.js";
+import { externalBop } from "./business-operations/external-bop.js";
+import { variableBop } from "./business-operations/variables-bop.js";
+import { packageBop } from "./business-operations/package-bop.js";
+import { ProtocolKind } from "../../../../src/configuration/protocols/protocols-type.js";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",

@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const countStringFunction = (input : { string : string; search : string }) : unknown => {
   let count = 0;

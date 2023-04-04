@@ -1,9 +1,9 @@
-import { isBopsConstants } from "./is-bops-constants";
-import { isBopsCustomObjects } from "./is-bops-custom-objects";
-import { isBopsConfigurationEntry } from "./is-bops-configuration";
-import { BusinessOperations } from "../../business-operations/business-operations-type";
-import { isType, optionalIsType } from "../is-type";
-import { isBopsVariables } from "./is-bops-variables";
+import { isBopsConstants } from "./is-bops-constants.js";
+import { isBopsCustomObjects } from "./is-bops-custom-objects.js";
+import { isBopsConfigurationEntry } from "./is-bops-configuration.js";
+import { BusinessOperations } from "../../business-operations/business-operations-type.js";
+import { isType, optionalIsType } from "../is-type.js";
+import { isBopsVariables } from "./is-bops-variables.js";
 import { isObjectDefinition } from "@meta-system/object-definition";
 
 const requiredObjectKeys : Array<keyof BusinessOperations> = [

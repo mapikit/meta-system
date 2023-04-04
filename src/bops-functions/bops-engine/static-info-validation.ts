@@ -1,8 +1,9 @@
 
-import { isValidType } from "../../common/assertions/is-valid-type";
-import { BopsConstant, ExtendedJsonTypeDict } from "../../configuration/business-operations/business-operations-type";
-import { ConfigurationType } from "../../configuration/configuration-type";
-import { ConstantTypeError } from "./engine-errors/constant-type-error";
+import { isValidType } from "../../common/assertions/is-valid-type.js";
+import { BopsConstant, ExtendedJsonTypeDict } from
+  "../../configuration/business-operations/business-operations-type.js";
+import { ConfigurationType } from "../../configuration/configuration-type.js";
+import { ConstantTypeError } from "./engine-errors/constant-type-error.js";
 
 export type ResolvedConstants = Record<string, unknown>;
 /**

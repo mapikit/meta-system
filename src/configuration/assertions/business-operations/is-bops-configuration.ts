@@ -1,5 +1,5 @@
-import { Dependency, BopsConfigurationEntry } from "../../business-operations/business-operations-type";
-import { isType } from "../is-type";
+import { Dependency, BopsConfigurationEntry } from "../../business-operations/business-operations-type.js";
+import { isType } from "../is-type.js";
 
 
 function isDependencies (input : unknown) : asserts input is Dependency[] {

@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const arrayAtBopsFunction = (input : { array : unknown[]; index : number }) : unknown => {
   const found = input.array[input.index];

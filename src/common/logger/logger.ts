@@ -1,6 +1,6 @@
-import constants from "../constants";
-import { defaultStyleFunctions } from "./default-styler-functions";
-import { LogLevelsType, LoggerType, LogLevels, logLevelsArray, Styles, StylingFunction } from "./logger-types";
+import constants from "../constants.js";
+import { defaultStyleFunctions } from "./default-styler-functions.js";
+import { LogLevelsType, LoggerType, LogLevels, logLevelsArray, Styles, StylingFunction } from "./logger-types.js";
 
 export class LoggerClass {
   constructor () { this.initialize(constants.DEFAULT_LOG_LEVEL); }

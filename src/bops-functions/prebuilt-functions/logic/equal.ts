@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 import { isDeepStrictEqual } from "util";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

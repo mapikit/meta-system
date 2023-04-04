@@ -1,5 +1,5 @@
-import { isProtocol } from "../assertions/protocols/is-protocol";
-import { Protocol } from "./protocols";
+import { isProtocol } from "../assertions/protocols/is-protocol.js";
+import { Protocol } from "./protocols.js";
 
 export class DeserializeProtocolsCommand {
   private result : Protocol[] = [];

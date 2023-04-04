@@ -2,7 +2,7 @@
 
 import { getClassConstructor, getDescriptorFileContent } from "@meta-system/meta-function-helper";
 import Path from "path";
-import { logger } from "../../common/logger/logger";
+import { logger } from "../../common/logger/logger.js";
 
 export class FunctionFileSystem {
   private readonly customFunctionsLocation : string;
@@ -35,7 +35,7 @@ export class FunctionFileSystem {
         return result;
       });
 
-    return file["default"];
+    return file["default"] ?? file;
   }
 
   public async import (moduleName : string, entrypoint : string, mainFunctionName ?: string)

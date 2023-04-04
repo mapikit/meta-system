@@ -1,7 +1,7 @@
-import { isValidType } from "../../../../common/assertions/is-valid-type";
-import { CloudedObject } from "../../../../common/types/clouded-object";
-import { InternalMetaFunction } from "../../../internal-meta-function";
-import { ResolvedVariables } from "../variables-context";
+import { isValidType } from "../../../../common/assertions/is-valid-type.js";
+import { CloudedObject } from "../../../../common/types/clouded-object.js";
+import { InternalMetaFunction } from "../../../internal-meta-function.js";
+import { ResolvedVariables } from "../variables-context.js";
 
 export function setVariablesFunction (input : CloudedObject, variables : ResolvedVariables) : unknown {
   let setCount = 0;

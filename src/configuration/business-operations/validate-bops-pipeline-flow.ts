@@ -1,6 +1,6 @@
-import { logger } from "../../common/logger/logger";
-import { BusinessOperation } from "./business-operation";
-import { BopsConfigurationEntry } from "./business-operations-type";
+import { logger } from "../../common/logger/logger.js";
+import { BusinessOperation } from "./business-operation.js";
+import { BopsConfigurationEntry } from "./business-operations-type.js";
 
 export class ValidateBopsPipelineFlowCommand {
   private businessOperation : BusinessOperation;

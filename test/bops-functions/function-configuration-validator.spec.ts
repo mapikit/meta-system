@@ -1,9 +1,9 @@
 
 import { MetaFunctionDescriptionValidation }
-  from "../../src/bops-functions/installation/functions-configuration-validation";
-import { ModuleKind } from "../../src/bops-functions/installation/functions-installer";
+  from "../../src/bops-functions/installation/functions-configuration-validation.js";
+import { ModuleKind } from "../../src/bops-functions/installation/functions-installer.js";
 import { expect } from "chai";
-import { purgeTestPackages, testFunctionFileSystem, testInstaller } from "../test-managers";
+import { purgeTestPackages, testFunctionFileSystem, testInstaller } from "../test-managers.js";
 
 describe("BOps Function Configuration Validator", () =>{
   const testFunctionName = "bops-function-hello-world";

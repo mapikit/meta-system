@@ -1,8 +1,8 @@
-import { isBusinessOperations } from "../assertions/business-operations/is-business-operations";
-import { BusinessOperation } from "./business-operation";
-import { BopsCyclicDependencyCheck } from "./cyclic-dependency-check";
-import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects";
-import { ValidateBopsPipelineFlowCommand } from "./validate-bops-pipeline-flow";
+import { isBusinessOperations } from "../assertions/business-operations/is-business-operations.js";
+import { BusinessOperation } from "./business-operation.js";
+import { BopsCyclicDependencyCheck } from "./cyclic-dependency-check.js";
+import { ValidateBopsCustomObjectsCommand } from "./validate-bops-custom-objects.js";
+import { ValidateBopsPipelineFlowCommand } from "./validate-bops-pipeline-flow.js";
 
 export class DeserializeBopsCommand {
   private result : BusinessOperation[] = [];

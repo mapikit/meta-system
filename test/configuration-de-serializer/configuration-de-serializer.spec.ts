@@ -1,14 +1,13 @@
-import { DeserializeConfigurationCommand } from "../../src/configuration/de-serialize-configuration";
+import { DeserializeConfigurationCommand } from "../../src/configuration/de-serialize-configuration.js";
 import { expect } from "chai";
-import { asyncTestThrow } from "../helpers/test-throw";
+import { asyncTestThrow } from "../helpers/test-throw.js";
+import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
-/* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("./test-data/configuration-example.json");
-const badConfigurationExample =
-  require("./test-data/configuration/bad-configuration-example.json");
-/* eslint-enable @typescript-eslint/no-var-requires */
+describe("Configuration Deserializer", async () => {
+  const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");
+  const badConfigurationExample =
+    await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration/bad-configuration-example.json");
 
-describe("Configuration Deserializer", () => {
   // This suite just tests the base type - the Schemas and BOPS tests are written in other suites
   it("Successfully deserializes a valid configuration file", async () => {
     const command = new DeserializeConfigurationCommand();

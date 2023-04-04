@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const higherThanBopsFunction = (input : { A : number; B : number }) : unknown => {
   const isHigher = input.A > input.B;

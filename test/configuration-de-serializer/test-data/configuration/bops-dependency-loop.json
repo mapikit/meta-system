@@ -254,6 +254,7 @@
   "protocols": [
     {
       "protocolType": "HTTP_JSONBODY",
+      "protocolKind": "normal",
       "configuration": { }
     }
   ]

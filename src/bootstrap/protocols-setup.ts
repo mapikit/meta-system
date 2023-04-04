@@ -1,14 +1,14 @@
 import { FunctionManager } from "@meta-system/meta-function-helper";
 import { DBProtocol, MetaProtocol } from "@meta-system/meta-protocol-helper";
-import { isDbProtocol } from "../configuration/protocols/is-db-protocol";
-import { Protocol } from "../configuration/protocols/protocols";
+import { isDbProtocol } from "../configuration/protocols/is-db-protocol.js";
+import { Protocol } from "../configuration/protocols/protocols.js";
 import {
   DBProtocolNewable,
   MetaProtocolNewable,
-  ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager";
-import { ConfigurationType } from "../configuration/configuration-type";
-import { logger } from "../common/logger/logger";
-import { ProtocolConfigType } from "../configuration/protocols/protocols-type";
+  ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager.js";
+import { ConfigurationType } from "../configuration/configuration-type.js";
+import { logger } from "../common/logger/logger.js";
+import { ProtocolConfigType } from "../configuration/protocols/protocols-type.js";
 
 export class ProtocolsSetup {
   public constructor (

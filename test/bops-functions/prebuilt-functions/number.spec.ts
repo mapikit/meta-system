@@ -1,6 +1,6 @@
-import { randomNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/number/random";
-import { toExponentialBopsFunction } from "../../../src/bops-functions/prebuilt-functions/number/to-exponential";
-import { numberToStringFunction } from "../../../src/bops-functions/prebuilt-functions/number/to-string";
+import { randomNumberBopsFunction } from "../../../src/bops-functions/prebuilt-functions/number/random.js";
+import { toExponentialBopsFunction } from "../../../src/bops-functions/prebuilt-functions/number/to-exponential.js";
+import { numberToStringFunction } from "../../../src/bops-functions/prebuilt-functions/number/to-string.js";
 import { expect } from "chai";
 
 describe("Number BOPs Function", () => {

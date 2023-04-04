@@ -1,6 +1,6 @@
-import { ConfigurationType } from "../../configuration-type";
-import { isType } from "../is-type";
-import { isEnvironmentVariable } from "./is-environment-variable";
+import { ConfigurationType } from "../../configuration-type.js";
+import { isType } from "../is-type.js";
+import { isEnvironmentVariable } from "./is-environment-variable.js";
 
 // eslint-disable-next-line max-lines-per-function
 export function isConfigurationType (input : unknown) : asserts input is ConfigurationType {

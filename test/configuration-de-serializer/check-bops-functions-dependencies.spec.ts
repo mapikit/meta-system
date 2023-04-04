@@ -1,22 +1,20 @@
-import { ExternalFunctionManagerClass } from "../../src/bops-functions/function-managers/external-function-manager";
-import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager";
-import { FunctionFileSystem } from "../../src/bops-functions/installation/function-file-system";
-import { FunctionsInstaller } from "../../src/bops-functions/installation/functions-installer";
+import { ExternalFunctionManagerClass } from "../../src/bops-functions/function-managers/external-function-manager.js";
+import internalFunctionManager from "../../src/bops-functions/function-managers/internal-function-manager.js";
+import { FunctionFileSystem } from "../../src/bops-functions/installation/function-file-system.js";
+import { FunctionsInstaller } from "../../src/bops-functions/installation/functions-installer.js";
 import {
   CheckBopsFunctionsDependencies,
-} from "../../src/configuration/business-operations/check-bops-functions-dependencies";
+} from "../../src/configuration/business-operations/check-bops-functions-dependencies.js";
 import { expect } from "chai";
 import Path from "path";
-import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager";
+import { protocolFunctionManagerSingleton } from "../../src/bops-functions/function-managers/protocol-function-manager.js";
+import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
+describe("Check BOPS functions dependencies", async () => {
+  const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");
+  const unreferencedInput =
+    await importJsonAndParse("./test/configuration-de-serializer/test-data/bops/unreferenced-input-dependency.json");
 
-/* eslint-disable @typescript-eslint/no-var-requires */
-const configurationExample = require("./test-data/configuration-example.json");
-const unreferencedInput =
-  require("./test-data/bops/unreferenced-input-dependency.json");
-/* eslint-enable @typescript-eslint/no-var-requires */
-
-describe("Check BOPS functions dependencies", () => {
   const functionsFolder = "test-functions";
   const installationHandler = new FunctionsInstaller(functionsFolder);
   const installPath = Path.join(process.cwd(), functionsFolder);

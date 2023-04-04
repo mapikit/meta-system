@@ -1,4 +1,4 @@
-import { SchemasFunctions } from "./schemas-functions";
+import { SchemasFunctions } from "./schemas-functions.js";
 
 export type SchemaFunctionErrorType = {
   [key in SchemasFunctions] : {
@@ -86,12 +86,25 @@ const DeleteErrors = {
   },
 };
 
+const CountErrors = {
+  invalidQueryArgument: {
+    errorCode: "C001",
+    message: "Invalid Query Argument",
+  },
+  genericError: {
+    errorCode: "C002",
+    message: "A unmapped error has happened. This possibly means that" +
+      " some configuration in the server was off, or the communication channel was shut down.",
+  },
+};
+
 export const SchemaFunctionErrors : SchemaFunctionErrorType = {
-  create : CreateErrors,
-  getById : GetByIdErrors,
+  insert : CreateErrors,
+  findById : GetByIdErrors,
   deleteById : DeleteByIdErrors,
   updateById : UpdateByIdErrors,
-  get : GetErrors,
+  find : GetErrors,
   update : UpdateErrors,
   delete : DeleteErrors,
+  count: CountErrors,
 };

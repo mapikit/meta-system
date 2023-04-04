@@ -1,5 +1,5 @@
 import { isObjectDefinition } from "@meta-system/object-definition";
-import { SchemaType } from "../../schemas/schemas-type";
+import { SchemaType } from "../../schemas/schemas-type.js";
 
 /**
  * Tests if the input given is a schema

@@ -1,10 +1,10 @@
 import clone from "just-clone";
-import { isConfigurationType } from "./assertions/configuration/is-configuration-type";
-import { DeserializeBopsCommand } from "./business-operations/de-serialize-bops";
-import { Configuration } from "./configuration";
-import { PathUtils } from "./path-alias-utils";
-import { DeserializeProtocolsCommand } from "./protocols/de-serialize-protocols";
-import { DeserializeSchemasCommand } from "./schemas/de-serialize-schemas";
+import { isConfigurationType } from "./assertions/configuration/is-configuration-type.js";
+import { DeserializeBopsCommand } from "./business-operations/de-serialize-bops.js";
+import { Configuration } from "./configuration.js";
+import { PathUtils } from "./path-alias-utils.js";
+import { DeserializeProtocolsCommand } from "./protocols/de-serialize-protocols.js";
+import { DeserializeSchemasCommand } from "./schemas/de-serialize-schemas.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",

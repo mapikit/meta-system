@@ -1,10 +1,10 @@
-import { arrayAtBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/array-at";
-import { arrayFindIndexBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/find-index";
-import { arrayIncludesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/inlcudes";
-import { arrayJoinBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/join";
-import { arrayLengthBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/length";
-import { arrayPushBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/push";
-import { arrayRemoveBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/remove";
+import { arrayAtBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/array-at.js";
+import { arrayFindIndexBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/find-index.js";
+import { arrayIncludesBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/inlcudes.js";
+import { arrayJoinBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/join.js";
+import { arrayLengthBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/length.js";
+import { arrayPushBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/push.js";
+import { arrayRemoveBopsFunction } from "../../../src/bops-functions/prebuilt-functions/array/remove.js";
 import { expect } from "chai";
 
 describe("Array BOPs functions", () => {

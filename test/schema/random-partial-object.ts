@@ -1,5 +1,5 @@
-import { CloudedObject } from "../../src/common/types/clouded-object";
-import { SchemaType } from "../../src/configuration/schemas/schemas-type";
+import { CloudedObject } from "../../src/common/types/clouded-object.js";
+import { SchemaType } from "../../src/configuration/schemas/schemas-type.js";
 import { entityFactory } from "../factories/entity-factory";
 import { random } from "faker";
 

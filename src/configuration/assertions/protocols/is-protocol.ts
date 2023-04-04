@@ -1,5 +1,5 @@
-import { ProtocolConfigType } from "../../protocols/protocols-type";
-import { isType, optionalIsType } from "../is-type";
+import { ProtocolConfigType } from "../../protocols/protocols-type.js";
+import { isType, optionalIsType } from "../is-type.js";
 
 const requiredProtocolsKeys : (keyof ProtocolConfigType)[] = [
   "configuration",

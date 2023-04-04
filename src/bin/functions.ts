@@ -1,19 +1,20 @@
 import chalk from "chalk";
-import { ConfigurationType } from "..";
-import { environment } from "../common/execution-env";
-import { getSystemInfo } from "../common/logger/get-system-info";
-import { hookConsoleToFile } from "../common/logger/hook-console-to-file";
-import { logger } from "../common/logger/logger";
-import { PathUtils } from "../configuration/path-alias-utils";
-import { runtimeDefaults } from "../configuration/runtime-config/defaults";
+import { ConfigurationType } from "../index.js";
+import { environment } from "../common/execution-env.js";
+import { getSystemInfo } from "../common/logger/get-system-info.js";
+import { hookConsoleToFile } from "../common/logger/hook-console-to-file.js";
+import { logger } from "../common/logger/logger.js";
+import { PathUtils } from "../configuration/path-alias-utils.js";
+import { runtimeDefaults } from "../configuration/runtime-config/defaults.js";
 import Path from "path";
 import fs from "fs";
-import { run } from "./commands";
+import { run } from "./commands.js";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import ReadLine from "readline";
-import { ExtendedJsonTypes } from "../common/types/json-types";
-import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type";
-import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration";
+import { ExtendedJsonTypes } from "../common/types/json-types.js";
+import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type.js";
+import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
+import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
 
 // eslint-disable-next-line max-lines-per-function
@@ -34,7 +35,7 @@ export async function main (fileLocation : string) : Promise<void> {
 
   logger.debug(getSystemInfo());
 
-  const setupProcess = new (await import("../bootstrap/system-setup")).SystemSetup();
+  const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup();
 
   const pathsToWatch = PathUtils.getFinalFilesPaths(await setupProcess.getFileContents() as ConfigurationType);
   pathsToWatch.push(environment.constants.configPath);
@@ -67,13 +68,13 @@ export async function testBopFunction (configPath : string, bopName : string) : 
     runtimeDefaults.defaultInstallFolder);
   if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
 
-  const setupProcess = new (await import("../bootstrap/system-setup")).SystemSetup();
+  const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup();
   const functionsManager = await setupProcess.execute();
   const functionToTest = functionsManager.get(bopName);
 
   // functionToTest(JSON.parse(testInput));
   const deserializer = new DeserializeConfigurationCommand();
-  await deserializer.execute(await import(environment.constants.configPath));
+  await deserializer.execute(await importJsonAndParse(environment.constants.configPath));
   const bopInfo = deserializer.result.businessOperations.find(bop => bop.name === bopName);
   await new Promise<void>(res => setTimeout(res, 500));
   while(true) {

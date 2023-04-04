@@ -1,8 +1,9 @@
-import chalk, { Chalk } from "chalk";
-import { LogLevelsType, logLevelsArray, Styles } from "./logger-types";
-import { fullObject } from "./logging-utils";
+import chalk from "chalk";
+import type { ChalkInstance } from "chalk";
+import { LogLevelsType, logLevelsArray, Styles } from "./logger-types.js";
+import { fullObject } from "./logging-utils.js";
 
-const defaultColors : Record<LogLevelsType, Chalk> = {
+const defaultColors : Record<LogLevelsType, ChalkInstance> = {
   fatal: chalk.red,
   success: chalk.green,
   operation: chalk.white,

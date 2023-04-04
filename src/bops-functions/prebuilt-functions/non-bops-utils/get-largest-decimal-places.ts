@@ -1,4 +1,4 @@
-import { getDecimalPlaces } from "./get-decimal-places";
+import { getDecimalPlaces } from "./get-decimal-places.js";
 
 export const getGreatestDecimalPlaces = (...numbers : number[]) : number => {
   const decimalPlacesList = numbers.map((value) => getDecimalPlaces(value));

@@ -1,14 +1,15 @@
-import { absoluteBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/absolute";
-import { addBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/add";
-import { divideBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/divide";
-import { exponentialBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/exponential";
-import { modulusBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/modulus";
-import { multiplyBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/multipy";
-import { roundBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/round";
-import { squareRootBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/square-root";
-import { subtractBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/subtract";
+import { absoluteBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/absolute.js";
+import { addBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/add.js";
+import { divideBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/divide.js";
+import { exponentialBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/exponential.js";
+import { modulusBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/modulus.js";
+import { multiplyBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/multipy.js";
+import { roundBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/round.js";
+import { squareRootBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/square-root.js";
+import { subtractBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/subtract.js";
 import { expect } from "chai";
-import { random } from "faker";
+import faker from "faker";
+const { random } = faker;
 
 describe("Math Prebuilt Functions", () => {
   const getRandomNumber = () : number => random.number({ precision: 2 });

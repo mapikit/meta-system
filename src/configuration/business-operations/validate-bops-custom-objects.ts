@@ -1,5 +1,5 @@
-import { BusinessOperation } from "./business-operation";
-import { BopsCustomObject } from "./business-operations-type";
+import { BusinessOperation } from "./business-operation.js";
+import { BopsCustomObject } from "./business-operations-type.js";
 
 export class ValidateBopsCustomObjectsCommand {
   private businessOperation : BusinessOperation;

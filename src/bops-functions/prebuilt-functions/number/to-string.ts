@@ -1,4 +1,4 @@
-import { InternalMetaFunction } from "../../internal-meta-function";
+import { InternalMetaFunction } from "../../internal-meta-function.js";
 
 export const numberToStringFunction = (input : { number : number }) : unknown => {
   if (Number.isNaN(input.number)) {

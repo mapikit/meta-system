@@ -1,7 +1,7 @@
-import { ExtendedJsonTypes } from "../../../common/types/json-types";
-import { BopsConstant } from "../../business-operations/business-operations-type";
-import { isType } from "../is-type";
-import { stringIsOneOf } from "../string-is-one-of";
+import { ExtendedJsonTypes } from "../../../common/types/json-types.js";
+import { BopsConstant } from "../../business-operations/business-operations-type.js";
+import { isType } from "../is-type.js";
+import { stringIsOneOf } from "../string-is-one-of.js";
 
 
 export function isBopsConstants (input : unknown) : asserts input is BopsConstant[] {

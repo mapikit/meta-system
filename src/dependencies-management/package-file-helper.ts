@@ -1,6 +1,6 @@
 import { promises, existsSync } from "fs";
 import Path from "path";
-import { environment } from "../common/execution-env";
+import { environment } from "../common/execution-env.js";
 
 export type FreshPackageFile = {
   dependencies : Record<string, string>;
@@ -9,7 +9,7 @@ export type FreshPackageFile = {
 export const getNPMPackageFileContent = async (customPath : string) : Promise<FreshPackageFile> => {
   const packagePath = customPath ?? environment.constants.installDir;
 
-  return import(`${packagePath}/package.json`);
+  return JSON.parse((await promises.readFile(`${packagePath}/package.json`)).toString());
 };
 
 export const prettifyNPMPackageFile = async (

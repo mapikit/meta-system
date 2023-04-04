@@ -1,4 +1,4 @@
-import { BopsConstant } from "../../../configuration/business-operations/business-operations-type";
+import { BopsConstant } from "../../../configuration/business-operations/business-operations-type.js";
 
 export class ConstantTypeError extends Error {
   constructor (constant : BopsConstant) {
