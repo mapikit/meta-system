@@ -9,7 +9,7 @@ export type FreshPackageFile = {
 export const getNPMPackageFileContent = async (customPath : string) : Promise<FreshPackageFile> => {
   const packagePath = customPath ?? environment.constants.installDir;
 
-  return import(`${packagePath}/package.json`);
+  return JSON.parse((await promises.readFile(`${packagePath}/package.json`)).toString());
 };
 
 export const prettifyNPMPackageFile = async (

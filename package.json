@@ -11,40 +11,7 @@
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'"
   },
   "bin": {
-    "meta-system": "./dist/src/bin/index.js"
-  },
-  "nyc": {
-    "require": [
-      "ts-node/register"
-    ],
-    "all": true,
-    "cache": true,
-    "check-coverage": true,
-    "exclude-after-remap": false,
-    "per-file": false,
-    "lines": 40,
-    "statements": 40,
-    "functions": 60,
-    "branches": 60,
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      ".eslintrc.js",
-      "sequelize-models/",
-      "migrations/",
-      "seeders/"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "instrument": true,
-    "reporter": [
-      "text",
-      "html"
-    ],
-    "sourceMap": true,
-    "report-dir": "./.nyc_output"
+    "meta-system": "./dist/bin/index.js"
   },
   "repository": {
     "type": "git",
