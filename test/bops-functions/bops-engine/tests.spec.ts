@@ -149,7 +149,7 @@ describe("Bops Engine Testing", () => {
     expect(result2["over18"]).to.be.false;
   });
 
-  it.only("Test envs", async () => {
+  it("Test envs", async () => {
     bopsEnginePrerequisites = await setupBopsEngineRequisites(envBop);
     const bopsEngine = new BopsEngine(bopsEnginePrerequisites);
     const stitched = bopsEngine.stitch(envBop, maxExecutionTime);
