@@ -2,6 +2,8 @@
 # 0.3.4
 - Fixed `runtime` folder creation
 - Removed negative keys invalidation
+- Fixed glob patterns on Windows
+- Fixed some pathing errors on Windows
 
 ## 0.3.3
 - Migrated to use ES Modules instead of common JS. This is preparatory work for enabling Meta-System to work on browsers.
