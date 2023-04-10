@@ -29,7 +29,7 @@ export class PathUtils {
 
   private static async getContentsFromPath<T> (path : string, parentPath : string) : Promise<T[]> {
     const jsons : Array<T> = [];
-    const files = glob(Path.resolve(parentPath, path));
+    const files = glob(Path.resolve(parentPath, path).split(Path.sep).join("/"));
     for(const file of files) {
       const fileInfo = await importJsonAndParse(file);
       const infoArray = Array.isArray(fileInfo) ?
@@ -61,7 +61,7 @@ export class PathUtils {
     let files : Array<string> = [];
 
     if(typeof value === "string") {
-      if(value.includes("*")) files = glob(Path.resolve(parentPath, value));
+      if(value.includes("*")) files = glob(Path.resolve(parentPath, value).split(Path.sep).join("/"));
       else files.push(Path.resolve(parentPath, value));
     }
     else if(Array.isArray(value)) {

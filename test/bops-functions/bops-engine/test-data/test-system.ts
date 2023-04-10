@@ -6,11 +6,14 @@ import { externalBop } from "./business-operations/external-bop.js";
 import { variableBop } from "./business-operations/variables-bop.js";
 import { packageBop } from "./business-operations/package-bop.js";
 import { ProtocolKind } from "../../../../src/configuration/protocols/protocols-type.js";
+import { envBop } from "./business-operations/envs-bop.js";
 
 export const testSystem : ConfigurationType = {
   name: "test-system",
   version: "0.0.1",
-  envs: [],
+  envs: [
+    { key: "testEnv", value: "test" },
+  ],
   schemas: [
     {
       name: "car",
@@ -29,6 +32,7 @@ export const testSystem : ConfigurationType = {
     externalBop,
     variableBop,
     packageBop,
+    envBop,
   ],
   protocols: [
     {

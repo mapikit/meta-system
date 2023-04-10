@@ -44,6 +44,7 @@ export class SystemSetup {
       `${systemConfig.name} System - Made in Meta-System.`,
       environment.constants.installDir,
     );
+    process.chdir(environment.constants.installDir);
 
     logger.operation("[System Setup] Starting protocols");
     this.protocolsManager.startAllProtocols();

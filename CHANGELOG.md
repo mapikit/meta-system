@@ -1,8 +1,14 @@
 # Changelog
-# 0.3.3
+# 0.3.4
+- Fixed `runtime` folder creation
+- Removed negative keys invalidation
+- Fixed glob patterns on Windows
+- Fixed some pathing errors on Windows
+
+## 0.3.3
 - Migrated to use ES Modules instead of common JS. This is preparatory work for enabling Meta-System to work on browsers.
 
-# 0.3.2
+## 0.3.2
 - Updated meta-protocol-helper and meta-function-helper
 - Fixed system crashing on BOp failure
 - All BOps working directory will now be the install directory (\<System Config Directory\>/runtime)
@@ -11,6 +17,7 @@
 ## 0.3.1
 - Improved BOps TTL (Time to Live) Configuration
   - Each BOp may have a specific ttl value and the default can be set via CLI (`--ttl` or `-T`). Default ttl is 2000 ms.
+
 ## 0.3.0
 ### File Splitting
 - System `schemas`, `businessOperations`, and `protocols` configuration json can now be split into multiple files.

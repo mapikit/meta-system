@@ -1,6 +1,6 @@
 {
   "name": "meta-system",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A system to be any system",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -30,7 +30,7 @@
     "url": "https://github.com/mapikit/meta-system/issues"
   },
   "dependencies": {
-    "@meta-system/meta-function-helper": "^0.4.5",
+    "@meta-system/meta-function-helper": "^0.4.6",
     "@meta-system/meta-protocol-helper": "^0.4.2",
     "@meta-system/object-definition": "^1.1.6",
     "chalk": "^5.2.0",
