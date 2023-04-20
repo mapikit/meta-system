@@ -4,7 +4,7 @@ export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFuncti
 
 // This section is just to ensure that the interfaces are interchangeable when MetaFunction
 // is correcly fulfilled.
-const metaFunctionType: MetaFunction = {
+const metaFunctionType : MetaFunction = {
   functionName: "",
   version: "1.0.0",
   description: "this is a test meta-function",
