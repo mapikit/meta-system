@@ -1,3 +1,5 @@
+import clone from "just-clone";
+
 export class BrokerFactory {
   // recebe a lista de entidades e suas permissões
   // usa da BrokerEntityFactory para criar as entidades
@@ -10,12 +12,61 @@ export interface EntityBroker {
   // 
 }
 
-export class BrokerEntityFactory {
-  private readonly result = {};
-  private readonly actions = [];
+export class BrokerEntityFactory<T extends object> {
+  private result : BrokerEntity;
+  private readonly steps : Array<Function> = [];
+  private readonly allowedActions : Map<string, EntityAction<T>> = new Map();
+  private readonly permissions : string[] = [];
+  private entityCopy : MetaEntity<T>;
 
-  public constructor () {
-    
+  public withAction (action : EntityAction<T>) : this {
+    if (!this.entityCopy) {
+      throw Error("Must call '.usingEntity()' before this!");
+    }
+
+    const step = () : void => {
+      if (this.permissions.includes(action.permission)) {
+        this.result[action.name] = action.action(this.entityCopy.entity);
+      }
+    };
+
+    this.steps.push(step);
+
+    return this;
+  }
+
+  public withPermissions (perms : string[]) : this {
+    this.steps.push(() => {
+      this.permissions.push(...perms);
+    });
+
+    return this;
+  }
+
+  public usingEntity (entity : T, owner : string | symbol) : this {
+    this.steps.push(() => {
+      this.entityCopy = new MetaEntity(owner, clone(entity));
+    });
+
+    return this;
+  }
+
+  public build () : BrokerEntity {
+    const intermediate = {
+      done: () : void => {
+        Object.keys(this.result).forEach((key) => {
+          if (key === "done") return;
+          if (this.allowedActions.get(key).callableInRuntime) return;
+
+          this.result[key] = undefined;
+        });
+      },
+    };
+
+    this.result = intermediate;
+    this.steps.forEach((step) => step());
+
+    return this.result;
   }
   // Receber o singleton da entidade
   // copiar ele
@@ -26,12 +77,13 @@ export class BrokerEntityFactory {
   // Injetar o Event Bus
 }
 
-export class EntityAction<T = unknown> {
+export class EntityAction<T extends object> {
+  // eslint-disable-next-line max-params
   public constructor (
-    public readonly permission: string,
-    public readonly callableInRuntime : boolean,
+    public readonly permission : string,
     public readonly name : string,
     public action : (ent : T) => Function,
+    public readonly callableInRuntime : boolean = false,
   ) {}
 }
 
@@ -44,17 +96,17 @@ export interface BrokerEntity {
   // -> Update All
   // -> Delete mine
   // -> Delete Others
-  
+
   // Deve ser instanciado por uma Factory
   done() : void;
 }
 
 /** handles ownership */
-export class MetaEntity<T> {
-  public readonly owner: Symbol
+export class MetaEntity<T extends object> {
+  public readonly owner : symbol;
   public entity : T;
 
-  public constructor (owner: Symbol | string, entity: T) {
+  public constructor (owner : symbol | string, entity: T) {
     this.owner = typeof owner === "string" ? Symbol(owner) : owner;
     this.entity = entity;
   }
