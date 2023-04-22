@@ -20,13 +20,14 @@ export class BrokerEntityFactory<T extends object> {
   private entityCopy : MetaEntity<T>;
 
   public withAction (action : EntityAction<T>) : this {
-    if (!this.entityCopy) {
-      throw Error("Must call '.usingEntity()' before this!");
-    }
-
     const step = () : void => {
+      if (!this.entityCopy) {
+        throw Error("Must call '.usingEntity()' before this!");
+      }
+
       if (this.permissions.includes(action.permission)) {
         this.result[action.name] = action.action(this.entityCopy.entity);
+        this.allowedActions.set(action.name, action);
       }
     };
 
