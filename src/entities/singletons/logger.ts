@@ -2,7 +2,7 @@ import type { EntityRepository } from "../repository.js";
 import constants from "../../common/constants.js";
 import { logger } from "../../common/logger/logger.js";
 import { MetaEntity } from "../meta-entity.js";
-import { EntityAction } from "entities/entity-action.js";
+import { EntityAction } from "../../entities/entity-action.js";
 
 const loggerMetaEntity = new MetaEntity(constants.ENGINE_OWNER, { identifier: "default-logger", ...logger });
 export const loggerSingleton = [loggerMetaEntity];
@@ -15,6 +15,7 @@ const infoLogAction = new EntityAction<typeof loggerMetaEntity["data"], LoggerRe
   "log",
   "info",
   (repo) => (...data : unknown[]) : void => {
+    console.log(repo.readCollection()[0].data.info('gay'));
     repo.readCollection()[0].data.info(...data);
   },
   true,

@@ -1,6 +1,6 @@
 import { EntityAction } from "../entities/entity-action.js";
 import { EntityValue } from "../entities/meta-entity.js";
-import { EntityRepository } from "entities/repository.js";
+import { EntityRepository } from "../entities/repository.js";
 
 export class BrokerEntityFactory<T extends EntityValue> {
   private result : BrokerEntity;

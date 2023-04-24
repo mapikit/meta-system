@@ -12,12 +12,11 @@ export class BrokerFactory {
 
       const factory = new BrokerEntityFactory();
       factory.usingRepository(foundPreset.repo);
+      factory.withPermissions(data.permissions);
 
       foundPreset.actions.forEach((action) => {
         factory.withAction(action);
       });
-
-      factory.withPermissions(data.permissions);
 
       this.result[data.entity] = factory.build();
     });
@@ -36,6 +35,9 @@ export class BrokerFactory {
     };
 
     this.result = intermediate as EntityBroker;
+    // Always add logger
+    this.useEntity({ entity: "logger", permissions: ["log"] });
+
     this.steps.forEach((step) => step());
 
     return this.result;
