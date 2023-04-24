@@ -1,29 +1,38 @@
-import { BrokerEntityFactory, EntityAction } from "../../src/broker/entity-broker.js";
+import { BrokerEntityFactory } from "../../src/broker/broker-entity.js";
+import { EntityRepository } from "../../src/entities/repository.js";
+import { EntityAction } from "../../src/entities/entity-action.js";
+import { MetaEntity } from "../../src/entities/meta-entity.js";
+
+const aSchema = new MetaEntity("", { identifier: "1234", anotherValue: "hello" });
+const repoSingleton : Array<typeof aSchema> = [];
+repoSingleton.push(aSchema);
+
+const repo = new EntityRepository(repoSingleton);
 
 describe.only("Broker Tests", () => {
   const brokerFactory = new BrokerEntityFactory();
 
   const actionA = new EntityAction(
     "A",
-    "setEntValue",
-    (ent) => (val : string) : void => {
-      ent["myValue"] = val; console.log("modiFying Entity", ent);
+    "readList",
+    (rep) => () : object => {
+      return rep;
     });
 
   it("Idiot test", () => {
-    const origEnt = { myValue: "hello" };
-    const myBrokerEntity = brokerFactory
-      .usingEntity(origEnt, "me")
+    const origEnt = [{}, {}, {}];
+    const aSchemaBrokerEntity = brokerFactory
+      .usingRepository(repo)
       .withPermissions(["A", "B"])
       .withAction(actionA)
       .build();
 
-    myBrokerEntity["setEntValue"]("bodia caralho");
-    console.log(myBrokerEntity, origEnt);
+    console.log(aSchemaBrokerEntity["readList"](), "<----------------");
+    console.log(aSchemaBrokerEntity, origEnt);
 
-    myBrokerEntity.done();
+    aSchemaBrokerEntity.done();
 
-    console.log(myBrokerEntity);
+    console.log(aSchemaBrokerEntity);
   });
 });
 
