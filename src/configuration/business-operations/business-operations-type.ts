@@ -10,6 +10,7 @@ export interface BusinessOperations {
   variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];
   customObjects : BopsCustomObject[];
+  identifier : string;
 }
 
 export type ExtendedJsonTypeDict<T = ExtendedJsonTypes | "any"> =

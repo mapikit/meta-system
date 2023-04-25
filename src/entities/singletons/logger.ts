@@ -15,7 +15,6 @@ const infoLogAction = new EntityAction<typeof loggerMetaEntity["data"], LoggerRe
   "log",
   "info",
   (repo) => (...data : unknown[]) : void => {
-    console.log(repo.readCollection()[0].data.info('gay'));
     repo.readCollection()[0].data.info(...data);
   },
   true,

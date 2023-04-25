@@ -4,7 +4,7 @@ import { EntityRepository } from "../entities/repository.js";
 import { loggerActions, loggerSingleton } from "../entities/singletons/logger.js";
 
 type PresetType = {
-  repo : EntityRepository<EntityValue>,
+  repo ?: EntityRepository<EntityValue>,
   actions : EntityAction<EntityValue, EntityRepository<EntityValue>>[]
 }
 
@@ -12,5 +12,17 @@ export const brokerPresets : Record<string, PresetType> = {
   "logger": {
     repo: new EntityRepository(loggerSingleton),
     actions: loggerActions,
+  },
+  "env": {
+    actions: [],
+  },
+  "schema": {
+    actions: [],
+  },
+  "businessOperation": {
+    actions: [],
+  },
+  "addon": {
+    actions: [],
   },
 };

@@ -6,6 +6,7 @@ import {
   BopsVariable,
   BusinessOperations,
 } from "./business-operations-type.js";
+import { nanoid } from "nanoid";
 
 interface ModuleRepositoriesData {
   internal : string[];
@@ -23,6 +24,7 @@ export class BusinessOperation implements BusinessOperations {
   public configuration : BopsConfigurationEntry[];
   public customObjects : BopsCustomObject[];
   public ttl ?: number;
+  public readonly identifier : string;
 
   public constructor (parameters : BusinessOperations) {
     this.name = parameters.name;
@@ -33,6 +35,7 @@ export class BusinessOperation implements BusinessOperations {
     this.customObjects = parameters.customObjects;
     this.variables = parameters.variables;
     this.ttl = parameters.ttl;
+    this.identifier = nanoid();
   }
 
   // eslint-disable-next-line max-lines-per-function

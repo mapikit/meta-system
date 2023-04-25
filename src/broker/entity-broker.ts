@@ -1,17 +1,20 @@
+import { EntityRepository } from "../entities/repository.js";
 import { BrokerEntity, BrokerEntityFactory } from "./broker-entity.js";
 import { brokerPresets } from "./broker-presets.js";
+import { EntityValue } from "../entities/meta-entity.js";
 
 export class BrokerFactory {
   private result : EntityBroker;
   private readonly steps : Array<Function> = [];
 
-  public useEntity (data : { entity : string, permissions : string[] }) : this {
+  public useEntity <T extends EntityValue>
+  (data : { entity : string, permissions : string[] }, repo ?: EntityRepository<T>) : this {
     this.steps.push(() => {
       const foundPreset = brokerPresets[data.entity];
       if (!foundPreset) { return; }
 
       const factory = new BrokerEntityFactory();
-      factory.usingRepository(foundPreset.repo);
+      factory.usingRepository(foundPreset.repo ?? repo);
       factory.withPermissions(data.permissions);
 
       foundPreset.actions.forEach((action) => {

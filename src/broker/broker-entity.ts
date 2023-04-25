@@ -1,3 +1,5 @@
+import { logger } from "common/logger/logger.js";
+import constants from "../common/constants.js";
 import { EntityAction } from "../entities/entity-action.js";
 import { EntityValue } from "../entities/meta-entity.js";
 import { EntityRepository } from "../entities/repository.js";
@@ -15,7 +17,8 @@ export class BrokerEntityFactory<T extends EntityValue> {
         throw Error("Must call '.usingRepository()' before this!");
       }
 
-      if (this.permissions.includes(action.permission)) {
+      if (this.permissions.includes(action.permission)
+      || this.permissions.includes(constants.PERMISSION_OVERRIDE_VALUE)) {
         this.result[action.name] = action.action(this.repository);
         this.allowedActions.set(action.name, action);
       }
@@ -35,6 +38,12 @@ export class BrokerEntityFactory<T extends EntityValue> {
   }
 
   public usingRepository (repository : EntityRepository<T>) : this {
+    if (!repository) {
+      const error = "Can't build a broker without a repository!";
+      logger.fatal(error);
+      throw error;
+    }
+
     this.steps.push(() => {
       this.repository = repository;
     });
@@ -61,6 +70,6 @@ export class BrokerEntityFactory<T extends EntityValue> {
   }
 }
 
-export interface BrokerEntity {
+export type BrokerEntity = Record<string, Function> & {
   done() : void;
 }
