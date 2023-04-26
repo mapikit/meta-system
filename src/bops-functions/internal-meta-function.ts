@@ -1,6 +1,6 @@
 import { MetaFunction } from "@meta-system/meta-function-helper";
 
-export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction">;
+export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction" | "version">;
 
 // This section is just to ensure that the interfaces are interchangeable when MetaFunction
 // is correcly fulfilled.

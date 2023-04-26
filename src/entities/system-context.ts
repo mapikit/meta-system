@@ -16,8 +16,8 @@ export class SystemContext {
   private readonly schemas : MetaEntity<Schema>[] = [];
   private readonly businessOperations : MetaEntity<BusinessOperation>[] = [];
   private readonly addons : MetaEntity<Addon>[] = [];
-  public readonly systemConfig : ConfigurationType;
 
+  public readonly systemConfig : ConfigurationType;
   public readonly broker : EntityBroker;
 
   // eslint-disable-next-line max-lines-per-function
