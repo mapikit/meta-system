@@ -11,7 +11,6 @@ export const stringConcatFunction = (input : { strings : Record<string, string> 
 
 export const stringConcatFunctionInformation : InternalMetaFunction = {
   functionName: "stringConcat",
-  version: "1.0.0",
   description: "Concatenates all given strings in order",
   input: {
     strings: { type: "object", required: true, subtype: "string" },

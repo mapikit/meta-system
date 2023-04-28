@@ -19,8 +19,7 @@ export const getSystemFunctionFunctionInformation : InternalMetaFunction = {
     modulePackage: { type: "string", required: false },
     moduleType: { type: "string", required: true },
   },
-  version: "1.0.0",
-  output: {
+    output: {
     callableFunction: { type: "function", required: false },
     found: { type: "boolean", required: true },
   },

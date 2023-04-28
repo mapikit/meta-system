@@ -2,12 +2,13 @@ import { EntityRepository } from "../entities/repository.js";
 import { BrokerEntity, BrokerEntityFactory } from "./broker-entity.js";
 import { brokerPresets } from "./broker-presets.js";
 import { EntityValue } from "../entities/meta-entity.js";
-import clone from "just-clone";
 import { EntityAction } from "entities/entity-action.js";
+
+export interface EntityPermissions { entity : string, permissions : string[] };
 
 export class BrokerFactory {
   private result : EntityBroker;
-  private brokerEntitiesAndActions = clone(brokerPresets);
+  private brokerEntitiesAndActions = { ...brokerPresets };
   private readonly steps : Array<Function> = [];
 
   public configEntity <T extends EntityValue> (

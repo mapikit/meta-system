@@ -14,7 +14,6 @@ export const subtractBopsFunction = (input : { A : number; B : number }) : unkno
 
 export const subtractFunctionInformation : InternalMetaFunction = {
   functionName: "subtract",
-  version: "1.0.0",
   description: "Subtracts B from A",
   input: {
     A: { type: "number",  required: true },

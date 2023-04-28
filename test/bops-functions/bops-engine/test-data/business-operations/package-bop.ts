@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../../../src/configuration/business-op
 
 export const packageBop : BusinessOperations = {
   name: "package-bop",
+  identifier: "",
   input: {
     age: { type: "number", required: true },
   },

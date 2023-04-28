@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../../../src/configuration/business-op
 
 export const externalBop : BusinessOperations = {
   name: "external-bop",
+  identifier: "",
   input: {
     myName: { type: "string", required: true },
   },

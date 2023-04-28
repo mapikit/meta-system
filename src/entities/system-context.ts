@@ -3,7 +3,7 @@ import { EntityValue, MetaEntity } from "./meta-entity.js";
 import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
 import { Schema } from "../configuration/schemas/schema.js";
 import { Addon } from "../configuration/addons/addon-type.js";
-import { BrokerFactory, EntityBroker } from "../broker/entity-broker.js";
+import { BrokerFactory, EntityBroker, EntityPermissions } from "../broker/entity-broker.js";
 import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";
 
@@ -18,16 +18,14 @@ export class SystemContext {
   private readonly addons : MetaEntity<Addon>[] = [];
 
   public readonly systemConfig : ConfigurationType;
-  public readonly broker : EntityBroker;
+  public readonly systemBroker : EntityBroker;
 
   // eslint-disable-next-line max-lines-per-function
-  public constructor (options : {
-    systemConfig : ConfigurationType;
-  }) {
-    this.systemConfig = options.systemConfig;
+  public constructor (systemConfig : ConfigurationType) {
+    this.systemConfig = systemConfig;
 
     const factory = new BrokerFactory();
-    this.broker = factory
+    this.systemBroker = factory
       .useEntity({ entity: "schema", permissions: [constants.PERMISSION_OVERRIDE_VALUE] },
         new EntityRepository(this.schemas))
       .useEntity({ entity: "businessOperation", permissions: [constants.PERMISSION_OVERRIDE_VALUE] },
@@ -37,5 +35,15 @@ export class SystemContext {
       .useEntity({ entity: "addon", permissions: [constants.PERMISSION_OVERRIDE_VALUE] },
         new EntityRepository(this.addons))
       .build();
+  }
+
+  public createBroker (accesses : EntityPermissions[]) : EntityBroker {
+    const factory = new BrokerFactory();
+
+    accesses.forEach((access) => {
+      factory.useEntity(access);
+    });
+
+    return factory.build();
   }
 }

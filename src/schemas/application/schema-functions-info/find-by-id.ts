@@ -4,7 +4,6 @@ export const getByIdInfo : InternalMetaFunction = {
   functionName: "findById",
   description: "Gets an entity from the database by the Id",
   author: "mapikit",
-  version: "0.0.1",
   input: {
     id: { type: "string", required: true },
   },

@@ -4,7 +4,6 @@ export const deleteInfo : InternalMetaFunction = {
   functionName: "delete",
   description: "Deletes all entities in the database, filtering by the properties given",
   author: "mapikit",
-  version: "0.0.1",
   input: {
     query : { type: "cloudedObject", required: true },
   },

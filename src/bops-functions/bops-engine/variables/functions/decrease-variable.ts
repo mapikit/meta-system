@@ -23,7 +23,6 @@ export function decreaseVariablesFunction (input : CloudedObject, variables : Re
 
 export const decreaseVariableFunctionInformation : InternalMetaFunction = {
   functionName: "decreaseVariables",
-  version: "1.0.0",
   description: "Decreases all given variables by the given amount",
   input: {
     "%variableName": { type: "number", required: true },

@@ -19,7 +19,6 @@ export const addBopsFunction = (input : { numbersToAdd : number[] }) : unknown =
 
 export const addFunctionInformation : InternalMetaFunction = {
   functionName: "add",
-  version: "1.0.0",
   description: "Adds numbers together",
   input: {
     numbersToAdd: { type: "array", subtype: "number", required: true },

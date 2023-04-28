@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../../../src/configuration/business-op
 
 export const mapikitProvidedBop : BusinessOperations = {
   name: "prebuilt-functions",
+  identifier: "",
   input: {
     aNumber: { type: "number", required: true },
   },

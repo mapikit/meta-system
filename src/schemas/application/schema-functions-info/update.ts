@@ -4,7 +4,6 @@ export const updateInfo : InternalMetaFunction = {
   functionName: "update",
   description: "Updates all entities in the database, filtering by the properties given",
   author: "mapikit",
-  version: "0.0.1",
   input: {
     query: { type: "cloudedObject", required: true },
     data: { type: "%entity", required: true },

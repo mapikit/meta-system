@@ -23,7 +23,7 @@ export const prettifyNPMPackageFile = async (
   const result = {
     name: systemName.toLocaleLowerCase(),
     version,
-    description,
+  description,
     dependencies:  fileContent.dependencies,
   };
 

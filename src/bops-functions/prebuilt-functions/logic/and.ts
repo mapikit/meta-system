@@ -8,7 +8,6 @@ export const andGateBopsFunction = (input : { A : boolean; B : boolean }) : unkn
 
 export const andGateBopsFunctionInformation : InternalMetaFunction = {
   functionName: "and",
-  version: "1.0.0",
   description: "And gate comparing boolean values for A and B",
   input: {
     A: { type: "boolean", required: true },

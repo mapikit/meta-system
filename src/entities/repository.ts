@@ -21,7 +21,9 @@ export class EntityRepository<T extends EntityValue> {
   }
 
   public readCollection () : Array<MetaEntity<T>> {
-    return clone(this.collectionSingleton);
+    return this.collectionSingleton.map((value) => {
+      return new MetaEntity(value.owner, clone(value.data));
+    });
   }
 
   public deleteEntity (entity : MetaEntity<T>) : void {

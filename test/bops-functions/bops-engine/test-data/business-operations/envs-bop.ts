@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../../../src/configuration/business-op
 
 export const envBop : BusinessOperations = {
   name: "env-bop",
+  identifier: "",
   input: {},
   output: {},
   constants: [],

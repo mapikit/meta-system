@@ -6,7 +6,6 @@ export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFuncti
 // is correcly fulfilled.
 const metaFunctionType : MetaFunction = {
   functionName: "",
-  version: "1.0.0",
   description: "this is a test meta-function",
   output: {
     result: { type: "number", required: false },

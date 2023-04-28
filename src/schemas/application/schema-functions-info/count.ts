@@ -4,7 +4,6 @@ export const countInfo : InternalMetaFunction = {
   functionName: "count",
   description: "Count how many entities match the given query",
   author: "mapikit",
-  version: "0.0.1",
   input: {
     query : { type: "cloudedObject", required: true },
   },

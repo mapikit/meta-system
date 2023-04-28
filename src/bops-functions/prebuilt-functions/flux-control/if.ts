@@ -20,7 +20,6 @@ export const ifBopsFunction = async (input : InputType) : Promise<unknown> => {
 
 export const ifBopsFunctionInformation : InternalMetaFunction = {
   functionName: "if",
-  version: "1.0.0",
   description: "Returns one of two given values based on whether the given boolean is true or false",
   input: {
     boolean : { type: "boolean", required: true },

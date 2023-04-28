@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../../../src/configuration/business-op
 
 export const variableBop : BusinessOperations = {
   name: "variables",
+  identifier: "",
   input: {
     aNumber: { type: "number", required: true },
     randomValue: { type: "any", required: true },

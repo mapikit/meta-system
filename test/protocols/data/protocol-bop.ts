@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../src/configuration/business-operatio
 
 export const cronjobBop : BusinessOperations = {
   name: "cronjob-bop",
+  identifier: "",
   input: {
     model: {  type: "string", required: true },
     year: {  type: "number", required: true },

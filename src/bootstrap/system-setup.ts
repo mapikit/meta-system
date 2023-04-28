@@ -10,12 +10,19 @@ import { prettifyNPMPackageFile } from "../dependencies-management/package-file-
 import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
+import { SystemContext } from "../entities/system-context.js";
+import { FunctionsContext } from "entities/functions-context.js";
 
 export class SystemSetup {
   private protocolsManager : ProtocolsSetup;
 
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<FunctionManager> {
+    // Steps to Refactor -----
+    // Get config
+    // validate config
+    // Create System Context
+
     logger.operation("[System Setup] System setup starting");
     logger.operation("[System Setup] Retrieving system configuration");
     const fileContent = await this.getFileContents();
@@ -23,6 +30,9 @@ export class SystemSetup {
     logger.success("[System Setup] File found - Validating content");
     const systemConfig = await this.deserializeConfiguration(fileContent);
     logger.success("[System Setup] Validation successful");
+
+    const sytemContext = new SystemContext(systemConfig);
+    const functionsContext = new FunctionsContext();
 
     const functionSetupCommand = new FunctionSetup(
       internalFunctionManager,

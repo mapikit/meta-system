@@ -2,6 +2,7 @@ import { BusinessOperations } from "../../../../../src/configuration/business-op
 
 export const internalBop : BusinessOperations = {
   name: "internal-bop",
+  identifier: "",
   input: {},
   output: {},
   constants: [

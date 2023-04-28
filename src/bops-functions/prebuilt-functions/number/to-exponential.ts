@@ -17,7 +17,6 @@ export const toExponentialBopsFunction = (input : { number : number; decimalPlac
 
 export const toExponentialBopsFunctionInformation : InternalMetaFunction = {
   functionName: "toExponential",
-  version: "1.0.0",
   description: "Gets the index of a substring in the string",
   output: {
     result: { type: "number", required: false },

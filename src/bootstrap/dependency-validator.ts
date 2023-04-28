@@ -326,7 +326,7 @@ export class DependencyPropValidator {
       const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage);
       const functionInfo = protocolInfo.functionDefinitions.find(funct => funct.functionName === name);
       return {
-        description: protocolInfo.description,
+      description: protocolInfo.description,
         version: protocolInfo.version,
         entrypoint: protocolInfo.entrypoint,
         mainFunction:  protocolInfo.className,

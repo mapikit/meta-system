@@ -14,7 +14,6 @@ export const stringTemplateFunction = (input : { template : string; replacers : 
 
 export const stringTemplateFunctionInformation : InternalMetaFunction = {
   functionName: "stringTemplate",
-  version: "1.0.0",
   description: "Replaces the values of a string template with the corresponding given values",
   input: {
     template: { type: "string", required: true },

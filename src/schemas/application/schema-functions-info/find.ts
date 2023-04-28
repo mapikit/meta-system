@@ -4,7 +4,6 @@ export const getInfo : InternalMetaFunction = {
   functionName: "find",
   description: "Gets an entity from the database by the properties given",
   author: "mapikit",
-  version: "0.0.1",
   input: {
     query: { type: "cloudedObject", required: true },
     limit: { type: "number", required: false },

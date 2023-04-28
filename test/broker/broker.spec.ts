@@ -1,11 +1,20 @@
-import { BrokerFactory } from "../../src/broker/entity-broker.js";
+import { FunctionsContext } from "../../src/entities/functions-context.js";
 
-describe.only("Broker Tests", () => {
-  it("Default Presence with logger", () => {
-    const factory = new BrokerFactory();
-    const broker = factory.build();
+describe.only("functions context", () => {
+  it("Functions context test DUH", () => {
+    const factory = new FunctionsContext();
+    const broker = factory.createBroker([{ entity: "schemaFunctions",
+      permissions: ["set_functions", "get_functions"] }]);
 
+    console.log(broker);
     broker["logger"]["fatal"]("NOT AN ERROR, THIS IS A TEST");
+    broker.schemaFunctions.setSchemaFunction("mySchema", () => { console.log("i exist!"); },
+      { functionName: "nn" },
+    );
+
+    broker.schemaFunctions.getSchemaFunction("nn", "mySchema")();
+
+    console.log(factory.systemBroker);
   });
 });
 

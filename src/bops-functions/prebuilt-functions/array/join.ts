@@ -6,7 +6,6 @@ export const arrayJoinBopsFunction = (input : { array : unknown[]; separator ?: 
 
 export const arrayJoinBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayJoin",
-  version: "1.0.0",
   description: "Joins Items of an array",
   input: {
     array: { type: "array", subtype: "any", required: true },

@@ -1,4 +1,4 @@
-import { logger } from "common/logger/logger.js";
+import { logger } from "../common/logger/logger.js";
 import constants from "../common/constants.js";
 import { EntityAction } from "../entities/entity-action.js";
 import { EntityValue } from "../entities/meta-entity.js";
