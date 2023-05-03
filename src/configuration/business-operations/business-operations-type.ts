@@ -6,6 +6,7 @@ export interface BusinessOperations {
   name : string;
   input : ObjectDefinition;
   output : ObjectDefinition;
+  identifier : string;
   constants : BopsConstant[];
   variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];
@@ -34,16 +35,13 @@ export interface BopsVariable {
   initialValue ?: ExtendedJsonTypeDict;
 }
 
-export type ModuleType = "schemaFunction"
-| "external"
-| "internal"
+export type ModuleType =  "internal"
 | "bop"
 | "output"
 | "variable"
-| "protocol";
+| "addon";
 
 export interface BopsConfigurationEntry {
-  version ?: string;
   moduleType : ModuleType;
   moduleName : string;
   modulePackage ?: string;
