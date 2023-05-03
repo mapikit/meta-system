@@ -36,20 +36,29 @@ export class FunctionsContext {
       .build();
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private static getInternalFunctionsActions () : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
 
     result.push(new EntityAction("set_functions", "setFunction",
       (repo : EntityRepository<FunctionEntity>) =>
-        (section : string, callable : Function, definition : InternalMetaFunction) => {
+        (callable : Function, definition : InternalMetaFunction) => {
           repo.createEntity(new MetaEntity("",
-            { callable, identifier: `${section}@${definition.functionName}`, ...definition }));
+            { callable, identifier: `${definition.functionName}`, ...definition }));
         }, false));
 
     result.push(new EntityAction("get_functions", "getFunction", (repo : EntityRepository<FunctionEntity>) =>
-      (functionName : string, section : string) => {
-        return repo.getEntity(`${section}@${functionName}`).data.callable;
+      (functionName : string) => {
+        return repo.getEntity(`${functionName}`).data.callable;
       }, true));
+
+    result.push(new EntityAction("overrride_functions", "override",
+      (repo : EntityRepository<FunctionEntity>) =>
+        (name : string, callable : Function) => {
+          const oldOne = repo.getEntity(name);
+          repo.updateEntity(new MetaEntity("",
+            { ...oldOne.data, callable }));
+        }, false));
 
     return result;
   }

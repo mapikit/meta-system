@@ -1,23 +1,19 @@
-import { externalFunctionManagerSingleton } from "../bops-functions/function-managers/external-function-manager.js";
-import { FunctionManager } from "../bops-functions/function-managers/function-manager.js";
-import internalFunctionManager from "../bops-functions/function-managers/internal-function-manager.js";
 import { Configuration } from "../configuration/configuration.js";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { FunctionSetup } from "../bootstrap/function-setup.js";
-import { protocolFunctionManagerSingleton } from "../bops-functions/function-managers/protocol-function-manager.js";
-import { ProtocolsSetup } from "./protocols-setup.js";
 import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper.js";
 import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { SystemContext } from "../entities/system-context.js";
-import { FunctionsContext } from "entities/functions-context.js";
+import { FunctionsContext } from "../entities/functions-context.js";
 
 export class SystemSetup {
-  private protocolsManager : ProtocolsSetup;
+  public systemContext : SystemContext;
+  public functionsContext : FunctionsContext;
 
   // eslint-disable-next-line max-lines-per-function
-  public async execute () : Promise<FunctionManager> {
+  public async execute () : Promise<void> {
     // Steps to Refactor -----
     // Get config
     // validate config
@@ -31,21 +27,18 @@ export class SystemSetup {
     const systemConfig = await this.deserializeConfiguration(fileContent);
     logger.success("[System Setup] Validation successful");
 
-    const sytemContext = new SystemContext(systemConfig);
-    const functionsContext = new FunctionsContext();
+    this.systemContext = new SystemContext(systemConfig);
+    this.functionsContext = new FunctionsContext();
 
     const functionSetupCommand = new FunctionSetup(
-      internalFunctionManager,
-      externalFunctionManagerSingleton,
-      protocolFunctionManagerSingleton,
+      this.systemContext.systemBroker,
+      this.functionsContext.systemBroker,
       systemConfig,
     );
 
-    const systemFunctionsManager = functionSetupCommand.getBopsManager();
-
-    logger.operation("[Protocol Installation] Starting protocol installation");
-    this.protocolsManager = await this.setupProtocols(systemFunctionsManager, systemConfig);
-    logger.success("[Protocol Installation] Protocol installation complete");
+    logger.operation("[Add-ons Installation] Starting add-ons installation");
+    await this.installAddons(systemConfig);
+    logger.success("[Add-ons Installation] Add-ons installation complete");
 
     logger.operation("[System Setup] Starting System functions bootstrap sequence");
     await functionSetupCommand.setup();
@@ -57,15 +50,16 @@ export class SystemSetup {
     process.chdir(environment.constants.installDir);
 
     logger.operation("[System Setup] Starting protocols");
-    this.protocolsManager.startAllProtocols();
-    return systemFunctionsManager;
+    // This will be a Broker Action :)
+    // this.protocolsManager.startAllProtocols();
   }
 
   public async stop () : Promise<void> {
     logger.warn("[System Shutdown] Shutting down system");
     logger.operation("[System Shutdown] Stopping protocol(s)");
 
-    await this.protocolsManager.stopAllProtocols();
+    // This will ALSO be a Broker Action :)
+    // await this.protocolsManager.stopAllProtocols();
 
     logger.success("[System Shutdown] System stopped gracefully");
   }
@@ -83,10 +77,11 @@ export class SystemSetup {
   public async testBop (bopName : string, stringInput : string) : Promise<void> {
     logger.operation("Testing bop", bopName, "with", stringInput);
 
-    const functionsManager = await this.execute();
+    await this.execute();
 
 
-    const requiredFunction = functionsManager.get(bopName);
+    const requiredFunction = this.functionsContext.systemBroker
+      .bopFunctions.getBopFunction(bopName);
     if(requiredFunction === undefined) {
       logger.error("Function to test does not exist");
       return;
@@ -111,12 +106,7 @@ export class SystemSetup {
     return importJsonAndParse(environment.constants.configPath as string);
   }
 
-  private async setupProtocols (
-    systemFunctionsManager : FunctionManager, systemConfig : Configuration,
-  ) : Promise<ProtocolsSetup> {
-    const protocolsSetup = new ProtocolsSetup(systemConfig, protocolFunctionManagerSingleton, systemFunctionsManager);
-    await protocolsSetup.execute();
+  private async installAddons (systemConfig : Configuration) : Promise<void> {
 
-    return protocolsSetup;
-  };
+  }
 }

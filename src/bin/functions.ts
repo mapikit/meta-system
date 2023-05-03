@@ -68,8 +68,9 @@ export async function testBopFunction (configPath : string, bopName : string) : 
   if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
 
   const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup();
-  const functionsManager = await setupProcess.execute();
-  const functionToTest = functionsManager.get(bopName);
+  await setupProcess.execute();
+  const functionsManager = setupProcess.functionsContext.systemBroker;
+  const functionToTest = functionsManager.bopFunctions.getBopFunction(bopName);
 
   // functionToTest(JSON.parse(testInput));
   const deserializer = new DeserializeConfigurationCommand();

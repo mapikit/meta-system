@@ -4,7 +4,7 @@ import { MappedFunctions, ModuleManager } from "../modules-manager.js";
 import { ResolvedConstants, StaticSystemInfo } from "../static-info-validation.js";
 import { VariableContext } from "../variables/variables-context.js";
 
-export class SystemContext {
+export class BopSystemContext {
   public readonly constants : Record<string, ResolvedConstants>;
   public readonly variables : Record<string, BopsVariable[]>;
   public readonly envs : Record<string, string>;

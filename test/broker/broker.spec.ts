@@ -6,7 +6,6 @@ describe.only("functions context", () => {
     const broker = factory.createBroker([{ entity: "schemaFunctions",
       permissions: ["set_functions", "get_functions"] }]);
 
-    console.log(broker);
     broker["logger"]["fatal"]("NOT AN ERROR, THIS IS A TEST");
     broker.schemaFunctions.setSchemaFunction("mySchema", () => { console.log("i exist!"); },
       { functionName: "nn" },
@@ -14,7 +13,6 @@ describe.only("functions context", () => {
 
     broker.schemaFunctions.getSchemaFunction("nn", "mySchema")();
 
-    console.log(factory.systemBroker);
   });
 });
 

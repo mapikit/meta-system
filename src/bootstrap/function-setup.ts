@@ -1,10 +1,5 @@
-import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager.js";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine.js";
 import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager.js";
-import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager.js";
-import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager.js";
-import { FunctionManager } from "../bops-functions/function-managers/function-manager.js";
-import { InternalFunctionManagerClass } from "../bops-functions/function-managers/internal-function-manager.js";
 import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
 import { BopsDependencies, CheckBopsFunctionsDependencies }
   from "../configuration/business-operations/check-bops-functions-dependencies.js";
@@ -15,17 +10,16 @@ import { ModuleType } from "../configuration/business-operations/business-operat
 import { DependencyPropValidator } from "./dependency-validator.js";
 import { logger } from "../common/logger/logger.js";
 import { environment } from "../common/execution-env.js";
+import { EntityBroker } from "../broker/entity-broker.js";
 
 export class FunctionSetup {
-  private readonly bopsManager = new BopsManagerClass();
   private bopsEngine : BopsEngine;
   private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
 
   // eslint-disable-next-line max-params
   public constructor (
-    private internalFunctionManager : InternalFunctionManagerClass,
-    private externalFunctionManager : ExternalFunctionManagerClass,
-    private protocolFunctionManager : ProtocolFunctionManagerClass,
+    private systemBroker : EntityBroker,
+    private functionsBroker : EntityBroker,
     private systemConfiguration : ConfigurationType,
   ) { }
 
@@ -47,20 +41,12 @@ export class FunctionSetup {
     if (!process.argv.includes("--skip-prop-validation")) {
       const propValidator = new DependencyPropValidator(
         this.systemConfiguration,
-        this.internalFunctionManager,
-        this.externalFunctionManager,
-        this.protocolFunctionManager,
+        this.systemBroker,
       );
       propValidator.verifyAll();
     }
 
-    const moduleManager = new ModuleManager({
-      ExternalFunctionManager: this.externalFunctionManager,
-      InternalFunctionManager: this.internalFunctionManager,
-      protocolFunctionManager: this.protocolFunctionManager,
-      BopsManager: this.bopsManager,
-      SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
-    });
+    const moduleManager = new ModuleManager(this.systemBroker);
 
     this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
 
@@ -78,7 +64,7 @@ export class FunctionSetup {
   private replaceGetSystemFunction (manager : ModuleManager, systemConfig : ConfigurationType) : void {
     const builtManager = manager.resolveSystemModules(systemConfig);
 
-    this.internalFunctionManager.replace("getSystemFunction", (
+    this.systemBroker.internalFunctions.override("getSystemFunction", (
       input : { moduleName : string; modulePackage : string; moduleType : ModuleType },
     ) => {
       const name = input.modulePackage === undefined ?
@@ -104,7 +90,7 @@ export class FunctionSetup {
         domainBops,
         new BusinessOperation(bopsConfig),
         this.externalFunctionManager,
-        this.internalFunctionManager,
+        this.systemBroker,
         this.protocolFunctionManager,
       );
 
@@ -202,37 +188,12 @@ export class FunctionSetup {
     }
   }
 
-  private addProtocolFunction (functionName : string, packageName : string) : void {
-    // Protocols are installed before this whole class is created, so here we just add the functions of already
-    // existing instances of protocols.
-    const exists = this.protocolFunctionManager.get(`${packageName}.${functionName}`);
-
-    if (!exists) {
-      this.protocolFunctionManager.addFunction(functionName, packageName);
-    }
-  }
-
   private async installFunction (functionName : string, version : string, packageName ?: string) : Promise<void> {
     const exists = this.externalFunctionManager.functionIsInstalled(functionName, packageName);
 
     if (!exists) {
       await this.externalFunctionManager.add(functionName, version, packageName);
     }
-  }
-
-  // eslint-disable-next-line max-lines-per-function
-  private async createSchemasManager (systemSchemas : SchemaType[]) : Promise<SchemasManager> {
-    const manager = new SchemasManager(
-      this.systemConfiguration.name,
-      this.protocolFunctionManager,
-    );
-
-    const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");
-    logger.operation(`[Schemas Setup] Adding schemas to the system: "${schemasNames}"`);
-
-    await manager.addSystemSchemas(systemSchemas);
-
-    return manager;
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -276,9 +237,5 @@ export class FunctionSetup {
     });
 
     this.buildBops(bopsBuilt);
-  }
-
-  public getBopsManager () : FunctionManager {
-    return this.bopsManager;
   }
 }

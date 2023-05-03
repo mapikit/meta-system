@@ -1,2 +1,0 @@
-## Function Manager
-This folder contains classes and types responsible to manage BOps functions installed on the system. The classes here should be singletons and a single source of truth for their types.

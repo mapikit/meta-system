@@ -1,10 +1,7 @@
-import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager.js";
-import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager.js";
-import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager.js";
 import { SchemasFunctions } from "../../schemas/domain/schemas-functions.js";
-import { Schema } from "../schemas/schema.js";
 import { BusinessOperation } from "./business-operation.js";
 import { logger } from "../../common/logger/logger.js";
+import { EntityBroker } from "../../broker/entity-broker.js";
 
 export interface BopsDependencies {
   fromSchemas : Array<{ functionName : string; schemaName : string; }>;
@@ -35,13 +32,10 @@ export class CheckBopsFunctionsDependencies {
 
   // eslint-disable-next-line max-lines-per-function, max-params
   public constructor (
-    allSchemas : Schema[],
-    allBusinessOperations : BusinessOperation[],
-    currentBusinessOperation : BusinessOperation,
-    private externalFunctionManager : ExternalFunctionManagerClass,
-    private internalFunctionManager : InternalFunctionManagerClass,
-    private protocolFunctionManager : ProtocolFunctionManagerClass,
+    private readonly systemBroker : EntityBroker,
+    private readonly functionsBroker : EntityBroker,
   ) {
+    // TODO
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
     });

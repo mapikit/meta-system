@@ -6,7 +6,7 @@ import { addTimeout } from "./add-timeout.js";
 import { ModuleManager } from "./modules-manager.js";
 import { ObjectResolver } from "./object-manipulator.js";
 import { VariableContext } from "./variables/variables-context.js";
-import { SystemContext } from "./contexts/system-context.js";
+import { BopSystemContext } from "./contexts/bop-system-context.js";
 import { BopContext } from "./contexts/bop-context.js";
 import { getObjectProperty } from "../../common/helpers/get-object-property.js";
 import { logger } from "../../common/logger/logger.js";
@@ -15,13 +15,13 @@ import { logger } from "../../common/logger/logger.js";
  * This is the engine responsible for stitching all the functions in all the BOps in the system
  */
 export class BopsEngine {
-  private readonly systemContext : SystemContext;
+  private readonly systemContext : BopSystemContext;
 
   constructor (options : {
     ModuleManager : ModuleManager;
     SystemConfig : ConfigurationType;
   }) {
-    this.systemContext = new SystemContext(options);
+    this.systemContext = new BopSystemContext(options);
   }
 
   // eslint-disable-next-line max-lines-per-function
