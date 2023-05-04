@@ -15,30 +15,30 @@ import { logger } from "../../common/logger/logger.js";
  * This is the engine responsible for stitching all the functions in all the BOps in the system
  */
 export class BopsEngine {
-  private readonly systemContext : BopSystemContext;
+  private readonly bopSystemContext : BopSystemContext;
 
   constructor (options : {
     ModuleManager : ModuleManager;
     SystemConfig : ConfigurationType;
   }) {
-    this.systemContext = new BopSystemContext(options);
+    this.bopSystemContext = new BopSystemContext(options);
   }
 
   // eslint-disable-next-line max-lines-per-function
   public stitch (operation : BusinessOperations, msTimeout : number = constants.ENGINE_TTL) : Function {
-    this.systemContext.generateMappedFunctions();
+    this.bopSystemContext.generateMappedFunctions();
     const output = operation.configuration.find(module => module.moduleType === "output");
 
     logger.debug(`[BOP] Stitching BOP ${operation.name} with ${operation.configuration.length} modules`);
 
     // eslint-disable-next-line max-lines-per-function
     const stitched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
-      const variablesInfo = new VariableContext(this.systemContext.variables[operation.name]);
+      const variablesInfo = new VariableContext(this.bopSystemContext.variables[operation.name]);
       const bopContext = new BopContext(
         operation.configuration,
         variablesInfo.variables,
-        this.systemContext.constants[operation.name],
-        variablesInfo.appendVariableFunctions(this.systemContext.mappedFunctions),
+        this.bopSystemContext.constants[operation.name],
+        variablesInfo.appendVariableFunctions(this.bopSystemContext.mappedFunctions),
       );
       logger.debug(`>>>> Start of BOp ${operation.name} >>>>`);
       logger.debug("BOp Inputs:", _inputs);
@@ -122,7 +122,7 @@ export class BopsEngine {
       case "env":
       case "envs":
       case "environment":
-        return { [input.targetPath]: this.systemContext.envs[input.originPath] };
+        return { [input.targetPath]: this.bopSystemContext.envs[input.originPath] };
     }
   }
 
