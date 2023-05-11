@@ -2,10 +2,11 @@ import { dirname, resolve } from "path";
 import { readFileSync } from "fs";
 import { logger } from "../common/logger/logger.js";
 import { isType, optionalIsType } from "../configuration/assertions/is-type.js";
+import { MetaFileType } from "../common/meta-file-type.js";
 
 export type ImportedInfo = {
-  metaFile : object;
-  main : any;
+  metaFile : MetaFileType;
+  main : MainType;
 }
 
 type MainType = {
@@ -17,7 +18,7 @@ export class Importer {
   public static async importAddons (metaFilePaths : Record<string, string>) : Promise<Map<string, ImportedInfo>>  {
     const importedAddons = new Map<string, ImportedInfo>();
     for(const identifier of Object.keys(metaFilePaths)) {
-      logger.operation(`Importing files for addon "${identifier}"`)
+      logger.operation(`Importing files for addon "${identifier}"`);
       const files = await this.importFiles(metaFilePaths[identifier]);
       importedAddons.set(identifier, files);
     }
@@ -31,8 +32,8 @@ export class Importer {
     const imported = await import(entrypointPath);
     const main = imported.__esModule ? this.resolveESM(imported) : imported;
     this.validateMain(main);
-    
-    return { metaFile, main }
+
+    return { metaFile, main };
   }
 
   private static validateMain (main : unknown) : asserts main is MainType {
@@ -45,10 +46,10 @@ export class Importer {
     return {
       boot: moduleDefault["boot"],
       broker: moduleDefault["broker"],
-    }
+    };
   }
 
-  private static validateMetaFile(metaFile : unknown) : asserts metaFile is Record<string, any> { // TODO update to meta-file type
+  private static validateMetaFile (metaFile : unknown) : asserts metaFile is MetaFileType {
     optionalIsType("string", "Name must be a string", metaFile["name"]);
     optionalIsType("string", "Version must be a string", metaFile["version"]);
 

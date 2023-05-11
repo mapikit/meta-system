@@ -7,6 +7,8 @@ import { logger } from "../common/logger/logger.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { SystemContext } from "../entities/system-context.js";
 import { FunctionsContext } from "../entities/functions-context.js";
+import { Collector } from "./collector.js";
+import { ImportedInfo, Importer } from "./importer.js";
 
 export class SystemSetup {
   public systemContext : SystemContext;
@@ -30,15 +32,16 @@ export class SystemSetup {
     this.systemContext = new SystemContext(systemConfig);
     this.functionsContext = new FunctionsContext();
 
+    logger.operation("[Add-ons Installation] Starting add-ons installation");
+    const addons = await this.installAddons(systemConfig);
+    logger.success("[Add-ons Installation] Add-ons installation complete");
+
     const functionSetupCommand = new FunctionSetup(
-      this.systemContext.systemBroker,
-      this.functionsContext.systemBroker,
+      this.systemContext,
+      this.functionsContext,
+      addons,
       systemConfig,
     );
-
-    logger.operation("[Add-ons Installation] Starting add-ons installation");
-    await this.installAddons(systemConfig);
-    logger.success("[Add-ons Installation] Add-ons installation complete");
 
     logger.operation("[System Setup] Starting System functions bootstrap sequence");
     await functionSetupCommand.setup();
@@ -47,11 +50,10 @@ export class SystemSetup {
       `${systemConfig.name} System - Made in Meta-System.`,
       environment.constants.installDir,
     );
+
     process.chdir(environment.constants.installDir);
 
     logger.operation("[System Setup] Starting protocols");
-    // This will be a Broker Action :)
-    // this.protocolsManager.startAllProtocols();
   }
 
   public async stop () : Promise<void> {
@@ -96,7 +98,6 @@ export class SystemSetup {
   private async deserializeConfiguration (validationContent : unknown) : Promise<Configuration> {
     const deserializer = new DeserializeConfigurationCommand();
     await deserializer.execute(validationContent);
-
     return deserializer.result;
   }
 
@@ -106,7 +107,10 @@ export class SystemSetup {
     return importJsonAndParse(environment.constants.configPath as string);
   }
 
-  private async installAddons (systemConfig : Configuration) : Promise<void> {
-
+  private async installAddons (systemConfig : Configuration) : Promise<Map<string, ImportedInfo>> {
+    const collector = new Collector(systemConfig.addons);
+    const metaFilesPaths = await collector.collectAddons();
+    const imported = await Importer.importAddons(metaFilesPaths);
+    return imported;
   }
 }

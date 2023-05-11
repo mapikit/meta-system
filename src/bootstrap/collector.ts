@@ -7,10 +7,16 @@ import { mkdir } from "fs/promises";
 import { existsSync, lstatSync } from "fs";
 import { logger } from "../common/logger/logger.js";
 
+// const environment = {
+//   constants: {
+//     configDir: "./collector-test",
+//   },
+// };
+
 export class Collector {
   constructor (
     public addonsConfigs : Addon[],
-    public modulesDirectory : string = "runtime"
+    public modulesDirectory : string = "runtime",
   ) {}
 
 
@@ -28,13 +34,13 @@ export class Collector {
   private async prep () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
     try {
       await mkdir(
-        join(environment.constants.configDir, this.modulesDirectory, "url_addons"), 
-        { recursive: true }
+        join(environment.constants.configDir, this.modulesDirectory, "url_addons"),
+        { recursive: true },
       );
     } catch(err) {}
   }
 
-  private async collectAddon (addon : Addon) {
+  private async collectAddon (addon : Addon) : Promise<string> {
     switch (addon.collectStrategy) {
       case "npm":
         return this.NPMCollectStrategy(addon.source, addon.version);
@@ -43,21 +49,21 @@ export class Collector {
       case "url":
         return this.urlCollectStrategy(addon.source, addon.identifier);
       default:
-        throw Error("addon" + addon.identifier + "does not have a valid collected strategy.")
+        throw Error("addon" + addon.identifier + "does not have a valid collected strategy.");
     }
   }
 
   private async NPMCollectStrategy (moduleName : string, version : string) : Promise<string> {
     //if (!this.requiresInstallation(moduleName, version)) { return; }
     const npmInstallDir = join(environment.constants.configDir, this.modulesDirectory);
-    const installationPromise : Promise<void> = new Promise((resolve, reject) => {
+    const installationPromise : Promise<void> = new Promise((pResolve, pReject) => {
       exec(`npm i --save --prefix ${npmInstallDir} ${moduleName}@${version}`, (err) => {
         if (err === null) {
           //if (version === "latest")
-          return resolve();
+          return pResolve();
         }
 
-        reject(err);
+        pReject(err);
       });
     });
 
@@ -75,27 +81,25 @@ export class Collector {
   }
 
   private async urlCollectStrategy (url : string, identifier : string) : Promise<string> {
-    var downloadOptions = {
+    const downloadOptions = {
       extract: true,
       strip: 1,
-      mode: '666',
-      headers: {
-        accept: 'application/zip',
-      }
-    }
-  
+      mode: "666",
+      headers: { accept: "application/zip" },
+    };
+
     const destinationDir = this.getDestinationPath("url_addons", identifier);
     await download(url, destinationDir, downloadOptions)
-      .catch(error => { 
-        if(error.code === "EEXIST") logger.warn(`Addon with identifier "${identifier}" already present. Skipping...`)
+      .catch(error => {
+        if(error.code === "EEXIST") logger.warn(`Addon with identifier "${identifier}" already present. Skipping...`);
         else throw error;
       });
 
     return join(destinationDir, "meta-file.json");
   }
 
-  private getDestinationPath (...paths : string[]) {
-    return join(environment.constants.configDir, this.modulesDirectory, ...paths)
+  private getDestinationPath (...paths : string[]) : string {
+    return join(environment.constants.configDir, this.modulesDirectory, ...paths);
   }
-  
+
 }

@@ -3,12 +3,10 @@ import { isConfigurationType } from "./assertions/configuration/is-configuration
 import { DeserializeBopsCommand } from "./business-operations/de-serialize-bops.js";
 import { Configuration } from "./configuration.js";
 import { PathUtils } from "./path-alias-utils.js";
-import { DeserializeProtocolsCommand } from "./protocols/de-serialize-protocols.js";
 import { DeserializeSchemasCommand } from "./schemas/de-serialize-schemas.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",
-  "protocols",
   "businessOperations",
 ];
 
@@ -31,15 +29,15 @@ export class DeserializeConfigurationCommand {
     const bopsValidationCommand =  new DeserializeBopsCommand();
     bopsValidationCommand.execute(this._result.businessOperations);
 
-    const protocolsValidationCommand = new DeserializeProtocolsCommand();
-    protocolsValidationCommand.execute(this._result.protocols ?? []);
-
+    // const protocolsValidationCommand = new DeserializeProtocolsCommand();
+    // protocolsValidationCommand.execute(this._result.protocols ?? []);
     this._result = new Configuration(
       {
         ...this._result,
         schemas: schemasValidationCommand.resultSchemas,
         businessOperations: bopsValidationCommand.bopsResults,
-        protocols: protocolsValidationCommand.protocolsResults,
+        addons: input["addons"],
+        // TODO add addon validation
       },
     );
   }

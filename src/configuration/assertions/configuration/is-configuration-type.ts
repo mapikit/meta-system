@@ -27,7 +27,7 @@ export function isConfigurationType (input : unknown) : asserts input is Configu
     throw Error("\"schemas\" should be an array");
   }
 
-  if (!Array.isArray(configurationTypeInput.protocols)) {
-    throw Error("\"protocols\" should be an array");
+  if (!Array.isArray(configurationTypeInput.addons)) {
+    throw Error("\"addons\" should be an array");
   }
 }

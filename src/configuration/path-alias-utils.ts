@@ -48,7 +48,7 @@ export class PathUtils {
 
   public static getFinalFilesPaths (systemConfig : ConfigurationType) : string[] {
     const paths : string[] = [];
-    const replaceableTypes : Array<keyof ConfigurationType> = ["businessOperations", "protocols", "schemas"];
+    const replaceableTypes : Array<keyof ConfigurationType> = ["businessOperations", "addons", "schemas"];
     const parentPath = environment.constants.configDir;
 
     replaceableTypes.forEach(type => {

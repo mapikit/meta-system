@@ -16,14 +16,12 @@ const getRef = (typeDefinition : TypeDefinition<SchemaDefinitionExtension>) : st
 
 export class Schema implements SchemaType {
   public readonly name : string;
-  public readonly dbProtocol : string;
   public readonly identifier : string;
   public readonly format : ObjectDefinition<SchemaDefinitionExtension>;
 
   public constructor (schema : SchemaType) {
     this.name = schema.name;
     this.format = schema.format;
-    this.dbProtocol = schema.dbProtocol;
     this.identifier = schema.identifier;
   }
 

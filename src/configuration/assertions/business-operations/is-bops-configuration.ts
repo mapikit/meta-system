@@ -1,4 +1,4 @@
-import { Dependency, BopsConfigurationEntry } from "../../business-operations/business-operations-type.js";
+import { Dependency, BopsConfigurationEntry, ModuleType } from "../../business-operations/business-operations-type.js";
 import { isType } from "../is-type.js";
 
 
@@ -34,7 +34,7 @@ export function isBopsConfigurationEntry (input : unknown, parent : string)
   configurations.forEach((config) => {
     isType("string", "\"moduleName\" must be a string", config.moduleName);
 
-    const moduleTypes = ["schemaFunction", "external", "internal", "bop", "output", "variable", "protocol"];
+    const moduleTypes : ModuleType[] = ["addon", "internal", "bop", "output", "variable"];
     if (!moduleTypes.includes(config.moduleType)) {
       const header = `(${config.key}@${parent}})`;
       throw Error(`${header}\"moduleType\" must be one of the following: " + ${moduleTypes.join(", ")}`);
@@ -48,11 +48,7 @@ export function isBopsConfigurationEntry (input : unknown, parent : string)
 }
 
 const validateModulePackage = (config : BopsConfigurationEntry) : void => {
-  if ("schemaFunction" === config.moduleType) {
-    isType("string", "\"moduleType\" must be a string", config.moduleType);
-  }
-
-  if ("external" === config.moduleType && typeof config.modulePackage !== "undefined") {
+  if ("addon" === config.moduleType && typeof config.modulePackage !== "undefined") {
     isType("string", "\"moduleType\" must be a string", config.moduleType);
   }
 };

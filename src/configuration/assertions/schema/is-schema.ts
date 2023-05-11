@@ -11,7 +11,7 @@ export function isSchema (input : unknown) : asserts input is SchemaType {
     throw TypeError("Schema with wrong format found - Not an object");
   }
 
-  const schemasRequiredKeys : Array<keyof SchemaType> = ["name", "format", "identifier", "dbProtocol"];
+  const schemasRequiredKeys : Array<keyof SchemaType> = ["name", "format", "identifier"];
   const inputKeys = Object.keys(input);
   const hasAllRequiredKeys = schemasRequiredKeys.every((requiredKey) =>
     inputKeys.includes(requiredKey) && input[requiredKey] !== null,

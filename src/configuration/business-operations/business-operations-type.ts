@@ -6,7 +6,6 @@ export interface BusinessOperations {
   name : string;
   input : ObjectDefinition;
   output : ObjectDefinition;
-  identifier : string;
   constants : BopsConstant[];
   variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];

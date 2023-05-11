@@ -50,9 +50,9 @@ export class BusinessOperation implements BusinessOperations {
         return internal.push(config.moduleName);
       }
 
-      if (config.moduleType === "schemaFunction") {
-        return fromSchemas.push(config.moduleName);
-      }
+      // if (config.moduleType === "schemaFunction") {
+      //   return fromSchemas.push(config.moduleName);
+      // }
 
       if (config.moduleType === "output") {
         return ending.push(config.moduleName);
