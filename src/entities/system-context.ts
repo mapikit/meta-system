@@ -2,7 +2,7 @@ import { ConfigurationType } from "../configuration/configuration-type.js";
 import { EntityValue, MetaEntity } from "./meta-entity.js";
 import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
 import { Schema } from "../configuration/schemas/schema.js";
-import { Addon } from "../configuration/addons/addon-type.js";
+import { Addon } from "../configuration/addon-type.js";
 import { BrokerFactory, EntityBroker, EntityPermissions } from "../broker/entity-broker.js";
 import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";

@@ -4,4 +4,4 @@ export type Addon = {
   identifier : string;
   collectStrategy : "npm" | "url" | "file";
   configuration : unknown;
-}
+};

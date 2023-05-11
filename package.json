@@ -32,7 +32,7 @@
   "dependencies": {
     "@meta-system/meta-function-helper": "^0.4.6",
     "@meta-system/meta-protocol-helper": "^0.4.2",
-    "@meta-system/object-definition": "^1.1.6",
+    "@meta-system/object-definition": "^2.0.0",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "decimal.js": "^10.4.3",

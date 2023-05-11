@@ -1,9 +1,10 @@
 import clone from "just-clone";
-import { isConfigurationType } from "./assertions/configuration/is-configuration-type.js";
+import { validateObject } from "@meta-system/object-definition";
 import { DeserializeBopsCommand } from "./business-operations/de-serialize-bops.js";
 import { Configuration } from "./configuration.js";
 import { PathUtils } from "./path-alias-utils.js";
 import { DeserializeSchemasCommand } from "./schemas/de-serialize-schemas.js";
+import { configurationTypeDefinition } from "./configuration-definition.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",
@@ -21,7 +22,9 @@ export class DeserializeConfigurationCommand {
   public async execute (input : unknown) : Promise<void> {
     this._result = clone(input as object) as Configuration;
     await this.replaceReferences(this._result);
-    isConfigurationType(this._result);
+    const validationOutput = validateObject(this._result, configurationTypeDefinition);
+
+    // TODO: Log validation errors and abort
 
     const schemasValidationCommand = new DeserializeSchemasCommand();
     schemasValidationCommand.execute(this._result.schemas);
