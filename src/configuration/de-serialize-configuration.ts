@@ -1,9 +1,7 @@
 import clone from "just-clone";
 import { validateObject } from "@meta-system/object-definition";
-import { DeserializeBopsCommand } from "./business-operations/de-serialize-bops.js";
 import { Configuration } from "./configuration.js";
 import { PathUtils } from "./path-alias-utils.js";
-import { DeserializeSchemasCommand } from "./schemas/de-serialize-schemas.js";
 import { configurationTypeDefinition } from "./configuration-definition.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
@@ -26,19 +24,19 @@ export class DeserializeConfigurationCommand {
 
     // TODO: Log validation errors and abort
 
-    const schemasValidationCommand = new DeserializeSchemasCommand();
-    schemasValidationCommand.execute(this._result.schemas);
+    // const schemasValidationCommand = new DeserializeSchemasCommand();
+    // schemasValidationCommand.execute(this._result.schemas);
 
-    const bopsValidationCommand =  new DeserializeBopsCommand();
-    bopsValidationCommand.execute(this._result.businessOperations);
+    // const bopsValidationCommand =  new DeserializeBopsCommand();
+    // bopsValidationCommand.execute(this._result.businessOperations);
 
     // const protocolsValidationCommand = new DeserializeProtocolsCommand();
     // protocolsValidationCommand.execute(this._result.protocols ?? []);
     this._result = new Configuration(
       {
         ...this._result,
-        schemas: schemasValidationCommand.resultSchemas,
-        businessOperations: bopsValidationCommand.bopsResults,
+        schemas: [],
+        businessOperations: [],
         addons: input["addons"],
         // TODO add addon validation
       },

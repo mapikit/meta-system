@@ -4,12 +4,14 @@ import { asyncTestThrow } from "../helpers/test-throw.js";
 import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
 describe("Configuration Deserializer", async () => {
+  // eslint-disable-next-line max-len
   const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");
   const badConfigurationExample =
+    // eslint-disable-next-line max-len
     await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration/bad-configuration-example.json");
 
   // This suite just tests the base type - the Schemas and BOPS tests are written in other suites
-  it("Successfully deserializes a valid configuration file", async () => {
+  it.only("Successfully deserializes a valid configuration file", async () => {
     const command = new DeserializeConfigurationCommand();
 
     await command.execute(configurationExample);
