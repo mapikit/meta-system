@@ -11,12 +11,12 @@ describe("Configuration Deserializer", async () => {
     await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration/bad-configuration-example.json");
 
   // This suite just tests the base type - the Schemas and BOPS tests are written in other suites
-  it.only("Successfully deserializes a valid configuration file", async () => {
+  it("Successfully deserializes a valid configuration file", async () => {
     const command = new DeserializeConfigurationCommand();
 
     await command.execute(configurationExample);
-
     expect(command.result).to.not.be.undefined;
+    expect(command.validation.errors.length).to.be.equal(0);
   });
 
   it("Fails do deserialize file with bad formatted configuration", async () => {
@@ -27,6 +27,6 @@ describe("Configuration Deserializer", async () => {
 
     expect(result.thrown).to.be.true;
     console.error(result.error);
-    expect(result.error.message).to.contain("\"version\" should be a string: Not type string - Type is number");
+    expect(result.error.message).to.contain("Config validation failed!");
   });
 });

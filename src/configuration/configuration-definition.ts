@@ -37,14 +37,14 @@ export const configurationTypeDefinition = {
     "configuration": { "type": "array", "subtype": {
       "moduleType": {
         "type": "enum",
-        "subtype": [ "internal", "addon", "bop", "variable", "output" ],
+        "subtype": [ "internal", "addon", "bop", "variable", "output", "schemaFunction" ],
       },
       "moduleName": { "type": "string" },
       "modulePackage": { "type": "string" },
       "key": { "type": "number" },
       "dependencies": { "type": "array", "subtype": {
         "origin": [
-          { "type": "enum", "subtype": ["constants", "variables", "input", "env" ] },
+          { "type": "enum", "subtype": ["constants", "constant", "variables", "variable", "input", "env" ] },
           { "type": "number" },
         ],
         "originPath": { "type": "string" },

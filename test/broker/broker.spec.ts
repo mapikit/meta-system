@@ -1,6 +1,6 @@
 import { FunctionsContext } from "../../src/entities/functions-context.js";
 
-describe.only("functions context", () => {
+describe("functions context", () => {
   it("Functions context test DUH", () => {
     const factory = new FunctionsContext();
     const broker = factory.createBroker([{ entity: "schemaFunctions",

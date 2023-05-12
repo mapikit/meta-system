@@ -61,7 +61,10 @@
       "variables": [],
       "input": {
         "carId": { "type": "string", "required": true },
-        "jsonBody": { "type": "$carSellBody", "required": true }
+        "jsonBody": { "type": "object", "required": true, "subtype": {
+          "clientId": { "type": "string", "required": true },
+          "employeeId": { "type": "string", "required": true }
+        }}
       },
       "output": {
         "message": { "type": "string", "required": true },
@@ -221,15 +224,6 @@
             { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "clientId" },
             { "origin": "input", "originPath": "jsonBody.employeeId", "targetPath": "employeeId" }
           ]
-        }
-      ],
-      "customObjects": [
-        {
-          "name": "carSellBody",
-          "properties": {
-            "clientId": { "type": "string", "required": true },
-            "employeeId": { "type": "string", "required": true }
-          }
         }
       ]
     }

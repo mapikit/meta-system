@@ -3,6 +3,8 @@ import { validateObject } from "@meta-system/object-definition";
 import { Configuration } from "./configuration.js";
 import { PathUtils } from "./path-alias-utils.js";
 import { configurationTypeDefinition } from "./configuration-definition.js";
+import { ValidationOutput } from "@meta-system/object-definition/dist/functions/validate-object.js";
+import { logger } from "../common/logger/logger.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",
@@ -11,6 +13,7 @@ const referenceableProperties : Array<keyof Configuration> = [
 
 export class DeserializeConfigurationCommand {
   private _result : Configuration;
+  public validation : ValidationOutput;
 
   public get result () : Configuration {
     return this._result;
@@ -20,8 +23,9 @@ export class DeserializeConfigurationCommand {
   public async execute (input : unknown) : Promise<void> {
     this._result = clone(input as object) as Configuration;
     await this.replaceReferences(this._result);
-    const validationOutput = validateObject(this._result, configurationTypeDefinition);
+    this.validation = validateObject(this._result, configurationTypeDefinition);
 
+    this.logErrorsAndAbort(this.validation);
     // TODO: Log validation errors and abort
 
     // const schemasValidationCommand = new DeserializeSchemasCommand();
@@ -46,6 +50,16 @@ export class DeserializeConfigurationCommand {
   private async replaceReferences (input : unknown) : Promise<void> {
     for(const property of referenceableProperties) {
       input[property] = await PathUtils.getContents(input[property]);
+    }
+  }
+
+  private logErrorsAndAbort (validation : ValidationOutput) : void {
+    validation.errors.forEach(err => {
+      logger.error(`[CONFIG VALIDATION] Error at configuration path: "${err.path}" -- `, err.error);
+    });
+
+    if (validation.errors.length > 0) {
+      throw Error("Config validation failed!");
     }
   }
 }
