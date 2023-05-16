@@ -25,5 +25,4 @@ export const multipleTypesSchema : SchemaType = {
     },
   },
   identifier: "someIdentifier",
-  dbProtocol: "aDbProtocol",
 };

@@ -1,18 +1,34 @@
+import { expect } from "chai";
 import { FunctionsContext } from "../../src/entities/functions-context.js";
+import faker from "faker";
+const { random } = faker;
 
-describe("functions context", () => {
-  it("Functions context test DUH", () => {
+describe("Broker Tests", () => {
+  it("Functions context broker", () => {
+    const factory = new FunctionsContext();
+    const broker = factory.createBroker([]);
+
+    // Would throw if not found
+    broker["logger"]["fatal"]("NOT AN ERROR, THIS IS A TEST");
+  });
+
+  it("Functions Context Broker - Declaring and retrieving functions", () => {
     const factory = new FunctionsContext();
     const broker = factory.createBroker([{ entity: "schemaFunctions",
       permissions: ["set_functions", "get_functions"] }]);
 
-    broker["logger"]["fatal"]("NOT AN ERROR, THIS IS A TEST");
-    broker.schemaFunctions.setSchemaFunction("mySchema", () => { console.log("i exist!"); },
+    let myVariable = 0;
+    const aFunction = (value : number) : void => { myVariable = value; };
+    broker.schemaFunctions.setSchemaFunction("mySchema", aFunction,
       { functionName: "nn" },
     );
 
-    broker.schemaFunctions.getSchemaFunction("nn", "mySchema")();
+    const myFunction = broker.schemaFunctions.getSchemaFunction("nn", "mySchema");
+    expect(myFunction).to.be.equal(aFunction);
 
+    const newValue = random.number(100);
+    myFunction(newValue);
+    expect(myVariable).to.be.equal(newValue);
   });
 });
 
