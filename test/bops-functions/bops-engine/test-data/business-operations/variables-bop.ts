@@ -1,8 +1,7 @@
 import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const variableBop : BusinessOperations = {
-  name: "variables",
-  identifier: "",
+  identifier: "variables",
   input: {
     aNumber: { type: "number", required: true },
     randomValue: { type: "any", required: true },
@@ -35,5 +34,4 @@ export const variableBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };

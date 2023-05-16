@@ -1,8 +1,7 @@
 import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const externalBop : BusinessOperations = {
-  name: "external-bop",
-  identifier: "",
+  identifier: "external-bop",
   input: {
     myName: { type: "string", required: true },
   },
@@ -11,9 +10,8 @@ export const externalBop : BusinessOperations = {
   variables: [],
   configuration: [
     {
-      version: "latest",
       moduleName: "bops-function-hello-world",
-      moduleType: "external",
+      moduleType: "addon",
       key: 6,
       dependencies: [
         { origin: "inputs", originPath: "myName", targetPath: "nameToGreet" },
@@ -29,5 +27,4 @@ export const externalBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };

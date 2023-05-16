@@ -12,7 +12,6 @@ import { logger } from "../common/logger/logger.js";
 //     configDir: "./collector-test",
 //   },
 // };
-
 export class Collector {
   constructor (
     public addonsConfigs : Addon[],

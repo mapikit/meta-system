@@ -1,8 +1,7 @@
 import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const envBop : BusinessOperations = {
-  name: "env-bop",
-  identifier: "",
+  identifier: "env-bop",
   input: {},
   output: {},
   constants: [],
@@ -17,5 +16,4 @@ export const envBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };

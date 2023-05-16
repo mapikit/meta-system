@@ -1,8 +1,7 @@
 import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const schemaBop : BusinessOperations = {
-  name: "schema-bop",
-  identifier: "",
+  identifier: "schema-bop",
   input: {
     aCar: { type: "cloudedObject", required: true },
   },
@@ -61,5 +60,4 @@ export const schemaBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };

@@ -57,7 +57,7 @@
   ],
   "businessOperations": [
     {
-      "name": "car-sell",
+      "identifier": "car-sell",
       "variables": [],
       "input": {
         "carId": { "type": "string", "required": true },
@@ -228,12 +228,5 @@
       ]
     }
   ],
-  "protocols": [
-    {
-      "protocol": "HTTP_JSONBODY",
-      "protocolKind": "normal",
-      "configuration": { },
-      "identifier": "http1"
-    }
-  ]
+  "addons": []
 }

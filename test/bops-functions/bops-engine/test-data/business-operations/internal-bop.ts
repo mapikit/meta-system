@@ -1,8 +1,7 @@
 import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
 export const internalBop : BusinessOperations = {
-  name: "internal-bop",
-  identifier: "",
+  identifier: "internal-bop",
   input: {},
   output: {},
   constants: [
@@ -38,5 +37,4 @@ export const internalBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };
