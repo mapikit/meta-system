@@ -3,13 +3,11 @@ import { ExtendedJsonTypes } from "../../common/types/json-types.js";
 
 export interface BusinessOperations {
   ttl ?: number;
-  name : string;
   input : ObjectDefinition;
   output : ObjectDefinition;
   constants : BopsConstant[];
   variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];
-  customObjects : BopsCustomObject[];
   identifier : string;
 }
 
@@ -52,9 +50,4 @@ export interface Dependency {
   origin : string | number;
   targetPath ?: string;
   originPath ?: string;
-}
-
-export interface BopsCustomObject {
-  name : string;
-  properties : ObjectDefinition;
 }

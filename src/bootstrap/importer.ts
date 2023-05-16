@@ -1,8 +1,7 @@
-import { dirname, resolve } from "path";
-import { readFileSync } from "fs";
+import { importJsonAndParse } from "common/helpers/import-json-and-parse.js";
 import { logger } from "../common/logger/logger.js";
-import { isType, optionalIsType } from "../configuration/assertions/is-type.js";
 import { MetaFileType } from "../common/meta-file-type.js";
+import { ObjectDefinition, validateObject } from "@meta-system/object-definition";
 
 export type ImportedInfo = {
   metaFile : MetaFileType;
@@ -25,20 +24,32 @@ export class Importer {
     return importedAddons;
   }
 
+  // TODO implement Browser import for v0.5
   private static async importFiles (path : string) : Promise<ImportedInfo> {
-    const metaFile = JSON.parse(readFileSync(path).toString());
+    const metaFile = await importJsonAndParse(path);
     this.validateMetaFile(metaFile);
-    const entrypointPath = resolve(dirname(path), metaFile.entrypoint);
+    const pathLib = await import("path");
+
+    const entrypointPath = pathLib.resolve(pathLib.dirname(path), metaFile.entrypoint);
     const imported = await import(entrypointPath);
     const main = imported.__esModule ? this.resolveESM(imported) : imported;
-    this.validateMain(main);
+    this.validateMain(main, metaFile.entrypoint);
 
     return { metaFile, main };
   }
 
-  private static validateMain (main : unknown) : asserts main is MainType {
-    if(typeof main["boot"] !== "function") throw Error("Invalid Boot function");
-    if(typeof main["broker"] !== "function") throw Error("Invalid Broker function");
+  private static validateMain (main : unknown, addonName : string) : asserts main is MainType {
+    if(typeof main["boot"] !== "function") {
+      // eslint-disable-next-line max-len
+      logger.error(`[ADDON VALIDATION] - Addon with identifier "${addonName}" is not valid! Missing "boot" function from entrypoint!`);
+      throw Error("Invalid Boot function");
+    };
+
+    if(typeof main["broker"] !== "function") {
+      // eslint-disable-next-line max-len
+      logger.error(`[ADDON VALIDATION] - Addon with identifier "${addonName}" is not valid! Missing "broker" function from entrypoint!`);
+      throw Error("Invalid Broker function");
+    }
   }
 
   private static resolveESM (esModule : { default : object }) : object {
@@ -50,10 +61,13 @@ export class Importer {
   }
 
   private static validateMetaFile (metaFile : unknown) : asserts metaFile is MetaFileType {
-    optionalIsType("string", "Name must be a string", metaFile["name"]);
-    optionalIsType("string", "Version must be a string", metaFile["version"]);
+    const metaFileDefinition : ObjectDefinition = {
+      name: { type: "string", required: true },
+      version: { type: "string", required: true },
+      entrypoint: { type: "string", required: true },
+    };
 
-    isType("string", "Entrypoint must be a string", metaFile["entrypoint"]);
+    validateObject(metaFile, metaFileDefinition);
   }
 
 }

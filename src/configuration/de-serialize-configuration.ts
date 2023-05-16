@@ -5,6 +5,7 @@ import { PathUtils } from "./path-alias-utils.js";
 import { configurationTypeDefinition } from "./configuration-definition.js";
 import { ValidationOutput } from "@meta-system/object-definition/dist/functions/validate-object.js";
 import { logger } from "../common/logger/logger.js";
+import { EntityValue } from "../entities/meta-entity.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",
@@ -26,25 +27,13 @@ export class DeserializeConfigurationCommand {
     this.validation = validateObject(this._result, configurationTypeDefinition);
 
     this.logErrorsAndAbort(this.validation);
-    // TODO: Log validation errors and abort
+    this.checkUniqueIdentifiers(this._result.schemas);
+    this.checkUniqueIdentifiers(this._result.businessOperations);
+    this.checkUniqueIdentifiers(this._result.addons);
 
-    // const schemasValidationCommand = new DeserializeSchemasCommand();
-    // schemasValidationCommand.execute(this._result.schemas);
-
-    // const bopsValidationCommand =  new DeserializeBopsCommand();
-    // bopsValidationCommand.execute(this._result.businessOperations);
-
-    // const protocolsValidationCommand = new DeserializeProtocolsCommand();
-    // protocolsValidationCommand.execute(this._result.protocols ?? []);
-    this._result = new Configuration(
-      {
-        ...this._result,
-        schemas: [],
-        businessOperations: [],
-        addons: input["addons"],
-        // TODO add addon validation
-      },
-    );
+    this.validateBusinessOperations();
+    this.checkAddonsSourceUniqueness();
+    this._result = new Configuration(this._result);
   }
 
   private async replaceReferences (input : unknown) : Promise<void> {
@@ -61,5 +50,57 @@ export class DeserializeConfigurationCommand {
     if (validation.errors.length > 0) {
       throw Error("Config validation failed!");
     }
+  }
+
+  private checkUniqueIdentifiers (entities : EntityValue[]) : void {
+    const identifiers = new Set();
+
+    entities.forEach((ent) => {
+      if (identifiers.has(ent.identifier)) {
+        logger.error(`[CONFIG VALIDATION] Found entities with duplicate identifiers! "${ent.identifier}"`
+          + " - All Identifiers should be unique!",
+        );
+        return;
+      }
+
+      identifiers.add(ent.identifier);
+    });
+  }
+
+  private validateBusinessOperations () : void {
+    const bops = this._result.businessOperations;
+
+    // Check bops Keys are not duplicates
+    bops.forEach((bop) => {
+      const keys = new Set();
+
+      bop.configuration.forEach((moduleData) => {
+        if (keys.has(moduleData.key)) {
+          // eslint-disable-next-line max-len
+          logger.error(`[CONFIG VALIDATION] Found Module within BOp "${bop.identifier}" with duplicate keys! "${moduleData.key}"`
+            + " - All keys within a BOp should be unique!",
+          );
+          return;
+        }
+
+        keys.add(moduleData.key);
+      });
+    });
+  }
+
+  private checkAddonsSourceUniqueness () : void {
+    const addons = this._result.addons;
+
+    const sources = new Set();
+    addons.forEach((addon) => {
+      if (sources.has(addon.source)) {
+        logger.error(`[CONFIG VALIDATION] Found Addon "${addon.identifier}" with duplicate sources! "${addon.source}"`
+          + " - All sources should be unique!",
+        );
+        return;
+      }
+
+      sources.add(addon.source);
+    });
   }
 }

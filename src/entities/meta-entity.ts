@@ -1,4 +1,4 @@
-export type EntityValue = object & {
+export type EntityValue<T extends object = object> = T & {
   identifier : string
 }
 
