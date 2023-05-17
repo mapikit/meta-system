@@ -30,7 +30,7 @@ export class BusinessOperation implements BusinessOperations {
     this.configuration = parameters.configuration;
     this.variables = parameters.variables;
     this.ttl = parameters.ttl;
-    this.identifier = nanoid();
+    this.identifier = parameters.identifier;
   }
 
   // eslint-disable-next-line max-lines-per-function

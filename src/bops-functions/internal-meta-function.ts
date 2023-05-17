@@ -1,4 +1,4 @@
-import { MetaFunction } from "@meta-system/meta-function-helper";
+import { MetaFunction } from "./meta-function-type.js";
 
 export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction" | "version">;
 

@@ -97,7 +97,7 @@ export class FunctionsContext {
 
     result.push(new EntityAction("get_function", "getBopFunction", (repo : EntityRepository<FunctionEntity>) =>
       (bopName : string) => {
-        return repo.getEntity(bopName).data.callable;
+        return repo.getEntity(bopName)?.data.callable;
       }, true));
 
     return result;

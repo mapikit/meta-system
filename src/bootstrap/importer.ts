@@ -10,7 +10,7 @@ export type ImportedInfo = {
 
 type MainType = {
   boot : Function;
-  broker : Function;
+  configure : Function;
 }
 
 export class Importer {
@@ -45,18 +45,18 @@ export class Importer {
       throw Error("Invalid Boot function");
     };
 
-    if(typeof main["broker"] !== "function") {
+    if(typeof main["configure"] !== "function") {
       // eslint-disable-next-line max-len
-      logger.error(`[ADDON VALIDATION] - Addon with identifier "${addonName}" is not valid! Missing "broker" function from entrypoint!`);
-      throw Error("Invalid Broker function");
+      logger.error(`[ADDON VALIDATION] - Addon with identifier "${addonName}" is not valid! Missing "configure" function from entrypoint!`);
+      throw Error("Invalid Configure function");
     }
   }
 
-  private static resolveESM (esModule : { default : object }) : object {
+  private static resolveESM (esModule : { default : object }) : MainType {
     const moduleDefault = esModule.default;
     return {
       boot: moduleDefault["boot"],
-      broker: moduleDefault["broker"],
+      configure: moduleDefault["configure"],
     };
   }
 

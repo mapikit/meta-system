@@ -20,7 +20,7 @@ export class Collector {
 
 
   public async collectAddons () : Promise<Record<string, string>> {
-    await this.prep();
+    await this.prepare();
     const installedPaths : Record<string, string> = {};
     for (const addonConfig of this.addonsConfigs) {
       const addonPath = await this.collectAddon(addonConfig);
@@ -30,7 +30,7 @@ export class Collector {
   }
 
 
-  private async prep () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
+  private async prepare () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
     try {
       await mkdir(
         join(environment.constants.configDir, this.modulesDirectory, "url_addons"),
@@ -53,7 +53,6 @@ export class Collector {
   }
 
   private async NPMCollectStrategy (moduleName : string, version : string) : Promise<string> {
-    //if (!this.requiresInstallation(moduleName, version)) { return; }
     const npmInstallDir = join(environment.constants.configDir, this.modulesDirectory);
     const installationPromise : Promise<void> = new Promise((pResolve, pReject) => {
       exec(`npm i --save --prefix ${npmInstallDir} ${moduleName}@${version}`, (err) => {
