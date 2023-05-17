@@ -6,12 +6,15 @@ import { configurationTypeDefinition } from "./configuration-definition.js";
 import { ValidationOutput } from "@meta-system/object-definition/dist/functions/validate-object.js";
 import { logger } from "../common/logger/logger.js";
 import { EntityValue } from "../entities/meta-entity.js";
+import { BopsCyclicDependencyCheck } from "./business-operations/cyclic-dependency-check.js";
+import { ValidateBopsPipelineFlowCommand } from "./business-operations/validate-bops-pipeline-flow.js";
 
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",
   "businessOperations",
 ];
 
+// TODO: Test
 export class DeserializeConfigurationCommand {
   private _result : Configuration;
   public validation : ValidationOutput;
@@ -67,6 +70,7 @@ export class DeserializeConfigurationCommand {
     });
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private validateBusinessOperations () : void {
     const bops = this._result.businessOperations;
 
@@ -85,7 +89,12 @@ export class DeserializeConfigurationCommand {
 
         keys.add(moduleData.key);
       });
+
+      new ValidateBopsPipelineFlowCommand().execute(bop);
     });
+
+    const cyclicValidation = new BopsCyclicDependencyCheck(this._result.businessOperations);
+    cyclicValidation.checkAllBops();
   }
 
   private checkAddonsSourceUniqueness () : void {

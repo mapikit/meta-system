@@ -1,6 +1,6 @@
 import { CloudedObject } from "../../common/types/clouded-object.js";
-// import { inspect } from "util";
 
+// TODO: Test
 export class ObjectResolver {
   // eslint-disable-next-line max-lines-per-function
   public static flattenObject (source : Array<object>, partial = {}) : CloudedObject {

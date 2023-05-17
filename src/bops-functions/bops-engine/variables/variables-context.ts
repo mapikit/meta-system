@@ -22,7 +22,7 @@ export class VariableContext {
   public static validateSystemVariables (systemConfig : ConfigurationType) : Record<string, BopsVariable[]> {
     const systemVariables : Record<string, BopsVariable[]> = {};
     for(const bop of systemConfig.businessOperations) {
-      systemVariables[bop.name] = VariableContext.validateBopVariables(bop.variables);
+      systemVariables[bop.identifier] = VariableContext.validateBopVariables(bop.variables);
     }
     return systemVariables;
   }
@@ -72,5 +72,5 @@ export class VariableContext {
     ["setVariables", setVariablesFunctionInformation],
     ["increaseVariables", increaseVariableFunctionInformation],
     ["decreaseVaraibles", decreaseVariableFunctionInformation],
-  ])
+  ]);
 }

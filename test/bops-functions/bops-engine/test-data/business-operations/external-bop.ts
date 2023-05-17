@@ -1,6 +1,6 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
+import { BusinessOperationType } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
-export const externalBop : BusinessOperations = {
+export const externalBop : BusinessOperationType = {
   identifier: "external-bop",
   input: {
     myName: { type: "string", required: true },

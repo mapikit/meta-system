@@ -1,7 +1,7 @@
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { ExtendedJsonTypes } from "../../common/types/json-types.js";
 
-export interface BusinessOperations {
+export interface BusinessOperationType {
   ttl ?: number;
   input : ObjectDefinition;
   output : ObjectDefinition;

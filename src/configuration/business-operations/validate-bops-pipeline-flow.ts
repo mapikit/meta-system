@@ -2,6 +2,7 @@ import { logger } from "../../common/logger/logger.js";
 import { BusinessOperation } from "./business-operation.js";
 import { BopsConfigurationEntry } from "./business-operations-type.js";
 
+// TODO: Test
 export class ValidateBopsPipelineFlowCommand {
   private businessOperation : BusinessOperation;
   private functions : Map<number, BopsConfigurationEntry> = new Map();
@@ -20,7 +21,7 @@ export class ValidateBopsPipelineFlowCommand {
     this.businessOperation.configuration.forEach((configurationEntry) => {
       if(this.functions.has(configurationEntry.key)) {
         const sameIdModuleName = this.functions.get(configurationEntry.key).moduleName;
-        throw Error(`Duplicate keys in Bop ${this.businessOperation.name}\n` +
+        throw Error(`Duplicate keys in Bop ${this.businessOperation.identifier}\n` +
         `\t- Both modules "${sameIdModuleName}" and "${configurationEntry.moduleName}" have the same identifier`);
       }
       this.functions.set(configurationEntry.key, configurationEntry);
@@ -33,7 +34,7 @@ export class ValidateBopsPipelineFlowCommand {
 
     if (path.includes(currentFunction.key)) {
       throw Error(
-        `Circular dependency found in BOps "${this.businessOperation.name}" configuration.`
+        `Circular dependency found in BOps "${this.businessOperation.identifier}" configuration.`
         + `[ key ${currentFunction.key} ]`,
       );
     }
@@ -53,7 +54,7 @@ export class ValidateBopsPipelineFlowCommand {
 
       if (!dependentOn) {
         throw Error(
-          `Unmapped dependency modules found at BOPS ${this.businessOperation.name}`
+          `Unmapped dependency modules found at BOPS ${this.businessOperation.identifier}`
           + ` Tried to get key [${input.origin}] but it does not exist.`,
         );
       }
@@ -66,7 +67,7 @@ export class ValidateBopsPipelineFlowCommand {
   private checkForUnusedModules () : void {
     for(const functionKey of Array.from(this.functions.keys())) {
       if(!this.mappedPaths.some(path => path.includes(functionKey))) {
-        logger.warn(`Function with key ${functionKey} in "${this.businessOperation.name}" ` +
+        logger.warn(`Function with key ${functionKey} in "${this.businessOperation.identifier}" ` +
         "is not part of any execution flow and will therefore not be executed");
       }
     }
@@ -81,7 +82,7 @@ export class ValidateBopsPipelineFlowCommand {
     } while(!current.done && current.value.moduleType !== "output");
 
     if(current.value === undefined) {
-      throw Error(`BOp "${this.businessOperation.name}" has no output function`);
+      throw Error(`BOp "${this.businessOperation.identifier}" has no output function`);
     }
     return current.value;
   }

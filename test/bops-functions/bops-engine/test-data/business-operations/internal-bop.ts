@@ -1,6 +1,6 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
+import { BusinessOperationType } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
-export const internalBop : BusinessOperations = {
+export const internalBop : BusinessOperationType = {
   identifier: "internal-bop",
   input: {},
   output: {},

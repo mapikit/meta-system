@@ -1,25 +1,22 @@
 import { InternalMetaFunction } from "../bops-functions/internal-meta-function.js";
 import {
   BopsConfigurationEntry,
-  BusinessOperations,
+  BusinessOperationType,
   Dependency,
   ModuleType } from "../configuration/business-operations/business-operations-type.js";
 import { ConfigurationType } from "../configuration/configuration-type.js";
-import { CustomType, MetaFunction } from "@meta-system/meta-function-helper";
-import { schemaFunctionInfoMap } from "../schemas/application/schema-functions-info.js";
 import { VariableContext } from "../bops-functions/bops-engine/variables/variables-context.js";
 import clone from "just-clone";
 import chalk from "chalk";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { logger } from "../common/logger/logger.js";
-import { SchemasFunctions } from "../schemas/domain/schemas-functions.js";
 import { environment } from "../common/execution-env.js";
 import { EntityBroker } from "broker/entity-broker.js";
 
-type FunctionInfoType = InternalMetaFunction | BusinessOperations;
+type FunctionInfoType = InternalMetaFunction | BusinessOperationType;
 
 export class DependencyPropValidator {
-  private workingBop : BusinessOperations;
+  private workingBop : BusinessOperationType;
   private getHeader : (errorType : string) => string;
   private typeCheckingLevel = 1;
   // eslint-disable-next-line max-params
@@ -52,7 +49,7 @@ export class DependencyPropValidator {
     logger.success("[Dependency Validation] Finished validating dependencies");
   }
 
-  private validateTargetPaths (bops : Array<BusinessOperations>) : void {
+  private validateTargetPaths (bops : Array<BusinessOperationType>) : void {
     bops.forEach(bop => {
       bop.configuration.forEach(config => {
         const infoHeader = `[${bop.name}@${config.key}] `;
@@ -84,7 +81,7 @@ export class DependencyPropValidator {
 
   private getCustomTypes (info : FunctionInfoType) : CustomType[] {
     if(info["customTypes"] !== undefined) return info["customTypes"];
-    const customTypes = (info as BusinessOperations).customObjects?.map(object => {
+    const customTypes = (info as BusinessOperationType).customObjects?.map(object => {
       const asCustomType : CustomType = { name: object.name, type: object.properties };
       return asCustomType;
     });
@@ -92,7 +89,7 @@ export class DependencyPropValidator {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private validateTypes (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperations) : void {
+  private validateTypes (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperationType) : void {
     const moduleInfo = this.getFunctionInfo(module);
     if(module.moduleType !== "output") {
       enum of { origin, target }
@@ -213,7 +210,7 @@ export class DependencyPropValidator {
     return this.infoResolver[moduleType](module.moduleName, module.modulePackage);
   };
 
-  private validateIO (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperations) : void {
+  private validateIO (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperationType) : void {
     const moduleInfo = this.getFunctionInfo(module);
     if(typeof dependency.origin === "number") {
       const refersTo = bop.configuration.find(mod => mod.key == dependency.origin);

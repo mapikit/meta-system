@@ -1,6 +1,6 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
+import { BusinessOperationType } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
-export const schemaBop : BusinessOperations = {
+export const schemaBop : BusinessOperationType = {
   identifier: "schema-bop",
   input: {
     aCar: { type: "cloudedObject", required: true },

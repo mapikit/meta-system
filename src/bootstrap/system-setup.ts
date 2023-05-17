@@ -1,7 +1,6 @@
 import { Configuration } from "../configuration/configuration.js";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { FunctionSetup } from "../bootstrap/function-setup.js";
-import { prettifyNPMPackageFile } from "../dependencies-management/package-file-helper.js";
 import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
@@ -45,11 +44,6 @@ export class SystemSetup {
 
     logger.operation("[System Setup] Starting System functions bootstrap sequence");
     await functionSetupCommand.setup();
-
-    await prettifyNPMPackageFile(systemConfig.name, systemConfig.version,
-      `${systemConfig.name} System - Made in Meta-System.`,
-      environment.constants.installDir,
-    );
 
     process.chdir(environment.constants.installDir);
 

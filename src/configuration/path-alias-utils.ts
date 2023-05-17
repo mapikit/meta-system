@@ -4,6 +4,7 @@ import { ConfigurationType } from "./configuration-type.js";
 import { environment } from "../common/execution-env.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
+// TODO: Test
 export class PathUtils {
   public static async getContents <T> (arrayOrPath : T[] | string, parentPath = "") : Promise<T[]> {
     if(Array.isArray(arrayOrPath)) {

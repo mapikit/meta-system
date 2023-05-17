@@ -1,5 +1,5 @@
 import { Addon } from "./addon-type.js";
-import { BusinessOperations } from "./business-operations/business-operations-type.js";
+import { BusinessOperationType } from "./business-operations/business-operations-type.js";
 import { SchemaType } from "./schemas/schemas-type.js";
 
 export interface ConfigurationType {
@@ -7,7 +7,7 @@ export interface ConfigurationType {
   version : string;
   envs ?: EnvironmentVariable[];
   schemas : SchemaType[];
-  businessOperations : BusinessOperations[];
+  businessOperations : BusinessOperationType[];
   addons : Addon[];
 }
 

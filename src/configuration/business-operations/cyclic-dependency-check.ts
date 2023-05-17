@@ -1,13 +1,14 @@
-import { BusinessOperations } from "./business-operations-type.js";
+import { BusinessOperationType } from "./business-operations-type.js";
 
+// TODO: Test
 export class BopsCyclicDependencyCheck {
   public constructor (
-    private businessOperations : BusinessOperations[],
+    private businessOperations : BusinessOperationType[],
   ) {}
 
   public checkAllBops () : void {
     this.businessOperations.forEach((bops) => {
-      this.checkBopDependencyChain(bops.name);
+      this.checkBopDependencyChain(bops.identifier);
     });
   }
 
@@ -46,7 +47,7 @@ export class BopsCyclicDependencyCheck {
     return result;
   }
 
-  private getBopsByName (bopsName : string) : BusinessOperations | undefined {
-    return this.businessOperations.find((bops) => bops.name === bopsName);
+  private getBopsByName (bopsName : string) : BusinessOperationType | undefined {
+    return this.businessOperations.find((bops) => bops.identifier === bopsName);
   }
 }

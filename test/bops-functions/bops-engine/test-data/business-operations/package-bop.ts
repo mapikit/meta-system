@@ -1,6 +1,6 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
+import { BusinessOperationType } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
-export const packageBop : BusinessOperations = {
+export const packageBop : BusinessOperationType = {
   identifier: "package-bop",
   input: {
     age: { type: "number", required: true },

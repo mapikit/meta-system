@@ -22,9 +22,8 @@ class Environment {
       defineProperty: (_object, property, value) : boolean => constantSetter(this.constants, property, value, true),
       deleteProperty: () : true => true,
     }),
-  }
+  };
 }
-
 
 // eslint-disable-next-line max-params
 function constantSetter (target : object, property : string | symbol, value : unknown, silent : boolean) : true {

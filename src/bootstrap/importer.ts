@@ -13,6 +13,7 @@ type MainType = {
   configure : Function;
 }
 
+// TODO: Test
 export class Importer {
   public static async importAddons (metaFilePaths : Record<string, string>) : Promise<Map<string, ImportedInfo>>  {
     const importedAddons = new Map<string, ImportedInfo>();

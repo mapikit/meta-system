@@ -1,15 +1,15 @@
-import { SchemasFunctions } from "../../schemas/domain/schemas-functions.js";
 import { BusinessOperation } from "./business-operation.js";
 import { logger } from "../../common/logger/logger.js";
 import { EntityBroker } from "../../broker/entity-broker.js";
+import type { SchemaType } from "../schemas/schemas-type.js";
+import type { BusinessOperationType } from "./business-operations-type.js";
 
 export interface BopsDependencies {
   fromSchemas : Array<{ functionName : string; schemaName : string; }>;
+  fromAddons : Array<{ name : string; package ?: string }>
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
-  external : Array<{ name : string; version : string; package ?: string }>;
-  protocol : Array<{ name : string; version : string; package ?: string }>
   fromBops : string[];
   bopName : string;
 }
@@ -34,16 +34,20 @@ export class CheckBopsFunctionsDependencies {
   public constructor (
     private readonly systemBroker : EntityBroker,
     private readonly functionsBroker : EntityBroker,
+    checkingBopIdentifier : string,
   ) {
-    // TODO
+    const allSchemas : Array<SchemaType> = this.systemBroker.schemas.getAll();
+    const allBusinessOperations : Array<BusinessOperationType> = this.systemBroker.businessOperations.getAll();
+
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
     });
 
     allBusinessOperations.forEach((Bop) => {
-      this.bops.add(Bop.name);
+      this.bops.add(Bop.identifier);
     });
 
+    // TODO Get BOP from identifier
     this.businessOperation = currentBusinessOperation;
     this.extractDependencies();
   }
@@ -68,7 +72,7 @@ export class CheckBopsFunctionsDependencies {
     const outputsDependencies = [];
     const schemasDependencies = [];
     const configurationalDependencies = [];
-    const protocolsDependencies = [];
+    const addonsDependencies = [];
     const bopsDependencies = [];
 
     // eslint-disable-next-line max-lines-per-function
@@ -114,16 +118,14 @@ export class CheckBopsFunctionsDependencies {
       if(type === typesEnum.external) {
         return externalDependencies.push({
           name: bopsFunctionConfig.moduleName,
-          version: bopsFunctionConfig.version,
           package: bopsFunctionConfig.modulePackage,
         });
       }
 
       if (type === typesEnum.protocol) {
         // The modulePackage - for Protocols - is their identifier, not their name
-        protocolsDependencies.push({
+        addonsDependencies.push({
           name: bopsFunctionConfig.moduleName,
-          version: bopsFunctionConfig.version,
           package: bopsFunctionConfig.modulePackage,
         });
       }
@@ -131,13 +133,12 @@ export class CheckBopsFunctionsDependencies {
 
     this.dependencies = {
       internal: internalDependencies,
-      external: externalDependencies,
       fromOutputs: outputsDependencies,
       fromSchemas: schemasDependencies,
       fromConfigurations: configurationalDependencies,
       fromBops: bopsDependencies,
-      protocol: protocolsDependencies,
-      bopName: this.businessOperation.name,
+      fromAddons: addonsDependencies,
+      bopName: this.businessOperation.identifier,
     };
   }
 
@@ -198,6 +199,7 @@ export class CheckBopsFunctionsDependencies {
     return fullPath.substring(0, firstAccessIndex);
   }
 
+  // TODO check existence from functions broker
   public checkInternalFunctionsDependenciesMet () : boolean {
     let result = true;
 
@@ -227,6 +229,7 @@ export class CheckBopsFunctionsDependencies {
         return false;
       }
 
+      // TODO Get from Broker, check if exists
       result = (requiredFunction in SchemasFunctions);
       if (!result) {
         logger.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
@@ -250,43 +253,5 @@ export class CheckBopsFunctionsDependencies {
     }
 
     return true;
-  }
-
-  public checkExternalRequiredFunctionsMet () : boolean {
-    let result = true;
-
-    for (const externalDependency of this.dependencies.external) {
-      result = this.externalFunctionManager
-        .functionIsInstalled(externalDependency.name, externalDependency.package);
-
-      if (!result) {
-        logger.error(
-          `[Dependency Check] Unmet external dependency: "${externalDependency.name}@${externalDependency.version}"`,
-        );
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  public checkProtocolDependenciesMet () : boolean {
-    let result = true;
-
-    for (const protocolDependency of this.dependencies.protocol) {
-      result = this.protocolFunctionManager
-        // The package for protocols in BOps **IS** the protocol identifier
-        .get(`${protocolDependency.package}.${protocolDependency.name}`) !== undefined;
-
-      if (!result) {
-        logger.error(
-          // eslint-disable-next-line max-len
-          `[Dependency Check] Unmet protocol dependency: "${protocolDependency.name}@${protocolDependency.version}.${protocolDependency.name}"`,
-        );
-        return false;
-      }
-    }
-
-    return result;
   }
 }
