@@ -59,14 +59,4 @@ export class ObjectResolver {
     });
     return current;
   }
-
-  // public static validateConfiguredInputs (configuredInputs : BopsInput[], inputs : CloudedObject) : CloudedObject {
-  //   const validatedInputs = {};
-  //   configuredInputs.forEach(configuredInput => {
-  //     if(inputs && typeof inputs[configuredInput.name] === configuredInput.type) {
-  //       validatedInputs[configuredInput.name] = inputs[configuredInput.name];
-  //     }
-  //   });
-  //   return validatedInputs;
-  // }
 }

@@ -12,6 +12,7 @@ export type ResolvedConstants = Record<string, unknown>;
  * as constants and internalBops
  */
 export class StaticSystemInfo {
+  // TODO: This is definitely not doing all of that above - let's consider renaming
   private static validateConstant (constant : BopsConstant) : ExtendedJsonTypeDict {
     if(!isValidType(constant.value, constant.type)) throw new ConstantTypeError(constant);
     return constant.value;

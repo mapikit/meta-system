@@ -14,13 +14,14 @@ export interface BopsDependencies {
   bopName : string;
 }
 
+// TODO: Test
 /**
  * Command to check if the dependencies for a given configuration are met
  *
  * Dependencies are code or information that resides outside the configuration for
  * the meta-system, be it a runtime attribute or a function described at it.
  */
-export class CheckBopsFunctionsDependencies {
+export class CheckBopsFunctionsDependencies { // Perhaps rename to convey: Validate whole system dependencies (?)
   private schemas : Set<string> = new Set();
   private bops : Set<string> = new Set();
   private businessOperation : BusinessOperation;
