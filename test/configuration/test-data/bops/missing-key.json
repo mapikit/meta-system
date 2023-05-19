@@ -28,7 +28,7 @@
         "moduleType": "internal",
         "key": 3,
         "dependencies": [
-          { "origin": 4 }
+          { "origin": 6 }
         ]
       },
       {

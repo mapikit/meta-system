@@ -7,6 +7,7 @@
   "schemas": [
     {
       "name": "client",
+      "identifier": "client",
       "format": {
         "id": { "type": "string" },
         "name": { "type": "string" },
@@ -17,6 +18,7 @@
     },
     {
       "name": "purchase",
+      "identifier": "purchase",
       "format": {
         "id": { "type": "string" },
         "date": { "type": "date" },
@@ -28,6 +30,7 @@
     },
     {
       "name": "employee",
+      "identifier": "employee",
       "format": {
         "id": { "type": "string" },
         "name": { "type": "string" },
@@ -36,6 +39,7 @@
     },
     {
       "name": "car",
+      "identifier": "car",
       "format": {
         "id": { "type": "string" },
         "model": { "type": "string" },
@@ -49,7 +53,7 @@
   ],
   "businessOperations": [
     {
-      "name": "function-2",
+      "identifier": "function-2",
       "input": {},
       "output": {},
       "constants": [],
@@ -65,7 +69,7 @@
       ]
     },
     {
-      "name": "function-3",
+      "identifier": "function-3",
       "input": {},
       "output": {},
       "constants": [],
@@ -81,10 +85,10 @@
       ]
     },
     {
-      "name": "car-sell",
+      "identifier": "car-sell",
       "input": {
         "carId": { "type": "string", "required": true },
-        "jsonBody": { "type": "$carSellBody", "required": true }
+        "jsonBody": { "type": "cloudedObject", "required": true }
       },
       "output": {
         "message": { "type": "string", "required": true },
@@ -239,23 +243,8 @@
             { "origin": "input", "originPath": "jsonBody.employeeId", "targetPath": "employeeId" }
           ]
         }
-      ],
-      "customObjects": [
-        {
-          "name": "carSellBody",
-          "properties": {
-            "clientId": { "type": "string", "required": true },
-            "employeeId": { "type": "string", "required": true }
-          }
-        }
       ]
     }
   ],
-  "protocols": [
-    {
-      "protocolType": "HTTP_JSONBODY",
-      "protocolKind": "normal",
-      "configuration": { }
-    }
-  ]
+  "addons": []
 }

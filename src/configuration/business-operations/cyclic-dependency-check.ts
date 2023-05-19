@@ -1,6 +1,6 @@
+import { logger } from "../../common/logger/logger.js";
 import { BusinessOperationType } from "./business-operations-type.js";
 
-// TODO: Test
 export class BopsCyclicDependencyCheck {
   public constructor (
     private businessOperations : BusinessOperationType[],
@@ -15,7 +15,9 @@ export class BopsCyclicDependencyCheck {
   public checkBopDependencyChain (
     initialBopsName : string, requireChain : string[] = [], currentDependencyName ?: string) : void {
     if (requireChain.includes(initialBopsName)) {
-      throw Error("Cannot run a BOp with a cyclic dependecy: " + requireChain.join(", "));
+      const message = "Cannot run a BOp with a cyclic dependecy: " + requireChain.join(", ");
+      logger.error(`[BUSINESS OPERATIONS VALIDATION] - ${message}`);
+      throw Error(message);
     }
 
     if (currentDependencyName !== undefined) requireChain.push(currentDependencyName);

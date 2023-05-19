@@ -38,6 +38,14 @@
         "dependencies": [
           { "origin": 2 }
         ]
+      },
+      {
+        "moduleName": "arrayAt",
+        "moduleType": "internal",
+        "key": 2,
+        "dependencies": [
+          { "origin": 4 }
+        ]
       }
     ]
   }

@@ -8,14 +8,6 @@
     "constants": [],
     "configuration": [
       {
-        "moduleName": "output",
-        "moduleType": "output",
-        "key": 1,
-        "dependencies": [
-          { "origin": 2 }
-        ]
-      },
-      {
         "moduleName": "arrayAt",
         "moduleType": "internal",
         "key": 2,
@@ -28,7 +20,7 @@
         "moduleType": "internal",
         "key": 3,
         "dependencies": [
-          { "origin": 4 }
+          { "origin": 6 }
         ]
       },
       {

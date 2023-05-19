@@ -2,7 +2,6 @@ import { logger } from "../../common/logger/logger.js";
 import { BusinessOperation } from "./business-operation.js";
 import { BopsConfigurationEntry } from "./business-operations-type.js";
 
-// TODO: Test
 export class ValidateBopsPipelineFlowCommand {
   private businessOperation : BusinessOperation;
   private functions : Map<number, BopsConfigurationEntry> = new Map();
@@ -21,8 +20,10 @@ export class ValidateBopsPipelineFlowCommand {
     this.businessOperation.configuration.forEach((configurationEntry) => {
       if(this.functions.has(configurationEntry.key)) {
         const sameIdModuleName = this.functions.get(configurationEntry.key).moduleName;
-        throw Error(`Duplicate keys in Bop ${this.businessOperation.identifier}\n` +
-        `\t- Both modules "${sameIdModuleName}" and "${configurationEntry.moduleName}" have the same identifier`);
+        const message = `Duplicate keys in Bop "${this.businessOperation.identifier}"\n` +
+        `\t- Both modules "${sameIdModuleName}" and "${configurationEntry.moduleName}" have the same identifier`;
+        logger.error(`[BUSINESS OPERATIONS VALIDATION] - ${message}`);
+        throw Error(message);
       }
       this.functions.set(configurationEntry.key, configurationEntry);
     });
@@ -33,10 +34,10 @@ export class ValidateBopsPipelineFlowCommand {
     const path = [...currentPath];
 
     if (path.includes(currentFunction.key)) {
-      throw Error(
-        `Circular dependency found in BOps "${this.businessOperation.identifier}" configuration.`
-        + `[ key ${currentFunction.key} ]`,
-      );
+      const message = `Circular dependency found in BOps "${this.businessOperation.identifier}" configuration.`
+      + `[ key ${currentFunction.key} ]`;
+      logger.error(`[BUSINESS OPERATIONS VALIDATION] - ${message}`);
+      throw Error(message);
     }
 
     path.push(currentFunction.key);
@@ -53,10 +54,10 @@ export class ValidateBopsPipelineFlowCommand {
       const dependentOn = this.functions.get(input.origin as number);
 
       if (!dependentOn) {
-        throw Error(
-          `Unmapped dependency modules found at BOPS ${this.businessOperation.identifier}`
-          + ` Tried to get key [${input.origin}] but it does not exist.`,
-        );
+        const message = `Unmapped dependency modules found at BOPS "${this.businessOperation.identifier}".`
+        + ` Tried to get key [${input.origin}] but it does not exist.`;
+        logger.error(`[BUSINESS OPERATIONS VALIDATION] - ${message}`);
+        throw Error(message);
       }
 
       return this.mapFunctionPipelinePath(dependentOn, path);
@@ -82,7 +83,9 @@ export class ValidateBopsPipelineFlowCommand {
     } while(!current.done && current.value.moduleType !== "output");
 
     if(current.value === undefined) {
-      throw Error(`BOp "${this.businessOperation.identifier}" has no output function`);
+      const message = `BOp "${this.businessOperation.identifier}" has no output function.`;
+      logger.error(`[BUSINESS OPERATIONS VALIDATION] - ${message}`);
+      throw Error(message);
     }
     return current.value;
   }
