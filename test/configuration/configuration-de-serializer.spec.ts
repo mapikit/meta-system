@@ -3,12 +3,16 @@ import { expect } from "chai";
 import { asyncTestThrow } from "../helpers/test-throw.js";
 import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 
-describe("Configuration Deserializer", async () => {
-  // eslint-disable-next-line max-len
-  const configurationExample = await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration-example.json");
-  const badConfigurationExample =
+describe("Configuration Deserializer", () => {
+  let configurationExample;
+  let badConfigurationExample;
+
+  before(async () => {
     // eslint-disable-next-line max-len
-    await importJsonAndParse("./test/configuration-de-serializer/test-data/configuration/bad-configuration-example.json");
+    configurationExample = await importJsonAndParse("./test/configuration/test-data/configuration-example.json");
+    // eslint-disable-next-line max-len
+    badConfigurationExample = await importJsonAndParse("./test/configuration/test-data/configuration/bad-configuration-example.json");
+  });
 
   // This suite just tests the base type - the Schemas and BOPS tests are written in other suites
   it("Successfully deserializes a valid configuration file", async () => {
