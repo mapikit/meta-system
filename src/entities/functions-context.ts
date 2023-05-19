@@ -49,13 +49,14 @@ export class FunctionsContext {
 
     result.push(new EntityAction("get_functions", "getFunction", (repo : EntityRepository<FunctionEntity>) =>
       (functionName : string) => {
-        return repo.getEntity(`${functionName}`).data.callable;
+        return repo.getEntity(`${functionName}`)?.data.callable;
       }, true));
 
     result.push(new EntityAction("overrride_functions", "override",
       (repo : EntityRepository<FunctionEntity>) =>
         (name : string, callable : Function) => {
           const oldOne = repo.getEntity(name);
+          if(!oldOne) return;
           repo.updateEntity(new MetaEntity("",
             { ...oldOne.data, callable }));
         }, false));
@@ -75,7 +76,7 @@ export class FunctionsContext {
 
     result.push(new EntityAction("get_functions", "getSchemaFunction", (repo : EntityRepository<FunctionEntity>) =>
       (functionName : string, schemaName : string) => {
-        return repo.getEntity(`${schemaName}@${functionName}`).data.callable;
+        return repo.getEntity(`${schemaName}@${functionName}`)?.data.callable;
       }, true));
 
     return result;
@@ -110,7 +111,7 @@ export class FunctionsContext {
 
     result.push(new EntityAction("get", "getFunction", (repo : EntityRepository<FunctionEntity>) =>
       (addonName : string, functionName : string) => {
-        return repo.getEntity(`${addonName}@${functionName}`).data.callable;
+        return repo.getEntity(`${addonName}@${functionName}`)?.data.callable;
       }, false));
 
     result.push(new EntityAction("register", "register", (repo : EntityRepository<FunctionEntity>) =>
@@ -128,6 +129,7 @@ export class FunctionsContext {
     result.push(new EntityAction("set_registered", "setRegistered", (repo : EntityRepository<FunctionEntity>) =>
       (addonName : string, functionName : string, callable : Function) => {
         const entity = repo.getEntity(`${addonName}@${functionName}`);
+        if(!entity) return;
         entity.data.callable = callable;
         repo.updateEntity(entity);
       }, true));

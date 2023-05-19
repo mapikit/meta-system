@@ -48,7 +48,7 @@ export class CheckBopsFunctionsDependencies {
     });
 
     // TODO Get BOP from identifier
-    this.businessOperation = currentBusinessOperation;
+    this.businessOperation = this.systemBroker.businessOperations.getBop(checkingBopIdentifier);
     this.extractDependencies();
   }
 
@@ -57,9 +57,8 @@ export class CheckBopsFunctionsDependencies {
       this.checkConfigurationalDependenciesMet(),
       this.checkInternalFunctionsDependenciesMet(),
       this.checkSchemaFunctionsDependenciesMet(),
-      this.checkExternalRequiredFunctionsMet(),
+      this.checkAddonsFunctionsDependenciesMet(),
       this.checkOutputDependencyMet(),
-      this.checkProtocolDependenciesMet(),
     ];
 
     return !results.includes(false);
@@ -201,16 +200,16 @@ export class CheckBopsFunctionsDependencies {
 
   // TODO check existence from functions broker
   public checkInternalFunctionsDependenciesMet () : boolean {
-    let result = true;
+    // let result = true;
 
-    for (const internalDependencyName of this.dependencies.internal) {
-      result = this.internalFunctionManager.functionIsInstalled(internalDependencyName);
+    // for (const internalDependencyName of this.dependencies.internal) {
+    //   result = this.internalFunctionManager.functionIsInstalled(internalDependencyName);
 
-      if (!result) {
-        logger.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
-        return false;
-      }
-    }
+    //   if (!result) {
+    //     logger.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
+    //     return false;
+    //   }
+    // }
 
     return true;
   }
@@ -230,7 +229,7 @@ export class CheckBopsFunctionsDependencies {
       }
 
       // TODO Get from Broker, check if exists
-      result = (requiredFunction in SchemasFunctions);
+      // result = (requiredFunction in SchemasFunctions);
       if (!result) {
         logger.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
         return false;

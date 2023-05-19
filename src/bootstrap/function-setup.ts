@@ -1,6 +1,6 @@
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine.js";
 import { ModuleManager } from "../bops-functions/bops-engine/modules-manager.js";
-import { CheckBopsFunctionsDependencies }
+import { BopsDependencies, CheckBopsFunctionsDependencies }
   from "../configuration/business-operations/check-bops-functions-dependencies.js";
 import { ConfigurationType } from "../configuration/configuration-type.js";
 import { BopsConfigurationEntry } from "../configuration/business-operations/business-operations-type.js";
@@ -10,6 +10,7 @@ import { EntityBroker } from "../broker/entity-broker.js";
 import { FunctionsContext } from "../entities/functions-context.js";
 import { ImportedInfo } from "./importer.js";
 import { SystemContext } from "../entities/system-context.js";
+import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
 
 export class FunctionSetup {
   private bopsEngine : BopsEngine;
@@ -30,21 +31,13 @@ export class FunctionSetup {
       this.systemConfiguration.name
     }"`);
 
-    // const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
+    const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
     // this.checkInternalDependencies(); TODO Check Internal Deps
 
     // this.checkBopsInterDependencies();
 
-    // TODO Reimplement prop validation
-    // if (!process.argv.includes("--skip-prop-validation")) {
-    //   const propValidator = new DependencyPropValidator(
-    //     this.systemConfiguration,
-    //     this.systemBroker,
-    //   );
-    //   propValidator.verifyAll();
-    // }
 
-    await this.brokerAddons();
+    await this.configureAddons();
 
     const moduleManager = new ModuleManager(this.functionsContext.systemBroker);
 
@@ -59,31 +52,43 @@ export class FunctionSetup {
 
     this.buildBops();
 
+    // TODO Reimplement prop validation
+    // if (!process.argv.includes("--skip-prop-validation")) {
+    //   const propValidator = new DependencyPropValidator(
+    //     this.systemConfiguration,
+    //     this.systemBroker,
+    //   );
+    //   propValidator.verifyAll();
+    // }
+
     await this.bootAddons();
 
     this.functionsContext.systemBroker.done();
     logger.success("[Function Setup] Success - Function Setup complete");
   }
 
-  private async brokerAddons () : Promise<void> {
+  private async configureAddons () : Promise<void> {
     for(const addonInfo of this.importedAddons) {
       const [identifier, addon] = addonInfo;
-      logger.operation("[Function Setup] Starting broker for addon", identifier);
+      logger.operation("[Function Setup] Starting configure for addon", identifier);
       const addonBroker = this.functionsContext.createBroker(addon.metaFile.permissions ?? []);
       this.addonBrokers.set(identifier, addonBroker);
-      await addon.main.broker(this.addonBrokers.get(identifier));
+      await addon.main.configure(this.addonBrokers.get(identifier));
     };
   }
 
+  // TODO Just to test boo function, must be redone
   private async bootAddons () : Promise<void> {
     for(const addonInfo of this.importedAddons) {
       const [identifier, addon] = addonInfo;
       logger.operation("[Function Setup] Booting addon", identifier);
       const currentAddonConfig = this.systemConfiguration.addons
         .find(addonConfig => addonConfig.identifier === identifier);
-      const addonBroker = this.systemContext.createBroker(addon.metaFile.permissions);
-
-      await addon.main.boot(currentAddonConfig.configuration, addonBroker);
+      const addonBroker = this.addonBrokers.get(identifier);
+      await addon.main.boot(
+        currentAddonConfig.configuration,
+        { ...addonBroker },
+      );
       addonBroker.done();
     };
   }
@@ -106,29 +111,26 @@ export class FunctionSetup {
   // }
 
   // eslint-disable-next-line max-lines-per-function
-  // private extractAllDependencies () : BopsDependencies[] {
-  //   const result = [];
+  private extractAllDependencies () : BopsDependencies[] {
+    const result = [];
 
-  //   const domainBops = this.systemConfiguration.businessOperations
-  //     .map((bopsConfig) => new BusinessOperation(bopsConfig));
+    const domainBops = this.systemConfiguration.businessOperations
+      .map((bopsConfig) => new BusinessOperation(bopsConfig));
 
-  //   this.systemConfiguration.businessOperations.forEach((bopsConfig) => {
-  //     const dependencyCheck = new CheckBopsFunctionsDependencies(
-  //       this.systemConfiguration.schemas,
-  //       domainBops,
-  //       new BusinessOperation(bopsConfig),
-  //       this.externalFunctionManager,
-  //       this.systemBroker,
-  //       this.protocolFunctionManager,
-  //     );
+    this.systemConfiguration.businessOperations.forEach((bopsConfig) => {
+      const dependencyCheck = new CheckBopsFunctionsDependencies(
+        this.systemContext.systemBroker,
+        this.functionsContext.systemBroker,
+        bopsConfig.identifier,
+      );
 
-  //     this.bopsDependencyCheck.set(bopsConfig.name, dependencyCheck);
+      this.bopsDependencyCheck.set(bopsConfig.identifier, dependencyCheck);
 
-  //     result.push(dependencyCheck.bopsDependencies);
-  //   });
+      result.push(dependencyCheck.bopsDependencies);
+    });
 
-  //   return result;
-  // }
+    return result;
+  }
 
   private checkInternalDependencies () : void {
     logger.operation("[Function Setup] Checking BOps internal dependencies");
@@ -157,7 +159,7 @@ export class FunctionSetup {
   private checkExternalDependencies () : void {
     logger.operation("[Function Setup] Checking BOps external dependencies");
     this.bopsDependencyCheck.forEach((depCheck) => {
-      const result = depCheck.checkExternalRequiredFunctionsMet();
+      const result = undefined; //depCheck.checkExternalRequiredFunctionsMet();
 
       if (!result) {
         throw Error(`Unmet External dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
@@ -226,20 +228,20 @@ export class FunctionSetup {
 
   // eslint-disable-next-line max-lines-per-function
   private buildBops (alreadyBuilt = 0) : void {
-    const unbuiltBopsNames = this.systemConfiguration.businessOperations
-      .map(bopConfig => bopConfig.name)
-      .filter((bopName) => !this.bopFunctionIsDeclared(bopName));
-    if (unbuiltBopsNames.length === 0) {
+    const unbuiltBopsIds = this.systemConfiguration.businessOperations
+      .map(bopConfig => bopConfig.identifier)
+      .filter((bopId) => !this.bopFunctionIsDeclared(bopId));
+    if (unbuiltBopsIds.length === 0) {
       if(alreadyBuilt === 0) logger.warn("[BOps Build] No bops were built");
 
       logger.success(`[BOps Build] Finished building ${alreadyBuilt} bops.`);
       return;
     }
 
-    logger.operation(`[BOps Build] Remaining BOps: [${unbuiltBopsNames.join(", ")}]`);
+    logger.operation(`[BOps Build] Remaining BOps: [${unbuiltBopsIds.join(", ")}]`);
 
-    const bopsWithMetDependencies = unbuiltBopsNames.filter((bopName) => {
-      const currentBop = this.systemConfiguration.businessOperations.find(bop => bop.name === bopName);
+    const bopsWithMetDependencies = unbuiltBopsIds.filter((bopId) => {
+      const currentBop = this.systemConfiguration.businessOperations.find(bop => bop.identifier === bopId);
       const bopsDependencies = this.getBopDependencies(currentBop.configuration);
 
       for (const bopDependencyFromBops of bopsDependencies) {
@@ -253,18 +255,17 @@ export class FunctionSetup {
 
     let bopsBuilt = 0;
 
-    bopsWithMetDependencies.forEach((bopName) => {
+    bopsWithMetDependencies.forEach((bopId) => {
       const currentBopConfig = this.systemConfiguration.businessOperations
-        .find((bopConfig) => bopConfig.name === bopName);
-      logger.operation(`[BOps Build] Stitching "${bopName}"`);
+        .find((bopConfig) => bopConfig.identifier === bopId);
+      logger.operation(`[BOps Build] Stitching "${bopId}"`);
 
       const definition = {
         input: currentBopConfig.input,
         output: currentBopConfig.output,
       };
-
       const callable = this.bopsEngine.stitch(currentBopConfig, currentBopConfig.ttl ?? environment.constants.ttl);
-      this.functionsContext.systemBroker["bopFunctions"].addBopCall(bopName, callable, definition);
+      this.functionsContext.systemBroker.bopFunctions.addBopCall(bopId, callable, definition);
       bopsBuilt++;
     });
 

@@ -1,4 +1,4 @@
-import { importJsonAndParse } from "common/helpers/import-json-and-parse.js";
+import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { logger } from "../common/logger/logger.js";
 import { MetaFileType } from "../common/meta-file-type.js";
 import { ObjectDefinition, validateObject } from "@meta-system/object-definition";
@@ -19,14 +19,14 @@ export class Importer {
     const importedAddons = new Map<string, ImportedInfo>();
     for(const identifier of Object.keys(metaFilePaths)) {
       logger.operation(`Importing files for addon "${identifier}"`);
-      const files = await this.importFiles(metaFilePaths[identifier]);
+      const files = await this.importFiles(metaFilePaths[identifier], identifier);
       importedAddons.set(identifier, files);
     }
     return importedAddons;
   }
 
   // TODO implement Browser import for v0.5
-  private static async importFiles (path : string) : Promise<ImportedInfo> {
+  private static async importFiles (path : string, identifier : string) : Promise<ImportedInfo> {
     const metaFile = await importJsonAndParse(path);
     this.validateMetaFile(metaFile);
     const pathLib = await import("path");
@@ -34,7 +34,7 @@ export class Importer {
     const entrypointPath = pathLib.resolve(pathLib.dirname(path), metaFile.entrypoint);
     const imported = await import(entrypointPath);
     const main = imported.__esModule ? this.resolveESM(imported) : imported;
-    this.validateMain(main, metaFile.entrypoint);
+    this.validateMain(main, identifier);
 
     return { metaFile, main };
   }
