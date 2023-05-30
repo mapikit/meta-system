@@ -19,7 +19,13 @@ export class Importer {
     const importedAddons = new Map<string, ImportedInfo>();
     for(const identifier of Object.keys(metaFilePaths)) {
       logger.operation(`Importing files for addon "${identifier}"`);
-      const files = await this.importFiles(metaFilePaths[identifier], identifier);
+      let files : ImportedInfo;
+      try {
+        files = await this.importFiles(metaFilePaths[identifier], identifier);
+      } catch (e) {
+        logger.error(`Failed to import addon "${identifier}"!`, e);
+        throw e;
+      }
       importedAddons.set(identifier, files);
     }
     return importedAddons;
