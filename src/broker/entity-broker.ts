@@ -60,6 +60,22 @@ export class BrokerFactory {
 
     return this.result;
   }
+
+  public static joinBrokers (...brokers : EntityBroker[]) : EntityBroker {
+    const result : EntityBroker = {} as unknown as EntityBroker;
+    for (const broker of brokers) {
+      Object.assign(result, broker);
+    }
+
+    result.done = () : void => {
+      Object.keys(result).forEach((key) => {
+        if (key === "done") return;
+        result[key].done();
+      });
+    };
+
+    return result;
+  }
 }
 
 export type EntityBroker = Record<string, BrokerEntity> & {
