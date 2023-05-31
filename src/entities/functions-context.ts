@@ -27,7 +27,7 @@ export class FunctionsContext {
       .configEntity("bopFunctions", FunctionsContext.getBopsFunctionsActions(),
         new EntityRepository(this.bopsFunctions))
       .useEntity({ entity: "bopFunctions", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
-      .configEntity("addonsFunctions", FunctionsContext.getAddonsFunctionsActions(),
+      .configEntity("addonsFunctions", FunctionsContext.getAddonsFunctionsActions(""),
         new EntityRepository(this.addonsFunctions))
       .useEntity({ entity: "addonsFunctions", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
       .configEntity("internalFunctions", FunctionsContext.getInternalFunctionsActions(),
@@ -105,30 +105,36 @@ export class FunctionsContext {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getAddonsFunctionsActions () : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
+  private static getAddonsFunctionsActions (identifier : string)
+    : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
     const empty = () : void => { void 0; };
 
-    result.push(new EntityAction("get", "getFunction", (repo : EntityRepository<FunctionEntity>) =>
-      (addonName : string, functionName : string) => {
-        return repo.getEntity(`${addonName}@${functionName}`)?.data.callable;
+    result.push(new EntityAction("get", "getFunction", (repo : EntityRepository<FunctionEntity>) => {
+      return (functionName : string) => {
+        return repo.getEntity(`${identifier}${functionName}`)?.data.callable;
+      };}, false));
+
+    result.push(new EntityAction("getAll", "getAll", (repo : EntityRepository<FunctionEntity>) =>
+      () => {
+        return repo.readCollection().map(item => item?.data).filter(item => item);
       }, false));
 
     result.push(new EntityAction("register", "register", (repo : EntityRepository<FunctionEntity>) =>
-      (addonName : string, callable : Function, definition : InternalMetaFunction) => {
+      (callable : Function, definition : InternalMetaFunction) => {
         return repo.createEntity(new MetaEntity("", {
-          callable, identifier: `${addonName}@${definition.functionName}`, ...definition }));
+          callable, identifier: `${identifier}${definition.functionName}`, ...definition }));
       }, false));
 
     result.push(new EntityAction("preregister", "preregister", (repo : EntityRepository<FunctionEntity>) =>
-      (addonName : string, definition : InternalMetaFunction) => {
+      (definition : InternalMetaFunction) => {
         return repo.createEntity(new MetaEntity("", {
-          callable: empty, identifier: `${addonName}@${definition.functionName}`, ...definition }));
+          callable: empty, identifier: `${identifier}${definition.functionName}`, ...definition }));
       }, false));
 
     result.push(new EntityAction("set_registered", "setRegistered", (repo : EntityRepository<FunctionEntity>) =>
-      (addonName : string, functionName : string, callable : Function) => {
-        const entity = repo.getEntity(`${addonName}@${functionName}`);
+      (functionName : string, callable : Function) => {
+        const entity = repo.getEntity(`${identifier}${functionName}`);
         if(!entity) return;
         entity.data.callable = callable;
         repo.updateEntity(entity);
@@ -137,13 +143,15 @@ export class FunctionsContext {
     return result;
   }
 
-  public createBroker (accesses : EntityPermissions[]) : EntityBroker {
+  public createBroker (accesses : EntityPermissions[], identifier ?: string) : EntityBroker {
+    const addonsIdentifier = identifier ? `${identifier}@` : "";
+
     const factory = new BrokerFactory()
       .configEntity("schemaFunctions", FunctionsContext.getSchemaFunctionsActions(),
         new EntityRepository(this.schemaFunctions))
       .configEntity("bopFunctions", FunctionsContext.getBopsFunctionsActions(),
         new EntityRepository(this.bopsFunctions))
-      .configEntity("addonsFunctions", FunctionsContext.getAddonsFunctionsActions(),
+      .configEntity("addonsFunctions", FunctionsContext.getAddonsFunctionsActions(addonsIdentifier),
         new EntityRepository(this.addonsFunctions));
 
     accesses.forEach((access) => {

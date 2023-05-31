@@ -26,6 +26,8 @@ export class SystemContext {
     this.systemConfig = systemConfig;
 
     this.businessOperations = systemConfig.businessOperations.map(bop => new MetaEntity("", bop));
+    this.addons = systemConfig.addons.map(addon => new MetaEntity("", addon));
+
 
     const factory = new BrokerFactory();
     this.systemBroker = factory

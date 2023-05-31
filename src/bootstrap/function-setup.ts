@@ -6,11 +6,10 @@ import { ConfigurationType } from "../configuration/configuration-type.js";
 import { BopsConfigurationEntry } from "../configuration/business-operations/business-operations-type.js";
 import { logger } from "../common/logger/logger.js";
 import { environment } from "../common/execution-env.js";
-import { EntityBroker } from "../broker/entity-broker.js";
+import { BrokerFactory, EntityBroker } from "../broker/entity-broker.js";
 import { FunctionsContext } from "../entities/functions-context.js";
 import { ImportedInfo } from "./importer.js";
 import { SystemContext } from "../entities/system-context.js";
-import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
 
 export class FunctionSetup {
   private bopsEngine : BopsEngine;
@@ -31,15 +30,15 @@ export class FunctionSetup {
       this.systemConfiguration.name
     }"`);
 
-    const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
-    // this.checkInternalDependencies(); TODO Check Internal Deps
+    this.checkInternalDependencies();
 
-    // this.checkBopsInterDependencies();
+    this.checkBopsInterDependencies();
 
 
     await this.configureAddons();
 
     const moduleManager = new ModuleManager(this.functionsContext.systemBroker);
+    const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
 
     // this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
 
@@ -71,9 +70,11 @@ export class FunctionSetup {
     for(const addonInfo of this.importedAddons) {
       const [identifier, addon] = addonInfo;
       logger.operation("[Function Setup] Starting configure for addon", identifier);
-      const addonBroker = this.functionsContext.createBroker(addon.metaFile.permissions ?? []);
+      const addonConfigure = this.functionsContext.createBroker(addon.metaFile.permissions ?? [], identifier);
+      const addonBoot = this.systemContext.createBroker(addon.metaFile.permissions ?? []);
+      const addonBroker = BrokerFactory.joinBrokers(addonConfigure, addonBoot);
       this.addonBrokers.set(identifier, addonBroker);
-      await addon.main.configure(this.addonBrokers.get(identifier));
+      await addon.main.configure(addonConfigure);
     };
   }
 
@@ -82,13 +83,8 @@ export class FunctionSetup {
     for(const addonInfo of this.importedAddons) {
       const [identifier, addon] = addonInfo;
       logger.operation("[Function Setup] Booting addon", identifier);
-      const currentAddonConfig = this.systemConfiguration.addons
-        .find(addonConfig => addonConfig.identifier === identifier);
       const addonBroker = this.addonBrokers.get(identifier);
-      await addon.main.boot(
-        currentAddonConfig.configuration,
-        { ...addonBroker },
-      );
+      await addon.main.boot(addonBroker);
       addonBroker.done();
     };
   }
@@ -114,8 +110,8 @@ export class FunctionSetup {
   private extractAllDependencies () : BopsDependencies[] {
     const result = [];
 
-    const domainBops = this.systemConfiguration.businessOperations
-      .map((bopsConfig) => new BusinessOperation(bopsConfig));
+    // const domainBops = this.systemConfiguration.businessOperations
+    //   .map((bopsConfig) => new BusinessOperation(bopsConfig));
 
     this.systemConfiguration.businessOperations.forEach((bopsConfig) => {
       const dependencyCheck = new CheckBopsFunctionsDependencies(
@@ -123,6 +119,8 @@ export class FunctionSetup {
         this.functionsContext.systemBroker,
         bopsConfig.identifier,
       );
+
+      dependencyCheck.checkAllDependencies();
 
       this.bopsDependencyCheck.set(bopsConfig.identifier, dependencyCheck);
 
@@ -156,17 +154,6 @@ export class FunctionSetup {
     });
   }
 
-  private checkExternalDependencies () : void {
-    logger.operation("[Function Setup] Checking BOps external dependencies");
-    this.bopsDependencyCheck.forEach((depCheck) => {
-      const result = undefined; //depCheck.checkExternalRequiredFunctionsMet();
-
-      if (!result) {
-        throw Error(`Unmet External dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
-      }
-    });
-  }
-
   private checkSchemaDependencies () : void {
     this.bopsDependencyCheck.forEach((depCheck) => {
       const result = depCheck.checkSchemaFunctionsDependenciesMet();
@@ -181,50 +168,6 @@ export class FunctionSetup {
       }
     });
   }
-
-  // eslint-disable-next-line max-lines-per-function
-  // private async bootstrapExternalDependencies (allBopsDependencies : BopsDependencies[]) : Promise<void> {
-  //   logger.operation("[Function Setup] Starting Bootstrap sequence for all system external dependencies");
-  //   const externalDependenciesArray = allBopsDependencies
-  //     .map((bopDependencies) => bopDependencies.external);
-
-  //   const externalDependencies = externalDependenciesArray.reduce((previousValue, currentValue) => {
-  //     const currentDependency = previousValue;
-  //     currentValue.forEach((value) => currentDependency.push(value));
-
-  //     return currentDependency;
-  //   }, []);
-
-  //   for (const dependency of externalDependencies) {
-  //     await this.installFunction(dependency.name, dependency.version, dependency.package);
-  //   }
-  // }
-
-  // eslint-disable-next-line max-lines-per-function
-  // private bootstrapProtocols (allBopsDependencies : BopsDependencies[]) : void {
-  //   logger.operation("[Function Setup] Starting Bootstrap sequence for all system protocols dependencies");
-  //   const protocolsDependenciesArray = allBopsDependencies
-  //     .map((bopDependencies) => bopDependencies.protocol);
-
-  //   const protocolDependencies = protocolsDependenciesArray.reduce((previousValue, currentValue) => {
-  //     const currentDependency = previousValue;
-  //     currentValue.forEach((value) => currentDependency.push(value));
-
-  //     return currentDependency;
-  //   }, []);
-
-  //   for (const dependency of protocolDependencies) {
-  //     this.addProtocolFunction(dependency.name, dependency.package);
-  //   }
-  // }
-
-  // private async installFunction (functionName : string, version : string, packageName ?: string) : Promise<void> {
-  //   const exists = this.externalFunctionManager.functionIsInstalled(functionName, packageName);
-
-  //   if (!exists) {
-  //     await this.externalFunctionManager.add(functionName, version, packageName);
-  //   }
-  // }
 
   // eslint-disable-next-line max-lines-per-function
   private buildBops (alreadyBuilt = 0) : void {

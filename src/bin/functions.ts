@@ -75,7 +75,7 @@ export async function testBopFunction (configPath : string, bopName : string) : 
   // functionToTest(JSON.parse(testInput));
   const deserializer = new DeserializeConfigurationCommand();
   await deserializer.execute(await importJsonAndParse(environment.constants.configPath));
-  const bopInfo = deserializer.result.businessOperations.find(bop => bop.name === bopName);
+  const bopInfo = deserializer.result.businessOperations.find(bop => bop.identifier === bopName);
   await new Promise<void>(res => setTimeout(res, 500));
   while(true) {
     const input = resolveInputTypes(bopInfo.input, await getTestInput(bopInfo.input));
@@ -87,7 +87,8 @@ export async function testBopFunction (configPath : string, bopName : string) : 
 function resolveInputTypes (input : ObjectDefinition, values : object) : object {
   const result = {};
   for(const key of Object.keys(values)) {
-    const expectedType = input[key].type;
+    // TODO Resolve Union as well
+    const expectedType = input[key]["type"];
     result[key] = typeConversion[expectedType](values[key]);
   }
   return result;

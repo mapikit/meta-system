@@ -21,7 +21,7 @@ export class ModuleResolver {
   public resolve : ModuleResolverType = {
     "addon": (module) : Function => {
       return this.systemFunctionsBroker.addonsFunctions
-        .getFunction(module.modulePackage, module.moduleName);
+        .getFunction(`${module.modulePackage}@${module.moduleName}`);
     },
     "bop": (module) : Function => {
       return this.systemFunctionsBroker.bopFunctions

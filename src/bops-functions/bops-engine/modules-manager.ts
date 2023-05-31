@@ -17,7 +17,6 @@ export class ModuleManager {
 
   private resolveModule (module : BopsConfigurationEntry) : Function {
     const result = this.moduleResolver.resolve[module.moduleType](module);
-
     if (!result) {
       throw new FunctionNotFoundError(module);
     }
