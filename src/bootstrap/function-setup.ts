@@ -15,6 +15,7 @@ export class FunctionSetup {
   private bopsEngine : BopsEngine;
   private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
   private addonBrokers = new Map<string, EntityBroker>();
+  private addonsConfigurationData = new Map<string, unknown>();
 
   // eslint-disable-next-line max-params
   public constructor (
@@ -74,7 +75,10 @@ export class FunctionSetup {
       const addonBoot = this.systemContext.createBroker(addon.metaFile.permissions ?? []);
       const addonBroker = BrokerFactory.joinBrokers(addonConfigure, addonBoot);
       this.addonBrokers.set(identifier, addonBroker);
-      await addon.main.configure(addonConfigure);
+      const addonUserConfig = this.systemConfiguration.addons
+        .find((addonConfig) => addonConfig.identifier === identifier);
+
+      this.addonsConfigurationData.set(identifier, await addon.main.configure(addonConfigure, addonUserConfig));
     };
   }
 
@@ -84,7 +88,7 @@ export class FunctionSetup {
       const [identifier, addon] = addonInfo;
       logger.operation("[Function Setup] Booting addon", identifier);
       const addonBroker = this.addonBrokers.get(identifier);
-      await addon.main.boot(addonBroker);
+      await addon.main.boot(addonBroker, this.addonsConfigurationData.get(identifier));
       addonBroker.done();
     };
   }
