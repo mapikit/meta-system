@@ -99,6 +99,12 @@ export class SystemContext {
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
     ));
 
+    result.push(new EntityAction("modify_schema", "modifySchema",
+      (repo : EntityRepository<Schema>) =>
+        (schema : Schema) => {
+          repo.updateEntity(new MetaEntity("", schema));
+        }));
+
     return result;
   }
 

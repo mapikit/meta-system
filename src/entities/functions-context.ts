@@ -113,7 +113,7 @@ export class FunctionsContext {
     result.push(new EntityAction("get", "getFunction", (repo : EntityRepository<FunctionEntity>) => {
       return (functionName : string) => {
         return repo.getEntity(`${identifier}${functionName}`)?.data.callable;
-      };}, false));
+      };}, true));
 
     result.push(new EntityAction("getAll", "getAll", (repo : EntityRepository<FunctionEntity>) =>
       () => {
