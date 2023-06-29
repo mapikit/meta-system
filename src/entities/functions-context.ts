@@ -64,8 +64,26 @@ export class FunctionsContext {
     return result;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private static getSchemaFunctionsActions () : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
+    const empty = () : void => { void 0; };
+
+    result.push(new EntityAction("preregister_functions", "preRegisterSchemaFunction",
+      (repo : EntityRepository<FunctionEntity>) =>
+        (schemaName : string, definition : InternalMetaFunction) => {
+          repo.createEntity(new MetaEntity("",
+            { callable: empty, identifier: `${schemaName}@${definition.functionName}`, ...definition }));
+        }, false));
+
+    result.push(new EntityAction("set_registered_functions", "setRegisteredSchemaFunction",
+      (repo : EntityRepository<FunctionEntity>) =>
+        (schemaName : string, functionName : string, callable : Function) => {
+          const entity = repo.getEntity(`${schemaName}@${functionName}`);
+          if(!entity) return;
+          entity.data.callable = callable;
+          repo.updateEntity(entity);
+        }, true));
 
     result.push(new EntityAction("set_functions", "setSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>

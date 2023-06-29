@@ -1,17 +1,17 @@
 import { exec } from "child_process";
 import { Addon } from "../configuration/addon-type.js";
-import { environment } from "../common/execution-env.js";
+// import { environment } from "../common/execution-env.js";
 import { join, resolve } from "path";
 import download from "download";
 import { mkdir } from "fs/promises";
 import { existsSync, lstatSync } from "fs";
 import { logger } from "../common/logger/logger.js";
 
-// const environment = {
-//   constants: {
-//     configDir: "./collector-test",
-//   },
-// };
+const environment = {
+  constants: {
+    configDir: "./test-runs",
+  },
+};
 export class Collector {
   constructor (
     public addonsConfigs : Addon[],
