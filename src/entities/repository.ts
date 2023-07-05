@@ -12,7 +12,7 @@ export class EntityRepository<T extends EntityValue> {
 
   public updateEntity (entity : MetaEntity<T>) : void {
     const itemIndex = this.collectionSingleton.findIndex((ent) => {
-      ent.data.identifier === entity.data.identifier;
+      return ent.data.identifier === entity.data.identifier;
     });
 
     if (itemIndex === -1) { return; }

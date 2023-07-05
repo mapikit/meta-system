@@ -27,7 +27,8 @@ export class SystemContext {
 
     this.businessOperations = systemConfig.businessOperations.map(bop => new MetaEntity("", bop));
     this.addons = systemConfig.addons.map(addon => new MetaEntity("", addon));
-
+    this.schemas = systemConfig.schemas.map(schema => new MetaEntity("", schema));
+    // this.envs = systemConfig.envs.map(env => new MetaEntity("", env));
 
     const factory = new BrokerFactory();
     this.systemBroker = factory
@@ -48,7 +49,15 @@ export class SystemContext {
   }
 
   public createBroker (accesses : EntityPermissions[]) : EntityBroker {
-    const factory = new BrokerFactory();
+    const factory = new BrokerFactory()
+      .configEntity("schemas", SystemContext.getSchemasActions(),
+        new EntityRepository(this.schemas))
+      .configEntity("businessOperations", SystemContext.getBopsActions(),
+        new EntityRepository(this.businessOperations))
+      .configEntity("envs", SystemContext.getEnvsActions(),
+        new EntityRepository(this.envs))
+      .configEntity("addons", SystemContext.getAddonsActions(),
+        new EntityRepository(this.addons));
 
     accesses.forEach((access) => {
       factory.useEntity(access);
