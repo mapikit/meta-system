@@ -55,7 +55,7 @@ export class BrokerEntityFactory<T extends EntityValue> {
     const intermediate = {
       done: () : void => {
         Object.keys(this.result).forEach((key) => {
-          if (key === "done") return;
+          if (key === "done" || key === "logger") return;
           if (this.allowedActions.get(key).callableInRuntime) return;
 
           delete this.result[key];
