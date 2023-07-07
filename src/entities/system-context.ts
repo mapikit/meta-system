@@ -96,7 +96,7 @@ export class SystemContext {
     result.push(new EntityAction("get_schema", "getSchema",
       (repo : EntityRepository<Schema>) =>
         (schemaIdentifier : string) => repo.getEntity(schemaIdentifier)?.data,
-    ));
+      true));
 
     result.push(new EntityAction("create_schema", "createSchema",
       (repo : EntityRepository<Schema>) =>
@@ -106,7 +106,7 @@ export class SystemContext {
     result.push(new EntityAction("get_all", "getAll",
       (repo : EntityRepository<Schema>) =>
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
-    ));
+      true));
 
     result.push(new EntityAction("modify_schema", "modifySchema",
       (repo : EntityRepository<Schema>) =>
