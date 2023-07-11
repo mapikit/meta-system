@@ -1,5 +1,8 @@
+// eslint-disable-next-line max-classes-per-file
 import clone from "just-clone";
 import { EntityValue, MetaEntity } from "./meta-entity.js";
+
+export class RepositoryError extends Error {}
 
 export class EntityRepository<T extends EntityValue> {
   public constructor (
@@ -7,6 +10,11 @@ export class EntityRepository<T extends EntityValue> {
   ) {}
 
   public createEntity (entity : MetaEntity<T>) : void {
+    const identifier = entity.data.identifier;
+    if (this.getEntity(identifier)) {
+      throw new RepositoryError(`Cannot create entity: Identifier "${identifier}" already exists.`);
+    }
+
     this.collectionSingleton.push(entity);
   }
 
@@ -15,7 +23,9 @@ export class EntityRepository<T extends EntityValue> {
       return ent.data.identifier === entity.data.identifier;
     });
 
-    if (itemIndex === -1) { return; }
+    if (itemIndex === -1) {
+      throw new RepositoryError(`Cannot update entity: Identifier "${entity.data.identifier}" does not exist.`);
+    }
 
     this.collectionSingleton[itemIndex] = entity;
   }

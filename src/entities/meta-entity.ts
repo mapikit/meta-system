@@ -1,3 +1,5 @@
+import constants from "../common/constants.js";
+
 export type EntityValue<T extends object = object> = T & {
   identifier : string
 }
@@ -8,7 +10,12 @@ export class MetaEntity<T extends EntityValue> {
   public data : T;
 
   public constructor (owner : symbol | string, entity : T) {
-    this.owner = typeof owner === "string" ? Symbol(owner) : owner;
+    let usedOwner = typeof owner === "string" ? Symbol(owner) : owner;
+    if (owner === constants.RUNTIME_ENGINE_IDENTIFIER) {
+      usedOwner = constants.ENGINE_OWNER;
+    }
+
+    this.owner = usedOwner;
     this.data = entity;
   }
 }

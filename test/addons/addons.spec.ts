@@ -66,10 +66,10 @@ describe("Addons test", () => {
 
     const imported = importAddons.get("http-local");
 
-    const functionBroker = functionsContext.createBroker(imported.metaFile.permissions);
+    const functionBroker = functionsContext.createBroker(imported.metaFile.permissions, localAddonConfig.identifier);
     functionsContext.systemBroker.bopFunctions.addBopCall("hello", () => { console.log("YEEHAW");}, {});
 
-    const systemBroker = systemContext.createBroker(imported.metaFile.permissions);
+    const systemBroker = systemContext.createBroker(imported.metaFile.permissions, localAddonConfig.identifier);
     const finalBroker = BrokerFactory.joinBrokers(functionBroker, systemBroker);
     replaceLogger();
 
@@ -79,7 +79,7 @@ describe("Addons test", () => {
       .boot(finalBroker, configResult);
 
     const insertFunction = functionsContext.systemBroker.schemaFunctions.getSchemaFunction("insert", "test");
-    // const ress = await insertFunction({ data: { "yee": "haw" } });
+    const ress = await insertFunction({ data: { "yee": "haw" } });
 
     console.log(systemBroker.schemas.getAll());
 
