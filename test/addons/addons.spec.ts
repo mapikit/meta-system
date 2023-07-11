@@ -5,15 +5,28 @@ import { Importer } from "../../src/bootstrap/importer.js";
 import { FunctionsContext } from "../../src/entities/functions-context.js";
 import { SystemContext } from "../../src/entities/system-context.js";
 import { BrokerFactory } from "../../src/broker/entity-broker.js";
+import { loggerSingleton } from "../../src/entities/singletons/logger.js";
+import { MetaEntity } from "../../src/entities/meta-entity.js";
+import constants from "../../src/common/constants.js";
+import { LoggerClass } from "../../src/common/logger/logger.js";
+import { LoggerType } from "../../src/common/logger/logger-types.js";
+
+const replaceLogger = () : void => {
+  const replacerLogger = new LoggerClass().initialize("debug") as unknown as LoggerType & LoggerClass;
+  const loggerMetaEntity = new MetaEntity(constants.ENGINE_OWNER, { identifier: "default-logger", ...replacerLogger });
+  loggerSingleton[0] = loggerMetaEntity;
+};
 
 describe("Addons test", () => {
-  it("COLLECTOR - Pulls local files", async () => {
+  it.only("COLLECTOR - Pulls local files", async () => {
     // Assumes you've also downloaded the http-json-meta-protocol repo in the same directory
     const localAddonConfig : Addon = {
-      source: "../../http-json-meta-protocol/",
+      source: "../../mongo-db-protocol/",
       collectStrategy: "file",
       identifier: "http-local",
       configuration: {
+        "databaseName": "john",
+        "dbConnectionString": "mongodb://localhost:27017",
         "port": 3333,
         "host": "0.0.0.0",
         "routes": [
@@ -39,7 +52,11 @@ describe("Addons test", () => {
     const importAddons = await Importer.importAddons(result);
     const functionsContext = new FunctionsContext();
     const systemContext = new SystemContext({
-      schemas: [],
+      schemas: [{
+        identifier: "test",
+        format: { prop: { type: "string" } },
+        name: "test",
+      }],
       businessOperations: [],
       envs: [],
       name: "test",
@@ -54,9 +71,17 @@ describe("Addons test", () => {
 
     const systemBroker = systemContext.createBroker(imported.metaFile.permissions);
     const finalBroker = BrokerFactory.joinBrokers(functionBroker, systemBroker);
+    replaceLogger();
 
-    importAddons.get("http-local").main.configure(finalBroker, localAddonConfig.configuration);
-    await importAddons.get("http-local").main.boot(finalBroker);
+    const configResult = await importAddons.get("http-local").main
+      .configure(finalBroker, localAddonConfig.configuration);
+    await importAddons.get("http-local").main
+      .boot(finalBroker, configResult);
+
+    const insertFunction = functionsContext.systemBroker.schemaFunctions.getSchemaFunction("insert", "test");
+    // const ress = await insertFunction({ data: { "yee": "haw" } });
+
+    console.log(systemBroker.schemas.getAll());
 
     const awaiter = new Promise((res) => {
       setTimeout(() => {
