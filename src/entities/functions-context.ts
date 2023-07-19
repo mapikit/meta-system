@@ -138,6 +138,11 @@ export class FunctionsContext {
         return repo.getEntity(`${identifier}@${functionName}`)?.data.callable;
       };}, true));
 
+    result.push(new EntityAction("getOthers", "getAddonFunction", (repo : EntityRepository<FunctionEntity>) => {
+      return (addonIdentifier : string, functionName : string) => {
+        return repo.getEntity(`${addonIdentifier}@${functionName}`)?.data.callable;
+      };}, true));
+
     result.push(new EntityAction("getAll", "getAll", (repo : EntityRepository<FunctionEntity>) =>
       () => {
         return repo.readCollection().map(item => item?.data).filter(item => item);
