@@ -8,7 +8,7 @@ import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";
 import { EntityAction } from "./entity-action.js";
 
-type EnvironmentVariableEntity = EntityValue & EnvironmentVariable;
+export type EnvironmentVariableEntity = EntityValue & EnvironmentVariable;
 
 export class SystemContext {
   private readonly envs : MetaEntity<EnvironmentVariableEntity>[]= [];
@@ -55,7 +55,7 @@ export class SystemContext {
     result.push(new EntityAction("get_bop", "getBop",
       (repo : EntityRepository<BusinessOperation>) =>
         (bopIdentifier : string) => repo.getEntity(bopIdentifier)?.data,
-    ));
+      true));
 
     result.push(new EntityAction("create_bop", "createBop",
       (repo : EntityRepository<BusinessOperation>) =>
@@ -65,7 +65,7 @@ export class SystemContext {
     result.push(new EntityAction("get_all", "getAll",
       (repo : EntityRepository<BusinessOperation>) =>
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
-    ));
+      true));
 
     return result;
   }
@@ -129,12 +129,12 @@ export class SystemContext {
 
     result.push(new EntityAction("get_env", "getEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
-        (envIdentifier : string) => repo.getEntity(envIdentifier)?.data,
+        (envKey : string) => repo.getEntity(envKey)?.data,
     ));
 
     result.push(new EntityAction("create_env", "createEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
-        (env : EnvironmentVariableEntity) => repo.createEntity(new MetaEntity(identifier, env)),
+        (env : EnvironmentVariable) => repo.createEntity(new MetaEntity(identifier, { identifier: env.key, ...env })),
     ));
 
     result.push(new EntityAction("get_all", "getAll",

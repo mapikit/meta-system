@@ -5,7 +5,7 @@ import { EntityRepository } from "./repository.js";
 import { InternalMetaFunction } from "bops-functions/internal-meta-function.js";
 import { EntityAction } from "./entity-action.js";
 
-type FunctionEntity = EntityValue & InternalMetaFunction & {
+export type FunctionEntity = EntityValue & InternalMetaFunction & {
   callable : Function;
 }
 
@@ -75,15 +75,15 @@ export class FunctionsContext {
 
     result.push(new EntityAction("preregister_functions", "preRegisterSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
-        (schemaName : string, definition : InternalMetaFunction) => {
+        (schemaIdentifier : string, definition : InternalMetaFunction) => {
           repo.createEntity(new MetaEntity(identifier,
-            { callable: empty, identifier: `${schemaName}@${definition.functionName}`, ...definition }));
+            { callable: empty, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
         }, false));
 
     result.push(new EntityAction("set_registered_functions", "setRegisteredSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
-        (schemaName : string, functionName : string, callable : Function) => {
-          const entity = repo.getEntity(`${schemaName}@${functionName}`);
+        (schemaIdentifier : string, functionName : string, callable : Function) => {
+          const entity = repo.getEntity(`${schemaIdentifier}@${functionName}`);
           if(!entity) return;
           entity.data.callable = callable;
           repo.updateEntity(entity);
@@ -91,14 +91,14 @@ export class FunctionsContext {
 
     result.push(new EntityAction("set_functions", "setSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
-        (schemaName : string, callable : Function, definition : InternalMetaFunction) => {
+        (schemaIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
           repo.createEntity(new MetaEntity(identifier,
-            { callable, identifier: `${schemaName}@${definition.functionName}`, ...definition }));
+            { callable, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
         }, false));
 
     result.push(new EntityAction("get_functions", "getSchemaFunction", (repo : EntityRepository<FunctionEntity>) =>
-      (functionName : string, schemaName : string) => {
-        return repo.getEntity(`${schemaName}@${functionName}`)?.data.callable;
+      (functionName : string, schemaIdentifier : string) => {
+        return repo.getEntity(`${schemaIdentifier}@${functionName}`)?.data.callable;
       }, true));
 
     return result;
@@ -110,18 +110,18 @@ export class FunctionsContext {
     const result = [];
 
     result.push(new EntityAction("override_call", "overrideBopCall", (repo : EntityRepository<FunctionEntity>) =>
-      (bopName : string, callable : Function, definition : InternalMetaFunction) => {
-        repo.updateEntity(new MetaEntity(identifier,{ callable, identifier: bopName, ...definition }));
-      }, false));
+      (bopIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
+        repo.updateEntity(new MetaEntity(identifier,{ callable, identifier: bopIdentifier, ...definition }));
+      }, true));
 
     result.push(new EntityAction("add_function", "addBopCall", (repo : EntityRepository<FunctionEntity>) =>
-      (bopName : string, callable : Function, definition : InternalMetaFunction) => {
-        return repo.createEntity(new MetaEntity(identifier, { callable, identifier: bopName, ...definition }));
-      }, false));
+      (bopIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
+        return repo.createEntity(new MetaEntity(identifier, { callable, identifier: bopIdentifier, ...definition }));
+      }, true));
 
     result.push(new EntityAction("get_function", "getBopFunction", (repo : EntityRepository<FunctionEntity>) =>
-      (bopName : string) => {
-        return repo.getEntity(bopName)?.data.callable;
+      (bopIdentifier : string) => {
+        return repo.getEntity(bopIdentifier)?.data.callable;
       }, true));
 
     return result;
