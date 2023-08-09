@@ -8,6 +8,7 @@ import { SystemContext } from "../entities/system-context.js";
 import { FunctionsContext } from "../entities/functions-context.js";
 import { Collector } from "./collector.js";
 import { ImportedInfo, Importer } from "./importer.js";
+import { inspect } from "util";
 
 export class SystemSetup {
   public systemContext : SystemContext;
@@ -76,10 +77,10 @@ export class SystemSetup {
     await this.execute();
 
 
-    const requiredFunction = this.functionsContext.systemBroker
-      .bopFunctions.getBopFunction(bopName);
+    const requiredFunction = this.functionsContext.systemBroker.bopFunctions.getBopFunction(bopName);
     if(requiredFunction === undefined) {
-      logger.error("Function to test does not exist");
+      const functions = this.functionsContext.systemBroker.bopFunctions.getAll();
+      logger.error("Function to test does not exist. Available:", functions.map(funct => funct.identifier).join(", "));
       return;
     }
 

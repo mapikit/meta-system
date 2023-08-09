@@ -1,7 +1,7 @@
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { logger } from "../common/logger/logger.js";
 import { MetaFileType } from "../common/meta-file-type.js";
-import { ObjectDefinition, validateObject } from "@meta-system/object-definition";
+import { validateMetaFile } from "../entities/helpers/validate-meta-file.js";
 
 export type ImportedInfo = {
   metaFile : MetaFileType;
@@ -34,7 +34,7 @@ export class Importer {
   // TODO implement Browser import for v0.5
   private static async importFiles (path : string, identifier : string) : Promise<ImportedInfo> {
     const metaFile = await importJsonAndParse(path);
-    this.validateMetaFile(metaFile);
+    validateMetaFile(metaFile, identifier);
     const pathLib = await import("path");
 
     const entrypointPath = pathLib.resolve(pathLib.dirname(path), metaFile.entrypoint);
@@ -65,16 +65,6 @@ export class Importer {
       boot: moduleDefault["boot"],
       configure: moduleDefault["configure"],
     };
-  }
-
-  private static validateMetaFile (metaFile : unknown) : asserts metaFile is MetaFileType {
-    const metaFileDefinition : ObjectDefinition = {
-      name: { type: "string", required: true },
-      version: { type: "string", required: true },
-      entrypoint: { type: "string", required: true },
-    };
-
-    validateObject(metaFile, metaFileDefinition);
   }
 
 }

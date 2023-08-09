@@ -154,9 +154,12 @@ export class CheckBopsFunctionsDependencies { // Perhaps rename to convey: Valid
         return false;
       }
 
-      result = this.functionsBroker.addonsFunctions.getFunction(`${requiredAddon}@${requiredFunction}`);
+      result = this.functionsBroker.addonsFunctions.getAddonFunction(requiredAddon, requiredFunction);
       if (!result) {
-        logger.error(`[Dependency Check] Unmet Addon function dependency: "${requiredFunction}" - Missing Function`);
+        const available = this.functionsBroker.addonsFunctions.getFromIdentifier(requiredAddon);
+        logger.error(`[Dependency Check] Unmet Addon function dependency: "${requiredFunction}" - Missing Function\n` +
+          `\t Available are: ${available.map(funct => funct.functionName).join(", ")}`,
+        );
         return false;
       }
     }

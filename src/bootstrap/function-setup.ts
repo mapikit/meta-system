@@ -72,7 +72,7 @@ export class FunctionSetup {
       const [identifier, addon] = addonInfo;
       logger.operation("[Function Setup] Starting configure for addon", identifier);
       const addonConfigure = this.functionsContext.createBroker(addon.metaFile.permissions ?? [], identifier);
-      const addonBoot = this.systemContext.createBroker(addon.metaFile.permissions ?? []);
+      const addonBoot = this.systemContext.createBroker(addon.metaFile.permissions ?? [], identifier);
       const addonBroker = BrokerFactory.joinBrokers(addonConfigure, addonBoot);
       this.addonBrokers.set(identifier, addonBroker);
       const addonUserConfig = this.systemConfiguration.addons
@@ -82,7 +82,6 @@ export class FunctionSetup {
     };
   }
 
-  // TODO Just to test boo function, must be redone
   private async bootAddons () : Promise<void> {
     for(const addonInfo of this.importedAddons) {
       const [identifier, addon] = addonInfo;
@@ -92,23 +91,6 @@ export class FunctionSetup {
       addonBroker.done();
     };
   }
-
-
-  // private replaceGetSystemFunction (manager : ModuleManager, systemConfig : ConfigurationType) : void {
-  //   const builtManager = manager.resolveSystemModules(systemConfig);
-
-  //   this.systemBroker.internalFunctions.override("getSystemFunction", (
-  //     input : { moduleName : string; modulePackage : string; moduleType : ModuleType },
-  //   ) => {
-  //     const name = input.modulePackage === undefined ?
-  //       `${input.moduleType}.${input.moduleName}` :
-  //       `${input.moduleType}.${input.modulePackage}.${input.moduleName}`;
-
-  //     const callableFunction = builtManager.get(name as unknown as ModuleFullName);
-  //     const found = callableFunction !== undefined;
-  //     return { callableFunction, found };
-  //   });
-  // }
 
   // eslint-disable-next-line max-lines-per-function
   private extractAllDependencies () : BopsDependencies[] {

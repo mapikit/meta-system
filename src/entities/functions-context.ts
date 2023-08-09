@@ -4,6 +4,7 @@ import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";
 import { InternalMetaFunction } from "bops-functions/internal-meta-function.js";
 import { EntityAction } from "./entity-action.js";
+import { validateDefinition } from "./helpers/validate-definition.js";
 
 export type FunctionEntity = EntityValue & InternalMetaFunction & {
   callable : Function;
@@ -46,6 +47,7 @@ export class FunctionsContext {
     result.push(new EntityAction("set_functions", "setFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (callable : Function, definition : InternalMetaFunction) => {
+          validateDefinition(definition, identifier);
           repo.createEntity(new MetaEntity(identifier,
             { callable, identifier: `${definition.functionName}`, ...definition }));
         }, false));
@@ -76,6 +78,7 @@ export class FunctionsContext {
     result.push(new EntityAction("preregister_functions", "preRegisterSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (schemaIdentifier : string, definition : InternalMetaFunction) => {
+          validateDefinition(definition, identifier);
           repo.createEntity(new MetaEntity(identifier,
             { callable: empty, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
         }, false));
@@ -92,6 +95,7 @@ export class FunctionsContext {
     result.push(new EntityAction("set_functions", "setSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (schemaIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
+          validateDefinition(definition, identifier);
           repo.createEntity(new MetaEntity(identifier,
             { callable, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
         }, false));
@@ -111,6 +115,7 @@ export class FunctionsContext {
 
     result.push(new EntityAction("override_call", "overrideBopCall", (repo : EntityRepository<FunctionEntity>) =>
       (bopIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
+        validateDefinition(definition, identifier);
         repo.updateEntity(new MetaEntity(identifier,{ callable, identifier: bopIdentifier, ...definition }));
       }, true));
 
@@ -122,6 +127,11 @@ export class FunctionsContext {
     result.push(new EntityAction("get_function", "getBopFunction", (repo : EntityRepository<FunctionEntity>) =>
       (bopIdentifier : string) => {
         return repo.getEntity(bopIdentifier)?.data.callable;
+      }, true));
+
+    result.push(new EntityAction("get_all", "getAll", (repo : EntityRepository<FunctionEntity>) =>
+      () => {
+        return repo.readCollection().map(item => item?.data).filter(item => item);
       }, true));
 
     return result;
@@ -148,14 +158,23 @@ export class FunctionsContext {
         return repo.readCollection().map(item => item?.data).filter(item => item);
       }, false));
 
+    result.push(new EntityAction("getFromIdentifier", "getFromIdentifier", (repo : EntityRepository<FunctionEntity>) =>
+      (addonIdentifier : string) => {
+        return repo.readCollection()
+          .map(item => item?.data)
+          .filter(item => item.identifier.startsWith(addonIdentifier));
+      }, false));
+
     result.push(new EntityAction("register", "register", (repo : EntityRepository<FunctionEntity>) =>
       (callable : Function, definition : InternalMetaFunction) => {
+        validateDefinition(definition, identifier);
         return repo.createEntity(new MetaEntity(identifier, {
           callable, identifier: `${identifier}@${definition.functionName}`, ...definition }));
       }, false));
 
     result.push(new EntityAction("preregister", "preregister", (repo : EntityRepository<FunctionEntity>) =>
       (definition : InternalMetaFunction) => {
+        validateDefinition(definition, identifier);
         return repo.createEntity(new MetaEntity(identifier, {
           callable: empty, identifier: `${identifier}@${definition.functionName}`, ...definition }));
       }, false));
