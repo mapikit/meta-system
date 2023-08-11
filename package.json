@@ -34,11 +34,11 @@
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "decimal.js": "^10.4.3",
-    "download": "^8.0.0",
     "glob": "^9.3.2",
     "just-clone": "^6.2.0",
     "mersenne-twister": "^1.1.0",
     "nanoid": "^4.0.2",
+    "nethere": "^0.0.8",
     "strip-ansi": "^7.0.1"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",

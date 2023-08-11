@@ -2,10 +2,10 @@ import { exec } from "child_process";
 import { Addon } from "../configuration/addon-type.js";
 // import { environment } from "../common/execution-env.js";
 import { join, resolve } from "path";
-import download from "download";
 import { mkdir } from "fs/promises";
 import { existsSync, lstatSync } from "fs";
 import { logger } from "../common/logger/logger.js";
+import { Nethere } from "nethere";
 
 const environment = {
   constants: {
@@ -25,6 +25,7 @@ export class Collector {
     for (const addonConfig of this.addonsConfigs) {
       const addonPath = await this.collectAddon(addonConfig);
       installedPaths[addonConfig.identifier] = addonPath;
+      logger.success("Addon ", addonConfig.identifier, "collected successfully!")
     }
     return installedPaths;
   }
@@ -32,6 +33,7 @@ export class Collector {
 
   private async prepare () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
     try {
+      logger.info("Preparing for download of required addons...")
       await mkdir(
         join(environment.constants.configDir, this.modulesDirectory, "url_addons"),
         { recursive: true },
@@ -40,6 +42,7 @@ export class Collector {
   }
 
   private async collectAddon (addon : Addon) : Promise<string> {
+    logger.info("Collecting addon ", addon.identifier);
     switch (addon.collectStrategy) {
       case "npm":
         return this.NPMCollectStrategy(addon.source, addon.version);
@@ -79,19 +82,8 @@ export class Collector {
   }
 
   private async urlCollectStrategy (url : string, identifier : string) : Promise<string> {
-    const downloadOptions = {
-      extract: true,
-      strip: 1,
-      mode: "666",
-      headers: { accept: "application/zip" },
-    };
-
     const destinationDir = this.getDestinationPath("url_addons", identifier);
-    await download(url, destinationDir, downloadOptions)
-      .catch(error => {
-        if(error.code === "EEXIST") logger.warn(`Addon with identifier "${identifier}" already present. Skipping...`);
-        else throw error;
-      });
+    await Nethere.downloadToDisk(url, destinationDir)
 
     return join(destinationDir, "meta-file.json");
   }
