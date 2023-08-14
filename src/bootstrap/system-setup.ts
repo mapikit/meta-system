@@ -8,7 +8,6 @@ import { SystemContext } from "../entities/system-context.js";
 import { FunctionsContext } from "../entities/functions-context.js";
 import { Collector } from "./collector.js";
 import { ImportedInfo, Importer } from "./importer.js";
-import { inspect } from "util";
 
 export class SystemSetup {
   public systemContext : SystemContext;
@@ -47,8 +46,6 @@ export class SystemSetup {
     await functionSetupCommand.setup();
 
     process.chdir(environment.constants.installDir);
-
-    logger.operation("[System Setup] Starting protocols");
   }
 
   public async stop () : Promise<void> {
@@ -103,7 +100,7 @@ export class SystemSetup {
   }
 
   private async installAddons (systemConfig : Configuration) : Promise<Map<string, ImportedInfo>> {
-    const collector = new Collector(systemConfig.addons);
+    const collector = new Collector(systemConfig.addons, systemConfig);
     const metaFilesPaths = await collector.collectAddons();
     const imported = await Importer.importAddons(metaFilesPaths);
     return imported;

@@ -17,7 +17,7 @@ const referenceableProperties : Array<keyof Configuration> = [
 // TODO: Test
 export class DeserializeConfigurationCommand {
   private _result : Configuration;
-  public validation : ValidationOutput;
+  public validation : ValidationOutput = { errors: [] };
 
   public get result () : Configuration {
     return this._result;
@@ -41,7 +41,9 @@ export class DeserializeConfigurationCommand {
 
   private async replaceReferences (input : unknown) : Promise<void> {
     for(const property of referenceableProperties) {
-      input[property] = await PathUtils.getContents(input[property]);
+      if(typeof input[property] === "string") {
+        input[property] = await PathUtils.getContents(input[property]);
+      }
     }
   }
 
@@ -57,7 +59,6 @@ export class DeserializeConfigurationCommand {
 
   private checkUniqueIdentifiers (entities : EntityValue[]) : void {
     const identifiers = new Set();
-
     entities.forEach((ent) => {
       if (identifiers.has(ent.identifier)) {
         logger.error(`[CONFIG VALIDATION] Found entities with duplicate identifiers! "${ent.identifier}"`
@@ -75,6 +76,7 @@ export class DeserializeConfigurationCommand {
     const bops = this._result.businessOperations;
 
     // Check bops Keys are not duplicates
+    // eslint-disable-next-line max-lines-per-function
     bops.forEach((bop) => {
       const keys = new Set();
 
@@ -85,6 +87,11 @@ export class DeserializeConfigurationCommand {
             + " - All keys within a BOp should be unique!",
           );
           return;
+        }
+
+        if(moduleData.moduleType === "addon" && moduleData.modulePackage === undefined) {
+          throw Error(`Module ${moduleData.key} in bop ${bop.identifier} is configured as an addon module
+          but has no "modulePackage". modulePackage should be the identifier of the addon.`);
         }
 
         keys.add(moduleData.key);

@@ -38,7 +38,7 @@
     "just-clone": "^6.2.0",
     "mersenne-twister": "^1.1.0",
     "nanoid": "^4.0.2",
-    "nethere": "^0.0.8",
+    "nethere": "^0.0.9",
     "strip-ansi": "^7.0.1"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",

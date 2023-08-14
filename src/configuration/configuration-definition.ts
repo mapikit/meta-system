@@ -1,11 +1,11 @@
 export const configurationTypeDefinition = {
   "name": { "type": "string", "required": true },
   "version": { "type": "string", "required": true },
-  "envs": { "type": "array", "subtype": {
+  "envs": { "type": "array", "required": true, "subtype": {
     "key": { "type": "string", "required": true },
     "value": { "type": "string", "required": true },
   } },
-  "schemas": { "type": "array", "subtype": {
+  "schemas": { "type": "array", "required": true, "subtype": {
     "name": { "type": "string", "required": true },
     "identifier": { "type": "string", "required": true },
     "format": { "type": "__%objdef%__", "required": true },
@@ -17,7 +17,7 @@ export const configurationTypeDefinition = {
     "collectStrategy": { "type": "enum", "subtype": ["npm", "file", "url"], "required": true },
     "configuration": { "type": "cloudedObject" },
   }, "required": true },
-  "businessOperations": { "type": "array", "subtype": {
+  "businessOperations": { "type": "array", "required": true, "subtype": {
     "ttl": { "type": "number" },
     "input": { "type": "__%objdef%__", "required": true },
     "output": { "type": "__%objdef%__", "required": true },

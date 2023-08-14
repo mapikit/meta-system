@@ -1,21 +1,18 @@
 import { exec } from "child_process";
 import { Addon } from "../configuration/addon-type.js";
-// import { environment } from "../common/execution-env.js";
+import { environment } from "../common/execution-env.js";
 import { join, resolve } from "path";
 import { mkdir } from "fs/promises";
-import { existsSync, lstatSync } from "fs";
+import { existsSync, lstatSync, readFile, writeFileSync } from "fs";
 import { logger } from "../common/logger/logger.js";
 import { Nethere } from "nethere";
+import { Configuration } from "configuration/configuration.js";
 
-const environment = {
-  constants: {
-    configDir: "./test-runs",
-  },
-};
 export class Collector {
   constructor (
-    public addonsConfigs : Addon[],
-    public modulesDirectory : string = "runtime",
+    private addonsConfigs : Addon[],
+    private systemInfo : Configuration,
+    private modulesDirectory : string = "runtime",
   ) {}
 
 
@@ -25,7 +22,7 @@ export class Collector {
     for (const addonConfig of this.addonsConfigs) {
       const addonPath = await this.collectAddon(addonConfig);
       installedPaths[addonConfig.identifier] = addonPath;
-      logger.success("Addon ", addonConfig.identifier, "collected successfully!")
+      logger.success("Addon ", addonConfig.identifier, "collected successfully!");
     }
     return installedPaths;
   }
@@ -33,12 +30,32 @@ export class Collector {
 
   private async prepare () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
     try {
-      logger.info("Preparing for download of required addons...")
+      logger.info("Preparing for download of required addons...");
       await mkdir(
         join(environment.constants.configDir, this.modulesDirectory, "url_addons"),
         { recursive: true },
       );
-    } catch(err) {}
+      await this.resolvePackageFile();
+
+    } catch(err) { logger.error(err); }
+  }
+
+  private resolvePackageFile () : Promise<void> {
+    const path = join(environment.constants.configDir, this.modulesDirectory, "package.json");
+    return new Promise<void>((pResolve) => {
+      readFile(path, (error, data) => {
+        if(error && error.code === "ENOENT") logger.info("Creating package.json file for npm addons");
+        const file = JSON.parse(data?.toString() ?? "{}");
+
+        const NPMInfo = {
+          ...file,
+          name: this.systemInfo.name ?? file?.name,
+          version: this.systemInfo.version ?? file?.version,
+        };
+        writeFileSync(path, JSON.stringify(NPMInfo, undefined, 4));
+        pResolve();
+      });
+    });
   }
 
   private async collectAddon (addon : Addon) : Promise<string> {
@@ -55,15 +72,11 @@ export class Collector {
     }
   }
 
-  private async NPMCollectStrategy (moduleName : string, version : string) : Promise<string> {
+  private async NPMCollectStrategy (moduleName : string, version = "latest") : Promise<string> {
     const npmInstallDir = join(environment.constants.configDir, this.modulesDirectory);
     const installationPromise : Promise<void> = new Promise((pResolve, pReject) => {
-      exec(`npm i --save --prefix ${npmInstallDir} ${moduleName}@${version}`, (err) => {
-        if (err === null) {
-          //if (version === "latest")
-          return pResolve();
-        }
-
+      exec(`npm i --save --prefix "${npmInstallDir}" ${moduleName}@${version}`, (err) => {
+        if (err === null) return pResolve();
         pReject(err);
       });
     });
@@ -83,7 +96,7 @@ export class Collector {
 
   private async urlCollectStrategy (url : string, identifier : string) : Promise<string> {
     const destinationDir = this.getDestinationPath("url_addons", identifier);
-    await Nethere.downloadToDisk(url, destinationDir)
+    await Nethere.downloadToDisk(url, destinationDir);
 
     return join(destinationDir, "meta-file.json");
   }
