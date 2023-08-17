@@ -1,6 +1,7 @@
+import { validateObject } from "@meta-system/object-definition";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { logger } from "../common/logger/logger.js";
-import { MetaFileType } from "../common/meta-file-type.js";
+import { MetaFileType, metaFileObjectDefinition } from "../common/meta-file-type.js";
 import { validateMetaFile } from "../entities/helpers/validate-meta-file.js";
 
 export type ImportedInfo = {
@@ -15,6 +16,7 @@ type MainType = {
 
 // TODO: Test
 export class Importer {
+  // eslint-disable-next-line max-lines-per-function
   public static async importAddons (metaFilePaths : Record<string, string>) : Promise<Map<string, ImportedInfo>>  {
     const importedAddons = new Map<string, ImportedInfo>();
     for(const identifier of Object.keys(metaFilePaths)) {
@@ -22,6 +24,7 @@ export class Importer {
       let files : ImportedInfo;
       try {
         files = await this.importFiles(metaFilePaths[identifier], identifier);
+        this.validateMetaFile(files);
       } catch (e) {
         logger.error(`Failed to import addon "${identifier}"!`, e);
         throw e;
@@ -31,7 +34,21 @@ export class Importer {
     return importedAddons;
   }
 
-  // TODO implement Browser import for v0.5
+  private static validateMetaFile (imported : ImportedInfo) : void {
+    const metaFileConfigurationValidation = validateObject(imported.metaFile, metaFileObjectDefinition);
+
+    if (metaFileConfigurationValidation.errors.length > 0) {
+      const message = "Addon meta-file is not valid!";
+      logger.fatal(message);
+      metaFileConfigurationValidation.errors.forEach((validationError) => {
+        logger.error(validationError.error, " at ", validationError.path);
+      });
+
+      throw Error(message);
+    }
+  }
+
+  // TODO implement Browser import
   private static async importFiles (path : string, identifier : string) : Promise<ImportedInfo> {
     const metaFile = await importJsonAndParse(path);
     validateMetaFile(metaFile, identifier);

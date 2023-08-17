@@ -8,3 +8,14 @@ export interface MetaFileType {
   configurationFormat : ObjectDefinition;
   permissions : EntityPermissions[];
 }
+
+export const metaFileObjectDefinition : ObjectDefinition = {
+  name: { type: "string", required: false },
+  version: { type: "string", required: false },
+  entrypoint: { type: "string", required: true },
+  configurationFormat: { type: "__%objdef%__", required: true },
+  permissions: { type: "array", required: true, subtype: {
+    permissions: { type: "array", required: true, subtype: "string" },
+    entity: { type: "string", required: true },
+  } },
+};

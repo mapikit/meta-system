@@ -17,7 +17,9 @@ export class ModuleManager {
 
   private resolveModule (module : BopsConfigurationEntry) : Function {
     const result = this.moduleResolver.resolve[module.moduleType](module);
-    if (!result) {
+    // Bop modules are generated sequentially.
+    // We ensure their generation order at the FunctionSetup.buildBops() function.
+    if (!result && module.moduleType !== "bop") {
       throw new FunctionNotFoundError(module);
     }
 

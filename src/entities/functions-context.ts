@@ -2,7 +2,7 @@ import { EntityValue, MetaEntity } from "./meta-entity.js";
 import { BrokerFactory, EntityBroker, EntityPermissions } from "../broker/entity-broker.js";
 import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";
-import { InternalMetaFunction } from "bops-functions/internal-meta-function.js";
+import { InternalMetaFunction } from "../bops-functions/internal-meta-function.js";
 import { EntityAction } from "./entity-action.js";
 import { validateDefinition } from "./helpers/validate-definition.js";
 
@@ -47,7 +47,7 @@ export class FunctionsContext {
     result.push(new EntityAction("set_functions", "setFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (callable : Function, definition : InternalMetaFunction) => {
-          validateDefinition(definition, identifier);
+          validateDefinition(definition, definition.functionName);
           repo.createEntity(new MetaEntity(identifier,
             { callable, identifier: `${definition.functionName}`, ...definition }));
         }, false));
@@ -121,7 +121,8 @@ export class FunctionsContext {
 
     result.push(new EntityAction("add_function", "addBopCall", (repo : EntityRepository<FunctionEntity>) =>
       (bopIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
-        return repo.createEntity(new MetaEntity(identifier, { callable, identifier: bopIdentifier, ...definition }));
+        repo.createEntity(new MetaEntity(identifier, { callable, identifier: bopIdentifier, ...definition }));
+        return;
       }, true));
 
     result.push(new EntityAction("get_function", "getBopFunction", (repo : EntityRepository<FunctionEntity>) =>

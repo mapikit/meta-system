@@ -52,8 +52,7 @@ export class SystemSetup {
     logger.warn("[System Shutdown] Shutting down system");
     logger.operation("[System Shutdown] Stopping protocol(s)");
 
-    // This will ALSO be a Broker Action :)
-    // await this.protocolsManager.stopAllProtocols();
+    // TODO: This will ALSO be a Broker Action :)
 
     logger.success("[System Shutdown] System stopped gracefully");
   }

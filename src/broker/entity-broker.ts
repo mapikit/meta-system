@@ -76,6 +76,16 @@ export class BrokerFactory {
 
     return result;
   }
+
+  public static wrapBrokerDone (broker : EntityBroker, wrapper : Function) : EntityBroker {
+    const doneFunction = broker.done;
+    broker.done = () : void => {
+      wrapper();
+      doneFunction();
+    };
+
+    return broker;
+  }
 }
 
 export type EntityBroker = Record<string, BrokerEntity> & {

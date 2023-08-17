@@ -40,6 +40,7 @@ export class Collector {
     } catch(err) { logger.error(err); }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private resolvePackageFile () : Promise<void> {
     const path = join(environment.constants.configDir, this.modulesDirectory, "package.json");
     return new Promise<void>((pResolve) => {

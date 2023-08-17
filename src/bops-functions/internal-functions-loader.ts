@@ -49,7 +49,7 @@ import { executeWithArgs, executeWithArgsFunctionInformation } from "./prebuilt-
 import { getSystemFunction, getSystemFunctionFunctionInformation } from "./prebuilt-functions/system/get-system-function.js";
 
 // eslint-disable-next-line max-lines-per-function
-export const setFunctions = (functionsBroker : EntityBroker) : void => {
+export const loadInternalFunctions = (functionsBroker : EntityBroker) : void => {
   // Math Functions
   functionsBroker.internalFunctions.setFunction(addBopsFunction, addFunctionInformation);
   functionsBroker.internalFunctions.setFunction(subtractBopsFunction, subtractFunctionInformation);

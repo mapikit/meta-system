@@ -10,6 +10,8 @@ import { BrokerFactory, EntityBroker } from "../broker/entity-broker.js";
 import { FunctionsContext } from "../entities/functions-context.js";
 import { ImportedInfo } from "./importer.js";
 import { SystemContext } from "../entities/system-context.js";
+import { validateObject } from "@meta-system/object-definition";
+import { loadInternalFunctions } from "../bops-functions/internal-functions-loader.js";
 
 export class FunctionSetup {
   private bopsEngine : BopsEngine;
@@ -31,8 +33,8 @@ export class FunctionSetup {
       this.systemConfiguration.name
     }"`);
 
+    loadInternalFunctions(this.functionsContext.systemBroker);
     this.checkInternalDependencies();
-
     this.checkBopsInterDependencies();
 
 
@@ -41,6 +43,7 @@ export class FunctionSetup {
     const moduleManager = new ModuleManager(this.functionsContext.systemBroker);
     const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
 
+    // TODO Redo the function below - "getSystemFunction" from the internal functions.
     // this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
 
     this.bopsEngine = new BopsEngine({
@@ -52,7 +55,7 @@ export class FunctionSetup {
 
     this.buildBops();
 
-    // TODO Reimplement prop validation
+    // TODO Reimplement prop validation - later re-release on v0.4.something
     // if (!process.argv.includes("--skip-prop-validation")) {
     //   const propValidator = new DependencyPropValidator(
     //     this.systemConfiguration,
@@ -67,18 +70,47 @@ export class FunctionSetup {
     logger.success("[Function Setup] Success - Function Setup complete");
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private async configureAddons () : Promise<void> {
     for(const addonInfo of this.importedAddons) {
       const [identifier, addon] = addonInfo;
       logger.operation("[Function Setup] Starting configure for addon", identifier);
-      const addonConfigure = this.functionsContext.createBroker(addon.metaFile.permissions ?? [], identifier);
-      const addonBoot = this.systemContext.createBroker(addon.metaFile.permissions ?? [], identifier);
-      const addonBroker = BrokerFactory.joinBrokers(addonConfigure, addonBoot);
+      const functionsBroker = this.functionsContext.createBroker(addon.metaFile.permissions ?? [], identifier);
+      const systemBroker = this.systemContext.createBroker(addon.metaFile.permissions ?? [], identifier);
+      const addonBroker = BrokerFactory.joinBrokers(functionsBroker, systemBroker);
       this.addonBrokers.set(identifier, addonBroker);
       const addonUserConfig = this.systemConfiguration.addons
-        .find((addonConfig) => addonConfig.identifier === identifier);
+        .find((addonConfig) => addonConfig.identifier === identifier)
+        .configuration;
 
-      this.addonsConfigurationData.set(identifier, await addon.main.configure(addonConfigure, addonUserConfig));
+      const userConfigurationValidation = validateObject(addonUserConfig, addon.metaFile.configurationFormat);
+
+      if (userConfigurationValidation.errors.length > 0) {
+        const message = "User configuration for addon " +  identifier + " is not valid!";
+        logger.fatal(message);
+        userConfigurationValidation.errors.forEach((validationError) => {
+          logger.error(validationError.error, " at ", validationError.path);
+        });
+
+        throw Error(message);
+      }
+
+      let done = false;
+      BrokerFactory.wrapBrokerDone(addonBroker, () => { done = true; });
+      try {
+        const addonConfigureResult = await addon.main.configure(addonBroker, addonUserConfig);
+        this.addonsConfigurationData.set(identifier, addonConfigureResult);
+      } catch {
+        throw Error(`Addon ${identifier} 'configure' function has failed.`);
+      }
+
+      if (!done) {
+        // eslint-disable-next-line max-len
+        logger.fatal("Addon ", identifier, " 'configure' function executed, but broker did not receive the `done()` signal.",
+          " - Aborting launch!");
+
+        throw Error("Addon configure entrypoint did not call done().");
+      }
     };
   }
 
@@ -95,9 +127,6 @@ export class FunctionSetup {
   // eslint-disable-next-line max-lines-per-function
   private extractAllDependencies () : BopsDependencies[] {
     const result = [];
-
-    // const domainBops = this.systemConfiguration.businessOperations
-    //   .map((bopsConfig) => new BusinessOperation(bopsConfig));
 
     this.systemConfiguration.businessOperations.forEach((bopsConfig) => {
       const dependencyCheck = new CheckBopsFunctionsDependencies(
@@ -136,21 +165,6 @@ export class FunctionSetup {
         throw Error(`Unmet BOp dependency found in BOp "${depCheck.bopsDependencies.bopName}" \n`
           + "Read logs above for more information",
         );
-      }
-    });
-  }
-
-  private checkSchemaDependencies () : void {
-    this.bopsDependencyCheck.forEach((depCheck) => {
-      const result = depCheck.checkSchemaFunctionsDependenciesMet();
-      const schemaDeps = depCheck.bopsDependencies.fromSchemas.map(dep => dep.functionName).join(", ");
-      const schemaDepsName = schemaDeps === "" ? "NO SCHEMA DEPENDENCIES" : schemaDeps;
-      logger.operation(`[Function Setup] Checking schema function dependencies for BOp "${
-        depCheck.bopsDependencies.bopName
-      }": "${schemaDepsName}"`);
-
-      if (!result) {
-        throw Error(`Unmet Schema dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
       }
     });
   }
