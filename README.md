@@ -56,7 +56,7 @@ As an engine, Meta-System can be used to power any kind of software, as long as 
 Also, because it is extensible, you're never limited to only what you have in the engine. The combination of these properties sets Meta-System as a versatile lightweight no-code tool for almost any task! Here's some inspirations:
 - **A Backup Daemon** : Configured to automatically run at startup, backs up a preconfigured set of files timely.
 - **An authenticated API for accessing a DataSet** : With access to a DataBase, it filters, orders and joins data for a front end application to display.
-- **A Live Sync tool for a Collaborative Software** : Used to be the source of truth for an user interface to sync data live with peers using a protocol such as WebRTC.
+- **A Live Sync tool for a Collaborative Software** : Used as the source of truth for an user interface to sync data live with peers using a protocol such as WebRTC.
 - **A No-Code tool for Enterprise** : You can use Addons to inject business entities and their actions into Meta-System, and allow for wiring their business rules from within MSYS
 
 ## Getting in Touch & Contributing
