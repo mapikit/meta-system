@@ -13,7 +13,7 @@ It aims to simplify software as a whole, freeing you, the developer, to work on 
 - **Simple, Yet Extensible** : Its modular design allows you for adding, creating **and sharing** Add-ons, expanding your possibilities as far as you need them.
 - **Unopinionated** : Meta-System doesn't make decisions for you, instead, it opens the path for you to focus only in what is necessary. Of course, however, you can extend it with your own opinions as you wish.
 - **The Power of JSON** : Your Meta-System is configured using human-readable, and machine-parseable JSON.
-- **GUI for Configuring your System** : (Coming Soon!) A graphical editor for your Meta-System configuration files, allowing for great visibility of the processes of your system.
+- **GUI for Configuring your System** : (Coming Soon!) A graphical editor for your Meta-System configuration files, turning your JSON system into a beautiful set of cards and flows.
 
 ## How To Use
 Oversimplifying, It is actually as easy as:
