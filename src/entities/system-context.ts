@@ -107,7 +107,7 @@ export class SystemContext {
     result.push(new EntityAction("get_addon", "getAddon",
       (repo : EntityRepository<Addon>) =>
         (addonIdentifier : string) => repo.getEntity(addonIdentifier)?.data,
-    ));
+    ), true);
 
     result.push(new EntityAction("create_addon", "createAddon",
       (repo : EntityRepository<Addon>) =>
@@ -117,7 +117,7 @@ export class SystemContext {
     result.push(new EntityAction("get_all", "getAll",
       (repo : EntityRepository<Addon>) =>
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
-    ));
+    ), true);
 
     return result;
   }
