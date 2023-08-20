@@ -130,7 +130,7 @@ export class SystemContext {
     result.push(new EntityAction("get_env", "getEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
         (envKey : string) => repo.getEntity(envKey)?.data,
-    ));
+    ), true);
 
     result.push(new EntityAction("create_env", "createEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
@@ -140,7 +140,7 @@ export class SystemContext {
     result.push(new EntityAction("get_all", "getAll",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
-    ));
+    ), true);
 
     return result;
   }
