@@ -3,6 +3,7 @@ import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { logger } from "../common/logger/logger.js";
 import { MetaFileType, metaFileObjectDefinition } from "../common/meta-file-type.js";
 import { validateMetaFile } from "../entities/helpers/validate-meta-file.js";
+import { pathToFileURL } from "url";
 
 export type ImportedInfo = {
   metaFile : MetaFileType;
@@ -55,7 +56,8 @@ export class Importer {
     const pathLib = await import("path");
 
     const entrypointPath = pathLib.resolve(pathLib.dirname(path), metaFile.entrypoint);
-    const imported = await import(entrypointPath);
+    const entrypointPathURL = pathToFileURL(entrypointPath);
+    const imported = await import(entrypointPathURL.href);
     const main = imported.__esModule ? this.resolveESM(imported) : imported;
     this.validateMain(main, identifier);
 

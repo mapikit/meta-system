@@ -2,8 +2,6 @@ import { exec } from "child_process";
 import { Addon } from "../configuration/addon-type.js";
 import { environment } from "../common/execution-env.js";
 import { join, resolve } from "path";
-import { mkdir } from "fs/promises";
-import { existsSync, lstatSync, readFile, writeFileSync } from "fs";
 import { logger } from "../common/logger/logger.js";
 import { Nethere } from "nethere";
 import { Configuration } from "configuration/configuration.js";
@@ -31,6 +29,7 @@ export class Collector {
   private async prepare () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
     try {
       logger.info("Preparing for download of required addons...");
+      const { mkdir } = await import("fs/promises");
       await mkdir(
         join(environment.constants.configDir, this.modulesDirectory, "url_addons"),
         { recursive: true },
@@ -41,8 +40,9 @@ export class Collector {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private resolvePackageFile () : Promise<void> {
+  private async resolvePackageFile () : Promise<void> {
     const path = join(environment.constants.configDir, this.modulesDirectory, "package.json");
+    const { readFile, writeFileSync } = await import("fs");
     return new Promise<void>((pResolve) => {
       readFile(path, (error, data) => {
         if(error && error.code === "ENOENT") logger.info("Creating package.json file for npm addons");
@@ -87,6 +87,7 @@ export class Collector {
   }
 
   private async fileCollectStrategy (path : string) : Promise<string> {
+    const { lstatSync, existsSync } = await import("fs");
     const resolvedPath = resolve(environment.constants.configDir, path);
     const pathInfo = lstatSync(resolvedPath);
     if(!existsSync(resolvedPath)) throw Error(`No folder/file found in path \"${resolvedPath}\"`);
