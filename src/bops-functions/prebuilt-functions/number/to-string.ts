@@ -10,7 +10,6 @@ export const numberToStringFunction = (input : { number : number }) : unknown =>
 
 export const numberToStringFunctionInformation : InternalMetaFunction = {
   functionName: "numberToString",
-  version: "1.0.0",
   description: "Gets the index of a substring in the string",
   output: {
     result: { type: "number", required: false },

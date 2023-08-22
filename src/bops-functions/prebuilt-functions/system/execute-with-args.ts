@@ -13,7 +13,6 @@ export const executeWithArgsFunctionInformation : InternalMetaFunction = {
     module: { type: "function", required: true },
     arguments: { type: "cloudedObject", required: true },
   },
-  version: "1.0.0",
   output: {
     moduleOutput: { type: "any", required: false },
   },

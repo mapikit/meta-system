@@ -1,31 +1,29 @@
-import { ProtocolFunctionManagerClass } from "../bops-functions/function-managers/protocol-function-manager.js";
 import { BopsEngine } from "../bops-functions/bops-engine/bops-engine.js";
-import { ModuleFullName, ModuleManager } from "../bops-functions/bops-engine/modules-manager.js";
-import { BopsManagerClass } from "../bops-functions/function-managers/bops-manager.js";
-import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager.js";
-import { FunctionManager } from "../bops-functions/function-managers/function-manager.js";
-import { InternalFunctionManagerClass } from "../bops-functions/function-managers/internal-function-manager.js";
-import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
+import { ModuleManager } from "../bops-functions/bops-engine/modules-manager.js";
 import { BopsDependencies, CheckBopsFunctionsDependencies }
   from "../configuration/business-operations/check-bops-functions-dependencies.js";
 import { ConfigurationType } from "../configuration/configuration-type.js";
-import { SchemaType } from "../configuration/schemas/schemas-type.js";
-import { SchemasManager } from "../schemas/application/schemas-manager.js";
-import { ModuleType } from "../configuration/business-operations/business-operations-type.js";
-import { DependencyPropValidator } from "./dependency-validator.js";
+import { BopsConfigurationEntry } from "../configuration/business-operations/business-operations-type.js";
 import { logger } from "../common/logger/logger.js";
 import { environment } from "../common/execution-env.js";
+import { BrokerFactory, EntityBroker } from "../broker/entity-broker.js";
+import { FunctionsContext } from "../entities/functions-context.js";
+import { ImportedInfo } from "./importer.js";
+import { SystemContext } from "../entities/system-context.js";
+import { validateObject } from "@meta-system/object-definition";
+import { loadInternalFunctions } from "../bops-functions/internal-functions-loader.js";
 
 export class FunctionSetup {
-  private readonly bopsManager = new BopsManagerClass();
   private bopsEngine : BopsEngine;
   private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
+  private addonBrokers = new Map<string, EntityBroker>();
+  private addonsConfigurationData = new Map<string, unknown>();
 
   // eslint-disable-next-line max-params
   public constructor (
-    private internalFunctionManager : InternalFunctionManagerClass,
-    private externalFunctionManager : ExternalFunctionManagerClass,
-    private protocolFunctionManager : ProtocolFunctionManagerClass,
+    private systemContext : SystemContext,
+    private functionsContext : FunctionsContext,
+    private importedAddons : Map<string, ImportedInfo>,
     private systemConfiguration : ConfigurationType,
   ) { }
 
@@ -35,34 +33,18 @@ export class FunctionSetup {
       this.systemConfiguration.name
     }"`);
 
-    const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
+    loadInternalFunctions(this.functionsContext.systemBroker);
     this.checkInternalDependencies();
-    this.checkSchemaDependencies();
-
-    await this.bootstrapExternalDependencies(allBopsDependencies);
-    this.bootstrapProtocols(allBopsDependencies);
-    this.checkExternalDependencies();
     this.checkBopsInterDependencies();
 
-    if (!process.argv.includes("--skip-prop-validation")) {
-      const propValidator = new DependencyPropValidator(
-        this.systemConfiguration,
-        this.internalFunctionManager,
-        this.externalFunctionManager,
-        this.protocolFunctionManager,
-      );
-      propValidator.verifyAll();
-    }
 
-    const moduleManager = new ModuleManager({
-      ExternalFunctionManager: this.externalFunctionManager,
-      InternalFunctionManager: this.internalFunctionManager,
-      protocolFunctionManager: this.protocolFunctionManager,
-      BopsManager: this.bopsManager,
-      SchemasManager: await this.createSchemasManager(this.systemConfiguration.schemas),
-    });
+    await this.configureAddons();
 
-    this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
+    const moduleManager = new ModuleManager(this.functionsContext.systemBroker);
+    this.extractAllDependencies();
+
+    // TODO Redo the function below - "getSystemFunction" from the internal functions.
+    // this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
 
     this.bopsEngine = new BopsEngine({
       ModuleManager: moduleManager,
@@ -72,43 +54,91 @@ export class FunctionSetup {
     logger.operation("[Function Setup] Starting BOps build process");
 
     this.buildBops();
+
+    // TODO Reimplement prop validation - later re-release on v0.4.something
+    // if (!process.argv.includes("--skip-prop-validation")) {
+    //   const propValidator = new DependencyPropValidator(
+    //     this.systemConfiguration,
+    //     this.systemBroker,
+    //   );
+    //   propValidator.verifyAll();
+    // }
+
+    await this.bootAddons();
+
+    this.functionsContext.systemBroker.done();
+    this.bopsEngine.refreshFunctionMapping();
     logger.success("[Function Setup] Success - Function Setup complete");
   }
 
-  private replaceGetSystemFunction (manager : ModuleManager, systemConfig : ConfigurationType) : void {
-    const builtManager = manager.resolveSystemModules(systemConfig);
+  // eslint-disable-next-line max-lines-per-function
+  private async configureAddons () : Promise<void> {
+    for(const addonInfo of this.importedAddons) {
+      const [identifier, addon] = addonInfo;
+      logger.operation("[Function Setup] Starting configure for addon", identifier);
+      const functionsBroker = this.functionsContext.createBroker(addon.metaFile.permissions ?? [], identifier);
+      const systemBroker = this.systemContext.createBroker(addon.metaFile.permissions ?? [], identifier);
+      const addonBroker = BrokerFactory.joinBrokers(functionsBroker, systemBroker);
+      this.addonBrokers.set(identifier, addonBroker);
+      const addonUserConfig = this.systemConfiguration.addons
+        .find((addonConfig) => addonConfig.identifier === identifier)
+        .configuration;
 
-    this.internalFunctionManager.replace("getSystemFunction", (
-      input : { moduleName : string; modulePackage : string; moduleType : ModuleType },
-    ) => {
-      const name = input.modulePackage === undefined ?
-        `${input.moduleType}.${input.moduleName}` :
-        `${input.moduleType}.${input.modulePackage}.${input.moduleName}`;
+      const userConfigurationValidation = validateObject(addonUserConfig, addon.metaFile.configurationFormat);
 
-      const callableFunction = builtManager.get(name as unknown as ModuleFullName);
-      const found = callableFunction !== undefined;
-      return { callableFunction, found };
-    });
+      if (userConfigurationValidation.errors.length > 0) {
+        const message = "User configuration for addon " +  identifier + " is not valid!";
+        logger.fatal(message);
+        userConfigurationValidation.errors.forEach((validationError) => {
+          logger.error(validationError.error, " at ", validationError.path);
+        });
+
+        throw Error(message);
+      }
+
+      let done = false;
+      BrokerFactory.wrapBrokerDone(addonBroker, () => { done = true; });
+      try {
+        const addonConfigureResult = await addon.main.configure(addonBroker, addonUserConfig);
+        this.addonsConfigurationData.set(identifier, addonConfigureResult);
+      } catch (error) {
+        throw Error(`Addon ${identifier} 'configure' function has failed.\n` + error);
+      }
+
+      if (!done) {
+        // eslint-disable-next-line max-len
+        logger.fatal("Addon ", identifier, " 'configure' function executed, but broker did not receive the `done()` signal.",
+          " - Aborting launch!");
+
+        throw Error("Addon configure entrypoint did not call done().");
+      }
+    };
+  }
+
+  private async bootAddons () : Promise<void> {
+    for(const addonInfo of this.importedAddons) {
+      const [identifier, addon] = addonInfo;
+      logger.operation("[Function Setup] Booting addon", identifier);
+      const addonBroker = this.addonBrokers.get(identifier);
+      await addon.main.boot(addonBroker, this.addonsConfigurationData.get(identifier));
+      addonBroker.done();
+    };
   }
 
   // eslint-disable-next-line max-lines-per-function
   private extractAllDependencies () : BopsDependencies[] {
     const result = [];
 
-    const domainBops = this.systemConfiguration.businessOperations
-      .map((bopsConfig) => new BusinessOperation(bopsConfig));
-
     this.systemConfiguration.businessOperations.forEach((bopsConfig) => {
       const dependencyCheck = new CheckBopsFunctionsDependencies(
-        this.systemConfiguration.schemas,
-        domainBops,
-        new BusinessOperation(bopsConfig),
-        this.externalFunctionManager,
-        this.internalFunctionManager,
-        this.protocolFunctionManager,
+        this.systemContext.systemBroker,
+        this.functionsContext.systemBroker,
+        bopsConfig.identifier,
       );
 
-      this.bopsDependencyCheck.set(bopsConfig.name, dependencyCheck);
+      dependencyCheck.checkAllDependencies();
+
+      this.bopsDependencyCheck.set(bopsConfig.identifier, dependencyCheck);
 
       result.push(dependencyCheck.bopsDependencies);
     });
@@ -140,120 +170,26 @@ export class FunctionSetup {
     });
   }
 
-  private checkExternalDependencies () : void {
-    logger.operation("[Function Setup] Checking BOps external dependencies");
-    this.bopsDependencyCheck.forEach((depCheck) => {
-      const result = depCheck.checkExternalRequiredFunctionsMet();
-
-      if (!result) {
-        throw Error(`Unmet External dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
-      }
-    });
-  }
-
-  private checkSchemaDependencies () : void {
-    this.bopsDependencyCheck.forEach((depCheck) => {
-      const result = depCheck.checkSchemaFunctionsDependenciesMet();
-      const schemaDeps = depCheck.bopsDependencies.fromSchemas.map(dep => dep.functionName).join(", ");
-      const schemaDepsName = schemaDeps === "" ? "NO SCHEMA DEPENDENCIES" : schemaDeps;
-      logger.operation(`[Function Setup] Checking schema function dependencies for BOp "${
-        depCheck.bopsDependencies.bopName
-      }": "${schemaDepsName}"`);
-
-      if (!result) {
-        throw Error(`Unmet Schema dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
-      }
-    });
-  }
-
-  // eslint-disable-next-line max-lines-per-function
-  private async bootstrapExternalDependencies (allBopsDependencies : BopsDependencies[]) : Promise<void> {
-    logger.operation("[Function Setup] Starting Bootstrap sequence for all system external dependencies");
-    const externalDependenciesArray = allBopsDependencies
-      .map((bopDependencies) => bopDependencies.external);
-
-    const externalDependencies = externalDependenciesArray.reduce((previousValue, currentValue) => {
-      const currentDependency = previousValue;
-      currentValue.forEach((value) => currentDependency.push(value));
-
-      return currentDependency;
-    }, []);
-
-    for (const dependency of externalDependencies) {
-      await this.installFunction(dependency.name, dependency.version, dependency.package);
-    }
-  }
-
-  // eslint-disable-next-line max-lines-per-function
-  private bootstrapProtocols (allBopsDependencies : BopsDependencies[]) : void {
-    logger.operation("[Function Setup] Starting Bootstrap sequence for all system protocols dependencies");
-    const protocolsDependenciesArray = allBopsDependencies
-      .map((bopDependencies) => bopDependencies.protocol);
-
-    const protocolDependencies = protocolsDependenciesArray.reduce((previousValue, currentValue) => {
-      const currentDependency = previousValue;
-      currentValue.forEach((value) => currentDependency.push(value));
-
-      return currentDependency;
-    }, []);
-
-    for (const dependency of protocolDependencies) {
-      this.addProtocolFunction(dependency.name, dependency.package);
-    }
-  }
-
-  private addProtocolFunction (functionName : string, packageName : string) : void {
-    // Protocols are installed before this whole class is created, so here we just add the functions of already
-    // existing instances of protocols.
-    const exists = this.protocolFunctionManager.get(`${packageName}.${functionName}`);
-
-    if (!exists) {
-      this.protocolFunctionManager.addFunction(functionName, packageName);
-    }
-  }
-
-  private async installFunction (functionName : string, version : string, packageName ?: string) : Promise<void> {
-    const exists = this.externalFunctionManager.functionIsInstalled(functionName, packageName);
-
-    if (!exists) {
-      await this.externalFunctionManager.add(functionName, version, packageName);
-    }
-  }
-
-  // eslint-disable-next-line max-lines-per-function
-  private async createSchemasManager (systemSchemas : SchemaType[]) : Promise<SchemasManager> {
-    const manager = new SchemasManager(
-      this.systemConfiguration.name,
-      this.protocolFunctionManager,
-    );
-
-    const schemasNames = systemSchemas.map((schemaType) => schemaType.name).join(", ");
-    logger.operation(`[Schemas Setup] Adding schemas to the system: "${schemasNames}"`);
-
-    await manager.addSystemSchemas(systemSchemas);
-
-    return manager;
-  }
-
   // eslint-disable-next-line max-lines-per-function
   private buildBops (alreadyBuilt = 0) : void {
-    const unbuiltBopsNames = this.systemConfiguration.businessOperations
-      .map(bopConfig => bopConfig.name)
-      .filter(bopName => !this.bopsManager.functionIsDeclared(bopName));
-
-    if (unbuiltBopsNames.length === 0) {
+    const unbuiltBopsIds = this.systemConfiguration.businessOperations
+      .map(bopConfig => bopConfig.identifier)
+      .filter((bopId) => !this.bopFunctionIsDeclared(bopId));
+    if (unbuiltBopsIds.length === 0) {
       if(alreadyBuilt === 0) logger.warn("[BOps Build] No bops were built");
 
       logger.success(`[BOps Build] Finished building ${alreadyBuilt} bops.`);
       return;
     }
 
-    logger.operation(`[BOps Build] Remaining BOps: [${unbuiltBopsNames.join(", ")}]`);
+    logger.operation(`[BOps Build] Remaining BOps: [${unbuiltBopsIds.join(", ")}]`);
 
-    const bopsWithMetDependencies = unbuiltBopsNames.filter((bopName) => {
-      const bopsDependencies = this.bopsDependencyCheck.get(bopName).bopsDependencies;
-      for (const bopDependencyFromBops of bopsDependencies.fromBops) {
-        if (!this.bopsManager.functionIsDeclared(bopDependencyFromBops)) {
+    const bopsWithMetDependencies = unbuiltBopsIds.filter((bopId) => {
+      const currentBop = this.systemConfiguration.businessOperations.find(bop => bop.identifier === bopId);
+      const bopsDependencies = this.getBopDependencies(currentBop.configuration);
+
+      for (const bopDependencyFromBops of bopsDependencies) {
+        if (!this.bopFunctionIsDeclared(bopDependencyFromBops)) {
           return false;
         }
       }
@@ -263,22 +199,31 @@ export class FunctionSetup {
 
     let bopsBuilt = 0;
 
-    bopsWithMetDependencies.forEach((bopName) => {
+    bopsWithMetDependencies.forEach((bopId) => {
       const currentBopConfig = this.systemConfiguration.businessOperations
-        .find((bopConfig) => bopConfig.name === bopName);
-      logger.operation(`[BOps Build] Stitching "${bopName}"`);
+        .find((bopConfig) => bopConfig.identifier === bopId);
+      logger.operation(`[BOps Build] Stitching "${bopId}"`);
 
-      this.bopsManager.add(
-        bopName,
-        this.bopsEngine.stitch(currentBopConfig, currentBopConfig.ttl ?? environment.constants.ttl),
-      );
+      const definition = {
+        input: currentBopConfig.input,
+        output: currentBopConfig.output,
+      };
+      const callable = this.bopsEngine.stitch(currentBopConfig, currentBopConfig.ttl ?? environment.constants.ttl);
+      this.functionsContext.systemBroker.bopFunctions.addBopCall(bopId, callable, definition);
       bopsBuilt++;
     });
 
     this.buildBops(bopsBuilt);
   }
 
-  public getBopsManager () : FunctionManager {
-    return this.bopsManager;
+
+  private bopFunctionIsDeclared (functionName : string) : boolean {
+    return this.functionsContext.systemBroker["bopFunctions"].getBopFunction(functionName) !== undefined;
+  }
+
+  private getBopDependencies (bopConfig : BopsConfigurationEntry[]) : string[] {
+    return bopConfig
+      .filter(config => config.moduleType === "bop")
+      .map(config => config.moduleName);
   }
 }

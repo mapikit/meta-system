@@ -1,13 +1,22 @@
-import { SchemaType } from "../../src/configuration/schemas/schemas-type.js";
-import faker from "faker";
+import faker, { random } from "faker";
 import { ObjectDefinition } from "@meta-system/object-definition";
 
-export const entityFactory = (schemaFormat : SchemaType["format"]) : object => {
+export const entityFactory = (schemaFormat : ObjectDefinition) : object => {
   const entity = {};
   for(const prop in schemaFormat) {
-    entity[prop] = typeCreation[schemaFormat[prop].type](schemaFormat[prop]["subtype"]);
+    const usedType = getType(schemaFormat[prop]);
+    entity[prop] = typeCreation[usedType](schemaFormat[prop]["subtype"]);
   }
   return entity;
+};
+
+const getType = (def : ObjectDefinition["prop"]) : string => {
+  if (Array.isArray(def)) {
+    const usedType = random.number({ min: 0, max: def.length -1, precision: 1 });
+    return def[usedType].type;
+  }
+
+  return def.type;
 };
 
 const typeCreation = {
@@ -28,7 +37,7 @@ const typeCreation = {
   object: (dataType : ObjectDefinition) : object => {
     const object = {};
     for(const prop in dataType) {
-      object[prop] = typeCreation[dataType[prop].type](dataType[prop]["subtype"]);
+      object[prop] = typeCreation[getType(dataType[prop])](dataType[prop]["subtype"]);
     }
     return object;
   },

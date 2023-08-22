@@ -17,7 +17,6 @@ export const exponentialBopsFunction = (input : { A : number; B : number}) : unk
 
 export const exponentialFunctionInformation : InternalMetaFunction = {
   functionName: "exponential",
-  version: "1.0.0",
   description: "Raises A to the power of B",
   input: {
     A: { type: "number", required: true },

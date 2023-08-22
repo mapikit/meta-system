@@ -1,0 +1,37 @@
+{
+  "businessOperations": [
+  {
+    "identifier": "carSell",
+    "input": {},
+    "output": {},
+    "variables": [],
+    "constants": [],
+    "configuration": [
+      {
+        "moduleName": "arrayAt",
+        "moduleType": "internal",
+        "key": 2,
+        "dependencies": [
+          { "origin": 3 }
+        ]
+      },
+      {
+        "moduleName": "arrayAt",
+        "moduleType": "internal",
+        "key": 3,
+        "dependencies": [
+          { "origin": 6 }
+        ]
+      },
+      {
+        "moduleName": "arrayAt",
+        "moduleType": "internal",
+        "key": 4,
+        "dependencies": [
+          { "origin": 2 }
+        ]
+      }
+    ]
+  }
+]
+}

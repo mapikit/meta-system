@@ -1,7 +1,7 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
+import { BusinessOperationType } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
-export const mapikitProvidedBop : BusinessOperations = {
-  name: "prebuilt-functions",
+export const mapikitProvidedBop : BusinessOperationType = {
+  identifier: "prebuilt-functions",
   input: {
     aNumber: { type: "number", required: true },
   },
@@ -31,5 +31,4 @@ export const mapikitProvidedBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };

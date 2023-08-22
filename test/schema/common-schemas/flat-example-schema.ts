@@ -10,5 +10,4 @@ export const flatExampleSchema : SchemaType = {
     height: { type: "number" },
   },
   identifier: "someIdentifier",
-  dbProtocol: "aDbProtocol",
 };

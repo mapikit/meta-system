@@ -1,15 +1,14 @@
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { ExtendedJsonTypes } from "../../common/types/json-types.js";
 
-export interface BusinessOperations {
+export interface BusinessOperationType {
   ttl ?: number;
-  name : string;
   input : ObjectDefinition;
   output : ObjectDefinition;
   constants : BopsConstant[];
   variables : BopsVariable[];
   configuration : BopsConfigurationEntry[];
-  customObjects : BopsCustomObject[];
+  identifier : string;
 }
 
 export type ExtendedJsonTypeDict<T = ExtendedJsonTypes | "any"> =
@@ -33,16 +32,14 @@ export interface BopsVariable {
   initialValue ?: ExtendedJsonTypeDict;
 }
 
-export type ModuleType = "schemaFunction"
-| "external"
-| "internal"
+export type ModuleType =  "internal"
 | "bop"
 | "output"
 | "variable"
-| "protocol";
+| "addon"
+| "schemaFunction";
 
 export interface BopsConfigurationEntry {
-  version ?: string;
   moduleType : ModuleType;
   moduleName : string;
   modulePackage ?: string;
@@ -54,9 +51,4 @@ export interface Dependency {
   origin : string | number;
   targetPath ?: string;
   originPath ?: string;
-}
-
-export interface BopsCustomObject {
-  name : string;
-  properties : ObjectDefinition;
 }

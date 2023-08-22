@@ -10,7 +10,6 @@ export const isEqualToBopsFunction = (input : { A : any; B : any }) : unknown =>
 
 export const isEqualToBopsFunctionInformation : InternalMetaFunction = {
   functionName: "equalTo",
-  version: "1.0.0",
   description: "compares A to B, returning if A is lower than B",
   input: {
     A: { type: "any", required: true },

@@ -12,7 +12,6 @@ export const charAtBopsFunction = (input : { string : string; index : number }) 
 
 export const charAtBopsFunctionInformation : InternalMetaFunction = {
   functionName: "charAt",
-  version: "1.0.0",
   description: "Gets the character in the string at the index given",
   input: {
     string: { type: "string", required: true },

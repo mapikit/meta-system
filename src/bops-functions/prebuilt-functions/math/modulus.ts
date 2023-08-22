@@ -20,7 +20,6 @@ export const modulusBopsFunction = (input : { A : number; B : number }) : unknow
 
 export const modulusFunctionInformation : InternalMetaFunction = {
   functionName: "modulus",
-  version: "1.0.0",
   description: "Gets the remainder of the division of A by B",
   input: {
     A: { type: "number", required: true },

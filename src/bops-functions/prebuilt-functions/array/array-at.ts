@@ -12,7 +12,6 @@ export const arrayAtBopsFunction = (input : { array : unknown[]; index : number 
 
 export const arrayAtBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayAt",
-  version: "1.0.0",
   description: "Gets the item in the array at the index given",
   input: {
     array: { type: "array", subtype: "any", required: true },

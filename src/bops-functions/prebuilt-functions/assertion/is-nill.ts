@@ -9,7 +9,6 @@ export const isNillBopsFunction = (input : { value : any }) : unknown => {
 
 export const isNillBopsFunctionInformation : InternalMetaFunction = {
   functionName: "isNill",
-  version: "1.0.0",
   description: "Evaluates true if the value provided is undefined or null.",
   input: {
     value: { type: "any", required: true },

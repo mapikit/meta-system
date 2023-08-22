@@ -26,7 +26,6 @@ export const forLoopFunction = async (input : {
 
 export const forLoopInformation : InternalMetaFunction = {
   functionName: "forLoop",
-  version: "1.0.0",
   description: "Executes a module n times and a (optional) secundary module after each execution." +
   "Optionally executes a third module once the loop is done",
   input: {

@@ -25,7 +25,6 @@ export function increaseVariablesFunction (input : CloudedObject, variables : Re
 
 export const increaseVariableFunctionInformation : InternalMetaFunction = {
   functionName: "increaseVariables",
-  version: "1.0.0",
   description: "Increases all the given variables by the given amount",
   input: {
     "%variableName": { type: "number", required: true },

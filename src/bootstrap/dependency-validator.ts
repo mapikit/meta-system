@@ -1,35 +1,28 @@
-import { ExternalFunctionManagerClass } from "../bops-functions/function-managers/external-function-manager.js";
 import { InternalMetaFunction } from "../bops-functions/internal-meta-function.js";
 import {
   BopsConfigurationEntry,
-  BusinessOperations,
+  BusinessOperationType,
   Dependency,
   ModuleType } from "../configuration/business-operations/business-operations-type.js";
 import { ConfigurationType } from "../configuration/configuration-type.js";
-import { CustomType, MetaFunction } from "@meta-system/meta-function-helper";
-import { schemaFunctionInfoMap } from "../schemas/application/schema-functions-info.js";
 import { VariableContext } from "../bops-functions/bops-engine/variables/variables-context.js";
-import { ProtocolFunctionManagerClass } from "bops-functions/function-managers/protocol-function-manager.js";
 import clone from "just-clone";
-import { InternalFunctionManagerClass } from "bops-functions/function-managers/internal-function-manager.js";
 import chalk from "chalk";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import { logger } from "../common/logger/logger.js";
-import { SchemasFunctions } from "../schemas/domain/schemas-functions.js";
 import { environment } from "../common/execution-env.js";
+import { EntityBroker } from "broker/entity-broker.js";
 
-type FunctionInfoType = InternalMetaFunction | BusinessOperations;
+type FunctionInfoType = InternalMetaFunction | BusinessOperationType;
 
 export class DependencyPropValidator {
-  private workingBop : BusinessOperations;
+  private workingBop : BusinessOperationType;
   private getHeader : (errorType : string) => string;
   private typeCheckingLevel = 1;
   // eslint-disable-next-line max-params
   constructor (
     private systemConfig : ConfigurationType,
-    private internalManager : InternalFunctionManagerClass,
-    private externalManager : ExternalFunctionManagerClass,
-    private protocolManager : ProtocolFunctionManagerClass,
+    private systemBroker : EntityBroker,
   ) {};
 
   // eslint-disable-next-line max-lines-per-function
@@ -56,7 +49,7 @@ export class DependencyPropValidator {
     logger.success("[Dependency Validation] Finished validating dependencies");
   }
 
-  private validateTargetPaths (bops : Array<BusinessOperations>) : void {
+  private validateTargetPaths (bops : Array<BusinessOperationType>) : void {
     bops.forEach(bop => {
       bop.configuration.forEach(config => {
         const infoHeader = `[${bop.name}@${config.key}] `;
@@ -88,7 +81,7 @@ export class DependencyPropValidator {
 
   private getCustomTypes (info : FunctionInfoType) : CustomType[] {
     if(info["customTypes"] !== undefined) return info["customTypes"];
-    const customTypes = (info as BusinessOperations).customObjects?.map(object => {
+    const customTypes = (info as BusinessOperationType).customObjects?.map(object => {
       const asCustomType : CustomType = { name: object.name, type: object.properties };
       return asCustomType;
     });
@@ -96,7 +89,7 @@ export class DependencyPropValidator {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private validateTypes (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperations) : void {
+  private validateTypes (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperationType) : void {
     const moduleInfo = this.getFunctionInfo(module);
     if(module.moduleType !== "output") {
       enum of { origin, target }
@@ -217,7 +210,7 @@ export class DependencyPropValidator {
     return this.infoResolver[moduleType](module.moduleName, module.modulePackage);
   };
 
-  private validateIO (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperations) : void {
+  private validateIO (dependency : Dependency, module : BopsConfigurationEntry, bop : BusinessOperationType) : void {
     const moduleInfo = this.getFunctionInfo(module);
     if(typeof dependency.origin === "number") {
       const refersTo = bop.configuration.find(mod => mod.key == dependency.origin);
@@ -301,74 +294,74 @@ export class DependencyPropValidator {
 
   private infoResolver : { [type in ModuleType] :
     (name : string, packageName ?: string) => FunctionInfoType } = {
-    "internal": (name) => {
+      "internal": (name) => {
       // Internals does not require complete Meta-Function
-      return this.internalManager.infoMap.get(name) as MetaFunction;
-    },
-    "external": (name, packageName) => {
-      const externalInfo = this.externalManager.getFunctionInfo(name, packageName);
-      return externalInfo;
-    },
-    "bop": (name) => {
-      const bopDetails = this.systemConfig.businessOperations.find(bop => bop.name === name);
+        return this.internalManager.infoMap.get(name) as MetaFunction;
+      },
+      "external": (name, packageName) => {
+        const externalInfo = this.externalManager.getFunctionInfo(name, packageName);
+        return externalInfo;
+      },
+      "bop": (name) => {
+        const bopDetails = this.systemConfig.businessOperations.find(bop => bop.name === name);
 
-      return {
-        "input": bopDetails.input,
-        "output": bopDetails.output,
-        "functionName": name,
-        "entrypoint": "",
-        "description": "",
-        "mainFunction": "",
-        "version": "",
-      };
-    },
-    "protocol": (name, modulePackage) => {
-      const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage);
-      const functionInfo = protocolInfo.functionDefinitions.find(funct => funct.functionName === name);
-      return {
-        description: protocolInfo.description,
-        version: protocolInfo.version,
-        entrypoint: protocolInfo.entrypoint,
-        mainFunction:  protocolInfo.className,
-        ... functionInfo,
-      };
-    },
-    // eslint-disable-next-line max-lines-per-function
-    "schemaFunction": (name, modulePackage) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
-      const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name as keyof typeof SchemasFunctions));
-      resolvableParameters.forEach(param => {
-        Object.keys(schemaFunctionInfo[param]).forEach(key => {
-          if(schemaFunctionInfo[param][key].type === "%entity") {
-            schemaFunctionInfo[param][key].type = `$${modulePackage}`;
-          }
-          if(schemaFunctionInfo[param][key]["subtype"] === "%entity") {
-            schemaFunctionInfo[param][key]["subtype"] = `$${modulePackage}`;
-          }
+        return {
+          "input": bopDetails.input,
+          "output": bopDetails.output,
+          "functionName": name,
+          "entrypoint": "",
+          "description": "",
+          "mainFunction": "",
+          "version": "",
+        };
+      },
+      "protocol": (name, modulePackage) => {
+        const protocolInfo = this.protocolManager.getProtocolDescription(modulePackage);
+        const functionInfo = protocolInfo.functionDefinitions.find(funct => funct.functionName === name);
+        return {
+          description: protocolInfo.description,
+          version: protocolInfo.version,
+          entrypoint: protocolInfo.entrypoint,
+          mainFunction:  protocolInfo.className,
+          ... functionInfo,
+        };
+      },
+      // eslint-disable-next-line max-lines-per-function
+      "schemaFunction": (name, modulePackage) => {
+        const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
+        const schemaFunctionInfo = clone(schemaFunctionInfoMap.get(name as keyof typeof SchemasFunctions));
+        resolvableParameters.forEach(param => {
+          Object.keys(schemaFunctionInfo[param]).forEach(key => {
+            if(schemaFunctionInfo[param][key].type === "%entity") {
+              schemaFunctionInfo[param][key].type = `$${modulePackage}`;
+            }
+            if(schemaFunctionInfo[param][key]["subtype"] === "%entity") {
+              schemaFunctionInfo[param][key]["subtype"] = `$${modulePackage}`;
+            }
+          });
         });
-      });
-      const referredSchema = this.systemConfig.schemas.find(schema => schema.name === modulePackage);
-      schemaFunctionInfo.customTypes.push({
-        name: modulePackage,
-        type: referredSchema.format,
-      });
-      return schemaFunctionInfo;
-    },
-    "variable": (name) => {
-      const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
-      const info = clone(VariableContext.variablesInfo.get(name));
-      resolvableParameters.forEach(param => {
-        Object.keys(info[param]).forEach(key => {
-          if(key === "%variableName") {
-            delete info[param][key];
-            this.workingBop.variables.forEach(variable => {
-              info[param][variable.name] = { type: variable.type, required: false };
-            });
-          }
+        const referredSchema = this.systemConfig.schemas.find(schema => schema.name === modulePackage);
+        schemaFunctionInfo.customTypes.push({
+          name: modulePackage,
+          type: referredSchema.format,
         });
-      });
-      return info;
-    },
-    "output": () => undefined,
-  }
+        return schemaFunctionInfo;
+      },
+      "variable": (name) => {
+        const resolvableParameters : Array<keyof InternalMetaFunction> = ["input", "output"];
+        const info = clone(VariableContext.variablesInfo.get(name));
+        resolvableParameters.forEach(param => {
+          Object.keys(info[param]).forEach(key => {
+            if(key === "%variableName") {
+              delete info[param][key];
+              this.workingBop.variables.forEach(variable => {
+                info[param][variable.name] = { type: variable.type, required: false };
+              });
+            }
+          });
+        });
+        return info;
+      },
+      "output": () => undefined,
+    };
 }

@@ -1,6 +1,6 @@
 import { CloudedObject } from "../../common/types/clouded-object.js";
-// import { inspect } from "util";
 
+// TODO: Test
 export class ObjectResolver {
   // eslint-disable-next-line max-lines-per-function
   public static flattenObject (source : Array<object>, partial = {}) : CloudedObject {
@@ -59,14 +59,4 @@ export class ObjectResolver {
     });
     return current;
   }
-
-  // public static validateConfiguredInputs (configuredInputs : BopsInput[], inputs : CloudedObject) : CloudedObject {
-  //   const validatedInputs = {};
-  //   configuredInputs.forEach(configuredInput => {
-  //     if(inputs && typeof inputs[configuredInput.name] === configuredInput.type) {
-  //       validatedInputs[configuredInput.name] = inputs[configuredInput.name];
-  //     }
-  //   });
-  //   return validatedInputs;
-  // }
 }

@@ -7,7 +7,7 @@ import { MappedFunctions, ModuleFullName } from "../modules-manager.js";
 import { decreaseVariableFunctionInformation, decreaseVariablesFunction } from "./functions/decrease-variable.js";
 import { increaseVariableFunctionInformation, increaseVariablesFunction } from "./functions/increase-variable.js";
 import { setVariablesFunction, setVariablesFunctionInformation } from "./functions/set-variable.js";
-import { InternalMetaFunction } from "bops-functions/internal-meta-function.js";
+import { InternalMetaFunction } from "../../../bops-functions/internal-meta-function.js";
 
 type ResolvedVariable = { type : ExtendedJsonTypes | "any", value : unknown };
 export type ResolvedVariables = Record<string, ResolvedVariable>;
@@ -22,7 +22,7 @@ export class VariableContext {
   public static validateSystemVariables (systemConfig : ConfigurationType) : Record<string, BopsVariable[]> {
     const systemVariables : Record<string, BopsVariable[]> = {};
     for(const bop of systemConfig.businessOperations) {
-      systemVariables[bop.name] = VariableContext.validateBopVariables(bop.variables);
+      systemVariables[bop.identifier] = VariableContext.validateBopVariables(bop.variables);
     }
     return systemVariables;
   }
@@ -72,5 +72,5 @@ export class VariableContext {
     ["setVariables", setVariablesFunctionInformation],
     ["increaseVariables", increaseVariableFunctionInformation],
     ["decreaseVaraibles", decreaseVariableFunctionInformation],
-  ])
+  ]);
 }

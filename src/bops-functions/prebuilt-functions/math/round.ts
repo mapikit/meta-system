@@ -21,7 +21,6 @@ export const roundBopsFunction = (input : { input : number; precision : number }
 
 export const roundFunctionInformation : InternalMetaFunction = {
   functionName: "round",
-  version: "1.0.0",
   description: "Rounds Input to a given precision",
   input: {
     input: { type: "number",  required: true  },

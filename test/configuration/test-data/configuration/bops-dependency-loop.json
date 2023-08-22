@@ -1,0 +1,250 @@
+{
+  "name": "car-system-mgmt",
+  "version": "1.0.3",
+  "envs": [
+    {"key": "NODE_ENV", "value": "production"}
+  ],
+  "schemas": [
+    {
+      "name": "client",
+      "identifier": "client",
+      "format": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "birthdate": { "type": "date" }
+      }
+    },
+    {
+      "name": "purchase",
+      "identifier": "purchase",
+      "format": {
+        "id": { "type": "string" },
+        "date": { "type": "date" },
+        "value": { "type": "number" },
+        "productId": { "type": "string" },
+        "clientId": { "type": "string" },
+        "employeeId": { "type": "string" }
+      }
+    },
+    {
+      "name": "employee",
+      "identifier": "employee",
+      "format": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "salary": { "type": "number" }
+      }
+    },
+    {
+      "name": "car",
+      "identifier": "car",
+      "format": {
+        "id": { "type": "string" },
+        "model": { "type": "string" },
+        "brand": { "type": "string" },
+        "price": { "type": "number" },
+        "color": { "type": "string" },
+        "description": { "type": "string" },
+        "sold": { "type": "boolean" }
+      }
+    }
+  ],
+  "businessOperations": [
+    {
+      "identifier": "function-2",
+      "input": {},
+      "output": {},
+      "constants": [],
+      "variables": [],
+      "customObjects": [],
+      "configuration": [
+        {
+          "moduleName": "function-3",
+          "moduleType": "bop",
+          "key": 1,
+          "dependencies":  []
+        }
+      ]
+    },
+    {
+      "identifier": "function-3",
+      "input": {},
+      "output": {},
+      "constants": [],
+      "variables": [],
+      "customObjects": [],
+      "configuration": [
+        {
+          "moduleName": "car-sell",
+          "moduleType": "bop",
+          "key": 1,
+          "dependencies":  []
+        }
+      ]
+    },
+    {
+      "identifier": "car-sell",
+      "input": {
+        "carId": { "type": "string", "required": true },
+        "jsonBody": { "type": "cloudedObject", "required": true }
+      },
+      "output": {
+        "message": { "type": "string", "required": true },
+        "statusCode": { "type": "number", "requried": true }
+      },
+      "constants": [],
+      "variables": [],
+      "configuration": [
+        {
+          "key": 1,
+          "moduleName": "output",
+          "moduleType": "output",
+          "dependencies": [
+            { "origin": 2, "originPath": "result.value", "targetPath": "message" },
+            { "origin": 3, "originPath": "result.value", "targetPath": "statusCode" }
+          ]
+        },
+        {
+          "key": 2,
+          "moduleName": "if",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": "constant", "originPath": "failureMessage", "targetPath": "ifTrue" },
+            { "origin": "constant", "originPath": "successMessage", "targetPath": "ifFalse" },
+            { "origin": 4, "originPath": "result.value", "targetPath": "boolean" }
+          ]
+        },
+        {
+          "key": 3,
+          "moduleName": "if",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": "constant", "originPath": "failureCode", "targetPath": "ifTrue" },
+            { "origin": "constant", "originPath": "successCode", "targetPath": "ifFalse" },
+            { "origin": 4, "originPath": "result.value", "targetPath": "boolean" }
+          ]
+        },
+        {
+          "key": 4,
+          "moduleName": "if",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": "constant", "originPath": "trueValue", "targetPath": "ifTrue" },
+            { "origin": 13, "originPath": "module", "targetPath": "ifFalse" },
+            { "origin": 5, "originPath": "result.value", "targetPath": "boolean" }
+          ]
+        },
+        {
+          "key": 5,
+          "moduleName": "or",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 6, "originPath": "result.value", "targetPath": "comparison[$origin]" },
+            { "origin": 10, "originPath": "result.entity.sold", "targetPath": "comparison[$origin]" }
+          ]
+        },
+        {
+          "key": 6,
+          "moduleName": "or",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 7, "originPath": "result.value", "targetPath": "comparison[$origin]" },
+            { "origin": 8, "originPath": "result.value", "targetPath": "comparison[$origin]" },
+            { "origin": 9, "originPath": "result.value", "targetPath": "comparison[$origin]" }
+          ]
+        },
+        {
+          "key": 7,
+          "moduleName": "not",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 10, "originPath": "result.found", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 8,
+          "moduleName": "not",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 11, "originPath": "result.found", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 9,
+          "moduleName": "not",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 12, "originPath": "result.found", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 10,
+          "moduleName": "getById",
+          "modulePackage": "car",
+          "moduleType": "schemaFunction",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "id" }
+          ]
+        },
+        {
+          "key": 11,
+          "moduleName": "getById",
+          "modulePackage": "client",
+          "moduleType": "schemaFunction",
+          "dependencies": [
+            { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "id" }
+          ]
+        },
+        {
+          "key": 12,
+          "moduleName": "getById",
+          "modulePackage": "employee",
+          "moduleType": "schemaFunction",
+          "dependencies": [
+            { "origin": "input", "originPath": "jsonBody.employee", "targetPath": "id" }
+          ]
+        },
+        {
+          "key": 13,
+          "moduleName": "not",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 14, "originPath": "result.value", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 14,
+          "moduleName": "isNill",
+          "moduleType": "internal",
+          "dependencies": [
+            { "origin": 15, "originPath": "result.updateError", "targetPath": "input" }
+          ]
+        },
+        {
+          "key": 15,
+          "moduleName": "function-2",
+          "moduleType": "bop",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "id" },
+            { "origin": "constants", "originPath": "trueValue", "targetPath": "sold" },
+            { "origin": 16 }
+          ]
+        },
+        {
+          "key": 16,
+          "moduleName": "create",
+          "modulePackage": "purchase",
+          "moduleType": "schemaFunction",
+          "dependencies": [
+            { "origin": "input", "originPath": "carId", "targetPath": "productId" },
+            { "origin": "input", "originPath": "jsonBody.clientId", "targetPath": "clientId" },
+            { "origin": "input", "originPath": "jsonBody.employeeId", "targetPath": "employeeId" }
+          ]
+        }
+      ]
+    }
+  ],
+  "addons": []
+}

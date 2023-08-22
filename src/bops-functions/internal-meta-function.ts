@@ -1,12 +1,11 @@
-import { MetaFunction } from "@meta-system/meta-function-helper";
+import { MetaFunction } from "./meta-function-type.js";
 
-export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction">;
+export type InternalMetaFunction = Omit<MetaFunction, "entrypoint" | "mainFunction" | "version">;
 
 // This section is just to ensure that the interfaces are interchangeable when MetaFunction
 // is correcly fulfilled.
 const metaFunctionType : MetaFunction = {
   functionName: "",
-  version: "1.0.0",
   description: "this is a test meta-function",
   output: {
     result: { type: "number", required: false },

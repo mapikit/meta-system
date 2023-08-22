@@ -1,33 +1,33 @@
-import { ProtocolFunctionManagerClass } from "../../bops-functions/function-managers/protocol-function-manager.js";
-import { ExternalFunctionManagerClass } from "../../bops-functions/function-managers/external-function-manager.js";
-import { InternalFunctionManagerClass } from "../../bops-functions/function-managers/internal-function-manager.js";
-import { SchemasFunctions } from "../../schemas/domain/schemas-functions.js";
-import { Schema } from "../schemas/schema.js";
 import { BusinessOperation } from "./business-operation.js";
 import { logger } from "../../common/logger/logger.js";
+import { EntityBroker } from "../../broker/entity-broker.js";
+import type { SchemaType } from "../schemas/schemas-type.js";
+import type { BusinessOperationType } from "./business-operations-type.js";
+import { Addon } from "../addon-type.js";
 
 export interface BopsDependencies {
   fromSchemas : Array<{ functionName : string; schemaName : string; }>;
+  fromAddons : Array<{ addonIdentifier : string; function : string }>
   internal : string[];
   fromConfigurations : string[]; // From inputs/constants
   fromOutputs : string[];
-  external : Array<{ name : string; version : string; package ?: string }>;
-  protocol : Array<{ name : string; version : string; package ?: string }>
   fromBops : string[];
   bopName : string;
 }
 
+// TODO: Test
 /**
  * Command to check if the dependencies for a given configuration are met
  *
  * Dependencies are code or information that resides outside the configuration for
  * the meta-system, be it a runtime attribute or a function described at it.
  */
-export class CheckBopsFunctionsDependencies {
+export class CheckBopsFunctionsDependencies { // Perhaps rename to convey: Validate whole system dependencies (?)
   private schemas : Set<string> = new Set();
   private bops : Set<string> = new Set();
   private businessOperation : BusinessOperation;
   private dependencies : BopsDependencies;
+  private addons : Set<string> = new Set();
 
   public get bopsDependencies () : BopsDependencies {
     return this.dependencies;
@@ -35,22 +35,27 @@ export class CheckBopsFunctionsDependencies {
 
   // eslint-disable-next-line max-lines-per-function, max-params
   public constructor (
-    allSchemas : Schema[],
-    allBusinessOperations : BusinessOperation[],
-    currentBusinessOperation : BusinessOperation,
-    private externalFunctionManager : ExternalFunctionManagerClass,
-    private internalFunctionManager : InternalFunctionManagerClass,
-    private protocolFunctionManager : ProtocolFunctionManagerClass,
+    private readonly systemBroker : EntityBroker,
+    private readonly functionsBroker : EntityBroker,
+    checkingBopIdentifier : string,
   ) {
+    const allSchemas : Array<SchemaType> = this.systemBroker.schemas.getAll();
+    const allBusinessOperations : Array<BusinessOperationType> = this.systemBroker.businessOperations.getAll();
+    const allAddons : Array<Addon> = this.systemBroker.addons.getAll();
+
     allSchemas.forEach((schema) => {
       this.schemas.add(schema.name);
     });
 
     allBusinessOperations.forEach((Bop) => {
-      this.bops.add(Bop.name);
+      this.bops.add(Bop.identifier);
     });
 
-    this.businessOperation = currentBusinessOperation;
+    allAddons.forEach(addon => {
+      this.addons.add(addon.identifier);
+    });
+
+    this.businessOperation = this.systemBroker.businessOperations.getBop(checkingBopIdentifier);
     this.extractDependencies();
   }
 
@@ -59,9 +64,8 @@ export class CheckBopsFunctionsDependencies {
       this.checkConfigurationalDependenciesMet(),
       this.checkInternalFunctionsDependenciesMet(),
       this.checkSchemaFunctionsDependenciesMet(),
-      this.checkExternalRequiredFunctionsMet(),
+      this.checkAddonsFunctionsDependenciesMet(),
       this.checkOutputDependencyMet(),
-      this.checkProtocolDependenciesMet(),
     ];
 
     return !results.includes(false);
@@ -69,25 +73,22 @@ export class CheckBopsFunctionsDependencies {
 
   // eslint-disable-next-line max-lines-per-function
   private extractDependencies () : void {
-    const externalDependencies = [];
     const internalDependencies = [];
     const outputsDependencies = [];
     const schemasDependencies = [];
     const configurationalDependencies = [];
-    const protocolsDependencies = [];
+    const addonsDependencies = [];
     const bopsDependencies = [];
 
     // eslint-disable-next-line max-lines-per-function
     this.businessOperation.configuration.forEach((bopsFunctionConfig) => {
       const type = bopsFunctionConfig.moduleType;
-
       const typesEnum = {
         internal: "internal",
         schema: "schemaFunction",
-        protocol: "protocol",
         bops: "bop",
         outputs: "output",
-        external: "external",
+        addon: "addon",
       };
 
       bopsFunctionConfig.dependencies.forEach((dependency) => {
@@ -113,38 +114,57 @@ export class CheckBopsFunctionsDependencies {
         });
       }
 
+      if (type === typesEnum.addon) {
+        return addonsDependencies.push({
+          addonIdentifier: bopsFunctionConfig.modulePackage,
+          function: bopsFunctionConfig.moduleName,
+        });
+      }
+
       if (type === typesEnum.bops) {
         return bopsDependencies.push(bopsFunctionConfig.moduleName);
       }
 
-      if(type === typesEnum.external) {
-        return externalDependencies.push({
-          name: bopsFunctionConfig.moduleName,
-          version: bopsFunctionConfig.version,
-          package: bopsFunctionConfig.modulePackage,
-        });
-      }
-
-      if (type === typesEnum.protocol) {
-        // The modulePackage - for Protocols - is their identifier, not their name
-        protocolsDependencies.push({
-          name: bopsFunctionConfig.moduleName,
-          version: bopsFunctionConfig.version,
-          package: bopsFunctionConfig.modulePackage,
-        });
-      }
     });
+
 
     this.dependencies = {
       internal: internalDependencies,
-      external: externalDependencies,
       fromOutputs: outputsDependencies,
       fromSchemas: schemasDependencies,
       fromConfigurations: configurationalDependencies,
       fromBops: bopsDependencies,
-      protocol: protocolsDependencies,
-      bopName: this.businessOperation.name,
+      fromAddons: addonsDependencies,
+      bopName: this.businessOperation.identifier,
     };
+
+  }
+
+  // eslint-disable-next-line max-lines-per-function
+  public checkAddonsFunctionsDependenciesMet () : boolean {
+    let result = true;
+
+    for (const addonDependency of this.dependencies.fromAddons) {
+      const requiredAddon = addonDependency.addonIdentifier;
+      const requiredFunction = addonDependency.function;
+
+      result = this.addons.has(requiredAddon);
+      if (!result) {
+        logger.error(`[Dependency Check] Unmet Addon dependency: "${requiredAddon}" - Missing Addon`);
+        return false;
+      }
+
+      result = this.functionsBroker.addonsFunctions.getAddonFunction(requiredAddon, requiredFunction);
+      if (!result) {
+        const available = this.functionsBroker.addonsFunctions.getFromIdentifier(requiredAddon);
+        logger.error(`[Dependency Check] Unmet Addon function dependency: "${requiredFunction}" - Missing Function\n` +
+          `\t Available are: ${available.map(funct => funct.functionName).join(", ")}`,
+        );
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -208,7 +228,7 @@ export class CheckBopsFunctionsDependencies {
     let result = true;
 
     for (const internalDependencyName of this.dependencies.internal) {
-      result = this.internalFunctionManager.functionIsInstalled(internalDependencyName);
+      result = this.functionsBroker.internalFunctions.getFunction(internalDependencyName);
 
       if (!result) {
         logger.error(`[Dependency Check] Unmet internal dependency: "${internalDependencyName}"`);
@@ -233,7 +253,7 @@ export class CheckBopsFunctionsDependencies {
         return false;
       }
 
-      result = (requiredFunction in SchemasFunctions);
+      result = this.functionsBroker.schemaFunctions.getFunction(requiredFunction, requiredSchema);
       if (!result) {
         logger.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
         return false;
@@ -256,43 +276,5 @@ export class CheckBopsFunctionsDependencies {
     }
 
     return true;
-  }
-
-  public checkExternalRequiredFunctionsMet () : boolean {
-    let result = true;
-
-    for (const externalDependency of this.dependencies.external) {
-      result = this.externalFunctionManager
-        .functionIsInstalled(externalDependency.name, externalDependency.package);
-
-      if (!result) {
-        logger.error(
-          `[Dependency Check] Unmet external dependency: "${externalDependency.name}@${externalDependency.version}"`,
-        );
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  public checkProtocolDependenciesMet () : boolean {
-    let result = true;
-
-    for (const protocolDependency of this.dependencies.protocol) {
-      result = this.protocolFunctionManager
-        // The package for protocols in BOps **IS** the protocol identifier
-        .get(`${protocolDependency.package}.${protocolDependency.name}`) !== undefined;
-
-      if (!result) {
-        logger.error(
-          // eslint-disable-next-line max-len
-          `[Dependency Check] Unmet protocol dependency: "${protocolDependency.name}@${protocolDependency.version}.${protocolDependency.name}"`,
-        );
-        return false;
-      }
-    }
-
-    return result;
   }
 }

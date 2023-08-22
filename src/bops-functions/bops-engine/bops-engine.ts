@@ -1,12 +1,12 @@
 import constants from "../../common/constants.js";
-import { BusinessOperations, Dependency }
+import { BusinessOperationType, Dependency }
   from "../../configuration/business-operations/business-operations-type.js";
 import { ConfigurationType } from "../../configuration/configuration-type.js";
 import { addTimeout } from "./add-timeout.js";
 import { ModuleManager } from "./modules-manager.js";
 import { ObjectResolver } from "./object-manipulator.js";
 import { VariableContext } from "./variables/variables-context.js";
-import { SystemContext } from "./contexts/system-context.js";
+import { BopSystemContext } from "./contexts/bop-system-context.js";
 import { BopContext } from "./contexts/bop-context.js";
 import { getObjectProperty } from "../../common/helpers/get-object-property.js";
 import { logger } from "../../common/logger/logger.js";
@@ -15,37 +15,41 @@ import { logger } from "../../common/logger/logger.js";
  * This is the engine responsible for stitching all the functions in all the BOps in the system
  */
 export class BopsEngine {
-  private readonly systemContext : SystemContext;
+  private readonly bopSystemContext : BopSystemContext;
 
   constructor (options : {
     ModuleManager : ModuleManager;
     SystemConfig : ConfigurationType;
   }) {
-    this.systemContext = new SystemContext(options);
+    this.bopSystemContext = new BopSystemContext(options);
+  }
+
+  public refreshFunctionMapping () : void {
+    this.bopSystemContext.generateMappedFunctions();
   }
 
   // eslint-disable-next-line max-lines-per-function
-  public stitch (operation : BusinessOperations, msTimeout : number = constants.ENGINE_TTL) : Function {
-    this.systemContext.generateMappedFunctions();
+  public stitch (operation : BusinessOperationType, msTimeout : number = constants.ENGINE_TTL) : Function {
+    this.bopSystemContext.generateMappedFunctions();
     const output = operation.configuration.find(module => module.moduleType === "output");
 
-    logger.debug(`[BOP] Stitching BOP ${operation.name} with ${operation.configuration.length} modules`);
+    logger.debug(`[BOP] Stitching BOP ${operation.identifier} with ${operation.configuration.length} modules`);
 
     // eslint-disable-next-line max-lines-per-function
     const stitched = async (_inputs : Record<string, unknown>) : Promise<unknown> => {
-      const variablesInfo = new VariableContext(this.systemContext.variables[operation.name]);
+      const variablesInfo = new VariableContext(this.bopSystemContext.variables[operation.identifier]);
       const bopContext = new BopContext(
         operation.configuration,
         variablesInfo.variables,
-        this.systemContext.constants[operation.name],
-        variablesInfo.appendVariableFunctions(this.systemContext.mappedFunctions),
+        this.bopSystemContext.constants[operation.identifier],
+        variablesInfo.appendVariableFunctions(this.bopSystemContext.mappedFunctions),
       );
-      logger.debug(`>>>> Start of BOp ${operation.name} >>>>`);
+      logger.debug(`>>>> Start of BOp ${operation.identifier} >>>>`);
       logger.debug("BOp Inputs:", _inputs);
       const res = await this.getInputs(output.dependencies, bopContext, _inputs);
-      logger.debug(`[${operation.name}] End of Execution. Stored Results:\n`, bopContext.resultsCache);
+      logger.debug(`[${operation.identifier}] End of Execution. Stored Results:\n`, bopContext.resultsCache);
       logger.debug("BOp Output:", res);
-      logger.debug(`<<<< End of BOp ${operation.name} <<<<\n\n`);
+      logger.debug(`<<<< End of BOp ${operation.identifier} <<<<\n\n`);
 
       return res;
     };
@@ -122,7 +126,7 @@ export class BopsEngine {
       case "env":
       case "envs":
       case "environment":
-        return { [input.targetPath]: this.systemContext.envs[input.originPath] };
+        return { [input.targetPath]: this.bopSystemContext.envs[input.originPath] };
     }
   }
 

@@ -16,7 +16,6 @@ export const arrayRemoveBopsFunction = (input : { array : unknown[]; index : num
 
 export const arrayRemoveBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayRemove",
-  version: "1.0.0",
   description: "Removes the item at the given index from the array",
   input: {
     array: { type: "array", subtype: "any", required: true },

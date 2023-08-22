@@ -37,4 +37,3 @@ export const defaultStyleFunctions : Styles = (() : Styles => {
   }
   return defaultStyling;
 })();
-

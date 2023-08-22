@@ -1,7 +1,9 @@
+import { EntityBroker } from "../../broker/entity-broker.js";
 import { BopsConfigurationEntry, ModuleType } from
   "../../configuration/business-operations/business-operations-type.js";
 import { ConfigurationType } from "../../configuration/configuration-type.js";
-import { ModuleResolver, ModuleResolverInputs } from "./module-resolver.js";
+import { FunctionNotFoundError } from "./engine-errors/function-not-found.js";
+import { ModuleResolver } from "./module-resolver.js";
 
 export type MappedFunctions<T extends ModuleType = ModuleType> = Map<ModuleFullName<T>, Function>;
 export type ModuleFullName<T extends ModuleType = ModuleType> = `${T}.${string}.${string}` | `${T}.${string}`;
@@ -9,12 +11,19 @@ export type ModuleFullName<T extends ModuleType = ModuleType> = `${T}.${string}.
 export class ModuleManager {
   private moduleResolver : ModuleResolver;
 
-  constructor (options : ModuleResolverInputs) {
-    this.moduleResolver = new ModuleResolver(options);
+  constructor (systemFunctionsBroker : EntityBroker) {
+    this.moduleResolver = new ModuleResolver(systemFunctionsBroker);
   }
 
   private resolveModule (module : BopsConfigurationEntry) : Function {
-    return this.moduleResolver.resolve[module.moduleType](module);
+    const result = this.moduleResolver.resolve[module.moduleType](module);
+    // Bop modules are generated sequentially.
+    // We ensure their generation order at the FunctionSetup.buildBops() function.
+    if (!result && module.moduleType !== "bop") {
+      throw new FunctionNotFoundError(module);
+    }
+
+    return result;
   }
 
   private resolveModules (modules : BopsConfigurationEntry[], existingMap : Map<ModuleFullName, Function>)

@@ -11,7 +11,6 @@ export const stringReplaceFunction = (input : { baseString : string; search : st
 
 export const stringReplaceFunctionInformation : InternalMetaFunction = {
   functionName: "stringReplace",
-  version: "1.0.0",
   description: "Replaces a part of a string",
   input: {
     baseString: { type: "string", required: true },

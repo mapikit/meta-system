@@ -25,7 +25,6 @@ export function setVariablesFunction (input : CloudedObject, variables : Resolve
 
 export const setVariablesFunctionInformation : InternalMetaFunction = {
   functionName: "setVariables",
-  version: "1.0.0",
   description: "Sets the variables in targetPath to the new value",
   input: {
     "%variableName": { type: "any", required: true },

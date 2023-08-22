@@ -1,14 +1,14 @@
-import { BusinessOperations } from "./business-operations/business-operations-type.js";
-import { ProtocolConfigType } from "./protocols/protocols-type.js";
+import { Addon } from "./addon-type.js";
+import { BusinessOperationType } from "./business-operations/business-operations-type.js";
 import { SchemaType } from "./schemas/schemas-type.js";
 
 export interface ConfigurationType {
   name : string;
   version : string;
-  protocols ?: ProtocolConfigType[];
   envs ?: EnvironmentVariable[];
   schemas : SchemaType[];
-  businessOperations : BusinessOperations[];
+  businessOperations : BusinessOperationType[];
+  addons : Addon[];
 }
 
 export interface EnvironmentVariable {

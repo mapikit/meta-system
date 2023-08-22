@@ -1,7 +1,7 @@
-import { BusinessOperations } from "../../../../../src/configuration/business-operations/business-operations-type.js";
+import { BusinessOperationType } from "../../../../../src/configuration/business-operations/business-operations-type.js";
 
-export const packageBop : BusinessOperations = {
-  name: "package-bop",
+export const packageBop : BusinessOperationType = {
+  identifier: "package-bop",
   input: {
     age: { type: "number", required: true },
   },
@@ -44,7 +44,7 @@ export const packageBop : BusinessOperations = {
       ],
     },
     {
-      moduleType: "external",
+      moduleType: "addon",
       modulePackage: "logger-meta-functions",
       moduleName: "warnLog",
       key: 6,
@@ -62,5 +62,4 @@ export const packageBop : BusinessOperations = {
       ],
     },
   ],
-  customObjects: [],
 };

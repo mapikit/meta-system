@@ -13,7 +13,6 @@ export const getObjectValuesBopsFunction = (input : { object : CloudedObject }) 
 
 export const getObjectValuesBopsFunctionInformation : InternalMetaFunction = {
   functionName: "getObjectValues",
-  version: "1.0.0",
   description: "Get a list of the values of the given object",
   input: {
     object: { type: "cloudedObject",  required: true  },

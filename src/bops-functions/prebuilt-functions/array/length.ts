@@ -6,7 +6,6 @@ export const arrayLengthBopsFunction = (input : { array : unknown[] }) : unknown
 
 export const arrayLengthBopsFunctionInformation : InternalMetaFunction = {
   functionName: "arrayLength",
-  version: "1.0.0",
   description: "Gets the length of the list",
   input: {
     array: { type: "array", subtype: "any", required: true },
