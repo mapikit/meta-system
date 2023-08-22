@@ -1,5 +1,5 @@
 # Changelog
-## 0.4.0 - Andromeda
+# 0.4.0 - Andromeda
 ### Addons!
 - External Functions, Protocols, and DB Protocols now unified under `"Addons"`.
 - Addons are easier to create, or to convert an exsiting library to be compatible to use with Meta-System.
@@ -17,6 +17,7 @@
   - Insert new configuration details into the system.
 - Removed manual configuration type checks - Now we're using `ObjectDefinition` internally to check for a valid configuration. This change removed over 500 lines of code, while improving error reporting.
 - Redone the internal boot process to support Addons and their operations
+
 -----
 
 ## 0.3.4
