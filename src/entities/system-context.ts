@@ -107,7 +107,7 @@ export class SystemContext {
     result.push(new EntityAction("get_addon", "getAddon",
       (repo : EntityRepository<Addon>) =>
         (addonIdentifier : string) => repo.getEntity(addonIdentifier)?.data,
-    ), true);
+      true));
 
     result.push(new EntityAction("create_addon", "createAddon",
       (repo : EntityRepository<Addon>) =>
@@ -117,7 +117,7 @@ export class SystemContext {
     result.push(new EntityAction("get_all", "getAll",
       (repo : EntityRepository<Addon>) =>
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
-    ), true);
+      true));
 
     return result;
   }
@@ -130,7 +130,7 @@ export class SystemContext {
     result.push(new EntityAction("get_env", "getEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
         (envKey : string) => repo.getEntity(envKey)?.data,
-    ), true);
+      true));
 
     result.push(new EntityAction("create_env", "createEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
@@ -140,7 +140,7 @@ export class SystemContext {
     result.push(new EntityAction("get_all", "getAll",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
         () => repo.readCollection().map(entity => entity?.data).filter(entity => entity),
-    ), true);
+      true));
 
     return result;
   }

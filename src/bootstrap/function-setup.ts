@@ -41,7 +41,7 @@ export class FunctionSetup {
     await this.configureAddons();
 
     const moduleManager = new ModuleManager(this.functionsContext.systemBroker);
-    const allBopsDependencies : BopsDependencies[] = this.extractAllDependencies();
+    this.extractAllDependencies();
 
     // TODO Redo the function below - "getSystemFunction" from the internal functions.
     // this.replaceGetSystemFunction(moduleManager, this.systemConfiguration);
@@ -67,6 +67,7 @@ export class FunctionSetup {
     await this.bootAddons();
 
     this.functionsContext.systemBroker.done();
+    this.bopsEngine.refreshFunctionMapping();
     logger.success("[Function Setup] Success - Function Setup complete");
   }
 
@@ -100,8 +101,8 @@ export class FunctionSetup {
       try {
         const addonConfigureResult = await addon.main.configure(addonBroker, addonUserConfig);
         this.addonsConfigurationData.set(identifier, addonConfigureResult);
-      } catch {
-        throw Error(`Addon ${identifier} 'configure' function has failed.`);
+      } catch (error) {
+        throw Error(`Addon ${identifier} 'configure' function has failed.\n` + error);
       }
 
       if (!done) {

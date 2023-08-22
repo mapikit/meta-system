@@ -3,7 +3,6 @@ import { DeserializeConfigurationCommand } from "../configuration/de-serialize-c
 import { FunctionSetup } from "../bootstrap/function-setup.js";
 import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
-import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { SystemContext } from "../entities/system-context.js";
 import { FunctionsContext } from "../entities/functions-context.js";
 import { Collector } from "./collector.js";
@@ -13,19 +12,17 @@ export class SystemSetup {
   public systemContext : SystemContext;
   public functionsContext : FunctionsContext;
 
+  constructor (private rawSystemConfig : unknown) {}
+
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {
     // Steps to Refactor -----
     // Get config
     // validate config
     // Create System Context
+    // Check Platform
 
-    logger.operation("[System Setup] System setup starting");
-    logger.operation("[System Setup] Retrieving system configuration");
-    const fileContent = await this.getFileContents();
-
-    logger.success("[System Setup] File found - Validating content");
-    const systemConfig = await this.deserializeConfiguration(fileContent);
+    const systemConfig = await this.deserializeConfiguration(this.rawSystemConfig);
     logger.success("[System Setup] Validation successful");
 
     this.systemContext = new SystemContext(systemConfig);
@@ -90,12 +87,6 @@ export class SystemSetup {
     const deserializer = new DeserializeConfigurationCommand();
     await deserializer.execute(validationContent);
     return deserializer.result;
-  }
-
-  public async getFileContents () : Promise<object> {
-    logger.operation(`[System Setup] Searching system configuration in paths: "${environment.constants.configPath}"`);
-
-    return importJsonAndParse(environment.constants.configPath as string);
   }
 
   private async installAddons (systemConfig : Configuration) : Promise<Map<string, ImportedInfo>> {

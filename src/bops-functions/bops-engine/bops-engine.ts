@@ -24,6 +24,10 @@ export class BopsEngine {
     this.bopSystemContext = new BopSystemContext(options);
   }
 
+  public refreshFunctionMapping () : void {
+    this.bopSystemContext.generateMappedFunctions();
+  }
+
   // eslint-disable-next-line max-lines-per-function
   public stitch (operation : BusinessOperationType, msTimeout : number = constants.ENGINE_TTL) : Function {
     this.bopSystemContext.generateMappedFunctions();

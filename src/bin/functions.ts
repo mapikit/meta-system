@@ -1,13 +1,10 @@
 import chalk from "chalk";
-import { ConfigurationType } from "../index.js";
 import { environment } from "../common/execution-env.js";
 import { getSystemInfo } from "../common/logger/get-system-info.js";
 import { hookConsoleToFile } from "../common/logger/hook-console-to-file.js";
 import { logger } from "../common/logger/logger.js";
-import { PathUtils } from "../configuration/path-alias-utils.js";
 import { runtimeDefaults } from "../configuration/runtime-config/defaults.js";
 import Path from "path";
-import fs from "fs";
 import { run } from "./commands.js";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import ReadLine from "readline";
@@ -34,27 +31,20 @@ export async function main (fileLocation : string) : Promise<void> {
 
   logger.debug(getSystemInfo());
 
-  const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup();
+  logger.operation(`[System Setup] Searching system configuration in path: "${environment.constants.configPath}"`);
 
-  const pathsToWatch = PathUtils.getFinalFilesPaths(await setupProcess.getFileContents() as ConfigurationType);
-  pathsToWatch.push(environment.constants.configPath);
+  const fileContent = await importJsonAndParse(environment.constants.configPath as string);
+  if(!fileContent) throw Error("Config file not found");
+
+  logger.success("[System Setup] File found - Validating content");
+
+  const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup(fileContent);
 
   setupProcess.execute().catch((error : Error) => {
     logger.fatal(error?.message ?? "UNKNOWN ERROR");
     logger.fatal(error?.stack ?? "UNKNOWN ERROR");
+    throw error;
   });
-
-  process.stdin.on("data", (data) => {
-    if(data.toString().includes("rs")) setupProcess.restart();
-  });
-
-  // Disabled - Will be reimplemented in 0.5
-  if (environment.constants.dev) {
-    pathsToWatch.forEach(path => {
-      logger.info("Watching file", path, "for quick restart");
-      fs.watchFile(path as string, () => setupProcess.restart());
-    });
-  }
 };
 
 // eslint-disable-next-line max-lines-per-function
@@ -67,7 +57,16 @@ export async function testBopFunction (configPath : string, bopName : string) : 
     runtimeDefaults.defaultInstallFolder);
   if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
 
-  const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup();
+  logger.operation("[System Setup] System setup starting");
+  logger.operation("[System Setup] Retrieving system configuration");
+  logger.operation(`[System Setup] Searching system configuration in path: "${environment.constants.configPath}"`);
+
+  const fileContent = await importJsonAndParse(environment.constants.configPath as string);
+  if(!fileContent) throw Error("Config file not found");
+
+  logger.success("[System Setup] File found - Validating content");
+
+  const setupProcess = new (await import("../bootstrap/system-setup.js")).SystemSetup(fileContent);
   await setupProcess.execute();
   const functionsManager = setupProcess.functionsContext.systemBroker;
   const functionToTest = functionsManager.bopFunctions.getBopFunction(bopName);
@@ -124,8 +123,8 @@ async function getTestInput (inputInfo : ObjectDefinition) : Promise<object> {
 }
 
 const typeConversion : Record<ExtendedJsonTypes, (value : string) => ExtendedJsonTypeDict> = {
-  boolean: (value) => Boolean(value),
-  string: (value) => String(value),
+  boolean: value => Boolean(value),
+  string: value => String(value),
   number: value => Number(value),
   date: value => new Date(value),
   object: value => JSON.parse(value),
