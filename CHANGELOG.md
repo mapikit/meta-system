@@ -1,5 +1,26 @@
 # Changelog
-# 0.3.4
+# 0.4.0 - Andromeda
+### Addons!
+- External Functions, Protocols, and DB Protocols now unified under `"Addons"`.
+- Addons are easier to create, or to convert an exsiting library to be compatible to use with Meta-System.
+- Addons can now be loaded from a file on your computer
+- Addons can now be loaded from a GitHub/BitBucket/GitLab repo (must be JS though)
+- Addons can be downloaded from a file on the internet
+- Meta-System now checks for the configuration type, so the Addon does not need to.
+- Deprecated support libraries `meta-function-helper` and `meta-protocol-helper`. No more support packages needed to build addons, just build it.
+
+
+### New Internal Architecture
+- The new architecture decouples the data of the system and exposes actions to add/edit that data. This same achitecture enables us to expose a better API so Addons can do more with systems:
+  - Edit and add schemas.
+  - Override, and create BOps calls.
+  - Insert new configuration details into the system.
+- Removed manual configuration type checks - Now we're using `ObjectDefinition` internally to check for a valid configuration. This change removed over 500 lines of code, while improving error reporting.
+- Redone the internal boot process to support Addons and their operations
+
+-----
+
+## 0.3.4
 - Fixed `runtime` folder creation
 - Removed negative keys invalidation
 - Fixed glob patterns on Windows
