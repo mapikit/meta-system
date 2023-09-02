@@ -1,32 +1,92 @@
-import { exec } from "child_process";
-import { Addon } from "../configuration/addon-type.js";
-import { environment } from "../common/execution-env.js";
-import { join, resolve } from "path";
-import { logger } from "../common/logger/logger.js";
-import { Nethere } from "nethere";
+import { environment } from "common/execution-env.js";
+import { logger } from "common/logger/logger.js";
+import { Addon } from "configuration/addon-type.js";
 import { Configuration } from "configuration/configuration.js";
+import { join } from "path";
+import { ImportedInfo, Strategies } from "./strategies.js";
+import { UnpackedFile } from "nethere/dist/types.js";
+import { importJsonAndParse } from "common/helpers/import-json-and-parse.js";
+import { validateMetaFile } from "entities/helpers/validate-meta-file.js";
+import { pathToFileURL } from "url";
+import { MetaFileType } from "common/meta-file-type.js";
+import { Module } from "module";
+
+type CollectorOptions = {
+  runtimeEnv : "node" | "browser";
+}
+
+type MainType = {
+  boot : Function;
+  configure : Function;
+}
+
+type ImportedType = {
+  [identifier : string] : MainType
+}
 
 export class Collector {
   constructor (
-    private addonsConfigs : Addon[],
+    private options : CollectorOptions,
     private systemInfo : Configuration,
     private modulesDirectory : string = "runtime",
   ) {}
 
-
-  public async collectAddons () : Promise<Record<string, string>> {
+  public async collectAddons () : Promise<ImportedType> {
     await this.prepare();
-    const installedPaths : Record<string, string> = {};
-    for (const addonConfig of this.addonsConfigs) {
-      const addonPath = await this.collectAddon(addonConfig);
-      installedPaths[addonConfig.identifier] = addonPath;
+    const imports = {};
+    for (const addonConfig of this.systemInfo.addons) {
+      const collectedInfo = await this.collectAddon(addonConfig);
+      if(typeof collectedInfo === "string") {
+        imports[addonConfig.identifier] = Collector.importFiles(collectedInfo, addonConfig.identifier);
+      } else {
+        imports[addonConfig.identifier] = Collector.importFromMemory(collectedInfo as UnpackedFile[]);
+      }
       logger.success("Addon ", addonConfig.identifier, "collected successfully!");
     }
-    return installedPaths;
+    return imports;
   }
 
+  // eslint-disable-next-line max-lines-per-function
+  private static async importFiles (path : string, identifier : string) : Promise<ImportedInfo> {
+    const metaFile = await importJsonAndParse(path);
+    validateMetaFile(metaFile, identifier);
+    const pathLib = await import("path");
 
-  private async prepare () : Promise<void> { // TODO add CLI for better control of install (IE: Purge)
+    const entrypointPath = pathLib.resolve(pathLib.dirname(path), metaFile.entrypoint);
+    const entrypointPathURL = pathToFileURL(entrypointPath);
+    const imported = await import(entrypointPathURL.href);
+    const main = imported.__esModule ? this.resolveESM(imported) : imported;
+    this.validateMain(main, identifier);
+
+    return { metaFile, main };
+  }
+
+  private static async importFromMemory (data : UnpackedFile[]) : Promise<ImportedInfo> {
+    const main = {} as MainType;
+    const metaFileData = data.find(unpacked => unpacked.header.fileName.endsWith("meta-file.json"));
+    const metaFile = JSON.parse(metaFileData.data.toString("utf-8")) as MetaFileType;
+    const module = new Module(metaFile.entrypoint); // finish this
+
+    return { metaFile, main };
+  }
+
+  private static validateMain (main : unknown, addonName : string) : asserts main is MainType {
+    if(typeof main["boot"] !== "function") {
+      // eslint-disable-next-line max-len
+      logger.error(`[ADDON VALIDATION] - Addon with identifier "${addonName}" is not valid! Missing "boot" function from entrypoint!`);
+      throw Error("Invalid Boot function");
+    };
+
+    if(typeof main["configure"] !== "function") {
+      // eslint-disable-next-line max-len
+      logger.error(`[ADDON VALIDATION] - Addon with identifier "${addonName}" is not valid! Missing "configure" function from entrypoint!`);
+      throw Error("Invalid Configure function");
+    }
+  }
+
+  private async prepare () : Promise<void> {
+    if(this.options.runtimeEnv === "browser") return;
+
     try {
       logger.info("Preparing for download of required addons...");
       const { mkdir } = await import("fs/promises");
@@ -35,7 +95,6 @@ export class Collector {
         { recursive: true },
       );
       await this.resolvePackageFile();
-
     } catch(err) { logger.error(err); }
   }
 
@@ -59,52 +118,28 @@ export class Collector {
     });
   }
 
-  private async collectAddon (addon : Addon) : Promise<string> {
+  private static resolveESM (esModule : { default : object }) : MainType {
+    const moduleDefault = esModule.default;
+    return {
+      boot: moduleDefault["boot"],
+      configure: moduleDefault["configure"],
+    };
+  }
+
+  private async collectAddon (addon : Addon) : Promise<string | UnpackedFile[]> {
     logger.info("Collecting addon ", addon.identifier);
-    switch (addon.collectStrategy) {
-      case "npm":
-        return this.NPMCollectStrategy(addon.source, addon.version);
-      case "file":
-        return this.fileCollectStrategy(addon.source);
-      case "url":
-        return this.urlCollectStrategy(addon.source, addon.identifier);
+
+    switch (`${addon.collectStrategy}@${this.options.runtimeEnv}`) {
+      case "npm@node":
+        return Strategies.NPMCollectStrategy(addon.source, addon.version, this.modulesDirectory);
+      case "file@node":
+        return Strategies.fileCollectStrategy(addon.source);
+      case "url@node":
+        return Strategies.urlCollectStrategy(addon.source, addon.identifier);
+      case "url@browser":
+        return Strategies.browserUrlStrategy(addon.source);
       default:
         throw Error("addon" + addon.identifier + "does not have a valid collected strategy.");
     }
   }
-
-  private async NPMCollectStrategy (moduleName : string, version = "latest") : Promise<string> {
-    const npmInstallDir = join(environment.constants.configDir, this.modulesDirectory);
-    const installationPromise : Promise<void> = new Promise((pResolve, pReject) => {
-      exec(`npm i --save --prefix "${npmInstallDir}" ${moduleName}@${version}`, (err) => {
-        if (err === null) return pResolve();
-        pReject(err);
-      });
-    });
-
-    await installationPromise;
-    return this.getDestinationPath("node_modules", moduleName, "meta-file.json");
-  }
-
-  private async fileCollectStrategy (path : string) : Promise<string> {
-    const { lstatSync, existsSync } = await import("fs");
-    const resolvedPath = resolve(environment.constants.configDir, path);
-    const pathInfo = lstatSync(resolvedPath);
-    if(!existsSync(resolvedPath)) throw Error(`No folder/file found in path \"${resolvedPath}\"`);
-
-    if(pathInfo.isDirectory()) return join(resolvedPath, "meta-file.json");
-    return resolvedPath;
-  }
-
-  private async urlCollectStrategy (url : string, identifier : string) : Promise<string> {
-    const destinationDir = this.getDestinationPath("url_addons", identifier);
-    await Nethere.downloadToDisk(url, destinationDir);
-
-    return join(destinationDir, "meta-file.json");
-  }
-
-  private getDestinationPath (...paths : string[]) : string {
-    return join(environment.constants.configDir, this.modulesDirectory, ...paths);
-  }
-
 }
