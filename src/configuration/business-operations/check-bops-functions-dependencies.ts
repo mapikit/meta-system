@@ -253,7 +253,7 @@ export class CheckBopsFunctionsDependencies { // Perhaps rename to convey: Valid
         return false;
       }
 
-      result = this.functionsBroker.schemaFunctions.getFunction(requiredFunction, requiredSchema);
+      result = this.functionsBroker.schemaFunctions.getSchemaFunction(requiredFunction, requiredSchema);
       if (!result) {
         logger.error(`[Dependency Check] Unmet Schema function dependency: "${requiredFunction}" - Missing Function`);
         return false;

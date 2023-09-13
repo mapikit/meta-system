@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.1
+- Fixed wrong broker operation being called during schemasFunction setup.
+
 # 0.4.0 - Andromeda
 ### Addons!
 - External Functions, Protocols, and DB Protocols now unified under `"Addons"`.
