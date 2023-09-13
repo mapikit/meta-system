@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.2
+- BOps now fail gracefully instead of not reporting any error.
+
 ## 0.4.1
 - Fixed wrong broker operation being called during schemasFunction setup.
 

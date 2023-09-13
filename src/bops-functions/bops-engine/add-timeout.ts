@@ -16,9 +16,6 @@ export function addTimeout (timeoutMs : number, promise : Function) : Function {
     ]).then(promiseResult => {
       clearTimeout(timeoutHandle);
       return promiseResult;
-    }).catch(error => {
-      logger.error(error);
-      return { __execError: error };
     });
   };
 
