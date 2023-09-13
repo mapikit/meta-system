@@ -83,6 +83,7 @@ export class BopsEngine {
     const moduleFunction = currentBopContext.availableFunctions.get(dependencyName);
     if (!moduleFunction) {
       logger.error(`[BopsEngine] FATAL: Failed to get function! "${dependencyName}" Was not found!`);
+      throw Error("Function '"+ dependencyName +"'was not found!");
     }
     if(input.originPath === undefined) {
       const resolvedInputs = await this.getInputs(dependency.dependencies, currentBopContext, _inputs);

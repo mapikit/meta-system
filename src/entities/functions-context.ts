@@ -78,7 +78,7 @@ export class FunctionsContext {
     result.push(new EntityAction("preregister_functions", "preRegisterSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (schemaIdentifier : string, definition : InternalMetaFunction) => {
-          validateDefinition(definition, identifier);
+          validateDefinition(definition, `${identifier} - ${schemaIdentifier}@${definition.functionName}`);
           repo.createEntity(new MetaEntity(identifier,
             { callable: empty, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
         }, false));
@@ -95,7 +95,7 @@ export class FunctionsContext {
     result.push(new EntityAction("set_functions", "setSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (schemaIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
-          validateDefinition(definition, identifier);
+          validateDefinition(definition, `${identifier} - ${schemaIdentifier}@${definition.functionName}`);
           repo.createEntity(new MetaEntity(identifier,
             { callable, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
         }, false));
@@ -168,14 +168,14 @@ export class FunctionsContext {
 
     result.push(new EntityAction("register", "register", (repo : EntityRepository<FunctionEntity>) =>
       (callable : Function, definition : InternalMetaFunction) => {
-        validateDefinition(definition, identifier);
+        validateDefinition(definition, `${identifier} - ${definition.functionName}`);
         return repo.createEntity(new MetaEntity(identifier, {
           callable, identifier: `${identifier}@${definition.functionName}`, ...definition }));
       }, false));
 
     result.push(new EntityAction("preregister", "preregister", (repo : EntityRepository<FunctionEntity>) =>
       (definition : InternalMetaFunction) => {
-        validateDefinition(definition, identifier);
+        validateDefinition(definition, `${identifier} - ${definition.functionName}`);
         return repo.createEntity(new MetaEntity(identifier, {
           callable: empty, identifier: `${identifier}@${definition.functionName}`, ...definition }));
       }, false));
