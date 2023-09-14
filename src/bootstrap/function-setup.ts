@@ -36,6 +36,7 @@ export class FunctionSetup {
     loadInternalFunctions(this.functionsContext.systemBroker);
     this.checkInternalDependencies();
     this.checkBopsInterDependencies();
+    this.checkSchemaFunctionsDependencies();
 
 
     await this.configureAddons();
@@ -144,6 +145,17 @@ export class FunctionSetup {
     });
 
     return result;
+  }
+
+  private checkSchemaFunctionsDependencies () : void {
+    logger.operation("[Function Setup] Checking BOps internal dependencies");
+    this.bopsDependencyCheck.forEach((depCheck) => {
+      const result = depCheck.checkSchemaFunctionsDependenciesMet();
+
+      if (!result) {
+        throw Error(`Unmet schemaFunction dependency found in BOp "${depCheck.bopsDependencies.bopName}"`);
+      }
+    }) ;
   }
 
   private checkInternalDependencies () : void {

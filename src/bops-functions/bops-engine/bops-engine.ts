@@ -46,7 +46,13 @@ export class BopsEngine {
       );
       logger.debug(`>>>> Start of BOp ${operation.identifier} >>>>`);
       logger.debug("BOp Inputs:", _inputs);
-      const res = await this.getInputs(output.dependencies, bopContext, _inputs);
+      let res : object;
+      try {
+        res = await this.getInputs(output.dependencies, bopContext, _inputs);
+      } catch (bopError) {
+        logger.error("[BopsEngine] BOp encountered an error and did not finish.", bopError);
+        throw bopError;
+      }
       logger.debug(`[${operation.identifier}] End of Execution. Stored Results:\n`, bopContext.resultsCache);
       logger.debug("BOp Output:", res);
       logger.debug(`<<<< End of BOp ${operation.identifier} <<<<\n\n`);
@@ -75,6 +81,10 @@ export class BopsEngine {
     const dependency = currentBopContext.config.find(module => module.key === input.origin);
     const dependencyName = ModuleManager.getFullModuleName(dependency);
     const moduleFunction = currentBopContext.availableFunctions.get(dependencyName);
+    if (!moduleFunction) {
+      logger.error(`[BopsEngine] FATAL: Failed to get function! "${dependencyName}" Was not found!`);
+      throw Error("Function '"+ dependencyName +"'was not found!");
+    }
     if(input.originPath === undefined) {
       const resolvedInputs = await this.getInputs(dependency.dependencies, currentBopContext, _inputs);
       logger.debug(`[Functional Dependency] Executing ${dependency.moduleName} @${dependency.key} with input:
