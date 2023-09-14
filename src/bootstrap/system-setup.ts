@@ -41,8 +41,6 @@ export class SystemSetup {
 
     logger.operation("[System Setup] Starting System functions bootstrap sequence");
     await functionSetupCommand.setup();
-
-    process.chdir(environment.constants.installDir);
   }
 
   public async stop () : Promise<void> {
