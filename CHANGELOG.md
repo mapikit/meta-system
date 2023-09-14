@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.3
+- Fixed the `test-bop` CLI command
+
 ## 0.4.2
 - BOps now fail gracefully instead of not reporting any error.
 - Fixed: Meta-System check for missing schema functions

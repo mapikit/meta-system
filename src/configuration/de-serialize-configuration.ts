@@ -12,6 +12,7 @@ import { ValidateBopsPipelineFlowCommand } from "./business-operations/validate-
 const referenceableProperties : Array<keyof Configuration> = [
   "schemas",
   "businessOperations",
+  "addons",
 ];
 
 // TODO: Test
@@ -40,11 +41,14 @@ export class DeserializeConfigurationCommand {
   }
 
   private async replaceReferences (input : unknown) : Promise<void> {
+    const replacedProperties = {};
     for(const property of referenceableProperties) {
       if(typeof input[property] === "string") {
-        input[property] = await PathUtils.getContents(input[property]);
+        replacedProperties[property] = await PathUtils.getContents(input[property]);
       }
     }
+
+    this._result = { ...this._result, ...replacedProperties };
   }
 
   private logErrorsAndAbort (validation : ValidationOutput) : void {
