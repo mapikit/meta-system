@@ -1,15 +1,12 @@
-import { environment } from "common/execution-env.js";
-import { logger } from "common/logger/logger.js";
-import { Addon } from "configuration/addon-type.js";
-import { Configuration } from "configuration/configuration.js";
-import { join } from "path";
-import { ImportedInfo, Strategies } from "./strategies.js";
-import { UnpackedFile } from "nethere/dist/types.js";
-import { importJsonAndParse } from "common/helpers/import-json-and-parse.js";
-import { validateMetaFile } from "entities/helpers/validate-meta-file.js";
-import { pathToFileURL } from "url";
-import { MetaFileType } from "common/meta-file-type.js";
-import { Module } from "module";
+import { environment } from "../common/execution-env.js";
+import { logger } from "../common/logger/logger.js";
+import { Addon } from "../configuration/addon-type.js";
+import { Configuration } from "../configuration/configuration.js";
+import { Strategies } from "./strategies.js";
+import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
+import { validateMetaFile } from "../entities/helpers/validate-meta-file.js";
+import { MetaFileType } from "../common/meta-file-type.js";
+import type { UnpackedFile } from "nethere/dist/types.js";
 
 type CollectorOptions = {
   runtimeEnv : "node" | "browser";
@@ -20,9 +17,12 @@ type MainType = {
   configure : Function;
 }
 
-type ImportedType = {
-  [identifier : string] : MainType
+export type ImportedInfo = {
+  metaFile : MetaFileType;
+  main : MainType
 }
+
+export type ImportedType = Map<string, ImportedInfo>;
 
 export class Collector {
   constructor (
@@ -33,13 +33,13 @@ export class Collector {
 
   public async collectAddons () : Promise<ImportedType> {
     await this.prepare();
-    const imports = {};
+    const imports = new Map<string, ImportedInfo>();
     for (const addonConfig of this.systemInfo.addons) {
       const collectedInfo = await this.collectAddon(addonConfig);
       if(typeof collectedInfo === "string") {
-        imports[addonConfig.identifier] = Collector.importFiles(collectedInfo, addonConfig.identifier);
+        imports.set(addonConfig.identifier, await Collector.importFiles(collectedInfo, addonConfig.identifier));
       } else {
-        imports[addonConfig.identifier] = Collector.importFromMemory(collectedInfo as UnpackedFile[]);
+        imports.set(addonConfig.identifier, await Collector.importFromMemory(collectedInfo as UnpackedFile[]));
       }
       logger.success("Addon ", addonConfig.identifier, "collected successfully!");
     }
@@ -51,6 +51,8 @@ export class Collector {
     const metaFile = await importJsonAndParse(path);
     validateMetaFile(metaFile, identifier);
     const pathLib = await import("path");
+
+    const pathToFileURL = (await import("url")).pathToFileURL;
 
     const entrypointPath = pathLib.resolve(pathLib.dirname(path), metaFile.entrypoint);
     const entrypointPathURL = pathToFileURL(entrypointPath);
@@ -65,7 +67,7 @@ export class Collector {
     const main = {} as MainType;
     const metaFileData = data.find(unpacked => unpacked.header.fileName.endsWith("meta-file.json"));
     const metaFile = JSON.parse(metaFileData.data.toString("utf-8")) as MetaFileType;
-    const module = new Module(metaFile.entrypoint); // finish this
+    // const module = new Module(metaFile.entrypoint); // finish this
 
     return { metaFile, main };
   }
@@ -87,6 +89,8 @@ export class Collector {
   private async prepare () : Promise<void> {
     if(this.options.runtimeEnv === "browser") return;
 
+    const join = (await import("path")).join;
+
     try {
       logger.info("Preparing for download of required addons...");
       const { mkdir } = await import("fs/promises");
@@ -100,6 +104,7 @@ export class Collector {
 
   // eslint-disable-next-line max-lines-per-function
   private async resolvePackageFile () : Promise<void> {
+    const join = (await import("path")).join;
     const path = join(environment.constants.configDir, this.modulesDirectory, "package.json");
     const { readFile, writeFileSync } = await import("fs");
     return new Promise<void>((pResolve) => {

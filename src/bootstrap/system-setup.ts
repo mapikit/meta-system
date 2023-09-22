@@ -1,18 +1,23 @@
 import { Configuration } from "../configuration/configuration.js";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { FunctionSetup } from "../bootstrap/function-setup.js";
-import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
 import { SystemContext } from "../entities/system-context.js";
 import { FunctionsContext } from "../entities/functions-context.js";
-import { Collector } from "./collector.js";
-import { ImportedInfo, Importer } from "./importer.js";
+import { Collector, ImportedType } from "./collector.js";
+import { LogLevelsType } from "common/logger/logger-types.js";
+
+type SetupOptions = {
+  logLevel : LogLevelsType
+}
 
 export class SystemSetup {
   public systemContext : SystemContext;
   public functionsContext : FunctionsContext;
 
-  constructor (private rawSystemConfig : unknown) {}
+  constructor (private rawSystemConfig : unknown, private options ?: SetupOptions) {
+    console.log("constructed system setup");
+  }
 
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {
@@ -21,6 +26,10 @@ export class SystemSetup {
     // validate config
     // Create System Context
     // Check Platform
+
+    if(this.options !== undefined) {
+      if(this.options.logLevel) await logger.initialize(this.options.logLevel);
+    }
 
     const systemConfig = await this.deserializeConfiguration(this.rawSystemConfig);
     logger.success("[System Setup] Validation successful");
@@ -87,10 +96,10 @@ export class SystemSetup {
     return deserializer.result;
   }
 
-  private async installAddons (systemConfig : Configuration) : Promise<Map<string, ImportedInfo>> {
-    const collector = new Collector(systemConfig.addons, systemConfig);
-    const metaFilesPaths = await collector.collectAddons();
-    const imported = await Importer.importAddons(metaFilesPaths);
+  private async installAddons (systemConfig : Configuration) : Promise<ImportedType> {
+    const env = (typeof process === "object") ? "node" : "browser";
+    const collector = new Collector({ runtimeEnv: env }, systemConfig);
+    const imported = await collector.collectAddons();
     return imported;
   }
 }

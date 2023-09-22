@@ -1,4 +1,3 @@
-import { createWriteStream, existsSync, mkdirSync } from "fs";
 import stripAnsi from "strip-ansi";
 
 /**
@@ -7,7 +6,8 @@ import stripAnsi from "strip-ansi";
  *
  * @param dirPath The path containing the log files
  */
-export function hookConsoleToFile (dirPath : string) : void {
+export async function hookConsoleToFile (dirPath : string) : Promise<void> {
+  const { createWriteStream, existsSync, mkdirSync } = await import("fs");
   if(!existsSync(dirPath)) mkdirSync(dirPath);
   const logFileName = `${dirPath}/${new Date().toISOString()}.log`;
   const fileStream = createWriteStream(logFileName);

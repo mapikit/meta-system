@@ -8,10 +8,10 @@ import { logger } from "../common/logger/logger.js";
 import { environment } from "../common/execution-env.js";
 import { BrokerFactory, EntityBroker } from "../broker/entity-broker.js";
 import { FunctionsContext } from "../entities/functions-context.js";
-import { ImportedInfo } from "./importer.js";
 import { SystemContext } from "../entities/system-context.js";
 import { validateObject } from "@meta-system/object-definition";
 import { loadInternalFunctions } from "../bops-functions/internal-functions-loader.js";
+import { ImportedInfo } from "./collector.js";
 
 export class FunctionSetup {
   private bopsEngine : BopsEngine;

@@ -1,7 +1,6 @@
 import clone from "just-clone";
 import { validateObject } from "@meta-system/object-definition";
 import { Configuration } from "./configuration.js";
-import { PathUtils } from "./path-alias-utils.js";
 import { configurationTypeDefinition } from "./configuration-definition.js";
 import { ValidationOutput } from "@meta-system/object-definition/dist/functions/validate-object.js";
 import { logger } from "../common/logger/logger.js";
@@ -40,15 +39,16 @@ export class DeserializeConfigurationCommand {
     this._result = new Configuration(this._result);
   }
 
+  // TODO do this only for CLI
   private async replaceReferences (input : unknown) : Promise<void> {
-    const replacedProperties = {};
-    for(const property of referenceableProperties) {
-      if(typeof input[property] === "string") {
-        replacedProperties[property] = await PathUtils.getContents(input[property]);
-      }
-    }
+    // const replacedProperties = {};
+    // for(const property of referenceableProperties) {
+    //   if(typeof input[property] === "string") {
+    //     replacedProperties[property] = await PathUtils.getContents(input[property]);
+    //   }
+    // }
 
-    this._result = { ...this._result, ...replacedProperties };
+    // this._result = { ...this._result, ...replacedProperties };
   }
 
   private logErrorsAndAbort (validation : ValidationOutput) : void {

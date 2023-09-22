@@ -1,16 +1,16 @@
-import OS from "os";
-import { execSync } from "child_process";
-
-export function getSystemInfo () : string {
+export async function getSystemInfo () : Promise<string> {
+  const OS = await import("os");
+  const { execSync } = await  import("child_process");
   return `System Information:
     OS: ${OS.release()} ${OS.type()} ${OS.arch()}
     Node Version: ${process.version}
     NPM Version: v${execSync("npm -v").toString().trim()}
     System RAM: ${Math.round((OS.totalmem()/Math.pow(2,10*3)*10))/10} GB
-    CPU: ${parseCPUInfo()}`;
+    CPU: ${await parseCPUInfo()}`;
 }
 
-function parseCPUInfo () : string {
+async function parseCPUInfo () : Promise<string> {
+  const OS = await import("os");
   const cpus = OS.cpus();
   const parsedInfo : { cores : number, model : string }[] = [];
   cpus.forEach(cpu => {
