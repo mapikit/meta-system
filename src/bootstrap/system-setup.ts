@@ -15,9 +15,7 @@ export class SystemSetup {
   public systemContext : SystemContext;
   public functionsContext : FunctionsContext;
 
-  constructor (private rawSystemConfig : unknown, private options ?: SetupOptions) {
-    console.log("constructed system setup");
-  }
+  constructor (private rawSystemConfig : unknown, private options ?: SetupOptions) {}
 
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {

@@ -11,20 +11,19 @@ const defaultColors : Record<LogLevelsType, (str : string) => string> = {
 };
 
 async function getChalkColors () : Promise<void> {
-  await import("chalk")
-    .then(res => {
-      defaultColors.fatal = res.default.red;
-      defaultColors.success = res.default.green;
-      defaultColors.operation = res.default.white;
-      defaultColors.error = res.default.redBright;
-      defaultColors.warn = res.default.yellow;
-      defaultColors.info = res.default.blueBright;
-      defaultColors.debug = res.default.cyanBright;
-    }).catch(console.error);
+  const res = await import("chalk");
+  defaultColors.fatal = res.default.red;
+  defaultColors.success = res.default.green;
+  defaultColors.operation = res.default.white;
+  defaultColors.error = res.default.redBright;
+  defaultColors.warn = res.default.yellow;
+  defaultColors.info = res.default.blueBright;
+  defaultColors.debug = res.default.cyanBright;
 }
 
 
-export const defaultStyleFunctions : Promise<Styles> = (async () : Promise<Styles> => {
+// eslint-disable-next-line max-lines-per-function
+export async function getDefaultStyleFunctions () : Promise<Styles> {
   const defaultStyling : Styles = { default: undefined };
   await getChalkColors();
 
@@ -50,4 +49,4 @@ export const defaultStyleFunctions : Promise<Styles> = (async () : Promise<Style
     };
   }
   return defaultStyling;
-})();
+};

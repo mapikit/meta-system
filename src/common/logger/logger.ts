@@ -1,21 +1,27 @@
 import constants from "../constants.js";
-import { defaultStyleFunctions } from "./default-styler-functions.js";
+import { getDefaultStyleFunctions } from "./default-styler-functions.js";
 import { LogLevelsType, LoggerType, LogLevels, logLevelsArray, Styles, StylingFunction } from "./logger-types.js";
 
 export class LoggerClass {
   constructor () {
-    this.initialize(constants.DEFAULT_LOG_LEVEL)
-      .catch(console.error);
+    this.initializeDefault(constants.DEFAULT_LOG_LEVEL);
+  }
+
+  private initializeDefault (logLevel : LogLevelsType) : void {
+    for(const level of logLevelsArray) {
+      const inLogRange = LogLevels[logLevel] >= LogLevels[level];
+      if(!inLogRange) this[level] = () : void => undefined;
+    }
   }
 
   public async initialize (logLevel : LogLevelsType, styles ?: Styles) : Promise<this> {
-    const _styles = styles === undefined ? await defaultStyleFunctions : styles;
+    const _styles = styles ?? (await getDefaultStyleFunctions());
+
     for(const level of logLevelsArray) {
       const style : StylingFunction = _styles[level] ?? _styles.default ?? String;
 
       const env = (typeof process === "object") ? "node" : "browser";
-      const writeFunction = env === "browser" ? this[level] : process.stdout.write;
-      // In browser, use default console.log/warn/error
+      const writeFunction = env === "browser" ? this[level] : (log : string) : boolean => process.stdout.write(log);
 
       const inLogRange = LogLevels[logLevel] >= LogLevels[level];
       this[level] = inLogRange ?

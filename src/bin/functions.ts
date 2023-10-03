@@ -10,6 +10,7 @@ import { ExtendedJsonTypes } from "../common/types/json-types.js";
 import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type.js";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
+import { replaceReferences } from "./replace-references.js";
 
 
 // eslint-disable-next-line max-lines-per-function
@@ -34,6 +35,8 @@ export async function main (fileLocation : string) : Promise<void> {
 
   const fileContent = await importJsonAndParse(environment.constants.configPath as string);
   if(!fileContent) throw Error("Config file not found");
+
+  await replaceReferences(fileContent);
 
   logger.success("[System Setup] File found - Validating content");
 
