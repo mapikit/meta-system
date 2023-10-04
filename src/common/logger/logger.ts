@@ -2,7 +2,7 @@ import constants from "../constants.js";
 import { getDefaultStyleFunctions } from "./default-styler-functions.js";
 import { LogLevelsType, LoggerType, LogLevels, logLevelsArray, Styles, StylingFunction } from "./logger-types.js";
 
-export class LoggerClass {
+export class LoggerClass implements LoggerType {
   constructor () {
     this.initializeDefault(constants.DEFAULT_LOG_LEVEL);
   }
@@ -21,7 +21,10 @@ export class LoggerClass {
       const style : StylingFunction = _styles[level] ?? _styles.default ?? String;
 
       const env = (typeof process === "object") ? "node" : "browser";
-      const writeFunction = env === "browser" ? this[level] : (log : string) : boolean => process.stdout.write(log);
+
+      const writeFunction = (env === "browser") ?
+        this.getBrowserLog(level) :
+        ((log : string) : boolean => process.stdout.write(log));
 
       const inLogRange = LogLevels[logLevel] >= LogLevels[level];
       this[level] = inLogRange ?
@@ -32,6 +35,16 @@ export class LoggerClass {
     return this;
   };
 
+
+  private getBrowserLog (level : LogLevelsType) : Function {
+    if(console[level] !== undefined) return console[level];
+    switch (level) {
+      case "fatal": return console.error;
+      case "operation": return console.info;
+      default: return console.log;
+    }
+  }
+
   fatal = console.error;
   success = console.log;
   operation = console.info;
@@ -41,4 +54,4 @@ export class LoggerClass {
   debug = console.debug;
 }
 
-export const logger = new LoggerClass() as unknown as (LoggerType & LoggerClass);
+export const logger = new LoggerClass() as (LoggerType & LoggerClass);
