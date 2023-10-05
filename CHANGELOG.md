@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.4
+- Added browser compatibility *(currently only fully supports internal functions)*
+
 ## 0.4.3
 - Fixed the `test-bop` CLI command
 
