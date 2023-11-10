@@ -2,10 +2,10 @@
 // Other configurations may extend this file with the "extends" parameter. 
 {
   "compilerOptions": {
-    "module": "ES2020",
+    "module": "ES2022",
     "esModuleInterop": true,
-    "target": "ES2020",
-    "lib": ["es6", "ES2017"],
+    "target": "ES2021",
+    "lib": ["es6", "ES2021"],
     "types": ["node", "mocha"],
     "moduleResolution": "node16",
     "resolveJsonModule": true,
