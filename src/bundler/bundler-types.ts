@@ -6,6 +6,13 @@ export type FileImportInfo = {
   defaultImportAlias ?: string,
 }
 
+export type ExportInfo = {
+  fullString : string,
+  value : string,
+  name : string,
+  isDefault : boolean
+}
+
 export type StaticImportInfo = string
 
 export type ImportInfo = {

@@ -1,7 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import { Nethere } from "nethere";
-import { UnpackedFile } from "nethere/dist/types.js";
-import { FileImportInfo, ImportInfo, ImportStatements, StaticImportInfo } from "./bundler-types.js";
+import type { UnpackedFile } from "nethere/dist/types.js";
+import type { ExportInfo, FileImportInfo, ImportInfo, ImportStatements, StaticImportInfo } from "./bundler-types.js";
 
 export class Bundler {
   private filesList : Record<string, string>;
@@ -40,16 +39,24 @@ export class Bundler {
     }
   }
 
-  private grabFileImports (text : string, parentFile : string) : Array<FileImportInfo> {
-    const imports = text.matchAll(/import (?<objects>.+) from \"(?<importFile>.*\/.*)\"/gm);
-    return Array.from(imports).map(match => {
-      const objectImports = match.groups.objects.match(/\{((.)+,?)+\}/)[0];
+  public grabFileImports (text : string, parentFile : string) : Array<FileImportInfo> {
+    const imports = this.grabImportStatements(text);
+    return [
+      ...this.buildImportInfo(imports.CJSImports, parentFile),
+      ...this.buildImportInfo(imports.ESImports.dynamic, parentFile),
+      ...this.buildImportInfo(imports.ESImports.static, parentFile),
+    ];
+  }
+
+  public buildImportInfo (imports : Array<RegExpMatchArray>, parentFile : string) : Array<FileImportInfo> {
+    return imports.map(match => {
+      const objectImports = (match.groups.objects.match(/\{((.)+,?)+\}/) ?? [])[0];
       const defaultImport = match.groups.objects.replace(objectImports, "").match(/\w+/);
       const mapResult = {
         fullString: match[0],
         parentFile,
-        originFile: this.resolveFullPath(parentFile, match.groups.importFile),
-        importedObjects: (objectImports.replace("{", "").replace("}", "")
+        originFile: Bundler.resolveFullPath(parentFile, match.groups.importFile),
+        importedObjects: (objectImports?.replace("{", "").replace("}", "")
           .split(",").map(t => t.trim())),
       };
       if(defaultImport) Object.assign(mapResult, { defaultImportAlias: defaultImport[0] });
@@ -57,20 +64,21 @@ export class Bundler {
     });
   }
 
-  private grabImportStatements (text : string) : ImportStatements {
+  public grabImportStatements (text : string) : ImportStatements {
     const ESImports : ImportStatements["ESImports"] = {
       static: Array.from(text.matchAll(/import (?<objects>.+) from \"(?<importFile>.*\/.*)\"/gm)), //Static imports
       dynamic: Array.from(text.matchAll(/const (?<objects>.+)\s*=\s*(await)?\s*import\(\"(?<importFile>.*\/.*)\"\)/gm)),
     };
 
     const CJSImports = Array.from(text.matchAll(/const (?<objects>.+)\s*=\s*require\(\"(?<importFile>.*\/.*)\"\)/gm));
+
     return {
       ESImports,
       CJSImports,
     };
   }
 
-  private resolveFullPath (parentPath : string, childPath : string) : string {
+  private static resolveFullPath (parentPath : string, childPath : string) : string {
     const dirsPath = Array.from(parentPath.matchAll(/(?<dirs>.+)\/([^\/]+)/gm))[0].groups.dirs;
     const currentFileDirs = dirsPath.split("/");
 
@@ -84,7 +92,7 @@ export class Bundler {
     for(const _import of imports) {
       const importsWithDefault = _import.importedObjects;
       if(_import.defaultImportAlias) {
-        const defaultString = `default: ${_import.defaultImportAlias}`;
+        const defaultString = `__default: ${_import.defaultImportAlias}`;
         importsWithDefault.push(defaultString);
       }
       const leftOperator = `const {${importsWithDefault.join(", ")}}`;
@@ -98,19 +106,64 @@ export class Bundler {
   private transformExports () : void {
     for(const fileName in this.filesList) {
       if(fileName === this.entrypoint) continue;
-      const defaultExport = this.filesList[fileName].match(/export default (?<defAlias>.+)/);
-      const objExports = Array.from(this.filesList[fileName].matchAll(/export \{(?<objs>.+)\}/gm))?.map(r => r);
-      const exportsArray = objExports.map(r => r.groups.objs) ?? [];
-      if(defaultExport) {
-        this.filesList[fileName] = this.filesList[fileName].replace(defaultExport[0], "");
-        exportsArray.push(`default: ${defaultExport.groups.defAlias}`);
+      const exports = this.grabExportsStatements(this.filesList[fileName]);
+      const exportInfo = this.buildExportInfo(exports);
+      const exportsArray = [];
+      for(const info of exportInfo) {
+        if(info.isDefault) exportsArray.push(`__default: ${info.value}`);
+        else if(info.name !== undefined) exportsArray.push(`${info.name}: ${info.value}`);
+        else {
+          const objExports = (info.value as string).match(/\{(?<objs>.+)\}/);
+          exportsArray.push(objExports.groups.objs);
+        }
+        this.filesList[fileName]=this.filesList[fileName].replace(info.fullString, "");
       }
-      const returnStatement = `return {${exportsArray.join(", ")} };\n`;
-      objExports.forEach(exp => {
-        this.filesList[fileName] = this.filesList[fileName].replace(exp[0], "");
-      });
-      this.filesList[fileName] += returnStatement;
+      this.filesList[fileName] += `return { ${exportsArray.join(", ")} };\n`;
     }
+  }
+
+  public grabExportsStatements (text : string) : Array<RegExpMatchArray> {
+    const basicExports  = /\d+|\w+|(\`[\s\S]+?\`)|(\'.+?\')|(\".+?\")/;
+    const containerExports = /((\([\s\S]+?\))|(\{[\s\S]+?\})|(\[[\s\S]*?\]))/;
+    const arrowFunctionExports = /(((\([\s\S]*?\))|.+)\s*=>\s*(\{[\s\S]*?\}))/;
+    const functionExports = /(function\s+.+\s*\([\s\S]*?\)\s*\{[\s\S]*?\})/;
+
+    const fullRegex =
+      [arrowFunctionExports.source,basicExports.source,containerExports.source,functionExports.source].join("|");
+
+    const partialRegex =
+      [basicExports.source, containerExports.source].join("|");
+
+    const esRegex = new RegExp(
+      "(export default (?<defaultValue>" + fullRegex +
+      "))|(export (?<value>" + partialRegex + "))", "g");
+
+    const cjsRegex = new RegExp(
+      "(module\\.exports\\s*=\\s*(?<defaultValue>" + fullRegex +
+      "))|(exports\\.(?<name>\\w+)\\s*=\\s*(?<value>" + fullRegex + "))", "g");
+
+    const exports = [
+      ...(Array.from(text.matchAll(esRegex)) ?? []),
+      ...(Array.from(text.matchAll(cjsRegex)) ?? []),
+    ];
+
+    return [...exports ].filter(expt => expt !== null);
+  }
+
+  public buildExportInfo (exports : Array<RegExpMatchArray>) : Array<ExportInfo> {
+    const result : Array<ExportInfo> = [];
+    for(const exported of exports) {
+      const isDefault = exported.groups.defaultValue != undefined;
+      const newExport : ExportInfo = {
+        fullString: exported[0],
+        value: isDefault ? exported.groups.defaultValue : exported.groups.value,
+        name: exported.groups.name?.trim(),
+        isDefault,
+      };
+      result.push(newExport);
+    }
+
+    return result;
   }
 
   private appendFiles (staticImports : Set<StaticImportInfo>) : string {
@@ -142,15 +195,3 @@ export class Bundler {
     return final;
   }
 }
-
-
-
-const downloadedFiles = await Nethere.downloadToMemory("https://github.com/homemmakako/msys-test-web-import/tree/main",
-  { repo: "github" });
-
-const entrypoint = "msys-test-web-import-main/index.js";
-const bundler = new Bundler(entrypoint, downloadedFiles);
-const str = bundler.bundle();
-
-const hel = await import(`data:text/javascript,${str}`);
-hel.hello("test");
