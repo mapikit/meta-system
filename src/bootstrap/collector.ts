@@ -2,11 +2,12 @@ import { environment } from "../common/execution-env.js";
 import { logger } from "../common/logger/logger.js";
 import { Addon } from "../configuration/addon-type.js";
 import { Configuration } from "../configuration/configuration.js";
-import { Strategies } from "./strategies.js";
+import { Strategies } from "./collect-strategies/strategies.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { validateMetaFile } from "../entities/helpers/validate-meta-file.js";
 import { MetaFileType } from "../common/meta-file-type.js";
 import type { UnpackedFile } from "nethere/dist/types.js";
+import { Bundler } from "../bundler/lite-bundler.js";
 
 type CollectorOptions = {
   runtimeEnv : "node" | "browser";
@@ -63,11 +64,19 @@ export class Collector {
     return { metaFile, main };
   }
 
-  private static async importFromMemory (data : UnpackedFile[]) : Promise<ImportedInfo> {
-    const main = {} as MainType;
+  public static async importFromMemory (data : UnpackedFile[]) : Promise<ImportedInfo> {
     const metaFileData = data.find(unpacked => unpacked.header.fileName.endsWith("meta-file.json"));
     const metaFile = JSON.parse(metaFileData.data.toString("utf-8")) as MetaFileType;
-    // const module = new Module(metaFile.entrypoint); // finish this
+    if(metaFile === undefined) throw Error("File \"meta-file.json\" was not found!!");
+    const entrypointPath = Bundler.resolveFullPath(metaFileData.header.fileName, metaFile.entrypoint);
+    const bundler = new Bundler(entrypointPath, data);
+    const result = await import(`data:text/javascript,${bundler.bundle()}`);
+    const main = {
+      boot: result.boot,
+      configure: result.configure,
+    };
+
+    this.validateMain(main, metaFile.name);
 
     return { metaFile, main };
   }
@@ -131,18 +140,18 @@ export class Collector {
     };
   }
 
-  private async collectAddon (addon : Addon) : Promise<string | UnpackedFile[]> {
+  public async collectAddon (addon : Addon) : Promise<string | UnpackedFile[]> {
     logger.info("Collecting addon ", addon.identifier);
 
     switch (`${addon.collectStrategy}@${this.options.runtimeEnv}`) {
       case "npm@node":
-        return Strategies.NPMCollectStrategy(addon.source, addon.version, this.modulesDirectory);
+        return Strategies.node.NPMStrategy(addon.source, addon.version, this.modulesDirectory);
       case "file@node":
-        return Strategies.fileCollectStrategy(addon.source);
+        return Strategies.node.fileStrategy(addon.source);
       case "url@node":
-        return Strategies.urlCollectStrategy(addon.source, addon.identifier);
+        return Strategies.node.urlStrategy(addon.source, addon.identifier);
       case "url@browser":
-        return Strategies.browserUrlStrategy(addon.source);
+        return Strategies.browser.urlStrategy(addon.source);
       default:
         throw Error("addon" + addon.identifier + "does not have a valid collected strategy.");
     }

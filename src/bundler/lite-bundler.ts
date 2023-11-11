@@ -39,7 +39,7 @@ export class Bundler {
     }
   }
 
-  public grabFileImports (text : string, parentFile : string) : Array<FileImportInfo> {
+  private grabFileImports (text : string, parentFile : string) : Array<FileImportInfo> {
     const imports = this.grabImportStatements(text);
     return [
       ...this.buildImportInfo(imports.CJSImports, parentFile),
@@ -48,7 +48,7 @@ export class Bundler {
     ];
   }
 
-  public buildImportInfo (imports : Array<RegExpMatchArray>, parentFile : string) : Array<FileImportInfo> {
+  private buildImportInfo (imports : Array<RegExpMatchArray>, parentFile : string) : Array<FileImportInfo> {
     return imports.map(match => {
       const objectImports = (match.groups.objects.match(/\{((.)+,?)+\}/) ?? [])[0];
       const defaultImport = match.groups.objects.replace(objectImports, "").match(/\w+/);
@@ -64,7 +64,7 @@ export class Bundler {
     });
   }
 
-  public grabImportStatements (text : string) : ImportStatements {
+  private grabImportStatements (text : string) : ImportStatements {
     const ESImports : ImportStatements["ESImports"] = {
       static: Array.from(text.matchAll(/import (?<objects>.+) from \"(?<importFile>.*\/.*)\"/gm)), //Static imports
       dynamic: Array.from(text.matchAll(/const (?<objects>.+)\s*=\s*(await)?\s*import\(\"(?<importFile>.*\/.*)\"\)/gm)),
@@ -78,7 +78,7 @@ export class Bundler {
     };
   }
 
-  private static resolveFullPath (parentPath : string, childPath : string) : string {
+  public static resolveFullPath (parentPath : string, childPath : string) : string {
     const dirsPath = Array.from(parentPath.matchAll(/(?<dirs>.+)\/([^\/]+)/gm))[0].groups.dirs;
     const currentFileDirs = dirsPath.split("/");
 
@@ -122,7 +122,7 @@ export class Bundler {
     }
   }
 
-  public grabExportsStatements (text : string) : Array<RegExpMatchArray> {
+  private grabExportsStatements (text : string) : Array<RegExpMatchArray> {
     const basicExports  = /\d+|\w+|(\`[\s\S]+?\`)|(\'.+?\')|(\".+?\")/;
     const containerExports = /((\([\s\S]+?\))|(\{[\s\S]+?\})|(\[[\s\S]*?\]))/;
     const arrowFunctionExports = /(((\([\s\S]*?\))|.+)\s*=>\s*(\{[\s\S]*?\}))/;
@@ -150,7 +150,7 @@ export class Bundler {
     return [...exports ].filter(expt => expt !== null);
   }
 
-  public buildExportInfo (exports : Array<RegExpMatchArray>) : Array<ExportInfo> {
+  private buildExportInfo (exports : Array<RegExpMatchArray>) : Array<ExportInfo> {
     const result : Array<ExportInfo> = [];
     for(const exported of exports) {
       const isDefault = exported.groups.defaultValue != undefined;
@@ -173,7 +173,7 @@ export class Bundler {
       appendString += `__modules["${file}"] = (() => {\n${this.filesList[file]}});\n\n`;
     }
     this.filesList[this.entrypoint] = appendString + this.filesList[this.entrypoint];
-    this.cleanup();
+    // this.cleanup();
     return this.filesList[this.entrypoint];
   }
 
