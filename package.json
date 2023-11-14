@@ -34,6 +34,8 @@
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "decimal.js": "^10.4.3",
+    "deep-object-diff": "^1.1.9",
+    "flat": "^6.0.1",
     "glob": "^9.3.2",
     "just-clone": "^6.2.0",
     "mersenne-twister": "^1.1.0",
