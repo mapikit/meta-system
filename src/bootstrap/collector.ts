@@ -64,13 +64,13 @@ export class Collector {
     return { metaFile, main };
   }
 
-  public static async importFromMemory (data : UnpackedFile[]) : Promise<ImportedInfo> {
+  private static async importFromMemory (data : UnpackedFile[]) : Promise<ImportedInfo> {
     const metaFileData = data.find(unpacked => unpacked.header.fileName.endsWith("meta-file.json"));
     const metaFile = JSON.parse(metaFileData.data.toString("utf-8")) as MetaFileType;
     if(metaFile === undefined) throw Error("File \"meta-file.json\" was not found!!");
     const entrypointPath = Bundler.resolveFullPath(metaFileData.header.fileName, metaFile.entrypoint);
     const bundler = new Bundler(entrypointPath, data);
-    const result = await import(`data:text/javascript,${bundler.bundle()}`);
+    const result = await import(`data:text/javascript,${encodeURIComponent(bundler.bundle())}`);
     const main = {
       boot: result.boot,
       configure: result.configure,
@@ -140,6 +140,7 @@ export class Collector {
     };
   }
 
+  // eslint-disable-next-line max-lines-per-function
   public async collectAddon (addon : Addon) : Promise<string | UnpackedFile[]> {
     logger.info("Collecting addon ", addon.identifier);
 
@@ -152,6 +153,8 @@ export class Collector {
         return Strategies.node.urlStrategy(addon.source, addon.identifier);
       case "url@browser":
         return Strategies.browser.urlStrategy(addon.source);
+      case "npm@browser":
+        return Strategies.browser.npmStrategy(addon.source, addon.version);
       default:
         throw Error("addon" + addon.identifier + "does not have a valid collected strategy.");
     }
