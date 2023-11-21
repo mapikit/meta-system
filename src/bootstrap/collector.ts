@@ -35,15 +35,15 @@ export class Collector {
   public async collectAddons () : Promise<ImportedType> {
     await this.prepare();
     const imports = new Map<string, ImportedInfo>();
-    for (const addonConfig of this.systemInfo.addons) {
-      const collectedInfo = await this.collectAddon(addonConfig);
-      if(typeof collectedInfo === "string") {
-        imports.set(addonConfig.identifier, await Collector.importFiles(collectedInfo, addonConfig.identifier));
-      } else {
-        imports.set(addonConfig.identifier, await Collector.importFromMemory(collectedInfo as UnpackedFile[]));
-      }
-      logger.success("Addon ", addonConfig.identifier, "collected successfully!");
-    }
+    logger.info("Collecting all addons in parallel");
+    await Promise.all(this.systemInfo.addons.map(addon =>
+      this.collectAddon(addon).then(async (collected) => {
+        imports.set(addon.identifier, typeof collected === "string" ?
+          await Collector.importFiles(collected, addon.identifier) :
+          await Collector.importFromMemory(collected, addon.identifier));
+        logger.success(`Addon ${addon.identifier} successfully collected imported!`);
+      })),
+    );
     return imports;
   }
 
@@ -64,12 +64,16 @@ export class Collector {
     return { metaFile, main };
   }
 
-  private static async importFromMemory (data : UnpackedFile[]) : Promise<ImportedInfo> {
+  public static async importFromMemory (data : UnpackedFile[], identifier : string) : Promise<ImportedInfo> {
     const metaFileData = data.find(unpacked => unpacked.header.fileName.endsWith("meta-file.json"));
+
     const metaFile = JSON.parse(metaFileData.data.toString("utf-8")) as MetaFileType;
     if(metaFile === undefined) throw Error("File \"meta-file.json\" was not found!!");
+
     const entrypointPath = Bundler.resolveFullPath(metaFileData.header.fileName, metaFile.entrypoint);
-    const bundler = new Bundler(entrypointPath, data);
+    if(data.find(file => file.header.fileName === entrypointPath) === undefined) throw Error("Entrypoint not found!!");
+
+    const bundler = new Bundler(entrypointPath, data, identifier);
     const result = await import(`data:text/javascript,${encodeURIComponent(bundler.bundle())}`);
     const main = {
       boot: result.boot,
@@ -154,7 +158,7 @@ export class Collector {
       case "url@browser":
         return Strategies.browser.urlStrategy(addon.source);
       case "npm@browser":
-        return Strategies.browser.npmStrategy(addon.source, addon.version);
+        return Strategies.browser.npmStrategy(addon.source, addon.version, addon.identifier);
       default:
         throw Error("addon" + addon.identifier + "does not have a valid collected strategy.");
     }

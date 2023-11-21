@@ -1,3 +1,4 @@
+import { logger } from "../../common/logger/logger.js";
 import type { Header, UnpackedFile } from "nethere/dist/types.js";
 
 export class BrowserCollectStrategies {
@@ -9,7 +10,8 @@ export class BrowserCollectStrategies {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  static async npmStrategy (packageName : string, packageVersion = "latest") : Promise<UnpackedFile[]> {
+  static async npmStrategy (packageName : string, packageVersion = "latest", id : string) : Promise<UnpackedFile[]> {
+    logger.debug(`[${id}] Grabbing ${packageName} with version ${packageVersion} from unpkg.com`);
     const baseUrl = await this.getUnPkgRedirect(packageName, packageVersion);
 
     const fileStruct = JSON.parse((await this.getFileFromUnPkg(`${baseUrl}/?meta`)).toString());
@@ -27,7 +29,7 @@ export class BrowserCollectStrategies {
         }).catch(reject);
       })),
     );
-
+    logger.info("Addon", `${packageName}@${packageVersion}`, "Acquired from NPM");
     return unpackedFiles;
   }
 
@@ -54,7 +56,7 @@ export class BrowserCollectStrategies {
   private static async getUnPkgRedirect (packageName : string, packageVersion = "latest") : Promise<string> {
     const { get } = await import("https");
 
-    if(!(packageVersion === "latest" || packageVersion === "")) return `${packageName}@${packageVersion}`;
+    if(!(packageVersion === "latest" || packageVersion === "")) return `/${packageName}@${packageVersion}`;
 
     return new Promise<string>((resolve, reject) => {
       get(`https://unpkg.com/${packageName}`, (request) => {

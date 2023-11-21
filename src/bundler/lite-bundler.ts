@@ -1,14 +1,14 @@
-/* eslint-disable max-lines-per-function */
 import type { UnpackedFile } from "nethere/dist/types.js";
 import type { ExportInfo, FileImportInfo, ImportInfo, ImportStatements, StaticImportInfo } from "./bundler-types.js";
-// import { unpkgData } from "../bootstrap/collect-strategies/temp-data.js";
+import { logger } from "../common/logger/logger.js";
 
 export class Bundler {
-  public filesList : Record<string, string>;
+  private filesList : Record<string, string>;
 
   constructor (
     private entrypoint : string,
     downloadedData : Array<UnpackedFile>,
+    private identifier : string,
   ) { this.filesList = Bundler.assembleList(downloadedData); }
 
   private static assembleList (fileList : UnpackedFile[]) : Record<string, string> {
@@ -103,6 +103,7 @@ export class Bundler {
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private transformExports () : void {
     for(const fileName in this.filesList) {
       if(fileName === this.entrypoint) continue;
@@ -124,6 +125,7 @@ export class Bundler {
     }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private grabExportsStatements (text : string) : Array<RegExpMatchArray> {
     let str = text;
     const regexList = {
@@ -162,7 +164,7 @@ export class Bundler {
     return result;
   }
 
-  public static getNestedInChar (text : string, char : string) : string {
+  private static getNestedInChar (text : string, char : string) : string {
     const correspondingPair = { "{" : "}", "[" : "]", "(" : ")" };
     const firstPost = text.indexOf(char);
     let count = 1, index = firstPost + 1;
@@ -177,8 +179,7 @@ export class Bundler {
   }
 
   private buildExportInfo (exports : Array<RegExpMatchArray>) : Array<ExportInfo> {
-    const result : Array<ExportInfo> = [];
-    for(const exported of exports) {
+    return exports.map(exported => {
       const isDefault = exported.groups.defaultValue != undefined;
       const className = exported.groups["class_name"];
       const functionName = exported.groups["function_name"];
@@ -189,10 +190,8 @@ export class Bundler {
         isDefault,
       };
 
-      result.push(newExport);
-    }
-
-    return result;
+      return newExport;
+    });
   }
 
   private appendFiles (staticImports : Set<StaticImportInfo>) : void {
@@ -205,52 +204,69 @@ export class Bundler {
   }
 
   private cleanup () : void {
-    for(const file in this.filesList) if(file !== this.entrypoint) delete this.filesList[file];
-    this.removeComments();
-    this.filesList[this.entrypoint] = this.filesList[this.entrypoint]
-      .replaceAll(/;\s*\n*;/g, ";").replaceAll("\n;", "") // Remove stranded ";"
-      .replaceAll("\n", "").replaceAll(/\s+/g, " ") // Remove extra empty spaces and linebreaks
-      .replaceAll(/,\s*([\}\]])/g, "$1") // Remove trailing commas
-      .replaceAll(/\}\s+\}/g, "}}"); //Remove spaces between curly
-    // TODO IMPORTANT! All of this cleanup must be string-aware. Currently will mess up strings!
-    // Solution suggestion : Based of removeComments method, create a method that finds comments
-    // limits returns an Array<{start: string, end: string}> and replaces the above only in code (ignore slices)
-    // within any of the returned limits
+    for(const fileName in this.filesList) if(fileName !== this.entrypoint) delete this.filesList[fileName];
+
+    logger.debug(`[${this.identifier}] Original bundle contains ${this.filesList[this.entrypoint].length} characters`);
+    this.replaceOutsideStrings(/\/\/.*?(\n|$)/gm, ""); // Remove single Line comments
+    this.replaceOutsideStrings(/\/\*[\s\S]*\*\//gm, ""); // Remove multi Line comments
+    this.replaceOutsideStrings(/(\s+)/g, " "), // Remove excess spaces and line breaks
+    this.replaceOutsideStrings(/, ?([\]\}\)])/g, "$1"), // Remove Trailing commas
+    this.replaceOutsideStrings(/ ?([;\}\]\)\{\[\(]) ?/g, "$1"), // Remove starting/ending block spaces
+    this.replaceOutsideStrings(/ ?([,=+*-]) ?/g, "$1"), // Remove spaces adjacent to basic operators
+    this.replaceOutsideStrings(/ ?([\:\>\<\?]) ?/g, "$1"), // Remove spaces adjacent to complex operators
+    this.replaceOutsideStrings(/;{2,}/g, ";"), // Remove duplicate semi
+
+    logger.debug(`[${this.identifier}] Final bundle contains ${this.filesList[this.entrypoint].length} characters`);
   }
 
-  public removeComments () : void {
-    let inString = false;
-    let singleComment = false;
-    let multiComment = false;
-    let commentStart = -1;
+  // eslint-disable-next-line max-lines-per-function
+  private replaceOutsideStrings (regex : RegExp, replaceString : string) : void  {
+    const stringLimits = Bundler.grabStringLimits(this.filesList[this.entrypoint]);
+    let matches = Array.from(this.filesList[this.entrypoint].matchAll(regex));
+    matches = matches.filter(match => {
+      return stringLimits.every(limit => (match.index+match[0].length-1 < limit.start || match.index > limit.end));
+    }).sort((matchA, matchB) => matchA.index - matchB.index);
 
-    for (let i = 0; i < this.filesList[this.entrypoint].length; i++) {
-      const char = this.filesList[this.entrypoint].charAt(i);
-      const nextChar = this.filesList[this.entrypoint].charAt(i+1);
-      const str = this.filesList[this.entrypoint];
+    let replaceOffset = 0;
+    matches.forEach((match) => {
+      const replaceInfo = Array.from(replaceString.matchAll(/\$(?<N>\d)/g));
+      const str = replaceInfo.reduce((acc, cur) => acc.replace("$"+cur.groups.N, match[cur.groups.N]), replaceString);
+      this.filesList[this.entrypoint] =
+        this.filesList[this.entrypoint].slice(0, match.index - replaceOffset) + str +
+        this.filesList[this.entrypoint].slice(match.index+match[0].length - replaceOffset);
+      replaceOffset += (match[0].length-str.length);
+    });
+  };
 
-      if (["\"", "\'", "\`"].includes(char)) inString = !inString;
-      else if (!inString) {
-        if (char === "/") {
-          if(nextChar === "/") { singleComment = true; commentStart = i; }
-          else if(nextChar === "*") { multiComment = true; commentStart = i; }
-        } else if (char === "*" && nextChar === "/" && multiComment) {
-          multiComment = false;
-          this.filesList[this.entrypoint] = str.slice(0, commentStart) + str.slice(i+2); //Includes nextChar
-          i = commentStart - 1; // Compensate for removed string
-        } else if (singleComment && (char === "\n" || i === str.length-1)) {
-          singleComment = false;
-          this.filesList[this.entrypoint] = str.slice(0, commentStart) + str.slice(i+1);
-          i = commentStart - 1; // Compensate for removed string
-        }
+  // eslint-disable-next-line max-lines-per-function
+  private static grabStringLimits (text : string) : Array<{start : number, end : number}> {
+    let inStringChar = null;
+    const stringLimits : Array<{start : number, end : number}> = [];
+    const OrderedStringIdentifiers = ["\"", "\'", "\`"];
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const previousChar = text[i-1];
+
+      if (OrderedStringIdentifiers.includes(char)) {
+        if(inStringChar) {
+          if(previousChar === "\\") continue;
+          const currentIdentifierPriority = OrderedStringIdentifiers.indexOf(inStringChar);
+          const charPriority = OrderedStringIdentifiers.indexOf(char);
+          if(charPriority < currentIdentifierPriority) continue;
+          inStringChar = null;
+          stringLimits[stringLimits.length-1].end = i;
+        } else { inStringChar = char; stringLimits.push({ start: i, end: null });}
       }
     }
+    return stringLimits;
   }
 
   public bundle () : string {
     const importList = this.grabImportList(this.entrypoint);
-
+    logger.debug(`Package contains ${Object.keys(this.filesList).length} files`);
     this.stripUnimported(importList.fileImports);
+    logger.debug(`Bundling ${Object.keys(this.filesList).length} files`);
     this.transformExports();
     this.transformImports(importList.fileImports);
     this.appendFiles(importList.staticImports);
