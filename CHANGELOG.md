@@ -1,4 +1,11 @@
 # Changelog
+## 0.4.5
+- Added initial addon support for browser
+  - Addons must be browser compatible, otherwise they will crash
+  - MSys will detect the environment and attempt to import the browser addons:
+    - Through a url pointing to a zip archive with its files
+    - In case it is a npm package, will be imported from UnPkg
+
 ## 0.4.4
 - Added browser compatibility *(currently only fully supports internal functions)*
 

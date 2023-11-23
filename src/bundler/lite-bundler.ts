@@ -66,7 +66,7 @@ export class Bundler {
 
   private grabImportStatements (text : string) : ImportStatements {
     const ESImports : ImportStatements["ESImports"] = {
-      static: Array.from(text.matchAll(/import (?<objects>.+) from \"(?<importFile>.*\/.*)\"/gm)), //Static imports
+      static: Array.from(text.matchAll(/import (?<objects>.+) +from +\"(?<importFile>.*\/.*)\"/gm)),
       dynamic: Array.from(text.matchAll(/const (?<objects>.+)\s*=\s*(await)?\s*import\(\"(?<importFile>.*\/.*)\"\)/gm)),
     };
 
@@ -91,10 +91,8 @@ export class Bundler {
   private transformImports (imports : FileImportInfo[]) : void {
     for(const _import of imports) {
       const importsWithDefault = _import.importedObjects;
-      if(_import.defaultImportAlias) {
-        const defaultString = `__default: ${_import.defaultImportAlias}`;
-        importsWithDefault.push(defaultString);
-      }
+      if(_import.defaultImportAlias) importsWithDefault.push(`__default: ${_import.defaultImportAlias}`);
+
       const leftOperator = `const {${importsWithDefault.join(", ")}}`;
       const modulesFunction = `__modules["${_import.originFile}"]();`;
       const replaceString = `${leftOperator} = ${modulesFunction}`;
@@ -109,7 +107,6 @@ export class Bundler {
       if(fileName === this.entrypoint) continue;
       const exports = this.grabExportsStatements(this.filesList[fileName]);
       const exportInfo = this.buildExportInfo(exports);
-
       const exportsArray = [];
       for(const info of exportInfo) {
         if(info.isDefault) exportsArray.push(`__default: ${info.value}`);
@@ -141,6 +138,14 @@ export class Bundler {
       const esReg = new RegExp("export (?<value>" + regexList[regexName].source + ")", "g");
       const cjsReg = new RegExp("module\\.exports\\s*=\\s*(?<value>" + regexList[regexName].source + ")", "g");
 
+      const defaultMatches = [
+        str.match(new RegExp("export default (?<value>" + regexList[regexName].source + ")")),
+        str.match(new RegExp("exports\\.(?<name>\\w+)\\s*=\\s*(?<value>" + regexList[regexName].source + ")")),
+      ].filter(match => match !== null);
+
+      if(defaultMatches.length > 0) str = str.replace(defaultMatches[0][0], "");
+      exports.push(...defaultMatches);
+
       const matches = Array.from(str.matchAll(esReg)) ?? Array.from(str.matchAll(cjsReg)) ?? [];
 
       if(regexName.toLowerCase().includes("function") && matches.length > 0) {
@@ -152,12 +157,8 @@ export class Bundler {
         });
       }
 
+      matches.forEach(match => { str = str.replace(match[0], ""); });
       exports.push(...matches);
-      if(matches.length > 0) str = str.replace(matches[0][0], "");
-
-      exports.push(str.match(new RegExp("export default (?<value>" + regexList[regexName].source + ")")));
-      exports.push(str.match(new RegExp("exports\\.(?<name>\\w+)\\s*=\\s*(?<value>" +
-        regexList[regexName].source + ")")));
     }
 
     const result = exports.filter(expt => expt !== null);
