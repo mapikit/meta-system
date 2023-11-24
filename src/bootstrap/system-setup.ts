@@ -15,6 +15,7 @@ import { validateObject } from "@meta-system/object-definition";
 import { BopsConfigurationEntry } from "../configuration/business-operations/business-operations-type.js";
 import { environment } from "../common/execution-env.js";
 import { DiffManager } from "../configuration/diff/diff-manager.js";
+import constants from "../common/constants.js";
 
 type SetupOptions = {
   logLevel : LogLevelsType
@@ -34,6 +35,7 @@ export class SystemSetup {
   private bopsEngine : BopsEngine;
   private addonBrokers = new Map<string, EntityBroker>();
   private addonsConfigurationData = new Map<string, unknown>();
+  public systemIdentifier = constants.RUNTIME_ENGINE_IDENTIFIER;
 
   constructor (private rawSystemConfig : unknown, private options ?: SetupOptions) {}
 
