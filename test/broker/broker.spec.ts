@@ -24,7 +24,7 @@ describe("Broker Tests", () => {
     let myVariable = 0;
     const aFunction = (value : number) : void => { myVariable = value; };
     broker.schemaFunctions.setSchemaFunction("mySchema", aFunction,
-      { functionName: "nn" },
+      { functionName: "nn", input: {}, output: {} },
     );
 
     const myFunction = broker.schemaFunctions.getSchemaFunction("nn", "mySchema");

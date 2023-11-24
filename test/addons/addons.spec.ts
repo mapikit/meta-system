@@ -20,7 +20,7 @@ const replaceLogger = async () : Promise<void> => {
   loggerSingleton[0] = loggerMetaEntity;
 };
 
-describe.only("Addons test", () => {
+describe("Addons test", () => {
   let memoryMongo : string;
   before(async () => {
     memoryMongo = await createFakeMongo();

@@ -1,6 +1,6 @@
 import { InternalMetaFunction } from "../../internal-meta-function.js";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isEqualToBopsFunction = async (input : { A : any; B : any }) : Promise<unknown> => {
+export const isEqualToBopsFunction = (input : { A : any; B : any }) : unknown => {
   if(typeof input.A === "object" && typeof input.B === "object") {
     return { isEqual: JSON.stringify(input.A) === JSON.stringify(input.B) };
   }
