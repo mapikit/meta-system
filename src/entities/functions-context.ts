@@ -54,7 +54,7 @@ export class FunctionsContext {
             { callable, identifier: `${definition.functionName}`, ...definition });
 
           repo.createEntity(newEntity);
-          this.diffManager.addManyDiffs(
+          this.diffManager.addManyDiffsFromCheck(
             checkEntityDiff(definition.functionName, identifier, "internalFunctions", {}, newEntity.data),
           );
 
@@ -73,7 +73,7 @@ export class FunctionsContext {
           const newOne = new MetaEntity(identifier,
             { ...oldOne.data, callable });
           repo.updateEntity(newOne);
-          this.diffManager.addManyDiffs(
+          this.diffManager.addManyDiffsFromCheck(
             checkEntityDiff(name, identifier, "internalFunctions", oldOne.data, newOne.data),
           );
         }, false));
@@ -103,7 +103,7 @@ export class FunctionsContext {
           entity.data.callable = callable;
           repo.updateEntity(entity);
 
-          this.diffManager.addManyDiffs(
+          this.diffManager.addManyDiffsFromCheck(
             checkEntityDiff(`${schemaIdentifier}@${functionName}`, identifier,
               "schemaFunctions",
               {},
@@ -121,7 +121,7 @@ export class FunctionsContext {
 
           repo.createEntity(newEntity);
 
-          this.diffManager.addManyDiffs(
+          this.diffManager.addManyDiffsFromCheck(
             checkEntityDiff(`${schemaIdentifier}@${definition.functionName}`,
               identifier, "schemaFunctions", {}, newEntity.data),
           );
@@ -148,7 +148,7 @@ export class FunctionsContext {
         const oldEntity = repo.getEntity(bopIdentifier);
         repo.updateEntity(newEntity);
 
-        this.diffManager.addManyDiffs(
+        this.diffManager.addManyDiffsFromCheck(
           checkEntityDiff(bopIdentifier, identifier, "bopsFunctions", oldEntity.data, newEntity.data),
         );
       }, true));
@@ -158,7 +158,7 @@ export class FunctionsContext {
         const newEntity = new MetaEntity(identifier, { callable, identifier: bopIdentifier, ...definition });
         repo.createEntity(newEntity);
 
-        this.diffManager.addManyDiffs(
+        this.diffManager.addManyDiffsFromCheck(
           checkEntityDiff(bopIdentifier, identifier, "bopsFunctions", {}, newEntity.data),
         );
         return;
@@ -213,7 +213,7 @@ export class FunctionsContext {
 
         repo.createEntity(newEntity);
 
-        this.diffManager.addManyDiffs(
+        this.diffManager.addManyDiffsFromCheck(
           checkEntityDiff(`${identifier}@${definition.functionName}`,
             identifier, "addonsFunctions", {}, newEntity.data),
         );
@@ -233,7 +233,7 @@ export class FunctionsContext {
         entity.data.callable = callable;
         repo.updateEntity(entity);
 
-        this.diffManager.addManyDiffs(
+        this.diffManager.addManyDiffsFromCheck(
           checkEntityDiff(`${identifier}@${functionName}`,
             identifier, "addonsFunctions", {}, entity.data),
         );

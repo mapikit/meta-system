@@ -5,7 +5,7 @@ import { ConfigurationDiff } from "./configuration-diff-type.js";
 // eslint-disable-next-line max-lines-per-function
 export const checkEntityDiff = (
   identifier : string,
-  actor : string,
+  actorIdentifier : string,
   entityType : ConfigurationDiff["target"]["entity"],
   before : Record<string, unknown>,
   after : Record<string, unknown>,
@@ -17,9 +17,11 @@ export const checkEntityDiff = (
   const updatedValues = Object.entries(flatten(computedDiff.updated));
 
   const result = [].concat(
-    addedValues.map((entry) => buildDiff(identifier, actor, entityType, entry[0], "added", entry[1], after)),
-    updatedValues.map((entry) => buildDiff(identifier, actor, entityType, entry[0], "modified", entry[1], after)),
-    removedValues.map((entry) => buildDiff(identifier, actor, entityType, entry[0], "removed", entry[1], after)),
+    addedValues.map((entry) => buildDiff(identifier, actorIdentifier, entityType, entry[0], "added", entry[1], after)),
+    updatedValues.map((entry) => buildDiff(
+      identifier, actorIdentifier, entityType, entry[0], "modified", entry[1], after)),
+    removedValues.map((entry) => buildDiff(
+      identifier, actorIdentifier, entityType, entry[0], "removed", entry[1], after)),
   );
 
   return result;
