@@ -14,6 +14,7 @@ import { BrokerFactory, EntityBroker } from "../broker/entity-broker.js";
 import { validateObject } from "@meta-system/object-definition";
 import { BopsConfigurationEntry } from "../configuration/business-operations/business-operations-type.js";
 import { environment } from "../common/execution-env.js";
+import { DiffManager } from "../configuration/diff/diff-manager.js";
 
 type SetupOptions = {
   logLevel : LogLevelsType
@@ -25,6 +26,7 @@ type SetupOptions = {
 export class SystemSetup {
   public systemContext : SystemContext;
   public functionsContext : FunctionsContext;
+  public diffManager : DiffManager = new DiffManager();
   private systemConfig : Configuration;
   private systemAddons : ImportedType;
   private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
@@ -37,6 +39,26 @@ export class SystemSetup {
 
   // eslint-disable-next-line max-lines-per-function
   public async execute () : Promise<void> {
+    await this.prepare();
+
+    // TODO Reimplement prop validation - later re-release on v0.4.something
+    // if (!process.argv.includes("--skip-prop-validation")) {
+    //   const propValidator = new DependencyPropValidator(
+    //     this.systemConfiguration,
+    //     this.systemBroker,
+    //   );
+    //   propValidator.verifyAll();
+    // }
+
+    await this.bootAddons();
+
+    this.functionsContext.systemBroker.done();
+    this.bopsEngine.refreshFunctionMapping();
+    logger.success("[Function Setup] Success - Function Setup complete");
+  }
+
+  // eslint-disable-next-line max-lines-per-function
+  public async prepare () : Promise<void> {
     if(this.options !== undefined) {
       if(this.options.logLevel) await logger.initialize(this.options.logLevel);
     }
@@ -64,24 +86,9 @@ export class SystemSetup {
     this.createManager();
     this.createBopsEngine();
 
-    logger.operation("[Function Setup] Starting BOps build process");
+    logger.operation("[System Setup] Starting BOps build process");
 
     this.buildBops();
-
-    // TODO Reimplement prop validation - later re-release on v0.4.something
-    // if (!process.argv.includes("--skip-prop-validation")) {
-    //   const propValidator = new DependencyPropValidator(
-    //     this.systemConfiguration,
-    //     this.systemBroker,
-    //   );
-    //   propValidator.verifyAll();
-    // }
-
-    await this.bootAddons();
-
-    this.functionsContext.systemBroker.done();
-    this.bopsEngine.refreshFunctionMapping();
-    logger.success("[Function Setup] Success - Function Setup complete");
   }
 
   public async testBop (bopName : string, stringInput : string) : Promise<void> {
@@ -115,8 +122,8 @@ export class SystemSetup {
   }
 
   private initializeConxtexts () : void {
-    this.systemContext = new SystemContext(this.systemConfig);
-    this.functionsContext = new FunctionsContext();
+    this.systemContext = new SystemContext(this.systemConfig, this.diffManager);
+    this.functionsContext = new FunctionsContext(this.diffManager);
   }
 
   private checkSchemaFunctionsDependencies () : void {
@@ -195,6 +202,7 @@ export class SystemSetup {
       try {
         const addonConfigureResult = await addon.main.configure(addonBroker, addonUserConfig);
         this.addonsConfigurationData.set(identifier, addonConfigureResult);
+        this.diffManager.addCheckpoint(identifier);
       } catch (error) {
         throw Error(`Addon ${identifier} 'configure' function has failed.\n` + error);
       }

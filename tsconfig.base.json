@@ -2,7 +2,7 @@
 // Other configurations may extend this file with the "extends" parameter. 
 {
   "compilerOptions": {
-    "module": "ES2022",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "target": "ES2021",
     "lib": ["es6", "ES2021"],

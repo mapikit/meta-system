@@ -11,21 +11,13 @@ import { ExtendedJsonTypeDict } from "../configuration/business-operations/busin
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 import { replaceReferences } from "./replace-references.js";
+import { environmentStart } from "../common/environment-start.js";
 
 
 // eslint-disable-next-line max-lines-per-function
 export async function main (fileLocation : string) : Promise<void> {
-  Object.assign(environment.silent.constants, run.opts());
-  const Path = await import("path");
+  await environmentStart(fileLocation, true, run);
 
-
-  await logger.initialize(environment.constants.logLevel);
-
-  environment.constants.configPath = Path.resolve(fileLocation);
-  environment.constants.configDir = Path.parse(environment.constants.configPath).dir;
-  environment.constants.installDir = Path.resolve(
-    environment.constants.configDir,
-    runtimeDefaults.defaultInstallFolder);
   if(environment.constants.configPath === undefined) throw "Config file not found";
   if(environment.constants.saveLog) await hookConsoleToFile(`${environment.constants.configDir}/logs`);
 

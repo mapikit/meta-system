@@ -7,6 +7,7 @@ import { BrokerFactory, EntityBroker, EntityPermissions } from "../broker/entity
 import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";
 import { EntityAction } from "./entity-action.js";
+import { DiffManager } from "configuration/diff/diff-manager.js";
 
 export type EnvironmentVariableEntity = EntityValue & EnvironmentVariable;
 
@@ -20,7 +21,7 @@ export class SystemContext {
   public readonly systemBroker : EntityBroker;
 
   // eslint-disable-next-line max-lines-per-function
-  public constructor (systemConfig : ConfigurationType) {
+  public constructor (systemConfig : ConfigurationType, private diffManager : DiffManager) {
     this.systemConfig = systemConfig;
 
     this.businessOperations = systemConfig.businessOperations

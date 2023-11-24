@@ -17,9 +17,9 @@ export const checkEntityDiff = (
   const updatedValues = Object.entries(flatten(computedDiff.updated));
 
   const result = [].concat(
-    addedValues.forEach((entry) => buildDiff(identifier, actor, entityType, entry[0], "added", entry[1])),
-    removedValues.forEach((entry) => buildDiff(identifier, actor, entityType, entry[0], "removed", entry[1])),
-    updatedValues.forEach((entry) => buildDiff(identifier, actor, entityType, entry[0], "modified", entry[1])),
+    addedValues.map((entry) => buildDiff(identifier, actor, entityType, entry[0], "added", entry[1], after)),
+    updatedValues.map((entry) => buildDiff(identifier, actor, entityType, entry[0], "modified", entry[1], after)),
+    removedValues.map((entry) => buildDiff(identifier, actor, entityType, entry[0], "removed", entry[1], after)),
   );
 
   return result;
@@ -33,17 +33,18 @@ const buildDiff = (
   path : string,
   action : ConfigurationDiff["action"],
   value : unknown,
+  entityValue : unknown,
 // eslint-disable-next-line max-params
-) : ConfigurationDiff => {
-  return ({
-    action,
-    actor,
-    target: {
-      entity: type,
-      path,
-      identifier,
-    },
-    finalValue: value,
-  });
-};
+) : ConfigurationDiff => ({
+  action,
+  actor,
+  target: {
+    entity: type,
+    path,
+    identifier,
+  },
+  newEntityState: entityValue,
+  newValue: value,
+});
+
 

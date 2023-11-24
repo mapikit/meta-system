@@ -1,4 +1,4 @@
-import { sleep } from "./sleep";
+import { sleep } from "./sleep.js";
 
 // eslint-disable-next-line max-lines-per-function
 export const retry = async (exec : Function, limit : number) : Promise<void> => {

@@ -5,6 +5,8 @@ import { EntityRepository } from "./repository.js";
 import { InternalMetaFunction } from "../bops-functions/internal-meta-function.js";
 import { EntityAction } from "./entity-action.js";
 import { validateDefinition } from "./helpers/validate-definition.js";
+import { DiffManager } from "../configuration/diff/diff-manager.js";
+import { checkEntityDiff } from "../configuration/diff/check-entity-diff.js";
 
 export type FunctionEntity = EntityValue & InternalMetaFunction & {
   callable : Function;
@@ -19,28 +21,28 @@ export class FunctionsContext {
   public readonly systemBroker : EntityBroker;
 
   // eslint-disable-next-line max-lines-per-function
-  public constructor () {
+  public constructor (private diffManager : DiffManager) {
     const factory = new BrokerFactory();
     this.systemBroker = factory
-      .configEntity("schemaFunctions", FunctionsContext.getSchemaFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("schemaFunctions", this.getSchemaFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.schemaFunctions))
       .useEntity({ entity: "schemaFunctions", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
-      .configEntity("bopFunctions", FunctionsContext.getBopsFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("bopFunctions", this.getBopsFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.bopsFunctions))
       .useEntity({ entity: "bopFunctions", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
-      .configEntity("addonsFunctions", FunctionsContext.getAddonsFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("addonsFunctions", this.getAddonsFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.addonsFunctions))
       .useEntity({ entity: "addonsFunctions", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
       .configEntity(
         "internalFunctions",
-        FunctionsContext.getInternalFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+        this.getInternalFunctionsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.internalFunctions))
       .useEntity({ entity: "internalFunctions", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
       .build();
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getInternalFunctionsActions (identifier : string)
+  private getInternalFunctionsActions (identifier : string)
     : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
 
@@ -48,8 +50,14 @@ export class FunctionsContext {
       (repo : EntityRepository<FunctionEntity>) =>
         (callable : Function, definition : InternalMetaFunction) => {
           validateDefinition(definition, definition.functionName);
-          repo.createEntity(new MetaEntity(identifier,
-            { callable, identifier: `${definition.functionName}`, ...definition }));
+          const newEntity = new MetaEntity(identifier,
+            { callable, identifier: `${definition.functionName}`, ...definition });
+
+          repo.createEntity(newEntity);
+          this.diffManager.addManyDiffs(
+            checkEntityDiff(definition.functionName, identifier, "internalFunctions", {}, newEntity.data),
+          );
+
         }, false));
 
     result.push(new EntityAction("get_functions", "getFunction", (repo : EntityRepository<FunctionEntity>) =>
@@ -62,15 +70,19 @@ export class FunctionsContext {
         (name : string, callable : Function) => {
           const oldOne = repo.getEntity(name);
           if(!oldOne) return;
-          repo.updateEntity(new MetaEntity(identifier,
-            { ...oldOne.data, callable }));
+          const newOne = new MetaEntity(identifier,
+            { ...oldOne.data, callable });
+          repo.updateEntity(newOne);
+          this.diffManager.addManyDiffs(
+            checkEntityDiff(name, identifier, "internalFunctions", oldOne.data, newOne.data),
+          );
         }, false));
 
     return result;
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getSchemaFunctionsActions (identifier : string)
+  private getSchemaFunctionsActions (identifier : string)
     : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
     const empty = () : void => { void 0; };
@@ -90,14 +102,30 @@ export class FunctionsContext {
           if(!entity) return;
           entity.data.callable = callable;
           repo.updateEntity(entity);
+
+          this.diffManager.addManyDiffs(
+            checkEntityDiff(`${schemaIdentifier}@${functionName}`, identifier,
+              "schemaFunctions",
+              {},
+              entity.data,
+            ),
+          );
         }, true));
 
     result.push(new EntityAction("set_functions", "setSchemaFunction",
       (repo : EntityRepository<FunctionEntity>) =>
         (schemaIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
           validateDefinition(definition, `${identifier} - ${schemaIdentifier}@${definition.functionName}`);
-          repo.createEntity(new MetaEntity(identifier,
-            { callable, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition }));
+          const newEntity = new MetaEntity(identifier,
+            { callable, identifier: `${schemaIdentifier}@${definition.functionName}`, ...definition });
+
+          repo.createEntity(newEntity);
+
+          this.diffManager.addManyDiffs(
+            checkEntityDiff(`${schemaIdentifier}@${definition.functionName}`,
+              identifier, "schemaFunctions", {}, newEntity.data),
+          );
+
         }, false));
 
     result.push(new EntityAction("get_functions", "getSchemaFunction", (repo : EntityRepository<FunctionEntity>) =>
@@ -109,19 +137,30 @@ export class FunctionsContext {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getBopsFunctionsActions (identifier : string)
+  private getBopsFunctionsActions (identifier : string)
     : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
 
     result.push(new EntityAction("override_call", "overrideBopCall", (repo : EntityRepository<FunctionEntity>) =>
       (bopIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
         validateDefinition(definition, identifier);
-        repo.updateEntity(new MetaEntity(identifier,{ callable, identifier: bopIdentifier, ...definition }));
+        const newEntity = new MetaEntity(identifier,{ callable, identifier: bopIdentifier, ...definition });
+        const oldEntity = repo.getEntity(bopIdentifier);
+        repo.updateEntity(newEntity);
+
+        this.diffManager.addManyDiffs(
+          checkEntityDiff(bopIdentifier, identifier, "bopsFunctions", oldEntity.data, newEntity.data),
+        );
       }, true));
 
     result.push(new EntityAction("add_function", "addBopCall", (repo : EntityRepository<FunctionEntity>) =>
       (bopIdentifier : string, callable : Function, definition : InternalMetaFunction) => {
-        repo.createEntity(new MetaEntity(identifier, { callable, identifier: bopIdentifier, ...definition }));
+        const newEntity = new MetaEntity(identifier, { callable, identifier: bopIdentifier, ...definition });
+        repo.createEntity(newEntity);
+
+        this.diffManager.addManyDiffs(
+          checkEntityDiff(bopIdentifier, identifier, "bopsFunctions", {}, newEntity.data),
+        );
         return;
       }, true));
 
@@ -139,7 +178,7 @@ export class FunctionsContext {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getAddonsFunctionsActions (identifier : string)
+  private getAddonsFunctionsActions (identifier : string)
     : EntityAction<FunctionEntity, EntityRepository<FunctionEntity>>[] {
     const result = [];
     const empty = () : void => { void 0; };
@@ -169,8 +208,15 @@ export class FunctionsContext {
     result.push(new EntityAction("register", "register", (repo : EntityRepository<FunctionEntity>) =>
       (callable : Function, definition : InternalMetaFunction) => {
         validateDefinition(definition, `${identifier} - ${definition.functionName}`);
-        return repo.createEntity(new MetaEntity(identifier, {
-          callable, identifier: `${identifier}@${definition.functionName}`, ...definition }));
+        const newEntity = new MetaEntity(identifier, {
+          callable, identifier: `${identifier}@${definition.functionName}`, ...definition });
+
+        repo.createEntity(newEntity);
+
+        this.diffManager.addManyDiffs(
+          checkEntityDiff(`${identifier}@${definition.functionName}`,
+            identifier, "addonsFunctions", {}, newEntity.data),
+        );
       }, false));
 
     result.push(new EntityAction("preregister", "preregister", (repo : EntityRepository<FunctionEntity>) =>
@@ -186,6 +232,12 @@ export class FunctionsContext {
         if(!entity) return;
         entity.data.callable = callable;
         repo.updateEntity(entity);
+
+        this.diffManager.addManyDiffs(
+          checkEntityDiff(`${identifier}@${functionName}`,
+            identifier, "addonsFunctions", {}, entity.data),
+        );
+
       }, true));
 
     return result;
@@ -193,11 +245,11 @@ export class FunctionsContext {
 
   public createBroker (accesses : EntityPermissions[], identifier : string) : EntityBroker {
     const factory = new BrokerFactory()
-      .configEntity("schemaFunctions", FunctionsContext.getSchemaFunctionsActions(identifier),
+      .configEntity("schemaFunctions", this.getSchemaFunctionsActions(identifier),
         new EntityRepository(this.schemaFunctions))
-      .configEntity("bopFunctions", FunctionsContext.getBopsFunctionsActions(identifier),
+      .configEntity("bopFunctions", this.getBopsFunctionsActions(identifier),
         new EntityRepository(this.bopsFunctions))
-      .configEntity("addonsFunctions", FunctionsContext.getAddonsFunctionsActions(identifier),
+      .configEntity("addonsFunctions", this.getAddonsFunctionsActions(identifier),
         new EntityRepository(this.addonsFunctions));
 
     accesses.forEach((access) => {

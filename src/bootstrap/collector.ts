@@ -28,7 +28,7 @@ export type ImportedType = Map<string, ImportedInfo>;
 export class Collector {
   constructor (
     private options : CollectorOptions,
-    private systemInfo : Configuration,
+    private systemInfo : Pick<Configuration, "addons" | "name" | "version">,
     private modulesDirectory : string = "runtime",
   ) {}
 
