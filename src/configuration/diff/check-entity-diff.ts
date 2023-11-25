@@ -6,7 +6,7 @@ import { ConfigurationDiff } from "./configuration-diff-type.js";
 export const checkEntityDiff = (
   identifier : string,
   actorIdentifier : string,
-  entityType : ConfigurationDiff["target"]["entity"],
+  entityType : ConfigurationDiff["targetEntityType"],
   before : Record<string, unknown>,
   after : Record<string, unknown>,
 // eslint-disable-next-line max-params
@@ -31,7 +31,7 @@ export const checkEntityDiff = (
 const buildDiff = (
   identifier : string,
   actor : string,
-  type : ConfigurationDiff["target"]["entity"],
+  type : ConfigurationDiff["targetEntityType"],
   path : string,
   action : ConfigurationDiff["action"],
   value : unknown,
@@ -39,14 +39,12 @@ const buildDiff = (
 // eslint-disable-next-line max-params
 ) : ConfigurationDiff => ({
   action,
-  actor,
-  target: {
-    entity: type,
-    path,
-    identifier,
-  },
+  actorIdentifier: actor,
+  targetEntityIdentifier: identifier,
+  targetEntityType: type,
+  targetPath: path,
   newEntityState: entityValue,
-  newValue: value,
+  targetPathNewValue: value,
 });
 
 

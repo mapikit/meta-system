@@ -22,32 +22,32 @@ describe("Configuration Diff Tests", () => {
 
     const modifiedFieldDiff = {
       action: "modified",
-      actor: "test",
-      target: {
-        entity: "schema", path: "modified", identifier,
-      },
+      actorIdentifier: "test",
+      targetEntityIdentifier: identifier,
+      targetEntityType: "schema",
+      targetPath: "modified",
       newEntityState: objectAfter,
-      newValue: "yes",
+      targetPathNewValue: "yes",
     };
 
     const removedFieldDiff = {
       action: "removed",
-      actor: "test",
-      target: {
-        entity: "schema", path: "removed", identifier,
-      },
+      actorIdentifier: "test",
+      targetEntityIdentifier: identifier,
+      targetEntityType: "schema",
+      targetPath: "removed",
       newEntityState: objectAfter,
-      newValue: undefined,
+      targetPathNewValue: undefined,
     };
 
     const addedFieldDiff = {
       action: "added",
-      actor: "test",
-      target: {
-        entity: "schema", path: "added", identifier,
-      },
+      actorIdentifier: "test",
+      targetEntityIdentifier: identifier,
+      targetEntityType: "schema",
+      targetPath: "added",
       newEntityState: objectAfter,
-      newValue: 2992,
+      targetPathNewValue: 2992,
     };
 
     expect(diff).to.deep.include(modifiedFieldDiff);
@@ -116,7 +116,5 @@ describe("Configuration Diff Tests", () => {
     const configurationExample = await importJsonAndParse("./test/configuration/test-data/configuration-example.json");
     const systemSetup = new SystemSetup(configurationExample, { logLevel: "debug" });
     await systemSetup.prepare();
-
-    console.log(systemSetup.diffManager.diffs);
   });
 });

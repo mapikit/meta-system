@@ -1,13 +1,11 @@
 export type ConfigurationDiff = {
   action : "added" | "modified" | "removed";
-  actor : string;
-  target : {
-    entity : "schema" | "schemaFunctions" | "internalFunctions" | "businessOperations" | "bopsFunctions"
-    | "envs" | "addonsFunctions";
-    identifier : string;
-    path : string; // A path using dot.notation for where the change happened
-  }
+  actorIdentifier : string;
+  targetEntityType : "schema" | "schemaFunctions" | "internalFunctions" | "businessOperations" | "bopsFunctions"
+  | "envs" | "addonsFunctions";
+  targetEntityIdentifier :  string;
+  targetPath : string;
   newEntityState : unknown;
-  newValue : unknown;
+  targetPathNewValue : unknown;
 }
 
