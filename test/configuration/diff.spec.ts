@@ -6,7 +6,7 @@ import { SystemSetup } from "../../src/bootstrap/system-setup.js";
 import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 import { environmentStart } from "../../src/common/environment-start.js";
 
-describe("Configuration Diff Tests", () => {
+describe.only("Configuration Diff Tests", () => {
   it("Diff checker gets all diffs", () => {
     const objectBefore = { removed: "rrr", modified: { value: false } };
     const objectAfter = { added: 2992, modified: "yes" };
@@ -72,7 +72,7 @@ describe("Configuration Diff Tests", () => {
 
     manager.addManyDiffsFromCheck(diffs);
 
-    expect(diffs).to.be.deep.equal(manager.diffs);
+    expect(diffs.map(manager.toDiffWithHash)).to.be.deep.equal(manager.diffs);
   });
 
   it("Diff Manager checkpoints differences", () => {
@@ -104,10 +104,11 @@ describe("Configuration Diff Tests", () => {
     manager.addManyDiffsFromCheck(secondDiffs);
     manager.addCheckpoint(secondActorIdentifier);
 
-    expect([].concat(firstDiffs,secondDiffs)).to.be.deep.equal(manager.diffs);
+    expect([].concat(firstDiffs,secondDiffs).map(manager.toDiffWithHash)).to.be.deep.equal(manager.diffs);
     expect(manager.checkpoints.has(firstActorIdentifier)).to.be.true;
     expect(manager.checkpoints.has(secondActorIdentifier)).to.be.true;
-    expect(manager.getDiffsUpToCheckpoint(firstActorIdentifier)).to.be.deep.equal(firstDiffs);
+    expect(manager.getDiffsUpToCheckpoint(firstActorIdentifier)).to.be.deep
+      .equal(firstDiffs.map(manager.toDiffWithHash));
   });
 
   it("Adds diffs During Setup", async () => {
@@ -116,5 +117,7 @@ describe("Configuration Diff Tests", () => {
     const configurationExample = await importJsonAndParse("./test/configuration/test-data/configuration-example.json");
     const systemSetup = new SystemSetup(configurationExample, { logLevel: "debug" });
     await systemSetup.prepare();
+
+    expect(systemSetup.diffManager.diffs.length).to.be.greaterThan(0);
   });
 });
