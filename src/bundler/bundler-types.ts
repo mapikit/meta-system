@@ -2,7 +2,10 @@ export type FileImportInfo = {
   fullString : string,
   originFile : string,
   parentFile : string,
-  importedObjects : Array<string>,
+  importedObjects : Array<{
+    value : string,
+    alias ?: string
+  }>,
   defaultImportAlias ?: string,
 }
 

@@ -48,25 +48,28 @@ export class Bundler {
     ];
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private buildImportInfo (imports : Array<RegExpMatchArray>, parentFile : string) : Array<FileImportInfo> {
     return imports.map(match => {
       const objectImports = (match.groups.objects.match(/\{((.)+,?)+\}/) ?? [])[0];
       const defaultImport = match.groups.objects.replace(objectImports, "").match(/\w+/);
-      const mapResult = {
+      const objects = objectImports?.replaceAll(/\{|\}/g, "").split(",").map(t => t.trim());
+      return {
         fullString: match[0],
         parentFile,
         originFile: Bundler.resolveFullPath(parentFile, match.groups.importFile),
-        importedObjects: (objectImports?.replace("{", "").replace("}", "")
-          .split(",").map(t => t.trim())),
+        importedObjects: objects?.map(obj => {
+          const [value, alias] = obj.split(" as ");
+          return { value: value.trim(), alias: alias?.trim() };
+        }),
+        defaultImportAlias: defaultImport ? defaultImport[0] : undefined,
       };
-      if(defaultImport) Object.assign(mapResult, { defaultImportAlias: defaultImport[0] });
-      return mapResult;
     });
   }
 
   private grabImportStatements (text : string) : ImportStatements {
     const ESImports : ImportStatements["ESImports"] = {
-      static: Array.from(text.matchAll(/import (?<objects>.+) +from +\"(?<importFile>.*\/.*)\"/gm)),
+      static: Array.from(text.matchAll(/import (?<objects>.+) from \"(?<importFile>.*\/.*)\"/gm)),
       dynamic: Array.from(text.matchAll(/const (?<objects>.+)\s*=\s*(await)?\s*import\(\"(?<importFile>.*\/.*)\"\)/gm)),
     };
 
@@ -91,9 +94,11 @@ export class Bundler {
   private transformImports (imports : FileImportInfo[]) : void {
     for(const _import of imports) {
       const importsWithDefault = _import.importedObjects;
-      if(_import.defaultImportAlias) importsWithDefault.push(`__default: ${_import.defaultImportAlias}`);
+      if(_import.defaultImportAlias) importsWithDefault.push({ value: "__default", alias: _import.defaultImportAlias });
 
-      const leftOperator = `const {${importsWithDefault.join(", ")}}`;
+      const leftOperator = `const {${importsWithDefault
+        .map(obj => obj.alias ? `${obj.value}:${obj.alias}` : obj.value)
+        .join(", ")}}`;
       const modulesFunction = `__modules["${_import.originFile}"]();`;
       const replaceString = `${leftOperator} = ${modulesFunction}`;
       this.filesList[_import.parentFile] =
@@ -135,11 +140,10 @@ export class Bundler {
 
     const exports = [];
     for(const regexName in regexList) {
-      const esReg = new RegExp("export (?<value>" + regexList[regexName].source + ")", "g");
+      const esReg = new RegExp("export(?<default_word> default)? +(?<value>" + regexList[regexName].source + ")", "g");
       const cjsReg = new RegExp("module\\.exports\\s*=\\s*(?<value>" + regexList[regexName].source + ")", "g");
 
       const defaultMatches = [
-        str.match(new RegExp("export default (?<value>" + regexList[regexName].source + ")")),
         str.match(new RegExp("exports\\.(?<name>\\w+)\\s*=\\s*(?<value>" + regexList[regexName].source + ")")),
       ].filter(match => match !== null);
 
@@ -181,7 +185,7 @@ export class Bundler {
 
   private buildExportInfo (exports : Array<RegExpMatchArray>) : Array<ExportInfo> {
     return exports.map(exported => {
-      const isDefault = exported.groups.defaultValue != undefined;
+      const isDefault = exported.groups.default_word != undefined;
       const className = exported.groups["class_name"];
       const functionName = exported.groups["function_name"];
       const newExport : ExportInfo = {
