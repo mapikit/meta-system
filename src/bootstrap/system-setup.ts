@@ -118,8 +118,8 @@ export class SystemSetup {
   }
 
   private async installAddons (systemConfig : Configuration) : Promise<void> {
-    const env = (typeof process === "object") ? "node" : "browser";
-    const collector = new Collector({ runtimeEnv: env }, systemConfig);
+    const runtimeEnv = (typeof process === "object") ? "node" : "browser";
+    const collector = new Collector({ runtimeEnv }, systemConfig);
     this.systemAddons = await collector.collectAddons();
   }
 
@@ -187,7 +187,7 @@ export class SystemSetup {
         .find((addonConfig) => addonConfig.identifier === identifier)
         .configuration;
 
-      const userConfigurationValidation = validateObject(addonUserConfig, addon.metaFile.configurationFormat);
+      const userConfigurationValidation = validateObject(addonUserConfig, addon.metaFile.configurationFormat ?? {});
 
       if (userConfigurationValidation.errors.length > 0) {
         const message = "User configuration for addon " +  identifier + " is not valid!";
