@@ -6,6 +6,9 @@
     - Through a url pointing to a zip archive with its files
     - In case it is a npm package, will be imported from UnPkg
 
+- Fixes #112
+- Fixes #102
+
 ## 0.4.4
 - Added browser compatibility *(currently only fully supports internal functions)*
 
