@@ -20,7 +20,8 @@ type MainType = {
 
 export type ImportedInfo = {
   metaFile : MetaFileType;
-  main : MainType
+  main : MainType;
+  identifier : string;
 }
 
 export type ImportedType = Map<string, ImportedInfo>;
@@ -32,19 +33,23 @@ export class Collector {
     private modulesDirectory : string = "runtime",
   ) {}
 
-  public async collectAddons () : Promise<ImportedType> {
+  public async collectAddons () : Promise<ImportedInfo[]> {
     await this.prepare();
-    const imports = new Map<string, ImportedInfo>();
+    const importedMap = new Map<string, ImportedInfo>();
+
     logger.info("Collecting all addons in parallel");
     await Promise.all(this.systemInfo.addons.map(addon =>
       this.collectAddon(addon).then(async (collected) => {
-        imports.set(addon.identifier, typeof collected === "string" ?
+        const imported = typeof collected === "string" ?
           await Collector.importFiles(collected, addon.identifier) :
-          await Collector.importFromMemory(collected, addon.identifier));
+          await Collector.importFromMemory(collected, addon.identifier);
         logger.success(`Addon ${addon.identifier} successfully collected imported!`);
+        importedMap.set(addon.identifier, imported);
       })),
     );
-    return imports;
+
+    // So we maintain order, even though loaded in parallel :)
+    return this.systemInfo.addons.map((configAddon) => importedMap.get(configAddon.identifier));
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -61,7 +66,7 @@ export class Collector {
     const main = imported.__esModule ? this.resolveESM(imported) : imported;
     this.validateMain(main, identifier);
 
-    return { metaFile, main };
+    return { metaFile, main, identifier };
   }
 
   public static async importFromMemory (data : UnpackedFile[], identifier : string) : Promise<ImportedInfo> {
@@ -82,7 +87,7 @@ export class Collector {
 
     this.validateMain(main, metaFile.name);
 
-    return { metaFile, main };
+    return { metaFile, main, identifier };
   }
 
   private static validateMain (main : unknown, addonName : string) : asserts main is MainType {

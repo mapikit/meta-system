@@ -3,7 +3,7 @@ import { DeserializeConfigurationCommand } from "../configuration/de-serialize-c
 import { logger } from "../common/logger/logger.js";
 import { SystemContext } from "../entities/system-context.js";
 import { FunctionsContext } from "../entities/functions-context.js";
-import { Collector, ImportedType } from "./collector.js";
+import { Collector, ImportedInfo } from "./collector.js";
 import { LogLevelsType } from "../common/logger/logger-types.js";
 import { loadInternalFunctions } from "../bops-functions/internal-functions-loader.js";
 import { BopsDependencies, CheckBopsFunctionsDependencies }
@@ -29,7 +29,7 @@ export class SystemSetup {
   public functionsContext : FunctionsContext;
   public diffManager : DiffManager = new DiffManager();
   private systemConfig : Configuration;
-  private systemAddons : ImportedType;
+  private systemAddons : ImportedInfo[];
   private bopsDependencyCheck = new Map<string, CheckBopsFunctionsDependencies>();
   private moduleManager : ModuleManager;
   private bopsEngine : BopsEngine;
@@ -118,6 +118,7 @@ export class SystemSetup {
   }
 
   private async installAddons (systemConfig : Configuration) : Promise<void> {
+    console.log(systemConfig.addons, '----------------');
     const runtimeEnv = (typeof process === "object") ? "node" : "browser";
     const collector = new Collector({ runtimeEnv }, systemConfig);
     this.systemAddons = await collector.collectAddons();
@@ -177,7 +178,8 @@ export class SystemSetup {
   // eslint-disable-next-line max-lines-per-function
   private async configureAddons () : Promise<void> {
     for(const addonInfo of this.systemAddons) {
-      const [identifier, addon] = addonInfo;
+      const identifier = addonInfo.identifier;
+      const addon = addonInfo;
       logger.operation("[Function Setup] Starting configure for addon", identifier);
       const functionsBroker = this.functionsContext.createBroker(addon.metaFile.permissions ?? [], identifier);
       const systemBroker = this.systemContext.createBroker(addon.metaFile.permissions ?? [], identifier);
@@ -277,7 +279,8 @@ export class SystemSetup {
 
   private async bootAddons () : Promise<void> {
     for(const addonInfo of this.systemAddons) {
-      const [identifier, addon] = addonInfo;
+      const identifier = addonInfo.identifier;
+      const addon = addonInfo;
       logger.operation("[Function Setup] Booting addon", identifier);
       const addonBroker = this.addonBrokers.get(identifier);
       await addon.main.boot(addonBroker, this.addonsConfigurationData.get(identifier));

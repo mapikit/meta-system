@@ -1,5 +1,4 @@
 import { ConfigurationDiff, EntityType } from "./configuration-diff-type.js";
-import { ConfigurationType } from "../../index.js";
 
 type EntityQuery = {
   entityType : EntityType;
@@ -10,10 +9,7 @@ type DiffWithHash = ConfigurationDiff & { entityHash : string };
 
 export class DiffManager {
   public readonly diffs : DiffWithHash[] = [];
-  /** Stores the whole systemState at a checkpoint */
-  public readonly systemDiffStates : Map<string, ConfigurationType> = new Map();
   public readonly checkpoints : Map<string, number> = new Map();
-  public readonly diffsByAction = [];
   private readonly hashSeparator = "_-@$.$@-_"; // because yes
 
   public constructor () {
@@ -43,7 +39,7 @@ export class DiffManager {
   }
 
   public queryDiffs (query : { entity ?: EntityQuery, checkpoint ?: string }) : ConfigurationDiff[] {
-    let usedDiffs : DiffWithHash[] = [];
+    let usedDiffs : DiffWithHash[] = this.diffs;
     if (query.checkpoint) { usedDiffs = this.getDiffsUpToCheckpoint(query.checkpoint); }
 
     if (!query.entity) { return usedDiffs; }

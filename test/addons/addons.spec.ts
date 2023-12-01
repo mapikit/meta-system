@@ -43,7 +43,7 @@ describe("Addons test", () => {
     );
     const result = await collector.collectAddons();
 
-    const imported = result.get("http-local");
+    const imported = result.find((addon) => addon.identifier === "http-local");
 
     expect(imported).to.not.be.undefined;
 

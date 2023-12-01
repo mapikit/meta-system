@@ -5,8 +5,9 @@ import { expect } from "chai";
 import { SystemSetup } from "../../src/bootstrap/system-setup.js";
 import { importJsonAndParse } from "../../src/common/helpers/import-json-and-parse.js";
 import { environmentStart } from "../../src/common/environment-start.js";
+import constants from "../../src/common/constants.js";
 
-describe.only("Configuration Diff Tests", () => {
+describe("Configuration Diff Tests", () => {
   it("Diff checker gets all diffs", () => {
     const objectBefore = { removed: "rrr", modified: { value: false } };
     const objectAfter = { added: 2992, modified: "yes" };
@@ -119,5 +120,45 @@ describe.only("Configuration Diff Tests", () => {
     await systemSetup.prepare();
 
     expect(systemSetup.diffManager.diffs.length).to.be.greaterThan(0);
+  });
+
+  it("Queries Diffs by checkpoint", async () => {
+    await environmentStart("./test", true);
+    // eslint-disable-next-line max-len
+    const configurationExample = await importJsonAndParse("./test/configuration/test-data/configuration-example.json");
+    const systemSetup = new SystemSetup(configurationExample, { logLevel: "debug" });
+    await systemSetup.prepare();
+
+    const diffManager = systemSetup.diffManager;
+    const diffManagerQuery = diffManager.queryDiffs({ "checkpoint": "http-local" });
+    const expectedActors = [constants.RUNTIME_ENGINE_IDENTIFIER, "http-local"];
+    const queriedDiffActors = diffManagerQuery.map((diff) => diff.actorIdentifier).reduce((accumulator, curr) => {
+      if (accumulator.includes(curr)) return accumulator;
+      accumulator.push(curr);
+      return accumulator;
+    }, []);
+
+    const allActors = diffManager.diffs.map((d) => d.actorIdentifier).reduce((accumulator, curr) => {
+      if (accumulator.includes(curr)) return accumulator;
+      accumulator.push(curr);
+      return accumulator;
+    }, []);
+
+    expect(queriedDiffActors).to.be.deep.equal(expectedActors);
+    expect(allActors).to.not.be.deep.equal(queriedDiffActors);
+  });
+
+  it("Queries Diffs by entity", async () => {
+    await environmentStart("./test", true);
+    // eslint-disable-next-line max-len
+    const configurationExample = await importJsonAndParse("./test/configuration/test-data/configuration-example.json");
+    const systemSetup = new SystemSetup(configurationExample, { logLevel: "debug" });
+    await systemSetup.prepare();
+
+    const diffManager = systemSetup.diffManager;
+    const diffManagerQueried = diffManager
+      .queryDiffs({ "entity": { "entityType": "schema", "identifier": "purchase" } });
+
+    expect(diffManagerQueried.every((diff) => diff.targetEntityIdentifier === "purchase")).to.equal(true);
   });
 });
