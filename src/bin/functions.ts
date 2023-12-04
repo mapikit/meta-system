@@ -69,12 +69,12 @@ export async function testBopFunction (configPath : string, bopName : string) : 
 
   // functionToTest(JSON.parse(testInput));
   const deserializer = new DeserializeConfigurationCommand();
-  await deserializer.execute(await importJsonAndParse(environment.constants.configPath));
+  await deserializer.execute(fileContent);
   const bopInfo = deserializer.result.businessOperations.find(bop => bop.identifier === bopName);
   await new Promise<void>(res => setTimeout(res, 500));
   while(true) {
     const input = resolveInputTypes(bopInfo.input, await getTestInput(bopInfo.input));
-    console.log("Running BOP", bopName, "with inputs:", input);
+    logger.info("Running BOP", bopName, "with inputs:", input);
     await functionToTest(input);
   }
 }

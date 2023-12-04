@@ -4,7 +4,7 @@ import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
 // TODO: Test
 export class PathUtils {
-  public static async getContents <T> (arrayOrPath : T[] | string, parentPath = "") : Promise<T[]> {
+  public static async getContents <T> (arrayOrPath : T[] | string, parentPath ?: string) : Promise<T[]> {
     if(Array.isArray(arrayOrPath)) {
       const contents = [];
       for(const entry of arrayOrPath) {
@@ -30,7 +30,7 @@ export class PathUtils {
     const Path = await import("path");
     const glob = (await import("glob")).sync;
     const jsons : Array<T> = [];
-    const files = glob(Path.resolve(parentPath, path).split(Path.sep).join("/"));
+    const files = glob(Path.resolve(await this.resolveParentPath(parentPath), path).split(Path.sep).join("/"));
     for(const file of files) {
       const fileInfo = await importJsonAndParse(file);
       const infoArray = Array.isArray(fileInfo) ?
@@ -43,7 +43,6 @@ export class PathUtils {
 
   private static async resolveParentPath (parentValue : string | unknown) : Promise<string> {
     const Path = await import("path");
-
     if(typeof parentValue !== "string") return environment.constants.configDir as string ?? "";
     const parentPath = Path.parse(parentValue);
     return parentPath.root === "" ? environment.constants.configDir : parentPath.dir;
