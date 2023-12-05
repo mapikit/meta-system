@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { run, testBop } from "./commands.js";
+import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
 const program = new Command("meta-system");
 
 const main = async () : Promise<void> => {
   let packageFile;
   if (process && process.cwd()) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore I KNOW WHAT I'M DOING
-    packageFile = (await import("../../package.json", { assert: { type: "json" } }))["default"];
+    const libraryPath = new URL(import.meta.url).pathname;
+    packageFile = await importJsonAndParse("../../../package.json", libraryPath);
   }
 
   program

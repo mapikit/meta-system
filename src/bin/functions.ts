@@ -1,10 +1,8 @@
-import chalk from "chalk";
 import { environment } from "../common/execution-env.js";
 import { getSystemInfo } from "../common/logger/get-system-info.js";
 import { hookConsoleToFile } from "../common/logger/hook-console-to-file.js";
 import { logger } from "../common/logger/logger.js";
 import { runtimeDefaults } from "../configuration/runtime-config/defaults.js";
-import Path from "path";
 import { run } from "./commands.js";
 import { ObjectDefinition } from "@meta-system/object-definition";
 import ReadLine from "readline";
@@ -12,22 +10,16 @@ import { ExtendedJsonTypes } from "../common/types/json-types.js";
 import { ExtendedJsonTypeDict } from "../configuration/business-operations/business-operations-type.js";
 import { DeserializeConfigurationCommand } from "../configuration/de-serialize-configuration.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
+import { replaceReferences } from "./replace-references.js";
+import { environmentStart } from "../common/environment-start.js";
 
 
 // eslint-disable-next-line max-lines-per-function
 export async function main (fileLocation : string) : Promise<void> {
-  Object.assign(environment.silent.constants, run.opts());
+  await environmentStart(fileLocation, true, run);
 
-
-  logger.initialize(environment.constants.logLevel);
-
-  environment.constants.configPath = Path.resolve(fileLocation);
-  environment.constants.configDir = Path.parse(environment.constants.configPath).dir;
-  environment.constants.installDir = Path.resolve(
-    environment.constants.configDir,
-    runtimeDefaults.defaultInstallFolder);
-  if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
-  if(environment.constants.saveLog) hookConsoleToFile(`${environment.constants.configDir}/logs`);
+  if(environment.constants.configPath === undefined) throw "Config file not found";
+  if(environment.constants.saveLog) await hookConsoleToFile(`${environment.constants.configDir}/logs`);
 
   logger.debug(getSystemInfo());
 
@@ -35,6 +27,8 @@ export async function main (fileLocation : string) : Promise<void> {
 
   const fileContent = await importJsonAndParse(environment.constants.configPath as string);
   if(!fileContent) throw Error("Config file not found");
+
+  await replaceReferences(fileContent);
 
   logger.success("[System Setup] File found - Validating content");
 
@@ -49,13 +43,15 @@ export async function main (fileLocation : string) : Promise<void> {
 
 // eslint-disable-next-line max-lines-per-function
 export async function testBopFunction (configPath : string, bopName : string) : Promise<void> {
-  logger.initialize("debug");
+  const Path = await import("path");
+
+  await logger.initialize("debug");
   environment.constants.configPath = Path.resolve(configPath);
   environment.constants.configDir = Path.parse(environment.constants.configPath).dir;
   environment.constants.installDir = Path.resolve(
     environment.constants.configDir,
     runtimeDefaults.defaultInstallFolder);
-  if(environment.constants.configPath === undefined) throw chalk.redBright("Config file not found");
+  if(environment.constants.configPath === undefined) throw "Config file not found";
 
   logger.operation("[System Setup] System setup starting");
   logger.operation("[System Setup] Retrieving system configuration");
@@ -73,12 +69,12 @@ export async function testBopFunction (configPath : string, bopName : string) : 
 
   // functionToTest(JSON.parse(testInput));
   const deserializer = new DeserializeConfigurationCommand();
-  await deserializer.execute(await importJsonAndParse(environment.constants.configPath));
+  await deserializer.execute(fileContent);
   const bopInfo = deserializer.result.businessOperations.find(bop => bop.identifier === bopName);
   await new Promise<void>(res => setTimeout(res, 500));
   while(true) {
     const input = resolveInputTypes(bopInfo.input, await getTestInput(bopInfo.input));
-    console.log("Running BOP", bopName, "with inputs:", input);
+    logger.info("Running BOP", bopName, "with inputs:", input);
     await functionToTest(input);
   }
 }

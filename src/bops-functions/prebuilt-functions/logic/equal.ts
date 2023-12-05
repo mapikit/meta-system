@@ -1,10 +1,11 @@
 import { InternalMetaFunction } from "../../internal-meta-function.js";
-import { isDeepStrictEqual } from "util";
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isEqualToBopsFunction = (input : { A : any; B : any }) : unknown => {
-  const isEqual = isDeepStrictEqual(input.A, input.B);
+  if(typeof input.A === "object" && typeof input.B === "object") {
+    return { isEqual: JSON.stringify(input.A) === JSON.stringify(input.B) };
+  }
 
+  const isEqual = input.A === input.B;
   return ({ isEqual });
 };
 

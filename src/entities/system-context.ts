@@ -1,14 +1,20 @@
 import { ConfigurationType, EnvironmentVariable } from "../configuration/configuration-type.js";
 import { EntityValue, MetaEntity } from "./meta-entity.js";
-import { BusinessOperation } from "../configuration/business-operations/business-operation.js";
-import { Schema } from "../configuration/schemas/schema.js";
+import { BusinessOperation as BusinessOperationClass }
+  from "../configuration/business-operations/business-operation.js";
+import { Schema as SchemaClass } from "../configuration/schemas/schema.js";
 import { Addon } from "../configuration/addon-type.js";
 import { BrokerFactory, EntityBroker, EntityPermissions } from "../broker/entity-broker.js";
 import constants from "../common/constants.js";
 import { EntityRepository } from "./repository.js";
 import { EntityAction } from "./entity-action.js";
+import { DiffManager } from "../configuration/diff/diff-manager.js";
+import { checkEntityDiff } from "../configuration/diff/check-entity-diff.js";
 
 export type EnvironmentVariableEntity = EntityValue & EnvironmentVariable;
+type Schema = Pick<SchemaClass, "format" | "identifier" | "name">;
+type BusinessOperation = Pick<BusinessOperationClass,
+"configuration" | "constants" | "identifier" | "input" | "output" | "ttl" | "variables">;
 
 export class SystemContext {
   private readonly envs : MetaEntity<EnvironmentVariableEntity>[]= [];
@@ -20,7 +26,7 @@ export class SystemContext {
   public readonly systemBroker : EntityBroker;
 
   // eslint-disable-next-line max-lines-per-function
-  public constructor (systemConfig : ConfigurationType) {
+  public constructor (systemConfig : ConfigurationType, private diffManager : DiffManager) {
     this.systemConfig = systemConfig;
 
     this.businessOperations = systemConfig.businessOperations
@@ -31,24 +37,24 @@ export class SystemContext {
 
     const factory = new BrokerFactory();
     this.systemBroker = factory
-      .configEntity("schemas", SystemContext.getSchemasActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("schemas", this.getSchemasActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.schemas))
       .useEntity({ entity: "schemas", permissions: [constants.PERMISSION_OVERRIDE_VALUE] },
         new EntityRepository(this.schemas))
-      .configEntity("businessOperations", SystemContext.getBopsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("businessOperations", this.getBopsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.businessOperations))
       .useEntity({ entity: "businessOperations", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
-      .configEntity("envs", SystemContext.getEnvsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("envs", this.getEnvsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.envs))
       .useEntity({ entity: "envs", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
-      .configEntity("addons", SystemContext.getAddonsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
+      .configEntity("addons", this.getAddonsActions(constants.RUNTIME_ENGINE_IDENTIFIER),
         new EntityRepository(this.addons))
       .useEntity({ entity: "addons", permissions: [constants.PERMISSION_OVERRIDE_VALUE] })
       .build();
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getBopsActions (identifier : string)
+  public getBopsActions (identifier : string)
     : EntityAction<BusinessOperation, EntityRepository<BusinessOperation>>[] {
     const result = [];
 
@@ -59,7 +65,14 @@ export class SystemContext {
 
     result.push(new EntityAction("create_bop", "createBop",
       (repo : EntityRepository<BusinessOperation>) =>
-        (bop : BusinessOperation) => repo.createEntity(new MetaEntity(identifier, bop)),
+        (bop : BusinessOperation) => {
+          const created = new MetaEntity(identifier, bop);
+          repo.createEntity(created);
+
+          this.diffManager.addManyDiffsFromCheck(
+            checkEntityDiff(bop.identifier, identifier, "businessOperations", {}, created.data),
+          );
+        },
     ));
 
     result.push(new EntityAction("get_all", "getAll",
@@ -72,7 +85,7 @@ export class SystemContext {
 
 
   // eslint-disable-next-line max-lines-per-function
-  private static getSchemasActions (identifier : string)
+  public getSchemasActions (identifier : string)
     : EntityAction<Schema, EntityRepository<Schema>>[] {
     const result = [];
 
@@ -83,7 +96,14 @@ export class SystemContext {
 
     result.push(new EntityAction("create_schema", "createSchema",
       (repo : EntityRepository<Schema>) =>
-        (schema : Schema) => repo.createEntity(new MetaEntity(identifier, schema)),
+        (schema : Schema) => {
+          const newEntity = new MetaEntity(identifier, schema);
+          repo.createEntity(newEntity);
+
+          this.diffManager.addManyDiffsFromCheck(
+            checkEntityDiff(schema.identifier, identifier, "schema", {}, newEntity.data),
+          );
+        },
     ));
 
     result.push(new EntityAction("get_all", "getAll",
@@ -94,14 +114,20 @@ export class SystemContext {
     result.push(new EntityAction("modify_schema", "modifySchema",
       (repo : EntityRepository<Schema>) =>
         (schema : Schema) => {
-          repo.updateEntity(new MetaEntity(identifier, schema));
+          const modified = new MetaEntity(identifier, schema);
+          const old = repo.getEntity(schema.identifier).data;
+          repo.updateEntity(modified);
+
+          this.diffManager.addManyDiffsFromCheck(
+            checkEntityDiff(schema.identifier, identifier, "schema", old, modified.data),
+          );
         }));
 
     return result;
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getAddonsActions (identifier : string) : EntityAction<Addon, EntityRepository<Addon>>[] {
+  public getAddonsActions (identifier : string) : EntityAction<Addon, EntityRepository<Addon>>[] {
     const result = [];
 
     result.push(new EntityAction("get_addon", "getAddon",
@@ -123,7 +149,7 @@ export class SystemContext {
   }
 
   // eslint-disable-next-line max-lines-per-function
-  private static getEnvsActions (identifier : string)
+  public getEnvsActions (identifier : string)
     : EntityAction<EnvironmentVariableEntity, EntityRepository<EnvironmentVariableEntity>>[] {
     const result = [];
 
@@ -134,7 +160,14 @@ export class SystemContext {
 
     result.push(new EntityAction("create_env", "createEnv",
       (repo : EntityRepository<EnvironmentVariableEntity>) =>
-        (env : EnvironmentVariable) => repo.createEntity(new MetaEntity(identifier, { identifier: env.key, ...env })),
+        (env : EnvironmentVariable) => {
+          const created = new MetaEntity(identifier, { identifier: env.key, ...env });
+          repo.createEntity(created);
+
+          this.diffManager.addManyDiffsFromCheck(
+            checkEntityDiff(env.key, identifier, "envs", {}, created.data),
+          );
+        },
     ));
 
     result.push(new EntityAction("get_all", "getAll",
@@ -147,13 +180,13 @@ export class SystemContext {
 
   public createBroker (accesses : EntityPermissions[], identifier : string) : EntityBroker {
     const factory = new BrokerFactory()
-      .configEntity("schemas", SystemContext.getSchemasActions(identifier),
+      .configEntity("schemas", this.getSchemasActions(identifier),
         new EntityRepository(this.schemas))
-      .configEntity("businessOperations", SystemContext.getBopsActions(identifier),
+      .configEntity("businessOperations", this.getBopsActions(identifier),
         new EntityRepository(this.businessOperations))
-      .configEntity("envs", SystemContext.getEnvsActions(identifier),
+      .configEntity("envs", this.getEnvsActions(identifier),
         new EntityRepository(this.envs))
-      .configEntity("addons", SystemContext.getAddonsActions(identifier),
+      .configEntity("addons", this.getAddonsActions(identifier),
         new EntityRepository(this.addons));
 
     accesses.forEach((access) => {

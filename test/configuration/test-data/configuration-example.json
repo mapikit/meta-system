@@ -228,5 +228,21 @@
       ]
     }
   ],
-  "addons": []
+  "addons": [
+    {
+      "source": "../mongo-db-protocol/",
+      "collectStrategy": "file",
+      "identifier": "http-local",
+      "configuration": {
+        "databaseName": "john",
+        "dbConnectionString": "WONT-WORK-DON'T BOOT"
+      }
+    },
+    {
+      "source": "./test/addons/test-addon/",
+      "collectStrategy": "file",
+      "identifier": "test-addon",
+      "configuration": {}
+    }
+  ]
 }

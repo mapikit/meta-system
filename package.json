@@ -1,11 +1,12 @@
 {
   "name": "meta-system",
-  "version": "0.4.3",
+  "version": "0.4.5",
   "description": "A system to be any system",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "type": "module",
   "scripts": {
+    "rebuild-install": "npm remove -g && npm run build && npm install -g",
     "build": "npm ci && npx tsc -p tsconfig.build.json",
     "test": "mocha --exit --sort",
     "lint": "eslint --max-warnings 0 './*{(test),(src)}/**/*.{ts,js}'"
@@ -32,13 +33,16 @@
   "dependencies": {
     "@meta-system/object-definition": "^2.0.1",
     "chalk": "^5.2.0",
+    "ci": "^2.3.0",
     "commander": "^10.0.0",
     "decimal.js": "^10.4.3",
+    "deep-object-diff": "^1.1.9",
+    "flat": "^6.0.1",
     "glob": "^9.3.2",
     "just-clone": "^6.2.0",
     "mersenne-twister": "^1.1.0",
     "nanoid": "^4.0.2",
-    "nethere": "^0.0.9",
+    "nethere": "^0.1.4",
     "strip-ansi": "^7.0.1"
   },
   "homepage": "https://github.com/mapikit/meta-system#readme",

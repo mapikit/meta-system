@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "module": "ES2020",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "target": "ES2020",
     "lib": ["es6", "ES2017"],
     "types": ["node", "mocha"],
-    "moduleResolution": "node16",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

@@ -1,7 +1,6 @@
 import clone from "just-clone";
 import { validateObject } from "@meta-system/object-definition";
 import { Configuration } from "./configuration.js";
-import { PathUtils } from "./path-alias-utils.js";
 import { configurationTypeDefinition } from "./configuration-definition.js";
 import { ValidationOutput } from "@meta-system/object-definition/dist/functions/validate-object.js";
 import { logger } from "../common/logger/logger.js";
@@ -9,11 +8,6 @@ import { EntityValue } from "../entities/meta-entity.js";
 import { BopsCyclicDependencyCheck } from "./business-operations/cyclic-dependency-check.js";
 import { ValidateBopsPipelineFlowCommand } from "./business-operations/validate-bops-pipeline-flow.js";
 
-const referenceableProperties : Array<keyof Configuration> = [
-  "schemas",
-  "businessOperations",
-  "addons",
-];
 
 // TODO: Test
 export class DeserializeConfigurationCommand {
@@ -27,7 +21,6 @@ export class DeserializeConfigurationCommand {
   // eslint-disable-next-line max-lines-per-function
   public async execute (input : unknown) : Promise<void> {
     this._result = clone(input as object) as Configuration;
-    await this.replaceReferences(this._result);
     this.validation = validateObject(this._result, configurationTypeDefinition);
 
     this.logErrorsAndAbort(this.validation);
@@ -38,17 +31,6 @@ export class DeserializeConfigurationCommand {
     this.validateBusinessOperations();
     this.checkAddonsSourceUniqueness();
     this._result = new Configuration(this._result);
-  }
-
-  private async replaceReferences (input : unknown) : Promise<void> {
-    const replacedProperties = {};
-    for(const property of referenceableProperties) {
-      if(typeof input[property] === "string") {
-        replacedProperties[property] = await PathUtils.getContents(input[property]);
-      }
-    }
-
-    this._result = { ...this._result, ...replacedProperties };
   }
 
   private logErrorsAndAbort (validation : ValidationOutput) : void {

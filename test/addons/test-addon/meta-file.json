@@ -1,0 +1,9 @@
+{
+  "name": "test-addon",
+  "version": "1.0.0",
+  "entrypoint": "./entrypoint.js",
+  "configurationFormat": {},
+  "permissions": [
+    { "entity": "addonsFunctions", "permissions": ["register"] }
+  ]
+}
