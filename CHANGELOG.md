@@ -1,5 +1,7 @@
 # Changelog
 ## 0.4.5
+- Major architectural changes! 
+  - We've moved things around to make the code a bit more organized. This should make contributing even easier!
 - Added initial addon support for browser
   - Addons must be browser compatible, otherwise they will crash
   - MSys will detect the environment and attempt to import the browser addons:

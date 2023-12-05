@@ -68,7 +68,7 @@ export class SystemSetup {
     await this.deserializeConfiguration(this.rawSystemConfig);
     logger.success("[System Setup] Validation successful");
 
-    this.initializeConxtexts();
+    this.initializeContexts();
     logger.success("[System Setup] Initialized Contexts");
 
     logger.operation("[Add-ons Installation] Starting add-ons installation");
@@ -118,13 +118,12 @@ export class SystemSetup {
   }
 
   private async installAddons (systemConfig : Configuration) : Promise<void> {
-    console.log(systemConfig.addons, '----------------');
     const runtimeEnv = (typeof process === "object") ? "node" : "browser";
     const collector = new Collector({ runtimeEnv }, systemConfig);
     this.systemAddons = await collector.collectAddons();
   }
 
-  private initializeConxtexts () : void {
+  private initializeContexts () : void {
     this.systemContext = new SystemContext(this.systemConfig, this.diffManager);
     this.functionsContext = new FunctionsContext(this.diffManager);
   }
