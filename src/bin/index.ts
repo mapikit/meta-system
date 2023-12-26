@@ -8,7 +8,8 @@ const program = new Command("meta-system");
 const main = async () : Promise<void> => {
   let packageFile;
   if (process && process.cwd()) {
-    const libraryPath = new URL(import.meta.url).pathname;
+    const libraryPath = process.platform === "win32" ?
+      new URL(import.meta.url).pathname.replace("/", "") : new URL(import.meta.url).pathname;
     packageFile = await importJsonAndParse("../../../package.json", libraryPath);
   }
 
