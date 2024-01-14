@@ -1,9 +1,5 @@
 # Changelog
-## 0.4.8
-- System configuration fields "name" and "version" are now optional, as they do not impact MSys usability
-
 ## 0.4.7
-- Fixes meta-system launch on Windows
 - Adds new Internal Functions:
   - Array Map
   - Array Find
