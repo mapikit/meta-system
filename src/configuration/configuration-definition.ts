@@ -1,6 +1,6 @@
 export const configurationTypeDefinition = {
-  "name": { "type": "string", "required": true },
-  "version": { "type": "string", "required": true },
+  "name": { "type": "string", "required": false },
+  "version": { "type": "string", "required": false },
   "envs": { "type": "array", "required": true, "subtype": {
     "key": { "type": "string", "required": true },
     "value": { "type": "string", "required": true },
