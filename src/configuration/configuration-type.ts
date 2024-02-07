@@ -3,8 +3,8 @@ import { BusinessOperationType } from "./business-operations/business-operations
 import { SchemaType } from "./schemas/schemas-type.js";
 
 export interface ConfigurationType {
-  name : string;
-  version : string;
+  name ?: string;
+  version ?: string;
   envs ?: EnvironmentVariable[];
   schemas : SchemaType[];
   businessOperations : BusinessOperationType[];
