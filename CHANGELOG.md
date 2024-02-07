@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.8
+Made the configuration fields "name" and "version" optional.
+
 ## 0.4.7
 - Adds new Internal Functions:
   - Array Map
