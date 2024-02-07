@@ -1,4 +1,15 @@
 # Changelog
+## 0.4.7
+- Adds new Internal Functions:
+  - Array Map
+  - Array Find
+  - Array Filter
+  - Array Sort
+- Re-adds `getSystemFunction` Internal Function. It was disabled on version 0.4.0 during the architecture update.
+
+## 0.4.6
+- Fixes MSYS not launching on Windows
+
 ## 0.4.5
 - Major architectural changes! 
   - We've moved things around to make the code a bit more organized. This should make contributing even easier!

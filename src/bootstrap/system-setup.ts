@@ -16,6 +16,7 @@ import { BopsConfigurationEntry } from "../configuration/business-operations/bus
 import { environment } from "../common/execution-env.js";
 import { DiffManager } from "../configuration/diff/diff-manager.js";
 import constants from "../common/constants.js";
+import { ModuleResolver } from "../bops-functions/bops-engine/module-resolver.js";
 
 type SetupOptions = {
   logLevel : LogLevelsType
@@ -87,6 +88,7 @@ export class SystemSetup {
 
     this.createManager();
     this.createBopsEngine();
+    this.replaceGetSystemFunction();
 
     logger.operation("[System Setup] Starting BOps build process");
 
@@ -109,6 +111,32 @@ export class SystemSetup {
       const parsedInput = stringInput !== undefined ? JSON.parse(stringInput) : {};
       await requiredFunction(parsedInput);
     } catch (error) { throw error; }
+  }
+
+  // eslint-disable-next-line max-lines-per-function
+  private replaceGetSystemFunction () : void {
+    const moduleResolver = new ModuleResolver(this.functionsContext.systemBroker);
+
+    const getSystemFunction = (input : { moduleName : string, moduleType : string, modulePackage ?: string })
+    : { found : boolean, callableFunction ?: Function } => {
+      let found  = false;
+      let callable = undefined;
+
+      try {
+        callable = moduleResolver.resolve[input.moduleType](input as BopsConfigurationEntry);
+        found = !!callable;
+      } catch (e) {
+        found = false;
+      }
+
+      return { found, callableFunction: callable };
+    };
+
+
+    this.functionsContext.systemBroker.internalFunctions.override(
+      "getSystemFunction",
+      getSystemFunction,
+    );
   }
 
   private async deserializeConfiguration (validationContent : unknown) : Promise<void> {

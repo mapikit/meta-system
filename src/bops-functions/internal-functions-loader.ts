@@ -1,6 +1,10 @@
 /* eslint-disable max-len */
 import { EntityBroker } from "../broker/entity-broker.js";
 import { arrayAtBopsFunction, arrayAtBopsFunctionInformation } from "./prebuilt-functions/array/array-at.js";
+import { arrayFilterBopsFunction, arrayFilterBopsFunctionInformation } from "./prebuilt-functions/array/array-filter.js";
+import { arrayFindBopsFunction, arrayFindBopsFunctionInformation } from "./prebuilt-functions/array/array-find.js";
+import { arrayMapBopsFunction, arrayMapBopsFunctionInformation } from "./prebuilt-functions/array/array-map.js";
+import { arraySortBopsFunction, arraySortBopsFunctionInformation } from "./prebuilt-functions/array/array-sort.js";
 import { arrayFindIndexBopsFunction, arrayFindIndexBopsFunctionInformation } from "./prebuilt-functions/array/find-index.js";
 import { arrayIncludesBopsFunction, arrayIncludesBopsFunctionInformation } from "./prebuilt-functions/array/inlcudes.js";
 import { arrayJoinBopsFunction, arrayJoinBopsFunctionInformation } from "./prebuilt-functions/array/join.js";
@@ -96,6 +100,10 @@ export const loadInternalFunctions = (functionsBroker : EntityBroker) : void => 
   functionsBroker.internalFunctions.setFunction(arrayLengthBopsFunction, arrayLengthBopsFunctionInformation);
   functionsBroker.internalFunctions.setFunction(arrayPushBopsFunction, arrayPushBopsFunctionInformation);
   functionsBroker.internalFunctions.setFunction(arrayRemoveBopsFunction, arrayRemoveBopsFunctionInformation);
+  functionsBroker.internalFunctions.setFunction(arrayMapBopsFunction, arrayMapBopsFunctionInformation);
+  functionsBroker.internalFunctions.setFunction(arraySortBopsFunction, arraySortBopsFunctionInformation);
+  functionsBroker.internalFunctions.setFunction(arrayFindBopsFunction, arrayFindBopsFunctionInformation);
+  functionsBroker.internalFunctions.setFunction(arrayFilterBopsFunction, arrayFilterBopsFunctionInformation);
 
   // Logic Functions
   functionsBroker.internalFunctions.setFunction(andGateBopsFunction, andGateBopsFunctionInformation);
