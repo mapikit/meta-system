@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.9
+Hotfix for last version, which didn't ship with dist folder.
+
 ## 0.4.8
 Made the configuration fields "name" and "version" optional.
 
