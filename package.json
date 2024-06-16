@@ -44,7 +44,7 @@
     "glob": "^10.4.1",
     "just-clone": "^6.2.0",
     "mersenne-twister": "^1.1.0",
-    "nanoid": "^4.0.2",
+    "nanoid": "^5.0.7",
     "nethere": "^0.1.4",
     "strip-ansi": "^7.1.0"
   },
