@@ -1,4 +1,8 @@
 # Changelog
+## 0.4.10
+- Object Definition version bump.
+- Use faker-js instead of faker for testing.
+
 ## 0.4.9
 Hotfix for last version, which didn't ship with dist folder.
 
