@@ -15,9 +15,6 @@ export const divideBopsFunction = (input : { A : number; B : number }) : unknown
   const B = new Decimal(input.B);
   const result = A.div(B).toNumber();
 
-  console.log(result);
-
-
   return ({ result: result });
 };
 
