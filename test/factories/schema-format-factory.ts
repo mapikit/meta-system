@@ -1,5 +1,5 @@
 import { ObjectDefinition } from "@meta-system/object-definition";
-import faker from "faker";
+import { faker } from "@faker-js/faker";
 import { ExtendedJsonTypes, JsonTypes } from "../../src/common/types/json-types.js";
 import { TypeDefinitionDeep } from "@meta-system/object-definition/dist/object-definition-type.js";
 
@@ -9,12 +9,12 @@ const advancedStrings : Exclude<ExtendedJsonTypes, JsonTypes>[] = ["array", "obj
 export const schemaFormatFactory = (maxDepth = 3) : ObjectDefinition => {
   const newFormat : ObjectDefinition = {};
 
-  for (let property = 0; property < 6; property += faker.random.arrayElement([1, 2])) {
-    const type = faker.random.arrayElement([...basicStrings, ...advancedStrings]);
+  for (let property = 0; property < 6; property += faker.helpers.arrayElement([1, 2])) {
+    const type = faker.helpers.arrayElement([...basicStrings, ...advancedStrings]);
     if(type === "object" || type === "array") {
-      if(maxDepth > 0) newFormat[faker.name.jobType()] = typeFactory[type](maxDepth);
+      if(maxDepth > 0) newFormat[faker.person.jobType()] = typeFactory[type](maxDepth);
     }
-    else newFormat[faker.name.jobType()] = { type };
+    else newFormat[faker.person.jobType()] = { type };
   }
 
   return newFormat;
@@ -34,7 +34,7 @@ const typeFactory : { [type : string] : (maxDepth ?: number) => any } = {
   array: (maxDepth : number) : TypeDefinitionDeep => {
     return {
       type: "array",
-      subtype:  faker.random.arrayElement([...basicStrings, typeFactory.object(maxDepth-1).data]),
+      subtype:  faker.helpers.arrayElement([...basicStrings, typeFactory.object(maxDepth-1).data]),
     };
   },
 };

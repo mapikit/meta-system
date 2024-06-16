@@ -13,9 +13,12 @@ export const divideBopsFunction = (input : { A : number; B : number }) : unknown
 
   const A = new Decimal(input.A);
   const B = new Decimal(input.B);
-  const result = A.div(B);
+  const result = A.div(B).toNumber();
 
-  return ({ result: result.toNumber() });
+  console.log(result);
+
+
+  return ({ result: result });
 };
 
 export const divideFunctionInformation : InternalMetaFunction = {
