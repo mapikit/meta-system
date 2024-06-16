@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { FunctionsContext } from "../../src/entities/functions-context.js";
-import faker from "faker";
+import { faker } from "@faker-js/faker";
 import constants from "../../src/common/constants.js";
 import { DiffManager } from "../../src/configuration/diff/diff-manager.js";
-const { random } = faker;
+const { number } = faker;
 
 describe("Broker Tests", () => {
   const diffManager = new DiffManager();
@@ -30,7 +30,7 @@ describe("Broker Tests", () => {
     const myFunction = broker.schemaFunctions.getSchemaFunction("nn", "mySchema");
     expect(myFunction).to.be.equal(aFunction);
 
-    const newValue = random.number(100);
+    const newValue = number.int(100);
     myFunction(newValue);
     expect(myVariable).to.be.equal(newValue);
   });

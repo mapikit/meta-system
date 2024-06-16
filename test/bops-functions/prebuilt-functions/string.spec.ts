@@ -6,7 +6,7 @@ import { stringToNumberBopsFunction } from "../../../src/bops-functions/prebuilt
 import { stringTemplateFunction } from "../../../src/bops-functions/prebuilt-functions/string/template.js";
 import { stringConcatFunction } from "../../../src/bops-functions/prebuilt-functions/string/concat.js";
 import { expect } from "chai";
-import faker from "faker";
+import { faker } from "@faker-js/faker";
 
 describe("String BOPs functions", () => {
   describe("CharAt", () => {
@@ -118,8 +118,8 @@ describe("String BOPs functions", () => {
 
   describe("String Template", () => {
     it("Success of regular use of templates", () => {
-      const [name, surname] = [faker.name.firstName(), faker.name.lastName()];
-      const age = faker.random.number({ min: 18, max: 80, precision: 1 }).toString();
+      const [name, surname] = [faker.person.firstName(), faker.person.lastName()];
+      const age = faker.number.int({ min: 18, max: 80 }).toString();
       const template = "His full name is ${name} ${surname} and he is ${age}";
 
       const result = stringTemplateFunction({ template, replacers: { name, surname, age } });
@@ -127,7 +127,7 @@ describe("String BOPs functions", () => {
     });
 
     it("Success of edge cases use of templates", () => {
-      const word = faker.random.words(1);
+      const word = faker.word.sample(1);
       const empty = "";
 
       const template = "${word} is a random word that shows up here too: ${word} but this is empty: ${empty}";
@@ -141,8 +141,8 @@ describe("String BOPs functions", () => {
 
   describe("String Concat", () => {
     it("Successfully concatenates all the strings", () => {
-      const first = faker.random.words(4);
-      const second = faker.random.words(6);
+      const first = faker.word.sample(4);
+      const second = faker.word.sample(6);
 
       const result = stringConcatFunction({ strings: { first, second } });
       expect(result).to.be.deep.equal({ result: first + second });

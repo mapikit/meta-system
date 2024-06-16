@@ -1,5 +1,6 @@
-import faker, { random } from "faker";
+import { faker } from "@faker-js/faker";
 import { ObjectDefinition } from "@meta-system/object-definition";
+const { number, lorem, date, datatype } = faker;
 
 export const entityFactory = (schemaFormat : ObjectDefinition) : object => {
   const entity = {};
@@ -12,7 +13,7 @@ export const entityFactory = (schemaFormat : ObjectDefinition) : object => {
 
 const getType = (def : ObjectDefinition["prop"]) : string => {
   if (Array.isArray(def)) {
-    const usedType = random.number({ min: 0, max: def.length -1, precision: 1 });
+    const usedType = number.int({ min: 0, max: def.length -1 });
     return def[usedType].type;
   }
 
@@ -20,14 +21,14 @@ const getType = (def : ObjectDefinition["prop"]) : string => {
 };
 
 const typeCreation = {
-  string: () : string => faker.lorem.sentence(faker.random.number({ min: 2, max: 5 })),
-  number: () : number => faker.random.number(),
-  date: () : Date => faker.date.between("1500", "2500"),
-  boolean: () : boolean =>  faker.random.boolean(),
+  string: () : string => lorem.sentence(number.int({ min: 2, max: 5 })),
+  number: () : number => number.int(),
+  date: () : Date => date.between({ from: "1500", to: "2500" }),
+  boolean: () : boolean =>  datatype.boolean(),
 
   array: (dataType : string) : Array<unknown> => {
     const array = [];
-    for (let i = 0; i < faker.random.number({ min: 2, max: 5, precision: 1 }); i++) {
+    for (let i = 0; i < number.int({ min: 2, max: 5 }); i++) {
       const newItem = typeCreation[typeof dataType === "string" ? dataType : "object"](dataType);
       array.push(newItem);
     }

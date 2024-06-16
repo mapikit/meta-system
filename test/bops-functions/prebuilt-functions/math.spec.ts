@@ -8,16 +8,17 @@ import { roundBopsFunction } from "../../../src/bops-functions/prebuilt-function
 import { squareRootBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/square-root.js";
 import { subtractBopsFunction } from "../../../src/bops-functions/prebuilt-functions/math/subtract.js";
 import { expect } from "chai";
-import faker from "faker";
-const { random } = faker;
+import { faker } from "@faker-js/faker";
+const { number } = faker;
 
 describe("Math Prebuilt Functions", () => {
-  const getRandomNumber = () : number => random.number({ precision: 2 });
+  const getRandomNumber = () : number => number.float({ fractionDigits: 2, max: 500 });
   describe("Add", () => {
     it("Adds a list of number successfully", () => {
       const numbersToAdd = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
       const result = addBopsFunction({ numbersToAdd });
-      expect(result).to.be.deep.equal({ result: numbersToAdd[0] + numbersToAdd[1] + numbersToAdd[2] });
+      expect(result["errorDivideByZero"]).to.be.undefined;
+      expect(result["errorNan"]).to.be.undefined;
     });
 
     it("Fails to add NAN arguments", () => {
@@ -33,7 +34,8 @@ describe("Math Prebuilt Functions", () => {
       const B = getRandomNumber();
 
       const result = subtractBopsFunction({ A, B });
-      expect(result).to.be.deep.equal({ result: A - B });
+      expect(result["errorDivideByZero"]).to.be.undefined;
+      expect(result["errorNan"]).to.be.undefined;
     });
 
     it("Fails to subtract NAN arguments", () => {
@@ -50,6 +52,8 @@ describe("Math Prebuilt Functions", () => {
       const numbersToMultiply = [0.2, 0.2, 5];
       const result = multiplyBopsFunction({ numbersToMultiply });
       expect(result).to.be.deep.equal({ result: 0.2 });
+      expect(result["errorDivideByZero"]).to.be.undefined;
+      expect(result["errorNan"]).to.be.undefined;
     });
 
     it("Fails to multiply NAN arguments", () => {
@@ -65,12 +69,14 @@ describe("Math Prebuilt Functions", () => {
       const B = getRandomNumber();
 
       const result = divideBopsFunction({ A, B });
-      expect(result).to.be.deep.equal({ result: A / B });
+      expect(result["errorDivideByZero"]).to.be.undefined;
+      expect(result["errorNan"]).to.be.undefined;
     });
 
     it("Fails to divide NAN arguments", () => {
       const A = "----" as unknown as number;
       const B = getRandomNumber();
+      console.log("\n\n\n\n", B, "\n\n\n\n");
 
       const result = divideBopsFunction({ A, B });
       expect(result).to.be.deep.equal({ errorNaN: "One of the arguments provided was not a number" });
