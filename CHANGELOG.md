@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.11
+- Updates README
+
 ## 0.4.10
 - Object Definition version bump.
 - Use faker-js instead of faker for testing.
