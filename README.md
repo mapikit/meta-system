@@ -10,13 +10,15 @@ Meta-System is a data-centric framework created for reducing the need for duplic
 
 > Install Meta-System with NPM: `npm i -g meta-system`
 
+> Join the community and talk with maintainers at the [Discord server](https://discord.gg/ndGsnbTW7V).
+
 ## What it Does
 
 Meta-System provides a unique improvement to your development workflow, with all the structures to build the software you need, and the tools and libraries you love, or make.
 
 Here's what Meta-System does for you:
 
--   **Maps to your data: **It dynamically adapts to your data schemas, minimizing the need for manual adjustments in your code.
+-   **Maps to your data:** It dynamically adapts to your data schemas, minimizing the need for manual adjustments in your code.
 -   **Improves code reusability:** The engine's API boosts your productivity by enforcing clear separations of concern, providing bite-sized components that you can effortlessly reuse across projects.
 -   **Allows you to work on what matters:** Meta-System abstracts the software architecture responsible for wiring your code and libraries. Instead of writing scaffolding code, you can focus on features that deliver real value in your software.
 -   **Eases the efforts for adding features over time:** Because of its structure, Meta-System makes adding more functionality or modifying existing ones remain consistently straightforward, regardless of project complexity.
