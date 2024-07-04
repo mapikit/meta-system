@@ -3,17 +3,37 @@
 </p>
 
 # Meta-System
-Meta-System is an extensible and modular no-code engine, built for everyone, free and open-source.
 
-It aims to simplify software as a whole, freeing you, the developer, to work on what makes your software truly unique. It does so by being simple, capable, and [extensible](https://mapikit.github.io/meta-system-docs/docs/api-docs/architecture/extending-functionality): Just give Meta-System (**MSYS** for short) a configuration file and watch as it builds http routes, databases, functions and *voilà!* Your system should be up and running!
+## **The Everything Framework for Efficient Developers**
 
------
-## Features
-- **Build Anything!** : Meta-System wasn't made for "a type" of software, meaning you can build anything you like!
-- **Simple, Yet Extensible** : Its modular design allows you for adding, creating **and sharing** Add-ons, expanding your possibilities as far as you need them.
-- **Unopinionated** : Meta-System doesn't make decisions for you, instead, it opens the path for you to focus only in what is necessary. Of course, however, you can extend it with your own opinions as you wish.
-- **The Power of JSON** : Your Meta-System is configured using human-readable, and machine-parseable JSON.
-- **GUI for Configuring your System** : (Coming Soon!) A graphical editor for your Meta-System configuration files, turning your JSON system into a beautiful set of cards and flows.
+Meta-System is a data-centric framework created for reducing the need for duplicated code, or increasingly complex architectural setups.
+
+> Install Meta-System with NPM: `npm i -g meta-system`
+
+## What it Does
+
+Meta-System provides a unique improvement to your development workflow, with all the structures to build the software you need, and the tools and libraries you love, or make.
+
+Here's what Meta-System does for you:
+
+-   **Maps to your data: **It dynamically adapts to your data schemas, minimizing the need for manual adjustments in your code.
+-   **Improves code reusability:** The engine's API boosts your productivity by enforcing clear separations of concern, providing bite-sized components that you can effortlessly reuse across projects.
+-   **Allows you to work on what matters:** Meta-System abstracts the software architecture responsible for wiring your code and libraries. Instead of writing scaffolding code, you can focus on features that deliver real value in your software.
+-   **Eases the efforts for adding features over time:** Because of its structure, Meta-System makes adding more functionality or modifying existing ones remain consistently straightforward, regardless of project complexity.
+
+## How it Works
+
+Meta-System proposes a completely different approach to software development.
+
+Leveraging a simple yet powerful configuration, you can build complete software applications using just plain JSON files to describe your system entities and behaviors. You also won't need to write JSON by hand, as with Meta-Editor, you gain deep control through an intuitive GUI, making it easier than ever to manage and customize your configurations.
+
+Meta-system uses this configuration to fetch and connect all code pieces required, including your own local files, resulting in smaller and simpler code bases.
+
+**Define the entities schemas**: Create all the data formats you will need in your software.
+
+**Configure the Addons**: Addons (libraries) bring all the functions your software requires into Meta-System. Connect to databases, display or render Web Pages, Make HTTP Requests, or even tap into the File System.
+
+**Wire the functionality**: Pass data, remap them, modify, check conditions, and call Addons functions to compose every feature you need.
 
 ## How To Use
 Oversimplifying, It is actually as easy as:
