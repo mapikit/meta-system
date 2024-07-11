@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { run, testBop } from "./commands.js";
+import { run, testBop, test } from "./commands.js";
 import { importJsonAndParse } from "../common/helpers/import-json-and-parse.js";
 
 const program = new Command("meta-system");
 
-const main = async () : Promise<void> => {
+const main = async (): Promise<void> => {
   let packageFile;
   if (process && process.cwd()) {
     const libraryPath = process.platform === "win32" ?
@@ -18,6 +18,7 @@ const main = async () : Promise<void> => {
     .helpOption("-h, --help", "Displays this help panel")
     .version("Currently on version " + packageFile.version, "-v, --version", "Displays the current meta-system version")
     .addCommand(run)
+    .addCommand(test)
     .addCommand(testBop);
   program.parse();
 

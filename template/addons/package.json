@@ -1,0 +1,13 @@
+{
+  "name": "application",
+  "version": "1.0.0",
+  "description": "A application for managing various application processes",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "index.js"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {}
+}

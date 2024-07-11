@@ -4,11 +4,14 @@ import { environment } from "../common/execution-env.js";
 import { parseInteger } from "../common/helpers/parsers.js";
 import { logLevelsArray } from "../common/logger/logger-types.js";
 import { testBopFunction, main } from "./functions.js";
+import { boilerplate } from "./fetch-comms.js";
 
 const testBop = new Command("test-bop")
   .argument("<config>", "The config file")
   .argument("<bop>", "The bop name")
   .action(testBopFunction);
+
+const test = new Command("create-addon").action(boilerplate)
 
 const run = new Command("run")
   .description("Runs the given file")
@@ -36,4 +39,4 @@ const run = new Command("run")
       .default(2000));
 
 
-export { testBop, run };
+export { testBop, run, test };
