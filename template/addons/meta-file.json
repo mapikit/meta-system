@@ -1,0 +1,15 @@
+{
+  "name": "example-addon",
+  "version": "1.0.0",
+  "entrypoint": "./entrypoint.js",
+  "configurationFormat": {
+    "parameter1": "string",
+    "parameter2": "number"
+  },
+  "permissions": [
+    {
+      "entity": "schemas",
+      "permissions": ["modify_schema", "create_schema"]
+    }
+  ]
+}
