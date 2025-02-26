@@ -33,7 +33,7 @@ Meta-system uses this configuration to fetch and connect all code pieces require
 
 **Define the entities schemas**: Create all the data formats you will need in your software.
 
-**Configure the Addons**: Addons (libraries) bring all the functions your software requires into Meta-System. Connect to databases, display or render Web Pages, Make HTTP Requests, or even tap into the File System.
+**Configure the Addons**: [Addons](https://mapikit.github.io/meta-system-docs/docs/api-docs/architecture/components/addons/) (libraries) bring all the functions your software requires into Meta-System. Connect to databases, display or render Web Pages, Make HTTP Requests, or even tap into the File System.
 
 **Wire the functionality**: Pass data, remap them, modify, check conditions, and call Addons functions to compose every feature you need.
 
